@@ -10,12 +10,14 @@ import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astr
 import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { EXPLORER_FACETS, EXPLORER_ITEMS } from '@data/paradigm-e/collections';
+import { EXPLORER_FACET_ZH, EXPLORER_SUMMARY_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
+const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[value] ?? fallback) : fallback);
 ---
 <BaseShell
   title={isZh ? '多维分面探索器（10 大集合动态聚合）' : 'Multi-Facet Explorer — All ChinaWao Collections'}
@@ -62,7 +64,7 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         <div class="pe-facet-group">
           {EXPLORER_FACETS.space.map((f) => (
             <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="space" data-pe-facet-value={f.value}>
-              {f.label}
+              {fLabel(f.value, f.label)}
             </button>
           ))}
         </div>
@@ -75,7 +77,7 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         <div class="pe-facet-group">
           {EXPLORER_FACETS.season.map((f) => (
             <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="season" data-pe-facet-value={f.value}>
-              {f.label}
+              {fLabel(f.value, f.label)}
             </button>
           ))}
         </div>
@@ -88,7 +90,7 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         <div class="pe-facet-group">
           {EXPLORER_FACETS.kind.map((f) => (
             <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="kind" data-pe-facet-value={f.value}>
-              {f.label}
+              {fLabel(f.value, f.label)}
             </button>
           ))}
         </div>
@@ -101,7 +103,7 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         <div class="pe-facet-group">
           {EXPLORER_FACETS.constraints.map((f) => (
             <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="constraints" data-pe-facet-value={f.value}>
-              {f.label}
+              {fLabel(f.value, f.label)}
             </button>
           ))}
         </div>
@@ -114,7 +116,7 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         <div class="pe-facet-group">
           {EXPLORER_FACETS.trust.map((f) => (
             <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="trust" data-pe-facet-value={f.value}>
-              {f.label}
+              {fLabel(f.value, f.label)}
             </button>
           ))}
         </div>
@@ -136,9 +138,9 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
         >
           <div>
             <div style="display:flex;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
-              <Badge tone="editorial">{item.kind}</Badge>
+              <Badge tone="editorial">{fLabel(item.kind, item.kind)}</Badge>
               <Badge tone={item.trust === 'tier-a' ? 'verified' : 'standby'}>
-                {item.trust === 'tier-a' ? 'Tier-A' : 'Pulse Verified'}
+                {item.trust === 'tier-a' ? (isZh ? 'Tier-A 官方' : 'Tier-A') : (isZh ? '本周实测' : 'Pulse Verified')}
               </Badge>
             </div>
             <h2 style="font-family:var(--font-display);font-size:1.15rem;line-height:1.3;">
@@ -147,12 +149,12 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
               </a>
             </h2>
             <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
-              {item.summary}
+              {isZh ? (EXPLORER_SUMMARY_ZH[item.id] ?? item.summary) : item.summary}
             </p>
           </div>
           <div class="pe-mega-chips">
             {item.constraints.slice(0, 3).map((c) => (
-              <span class="pe-mega-chip" style="padding:0.15rem 0.45rem;font-size:var(--text-2xs);">{c}</span>
+              <span class="pe-mega-chip" style="padding:0.15rem 0.45rem;font-size:var(--text-2xs);">{fLabel(c, c)}</span>
             ))}
           </div>
         </article>

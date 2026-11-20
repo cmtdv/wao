@@ -18,6 +18,7 @@ import Button from '@ui/actions/Button.astro';
 import DataTable from '@ui/data-display/DataTable.astro';
 import { getGuidesByPillar, type GuideDefinition } from '@data/paradigm-e/guides';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { RESCUE_FILTER_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 interface Props {
@@ -229,7 +230,7 @@ const jsonLd = {
                       aria-pressed={idx === 0 ? 'true' : 'false'}
                       data-pe-rescue-filter={f}
                     >
-                      {f}
+                      {isZh ? (RESCUE_FILTER_ZH[f] ?? f) : f}
                     </button>
                   ))}
                 </div>

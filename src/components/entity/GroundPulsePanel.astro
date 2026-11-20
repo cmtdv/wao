@@ -6,6 +6,7 @@
 import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import type { GuidePulseItem } from '@data/paradigm-e/guides';
+import { PULSE_STATUS_LABELS } from '@data/paradigm-e/i18n-zh';
 import { localePath, type Locale } from '@i18n/ui';
 
 interface Props {
@@ -36,9 +37,9 @@ const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
 
   {stats && total > 0 && (
     <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3);">
-      <Badge tone="verified">{pct(stats.worked)}% Worked ({stats.worked})</Badge>
-      <Badge tone="standby">{pct(stats.partial)}% Partial ({stats.partial})</Badge>
-      <Badge tone="danger">{pct(stats.failed)}% Failed ({stats.failed})</Badge>
+      <Badge tone="verified">{pct(stats.worked)}% {PULSE_STATUS_LABELS[locale].worked} ({stats.worked})</Badge>
+      <Badge tone="standby">{pct(stats.partial)}% {PULSE_STATUS_LABELS[locale].partial} ({stats.partial})</Badge>
+      <Badge tone="danger">{pct(stats.failed)}% {PULSE_STATUS_LABELS[locale].failed} ({stats.failed})</Badge>
     </div>
   )}
 
@@ -46,7 +47,7 @@ const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
     {items.map((item) => (
       <li class="pe-pulse-row">
         <Badge tone={item.status === 'worked' ? 'verified' : item.status === 'partial' ? 'standby' : 'danger'}>
-          {item.status === 'worked' ? 'Worked' : item.status === 'partial' ? 'Partial' : 'Failed'}
+          {PULSE_STATUS_LABELS[locale][item.status]}
         </Badge>
         <div style="min-width:0;flex:1;">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.35rem;font-size:var(--text-xs);color:var(--ink-secondary);font-family:var(--font-mono);">

@@ -13,6 +13,8 @@
  */
 export {};
 
+const isZh = (): boolean => document.documentElement.lang.toLowerCase().startsWith('zh');
+
 function showToast(message: string): void {
   const region = document.querySelector<HTMLElement>('[data-cw-toast-region]');
   const live = document.querySelector<HTMLElement>('[data-cw-toast-live]');
@@ -319,7 +321,11 @@ function initStackChecklist(): void {
   const sync = () => {
     const checked = boxes.filter((b) => b.checked).map((b) => b.value);
     try { localStorage.setItem(key, JSON.stringify(checked)); } catch {}
-    if (statusEl) statusEl.textContent = `${checked.length} / ${boxes.length} ready`;
+    if (statusEl) {
+      statusEl.textContent = isZh()
+        ? `已就绪 ${checked.length} / ${boxes.length}`
+        : `${checked.length} / ${boxes.length} ready`;
+    }
   };
 
   boxes.forEach((b) => b.addEventListener('change', sync));
@@ -459,7 +465,11 @@ function initParadigmETools(): void {
     const render = () => {
       if (!input || !out) return;
       const res = validateUSCC(input.value);
-      out.innerHTML = `<strong style="color:${res.valid ? 'var(--status-verified-ink)' : 'var(--status-error-ink)'}">${res.valid ? '✓ VALID USCC' : '✕ INVALID USCC'}</strong> — ${res.reason}<br/><span style="font-size:var(--text-xs);color:var(--ink-secondary);">Authority: ${res.authority}</span>`;
+      const zh = isZh();
+      const head = res.valid
+        ? (zh ? '✓ 校验通过（有效 18 位 USCC）' : '✓ VALID USCC')
+        : (zh ? '✕ 校验未通过（无效 USCC）' : '✕ INVALID USCC');
+      out.innerHTML = `<strong style="color:${res.valid ? 'var(--status-verified-ink)' : 'var(--status-error-ink)'}">${head}</strong> — ${res.reason}<br/><span style="font-size:var(--text-xs);color:var(--ink-secondary);">${zh ? '登记管理机关' : 'Authority'}: ${res.authority}</span>`;
     };
     input?.addEventListener('input', render);
     render();
@@ -476,6 +486,7 @@ function initParadigmETools(): void {
 
     const calc = () => {
       if (!out) return;
+      const zh = isZh();
       const monthly = Math.max(0, Number(salaryIn?.value || 25000));
       const annual = monthly * 12;
       const salPts = annual >= 450000 ? 20 : annual >= 350000 ? 17 : annual >= 250000 ? 14 : annual >= 150000 ? 11 : 8;
@@ -485,10 +496,11 @@ function initParadigmETools(): void {
       const age = Number(ageIn?.value || 30);
       const agePts = age >= 26 && age <= 45 ? 15 : age >= 18 && age <= 55 ? 10 : 5;
       const hskPts = Number(hskIn?.value || 0);
-      const totalPts = salPts + degPts + expPts + agePts + hskPts + 10; // +10 baseline work-month score
-      const tier = totalPts >= 85 ? 'Category A (High-End Talent)' : totalPts >= 60 ? 'Category B (Standard Professional)' : 'Category C (Below 60 pts — Degree+2yr path needed)';
+      const totalPts = salPts + degPts + expPts + agePts + hskPts + 10;
+      const tier = zh
+        ? (totalPts >= 85 ? 'A 类（外国高端人才）' : totalPts >= 60 ? 'B 类（外国专业人才）' : 'C 类（未满 60 分，建议走本科+2年常规路径）')
+        : (totalPts >= 85 ? 'Category A (High-End Talent)' : totalPts >= 60 ? 'Category B (Standard Professional)' : 'Category C (Below 60 pts — Degree+2yr path needed)');
 
-      // Simplified monthly PRC IIT (5,000 standard deduction)
       const taxable = Math.max(0, monthly - 5000);
       let iit = 0;
       if (taxable <= 3000) iit = taxable * 0.03;
@@ -498,7 +510,9 @@ function initParadigmETools(): void {
       else if (taxable <= 55000) iit = taxable * 0.3 - 4410;
       else iit = taxable * 0.35 - 7160;
 
-      out.innerHTML = `<strong>Work Permit Score: ${totalPts} pts → ${tier}</strong><br/>Estimated Monthly PRC IIT (after ¥5,000 base deduction): <strong>¥${Math.round(iit).toLocaleString()}</strong> · Est. Net Take-Home: <strong>¥${Math.round(monthly - iit).toLocaleString()}/mo</strong>`;
+      out.innerHTML = zh
+        ? `<strong>工签综合积分：${totalPts} 分 → ${tier}</strong><br/>估算月度个税（扣除 ¥5,000 起征点）：<strong>¥${Math.round(iit).toLocaleString()}</strong> · 估算税后月净收入：<strong>¥${Math.round(monthly - iit).toLocaleString()}/月</strong>`
+        : `<strong>Work Permit Score: ${totalPts} pts → ${tier}</strong><br/>Estimated Monthly PRC IIT (after ¥5,000 base deduction): <strong>¥${Math.round(iit).toLocaleString()}</strong> · Est. Net Take-Home: <strong>¥${Math.round(monthly - iit).toLocaleString()}/mo</strong>`;
     };
 
     root.addEventListener('input', calc);
@@ -513,12 +527,15 @@ function initParadigmETools(): void {
     const out = root.querySelector<HTMLElement>('[data-jin-output]');
     const calc = () => {
       if (!out) return;
+      const zh = isZh();
       const jin = Math.max(0, Number(jinIn?.value || 2));
       const kg = (jin * 0.5).toFixed(2);
       const lb = (jin * 1.1023).toFixed(2);
       const eu = Math.max(35, Math.min(48, Number(euShoeIn?.value || 42)));
       const cnMm = Math.round((eu - 10) * 5 + 100);
-      out.innerHTML = `<strong>${jin} 斤 (jin)</strong> = ${jin * 10} 两 (liang) = <strong>${kg} kg</strong> = <strong>${lb} lbs</strong><br/>EU Shoe ${eu} ≈ China Size <strong>${eu} (${cnMm} mm)</strong> · US Men ~${(eu - 33).toFixed(1)}`;
+      out.innerHTML = zh
+        ? `<strong>${jin} 市斤</strong> = ${jin * 10} 两 = <strong>${kg} 公斤 (kg)</strong> = <strong>${lb} 磅 (lbs)</strong><br/>欧码 ${eu} ≈ 中国鞋码 <strong>${eu}（${cnMm} mm）</strong> · 美码男鞋约 ${(eu - 33).toFixed(1)}`
+        : `<strong>${jin} 斤 (jin)</strong> = ${jin * 10} 两 (liang) = <strong>${kg} kg</strong> = <strong>${lb} lbs</strong><br/>EU Shoe ${eu} ≈ China Size <strong>${eu} (${cnMm} mm)</strong> · US Men ~${(eu - 33).toFixed(1)}`;
     };
     root.addEventListener('input', calc);
     calc();
@@ -531,10 +548,13 @@ function initParadigmETools(): void {
     const out = root.querySelector<HTMLElement>('[data-wanyi-output]');
     const calc = () => {
       if (!out) return;
+      const zh = isZh();
       const n = Number(numIn?.value || 50);
       const mult = Number(unitIn?.value || 10000);
       const total = n * mult;
-      out.innerHTML = `Exact Integer: <strong>${total.toLocaleString()}</strong><br/>English: <strong>${(total / 1e6).toLocaleString(undefined, { maximumFractionDigits: 3 })} Million</strong> (${(total / 1e9).toLocaleString(undefined, { maximumFractionDigits: 4 })} Billion) · Approx USD (@7.2): <strong>$${Math.round(total / 7.2).toLocaleString()}</strong>`;
+      out.innerHTML = zh
+        ? `精确整数：<strong>${total.toLocaleString()}</strong><br/>英文大数：<strong>${(total / 1e6).toLocaleString(undefined, { maximumFractionDigits: 3 })} Million</strong>（${(total / 1e9).toLocaleString(undefined, { maximumFractionDigits: 4 })} Billion）· 折合美元（按 7.2）：<strong>$${Math.round(total / 7.2).toLocaleString()}</strong>`
+        : `Exact Integer: <strong>${total.toLocaleString()}</strong><br/>English: <strong>${(total / 1e6).toLocaleString(undefined, { maximumFractionDigits: 3 })} Million</strong> (${(total / 1e9).toLocaleString(undefined, { maximumFractionDigits: 4 })} Billion) · Approx USD (@7.2): <strong>$${Math.round(total / 7.2).toLocaleString()}</strong>`;
     };
     root.addEventListener('input', calc);
     root.addEventListener('change', calc);

@@ -1,10 +1,8 @@
 ---
 /**
  * Mother Template 2: 6 Pillar Hub Landing Layout (GOV.UK List Architecture)
- * - Breadcrumb + H1 + 3-line persona lead
- * - Pinned Top 3-6 "Most Viewed" strip
- * - 8:4 Main Split: Left structured topic groups / Right embedded tool + Stacks + Live Pulse
- * - Bottom Structured Databases chip strip (shallow click depth)
+ * - Fully bilingual (EN default / Simplified Chinese /zh/*)
+ * - Integrates live EmDash multi-locale CMS dispatches via getPublicPosts({ locale })
  */
 import BaseShell from './BaseShell.astro';
 import ResponsiveBreadcrumb from '../components/nav/ResponsiveBreadcrumb.astro';
@@ -13,6 +11,9 @@ import Button from '@ui/actions/Button.astro';
 import type { PillarConfig } from '@data/paradigm-e/pillars';
 import { LIVE_PULSE_REPORTS } from '@data/paradigm-e/collections';
 import { getGuidesByPillar } from '@data/paradigm-e/guides';
+import { ARCHETYPE_LABELS, PULSE_STATUS_LABELS, PULSE_ZH_MAP } from '@data/paradigm-e/i18n-zh';
+import { getPublicPosts } from '@lib/cms';
+import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 interface Props {
@@ -26,6 +27,8 @@ const lp = (p: string) => localePath(p, locale);
 
 const pillarGuides = getGuidesByPillar(pillar.id);
 const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
+const cmsFeed = await getPublicPosts({ limit: 3, locale }).catch(() => ({ entries: [] as never[] }));
+const cmsEntries = cmsFeed.entries ?? [];
 ---
 <BaseShell
   title={isZh ? pillar.nameZh : pillar.name}
@@ -49,7 +52,7 @@ const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
 
     <header style="max-width: 56rem;">
       <span class="eyebrow eyebrow--accent">
-        {isZh ? `六大主柱 · ${pillar.name}` : `Core Pillar · ${pillar.name}`}
+        {isZh ? `六大主柱 · ${pillar.nameZh}` : `Core Pillar · ${pillar.name}`}
       </span>
       <h1 style="margin-top:0.35rem;">{isZh ? pillar.h1Zh : pillar.h1}</h1>
       <p class="archive-lead" style="margin-top:var(--space-3);">
@@ -60,7 +63,7 @@ const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
     {/* Pinned Top: Most Viewed in Pillar (GOV.UK List Pattern) */}
     <section class="pe-most-viewed-box" aria-labelledby="pillar-most-viewed-h">
       <span id="pillar-most-viewed-h" class="eyebrow eyebrow--accent">
-        {isZh ? `本柱最常查看 · Most Viewed in ${pillar.name}` : `Most Viewed in ${pillar.name}`}
+        {isZh ? `${pillar.nameZh} · 本柱高频直达` : `Most Viewed in ${pillar.name}`}
       </span>
       <ol class="pe-most-viewed-grid">
         {pillar.mostViewedTop.map((item, idx) => (
@@ -103,14 +106,34 @@ const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
           <section class="pe-topic-group" aria-labelledby="pillar-guides-h">
             <span class="pe-topic-group-num">{isZh ? '深度主题页' : 'FEATURE GUIDES'}</span>
             <h2 id="pillar-guides-h" style="font-size:1.35rem;margin-top:0.2rem;">
-              {isZh ? `${pillar.nameZh} 下属深度主题页 (${pillarGuides.length})` : `${pillar.name} Deep Guides (${pillarGuides.length})`}
+              {isZh ? `${pillar.nameZh} 下属深度主题页（${pillarGuides.length} 篇）` : `${pillar.name} Deep Guides (${pillarGuides.length})`}
             </h2>
             <ul class="pe-gov-list">
               {pillarGuides.map((g) => (
                 <li>
                   <a href={lp(`/guides/${g.slug}/`)}>
                     <span>{isZh ? g.titleZh : g.title}</span>
-                    <Badge tone="neutral">{g.archetype}</Badge>
+                    <Badge tone="neutral">{ARCHETYPE_LABELS[locale][g.archetype] ?? g.archetype}</Badge>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* EmDash Native i18n Live Dispatches Feed */}
+        {cmsEntries.length > 0 && (
+          <section class="pe-topic-group" aria-labelledby="pillar-cms-h">
+            <span class="pe-topic-group-num">{isZh ? 'EMDASH 多语言实时志刊' : 'EMDASH LIVE DISPATCHES'}</span>
+            <h2 id="pillar-cms-h" style="font-size:1.25rem;margin-top:0.2rem;">
+              {isZh ? '编辑部最新双语实录（来自 EmDash CMS）' : 'Latest Editorial Dispatches (EmDash CMS)'}
+            </h2>
+            <ul class="pe-gov-list">
+              {cmsEntries.map((entry) => (
+                <li>
+                  <a href={lp(postPath(entry.data.slug || entry.id))}>
+                    <span>{entry.data.title}</span>
+                    <Badge tone="editorial">{isZh ? '简中志刊' : 'EN Dispatch'}</Badge>
                   </a>
                 </li>
               ))}
@@ -140,7 +163,7 @@ const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '热门场景清单包 (Stacks)' : 'Popular Scenario Stacks'}</span>
+          <span class="pe-mega-col-title">{isZh ? '热门场景清单包（Stacks）' : 'Popular Scenario Stacks'}</span>
           <ul class="pe-mega-links">
             {pillar.sidebarStacks.map((st) => (
               <li>
@@ -156,17 +179,22 @@ const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
         <div class="pe-side-card">
           <span class="pe-mega-col-title">{isZh ? '近 7 天现场实测流' : '7-Day Ground Pulse'}</span>
           <ul class="pe-pulse-list">
-            {recentPulse.map((p) => (
-              <li class="pe-pulse-row">
-                <Badge tone={p.status === 'worked' ? 'verified' : p.status === 'partial' ? 'standby' : 'danger'}>
-                  {p.status}
-                </Badge>
-                <div style="font-size:var(--text-xs);">
-                  <strong>{p.location}</strong>
-                  <p style="color:var(--ink-secondary);margin-top:0.15rem;">{p.summary}</p>
-                </div>
-              </li>
-            ))}
+            {recentPulse.map((p) => {
+              const zhP = PULSE_ZH_MAP[p.id];
+              return (
+                <li class="pe-pulse-row">
+                  <Badge tone={p.status === 'worked' ? 'verified' : p.status === 'partial' ? 'standby' : 'danger'}>
+                    {PULSE_STATUS_LABELS[locale][p.status]}
+                  </Badge>
+                  <div style="font-size:var(--text-xs);">
+                    <strong>{isZh && zhP ? zhP.location : p.location}</strong>
+                    <p style="color:var(--ink-secondary);margin-top:0.15rem;">
+                      {isZh && zhP ? zhP.summary : p.summary}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
           <a href={lp('/pulse/')} class="editorial-link" style="margin-top:var(--space-3);display:inline-flex;font-size:var(--text-xs);">
             {isZh ? '查看全部实测动态 →' : 'All Ground Pulse →'}

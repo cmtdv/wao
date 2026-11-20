@@ -5,6 +5,7 @@
  */
 import Badge from '@ui/data-display/Badge.astro';
 import type { NearbyMeshItem } from '@data/paradigm-e/entities';
+import { NEARBY_CAT_ZH } from '@data/paradigm-e/i18n-zh';
 
 interface Props {
   nearbyMesh: NearbyMeshItem[];
@@ -25,7 +26,7 @@ const isZh = locale === 'zh';
     {nearbyMesh.map((item) => (
       <article class="pe-side-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.45rem;">
-          <Badge tone="editorial">{item.category}</Badge>
+          <Badge tone="editorial">{isZh ? (NEARBY_CAT_ZH[item.category] ?? item.category) : item.category}</Badge>
           <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);">
             {item.distance}
           </span>

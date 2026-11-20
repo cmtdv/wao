@@ -9,6 +9,7 @@ import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astr
 import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { GOV_PORTALS } from '@data/paradigm-e/collections';
+import { PORTAL_ACCESS_ZH, PORTAL_DOMAIN_ZH, PORTAL_LEVEL_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
@@ -145,20 +146,20 @@ const mcpConfigJson = JSON.stringify(
                 data-search={`${p.name} ${p.chineseName} ${p.region} ${p.domain} ${p.accessDetail}`.toLowerCase()}
               >
                 <th scope="row">
-                  <strong>{p.name}</strong>
-                  <div style="font-size:var(--text-xs);color:var(--ink-secondary);font-weight:400;">{p.chineseName}</div>
+                  <strong>{isZh ? p.chineseName : p.name}</strong>
+                  <div style="font-size:var(--text-xs);color:var(--ink-secondary);font-weight:400;">{isZh ? p.name : p.chineseName}</div>
                 </th>
-                <td>{p.level} · {p.region}</td>
-                <td>{p.domain}</td>
+                <td>{isZh ? (PORTAL_LEVEL_ZH[p.level] ?? p.level) : p.level} · {p.region}</td>
+                <td>{isZh ? (PORTAL_DOMAIN_ZH[p.domain] ?? p.domain) : p.domain}</td>
                 <td>
                   <Badge tone={p.access === 'direct-200' ? 'verified' : 'standby'}>
-                    {p.accessDetail}
+                    {isZh ? (PORTAL_ACCESS_ZH[p.accessDetail] ?? p.accessDetail) : p.accessDetail}
                   </Badge>
                 </td>
                 <td>
                   <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
-                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="text-link">Official ↗</a>
-                    {p.guideHref && <a href={lp(p.guideHref)} class="text-link">Guide →</a>}
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="text-link">{isZh ? '官网 ↗' : 'Official ↗'}</a>
+                    {p.guideHref && <a href={lp(p.guideHref)} class="text-link">{isZh ? '攻略 →' : 'Guide →'}</a>}
                   </div>
                 </td>
               </tr>

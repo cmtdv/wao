@@ -264,6 +264,10 @@
   flex-shrink: 0;
 }
 
+.pe-header .lang-switch {
+  display: inline-flex;
+}
+
 .pe-dock-link,
 .pe-dock-btn {
   display: inline-flex;

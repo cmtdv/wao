@@ -16,6 +16,7 @@ import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { FEATURED_HOME_GUIDES } from '@data/paradigm-e/guides';
 import { LIVE_PULSE_REPORTS } from '@data/paradigm-e/collections';
+import { PULSE_STATUS_LABELS, PULSE_ZH_MAP } from '@data/paradigm-e/i18n-zh';
 import { getPublicPosts } from '@lib/cms';
 import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
@@ -165,24 +166,29 @@ const jsonLd = {
         </div>
 
         <ul class="pe-pulse-list">
-          {LIVE_PULSE_REPORTS.slice(0, 2).map((rep) => (
-            <li class="pe-pulse-row">
-              <Badge tone={rep.status === 'worked' ? 'verified' : rep.status === 'partial' ? 'standby' : 'danger'}>
-                {rep.status === 'worked' ? 'Worked' : rep.status === 'partial' ? 'Partial' : 'Failed'}
-              </Badge>
-              <div>
-                <a href={lp(rep.relatedHref)} class="text-link" style="font-weight:600;">
-                  {rep.passportOrCard} @ {rep.location}
-                </a>
-                <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);margin-left:0.4rem;">
-                  ({rep.timestamp})
-                </span>
-                <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">{rep.summary}</p>
-              </div>
-            </li>
-          ))}
+          {LIVE_PULSE_REPORTS.slice(0, 2).map((rep) => {
+            const zhRep = PULSE_ZH_MAP[rep.id];
+            return (
+              <li class="pe-pulse-row">
+                <Badge tone={rep.status === 'worked' ? 'verified' : rep.status === 'partial' ? 'standby' : 'danger'}>
+                  {PULSE_STATUS_LABELS[locale][rep.status]}
+                </Badge>
+                <div>
+                  <a href={lp(rep.relatedHref)} class="text-link" style="font-weight:600;">
+                    {isZh && zhRep ? `${zhRep.passportOrCard} @ ${zhRep.location}` : `${rep.passportOrCard} @ ${rep.location}`}
+                  </a>
+                  <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);margin-left:0.4rem;">
+                    ({isZh && zhRep ? zhRep.timestamp : rep.timestamp})
+                  </span>
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
+                    {isZh && zhRep ? zhRep.summary : rep.summary}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
           <li class="pe-pulse-row">
-            <Badge tone="editorial">Policy</Badge>
+            <Badge tone="editorial">{isZh ? '政策' : 'Policy'}</Badge>
             <div>
               <a href={lp('/guides/policy-changelog/')} class="text-link" style="font-weight:600;">
                 {isZh ? '2026-11 月度入境与商旅政策变更日志 →' : '2026-11 Monthly Policy Changelog →'}

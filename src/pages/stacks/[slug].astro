@@ -10,6 +10,7 @@ import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { STACKS } from '@data/paradigm-e/collections';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { STACK_CAT_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const slug = Astro.params.slug || '';
@@ -39,7 +40,9 @@ const shareUrl = Astro.url.href;
       mobileBackHref={lp(`/${pillar.id}/`)}
       mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
     >
-      <Badge slot="meta" tone="verified" data-pe-stack-progress>0 / {stack.items.length} ready</Badge>
+      <Badge slot="meta" tone="verified" data-pe-stack-progress>
+        {isZh ? `已就绪 0 / ${stack.items.length}` : `0 / ${stack.items.length} ready`}
+      </Badge>
     </ResponsiveBreadcrumb>
 
     <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);">
@@ -83,7 +86,7 @@ const shareUrl = Astro.url.href;
               <label for={`stack-item-${item.id}`} style="font-weight:600;font-size:1rem;cursor:pointer;">
                 {String(idx + 1).padStart(2, '0')}. {item.title}
               </label>
-              <Badge tone="editorial">{item.category}</Badge>
+              <Badge tone="editorial">{isZh ? (STACK_CAT_ZH[item.category] ?? item.category) : item.category}</Badge>
             </div>
             <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.25rem;">
               {item.summary}

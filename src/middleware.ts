@@ -35,6 +35,12 @@ export const onRequest = defineMiddleware((context, next) => {
     );
   }
 
+  // Normalize /zh-cn or /zh-CN prefix to canonical /zh/* path
+  if (/^\/zh-cn(\/|$)/i.test(pathname)) {
+    const normalized = pathname.replace(/^\/zh-cn/i, '/zh') || '/zh/';
+    return context.redirect(`${normalized}${search}`, 302);
+  }
+
   // Initial /zh or /zh/* request -> rewrite to canonical page with locale='zh'
   if (pathname === '/zh' || pathname === '/zh/' || pathname.startsWith('/zh/')) {
     context.locals.locale = 'zh';

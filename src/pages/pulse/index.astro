@@ -8,11 +8,13 @@ import GroundPulseForm from '@blocks/application/GroundPulseForm.astro';
 import Badge from '@ui/data-display/Badge.astro';
 import DataTable from '@ui/data-display/DataTable.astro';
 import { LIVE_PULSE_REPORTS, WEEKLY_ESIM_TOP5 } from '@data/paradigm-e/collections';
+import { ESIM_TOP5_ZH, PULSE_STATUS_LABELS, PULSE_ZH_MAP } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
+const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
 ---
 <BaseShell
   title={isZh ? '全站现场实测流（Ground Pulse）' : 'Live Ground Pulse & Field Benchmarks'}
@@ -43,39 +45,44 @@ const lp = (p: string) => localePath(p, locale);
 
     {/* Live Stream Cards */}
     <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-7);" aria-label="Recent field reports">
-      {LIVE_PULSE_REPORTS.map((r) => (
-        <article class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
-          <div style="flex:1;min-width:16rem;">
-            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;margin-bottom:0.35rem;">
-              <Badge tone={r.status === 'worked' ? 'verified' : r.status === 'partial' ? 'standby' : 'danger'}>
-                {r.status.toUpperCase()}
-              </Badge>
-              <Badge tone="editorial">{r.category}</Badge>
-              <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);">
-                {r.passportOrCard} @ {r.location}
-              </span>
+      {LIVE_PULSE_REPORTS.map((r) => {
+        const zhR = PULSE_ZH_MAP[r.id];
+        return (
+          <article class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
+            <div style="flex:1;min-width:16rem;">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;margin-bottom:0.35rem;">
+                <Badge tone={r.status === 'worked' ? 'verified' : r.status === 'partial' ? 'standby' : 'danger'}>
+                  {PULSE_STATUS_LABELS[locale][r.status]}
+                </Badge>
+                <Badge tone="editorial">{isZh && zhR ? zhR.category : r.category}</Badge>
+                <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);">
+                  {isZh && zhR ? `${zhR.passportOrCard} @ ${zhR.location}` : `${r.passportOrCard} @ ${r.location}`}
+                </span>
+              </div>
+              <p style="font-size:var(--text-base);color:var(--ink-primary);">
+                {isZh && zhR ? zhR.summary : r.summary}
+              </p>
             </div>
-            <p style="font-size:var(--text-base);color:var(--ink-primary);">{r.summary}</p>
-          </div>
-          <div style="text-align:end;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
-            <div>{r.timestamp}</div>
-            <a href={lp(r.relatedHref)} class="text-link" style="display:inline-block;margin-top:0.35rem;">
-              {isZh ? '对应攻略 →' : 'Related Guide →'}
-            </a>
-          </div>
-        </article>
-      ))}
+            <div style="text-align:end;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
+              <div>{isZh && zhR ? zhR.timestamp : r.timestamp}</div>
+              <a href={lp(r.relatedHref)} class="text-link" style="display:inline-block;margin-top:0.35rem;">
+                {isZh ? '对应攻略 →' : 'Related Guide →'}
+              </a>
+            </div>
+          </article>
+        );
+      })}
     </section>
 
     {/* Weekly Most Stable China eSIM Top 5 */}
     <section id="esim-top5" style="margin-bottom:var(--space-7);" aria-labelledby="esim-top5-h">
-      <span class="eyebrow eyebrow--accent">Weekly Field Leaderboard</span>
+      <span class="eyebrow eyebrow--accent">{isZh ? '每周实测榜单' : 'Weekly Field Leaderboard'}</span>
       <h2 id="esim-top5-h" style="margin-top:0.25rem;margin-bottom:var(--space-3);">
         {isZh ? '本周实测最稳中国 eSIM Top 5' : 'This Week’s Most Stable China eSIM Top 5'}
       </h2>
       <DataTable
         id="pulse-esim-top5"
-        caption="Weekly China eSIM Field Stability Ranking"
+        caption={isZh ? '本周中国 eSIM 实测稳定性排行' : 'Weekly China eSIM Field Stability Ranking'}
         columns={[
           { key: 'rank', label: '#', rowHeader: true, sortable: false },
           { key: 'provider', label: isZh ? 'eSIM 方案' : 'Provider', sortable: false },
@@ -83,7 +90,7 @@ const lp = (p: string) => localePath(p, locale);
           { key: 'priceRef', label: isZh ? '参考价格' : 'Ref Price', sortable: false },
           { key: 'stability', label: isZh ? '本周实测可用率' : 'Field Stability', sortable: false },
         ]}
-        rows={WEEKLY_ESIM_TOP5.map((row) => ({
+        rows={esimRows.map((row) => ({
           rank: row.rank,
           provider: row.provider,
           breakout: row.breakout,
