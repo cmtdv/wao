@@ -1,0 +1,51 @@
+---
+/**
+ * NotificationCard — Structured inbox / policy update notification item
+ */
+import Badge from '@ui/data-display/Badge.astro';
+
+interface Props {
+  title: string;
+  body: string;
+  timestamp: string;
+  category?: string;
+  unread?: boolean;
+  tone?: 'info' | 'verified' | 'standby' | 'danger';
+  actionLabel?: string;
+  actionHref?: string;
+  class?: string;
+}
+
+const {
+  title,
+  body,
+  timestamp,
+  category,
+  unread = false,
+  tone = 'info',
+  actionLabel,
+  actionHref,
+  class: className = '',
+} = Astro.props;
+
+const badgeTone = tone === 'info' ? 'editorial' : tone;
+---
+<article class:list={['cw-notif', unread && 'cw-notif--unread', className]} data-cw-notif-item data-unread={unread ? 'true' : 'false'}>
+  <span class:list={['cw-notif-dot', unread && 'cw-notif-dot--active']} aria-hidden="true"></span>
+  <div class="cw-notif-body">
+    <div class="cw-notif-head">
+      <div class="cw-notif-meta">
+        {category && <Badge tone={badgeTone}>{category}</Badge>}
+        <span class="cw-notif-time">{timestamp}</span>
+      </div>
+      {unread && <span class="cw-notif-unread-label">Unread</span>}
+    </div>
+    <h4 class="cw-notif-title">{title}</h4>
+    <p class="cw-notif-text">{body}</p>
+    {actionLabel && actionHref && (
+      <div class="cw-notif-actions">
+        <a href={actionHref} class="text-link">{actionLabel}</a>
+      </div>
+    )}
+  </div>
+</article>

@@ -1,0 +1,44 @@
+---
+/**
+ * CareersBlock — Open editorial fellowships & contributor roles table/list
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import LinkButton from '@ui/actions/LinkButton.astro';
+
+export interface RoleItem {
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  href?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  roles: RoleItem[];
+  class?: string;
+}
+
+const { eyebrow = 'Open Fellowships', title, subtitle, roles, class: className = '' } = Astro.props;
+---
+<section class:list={['cw-block-section', className]}>
+  <header class="cw-block-head">
+    <span class="kicker">{eyebrow}</span>
+    <h3 class="cw-block-title">{title}</h3>
+    {subtitle && <p class="cw-block-sub">{subtitle}</p>}
+  </header>
+  <div class="cw-careers-list">
+    {roles.map((r) => (
+      <article class="cw-career-row">
+        <div class="cw-career-main">
+          <Badge tone="editorial">{r.department}</Badge>
+          <h4 class="cw-career-title">{r.title}</h4>
+          <span class="cw-career-meta">{r.location} · {r.type}</span>
+        </div>
+        <LinkButton href={r.href ?? '/pages/write-for-chinawao/'} size="sm">Apply</LinkButton>
+      </article>
+    ))}
+  </div>
+</section>

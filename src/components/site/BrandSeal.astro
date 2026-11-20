@@ -1,0 +1,20 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = 'brand-seal' } = Astro.props;
+---
+<span class={className} aria-hidden="true">
+  <svg viewBox="0 0 32 36" width="32" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="36" rx="2" fill="var(--accent-seal)" />
+    <rect x="2.25" y="2.25" width="27.5" height="31.5" rx="1" stroke="var(--accent-gold-on-dark)" stroke-opacity="0.62" stroke-width="0.95" />
+    <!-- Pure vector carved-seal mark (中): zero font dependencies -->
+    <path
+      d="M16 6.75V29.25M8.25 12.25H23.75V21.75H8.25V12.25Z"
+      stroke="var(--accent-on-seal)"
+      stroke-width="2.15"
+      stroke-linecap="square"
+      stroke-linejoin="miter"
+    />
+  </svg>
+</span>

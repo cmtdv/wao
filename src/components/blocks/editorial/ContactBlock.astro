@@ -1,0 +1,75 @@
+---
+/**
+ * ContactBlock — Editorial desk inquiry & correction submission block
+ */
+import Input from '@ui/forms/Input.astro';
+import Select from '@ui/forms/Select.astro';
+import Textarea from '@ui/forms/Textarea.astro';
+import Button from '@ui/actions/Button.astro';
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  class?: string;
+}
+
+const {
+  id = 'cw-contact-block',
+  eyebrow = 'Editorial Desk',
+  title = 'Submit a correction, source link, or field inquiry',
+  subtitle = 'Every submission is routed to the matching editorial desk. Mock UI preview logs locally without sending external mail.',
+  class: className = '',
+} = Astro.props;
+---
+<section class:list={['cw-block-contact', className]}>
+  <div class="cw-block-contact-info">
+    <span class="kicker">{eyebrow}</span>
+    <h3 class="cw-block-title">{title}</h3>
+    <p class="cw-block-sub">{subtitle}</p>
+    <dl class="cw-contact-meta">
+      <div>
+        <dt>Corrections SLA</dt>
+        <dd>48 hours with source diff</dd>
+      </div>
+      <div>
+        <dt>Coverage Scope</dt>
+        <dd>12 Pillars · 97 Authoritative Topics</dd>
+      </div>
+      <div>
+        <dt>Data Policy</dt>
+        <dd>Public official sources & verified field logs only</dd>
+      </div>
+    </dl>
+  </div>
+
+  <form id={id} class="cw-block-contact-form" novalidate data-cw-demo-form data-toast-msg="Inquiry logged to editorial desk (mock preview).">
+    <div class="cw-form-row-2">
+      <Input id={`${id}-name`} name="name" label="Your name" placeholder="Lin Wei" required />
+      <Input id={`${id}-email`} name="email" type="email" label="Email address" placeholder="reader@example.com" required />
+    </div>
+    <Select
+      id={`${id}-desk`}
+      name="desk"
+      label="Target Desk"
+      options={[
+        { value: 'visit', label: '9. Visit China (Visas, Rail, Payments)' },
+        { value: 'live', label: '10. Live & Study (Work Permits, Tax)' },
+        { value: 'business', label: '11. Business (Canton Fair, GB Standards)' },
+        { value: 'open-data', label: '12.8 Gov Open Data & OKF Sources' },
+      ]}
+    />
+    <Textarea
+      id={`${id}-msg`}
+      name="message"
+      label="Details & official URL (if applicable)"
+      placeholder="Describe the policy update, broken portal, or question..."
+      maxlength={500}
+      required
+    />
+    <div class="cw-form-actions">
+      <Button type="submit" variant="primary">Send to Desk</Button>
+    </div>
+  </form>
+</section>

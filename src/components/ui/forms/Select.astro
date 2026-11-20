@@ -1,0 +1,114 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+  selected?: boolean;
+  disabled?: boolean;
+  data?: Record<string, string | number | boolean>;
+}
+
+interface Props extends Omit<HTMLAttributes<'select'>, 'size'> {
+  id?: string;
+  name: string;
+  label?: string;
+  srLabel?: string;
+  options: SelectOption[];
+  size?: 'sm' | 'md' | 'lg';
+  bare?: boolean;
+  hint?: string;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+const {
+  id,
+  name,
+  label,
+  srLabel,
+  options,
+  size = 'md',
+  bare = false,
+  hint,
+  required = false,
+  disabled = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const selectId = id ?? `select-${name}`;
+const hintId = hint ? `${selectId}-hint` : undefined;
+---
+{bare ? (
+  <select
+    id={id}
+    name={name}
+    aria-label={srLabel}
+    required={required}
+    disabled={disabled}
+    class:list={[
+      'cw-select',
+      'cw-select--bare',
+      size !== 'md' && `cw-select--${size}`,
+      className,
+    ]}
+    {...rest}
+  >
+    {options.map((opt) => {
+      const dataAttrs = opt.data
+        ? Object.fromEntries(Object.entries(opt.data).map(([k, v]) => [`data-${k}`, String(v)]))
+        : {};
+      return (
+        <option
+          value={opt.value}
+          selected={opt.selected}
+          disabled={opt.disabled}
+          {...dataAttrs}
+        >
+          {opt.label}
+        </option>
+      );
+    })}
+  </select>
+) : (
+  <div class="cw-field">
+    {label && (
+      <label class="cw-label" for={selectId}>
+        <span>{label}</span>
+        {required && <span class="cw-required" aria-hidden="true">*</span>}
+      </label>
+    )}
+    <select
+      id={selectId}
+      name={name}
+      aria-label={!label ? srLabel : undefined}
+      aria-describedby={hintId}
+      required={required}
+      disabled={disabled}
+      class:list={[
+        'cw-select',
+        size !== 'md' && `cw-select--${size}`,
+        className,
+      ]}
+      {...rest}
+    >
+      {options.map((opt) => {
+        const dataAttrs = opt.data
+          ? Object.fromEntries(Object.entries(opt.data).map(([k, v]) => [`data-${k}`, String(v)]))
+          : {};
+        return (
+          <option
+            value={opt.value}
+            selected={opt.selected}
+            disabled={opt.disabled}
+            {...dataAttrs}
+          >
+            {opt.label}
+          </option>
+        );
+      })}
+    </select>
+    {hint && <span id={hintId} class="cw-hint">{hint}</span>}
+  </div>
+)}

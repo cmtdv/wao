@@ -1,0 +1,147 @@
+---
+import Select from '@ui/forms/Select.astro';
+import RadioGroup from '@ui/forms/RadioGroup.astro';
+import Button from '@ui/actions/Button.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  idPrefix?: string;
+  class?: string;
+}
+
+const { idPrefix = 'pulse', class: className = '' } = Astro.props;
+const isZh = getLocaleFromContext(Astro) === 'zh';
+
+const topicOptions = isZh
+  ? [
+      { value: '铁路 12306', label: '9.4 · 铁路 12306 护照刷闸机', selected: true },
+      { value: '支付宝 / 微信支付', label: '9.2 · 支付宝 / 微信绑定外卡' },
+      { value: '240h 过境免签', label: '9.1 · 240 小时跨省过境免签' },
+      { value: '离境退税', label: '9.8 · 市内即买即退 / 机场退税' },
+      { value: '故宫/博物馆预约', label: '9.6 · 博物馆护照实名预约' },
+    ]
+  : [
+      { value: 'Railway 12306', label: '9.4 · Railway 12306 Passport Gate', selected: true },
+      { value: 'Alipay / WeChat Pay', label: '9.2 · Alipay / WeChat Foreign Card' },
+      { value: '240h Transit Entry', label: '9.1 · 240-Hour Visa-Free Transit' },
+      { value: 'Departure Tax Refund', label: '9.8 · Instant Departure Tax Refund' },
+      { value: 'Palace Museum Booking', label: '9.6 · Museum Real-Name Booking' },
+    ];
+
+const outcomeOptions = isZh
+  ? [
+      { value: 'Worked', label: '顺畅通过（Worked）', checked: true },
+      { value: 'Partial', label: '部分可用（Partial）' },
+      { value: 'Failed', label: '受阻/规则变动（Failed）' },
+    ]
+  : [
+      { value: 'Worked', label: 'Worked smoothly', checked: true },
+      { value: 'Partial', label: 'Partial / needed workaround' },
+      { value: 'Failed', label: 'Failed / rule changed' },
+    ];
+
+const initialReports = isZh
+  ? [
+      {
+        topic: '铁路 12306',
+        city: '北京南站 → 上海虹桥站',
+        outcome: '顺畅通过',
+        tone: 'verified' as const,
+        note: '线上通过 12306 护照核验后，进站直接把英国护照原件放上电子闸机秒过，无需取纸质车票。',
+        date: '2026-11-19',
+      },
+      {
+        topic: '离境退税',
+        city: '上海南京西路商圈',
+        outcome: '部分可用',
+        tone: 'standby' as const,
+        note: '消费 1,280 元门店当场办理即买即退很顺利，但浦东 T2 机场海关盖章柜台建议多预留 25 分钟排队。',
+        date: '2026-11-18',
+      },
+    ]
+  : [
+      {
+        topic: 'Railway 12306',
+        city: 'Beijing South -> Shanghai Hongqiao',
+        outcome: 'Worked',
+        tone: 'verified' as const,
+        note: 'Scanned UK passport directly at automatic e-gate after online 12306 photo verification—zero paper ticket needed.',
+        date: '2026-11-19',
+      },
+      {
+        topic: 'Departure Tax Refund',
+        city: 'Shanghai Nanjing West Rd',
+        outcome: 'Partial',
+        tone: 'standby' as const,
+        note: 'In-store instant refund worked smoothly for 1,280 RMB purchase, but allow an extra 25 minutes at Pudong T2 customs stamp desk.',
+        date: '2026-11-18',
+      },
+    ];
+---
+<div class:list={['cw-pulse-grid', className]} data-cw-pulse-root>
+  <form class="cw-pulse-form" data-cw-pulse-form novalidate>
+    <Select
+      id={`${idPrefix}-topic`}
+      name="topic"
+      label={isZh ? '实测服务或流程' : 'Service or Procedure Tested'}
+      options={topicOptions}
+    />
+
+    <div class="cw-field">
+      <label class="cw-label" for={`${idPrefix}-city`}>
+        <span>{isZh ? '城市 / 口岸 / 场馆' : 'City / Port / Venue'}</span>
+        <span class="cw-required" aria-hidden="true">*</span>
+      </label>
+      <input
+        id={`${idPrefix}-city`}
+        name="city"
+        type="text"
+        required
+        minlength="2"
+        placeholder={isZh ? '如：成都东站、上海浦东 T2' : 'e.g. Chengdu East Station or Pudong T2'}
+        class="cw-input"
+      />
+    </div>
+
+    <RadioGroup
+      name={`${idPrefix}-outcome`}
+      legend={isZh ? '现场实测结论' : 'On-the-Ground Outcome'}
+      options={outcomeOptions}
+      inline
+    />
+
+    <div class="cw-field">
+      <label class="cw-label" for={`${idPrefix}-note`}>
+        <span>{isZh ? '现场细节 / 勘误说明' : 'Field Note / Correction Detail'}</span>
+        <span class="cw-required" aria-hidden="true">*</span>
+      </label>
+      <textarea
+        id={`${idPrefix}-note`}
+        name="note"
+        required
+        minlength="10"
+        placeholder={isZh ? '写明具体柜台、航站楼、核验耗时或费率细节…' : 'Share exact counter, terminal, or fee threshold you observed...'}
+        class="cw-input cw-textarea"
+      ></textarea>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;">
+      <Button type="submit" variant="primary">{isZh ? '提交现场实测' : 'Submit Field Report'}</Button>
+    </div>
+  </form>
+
+  <div class="cw-pulse-feed" data-cw-pulse-feed aria-live="polite">
+    <span class="rail-heading">{isZh ? '最新现场实测流（本地演示）' : 'Recent Ground Pulse Reports (Mock Stream)'}</span>
+    {initialReports.map((item) => (
+      <article class="cw-pulse-item">
+        <div class="cw-pulse-item-head">
+          <span class="portal-domain-tag">{item.topic} · {item.city}</span>
+          <Badge tone={item.tone}>{item.outcome}</Badge>
+        </div>
+        <p class="cw-pulse-item-note">{item.note}</p>
+        <span class="portal-card-meta">{isZh ? `记录于 ${item.date}` : `Logged ${item.date}`}</span>
+      </article>
+    ))}
+  </div>
+</div>

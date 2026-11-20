@@ -1,0 +1,681 @@
+/* ==========================================================================
+   Homepage & Broadsheet Asymmetric Hero + Palace Wall Interactive Chapter
+   ========================================================================== */
+
+@layer pages {
+  .home-shell {
+    padding-block: var(--space-5) var(--space-7);
+  }
+
+  /* Compact Hairline Edition Strip */
+  .edition-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .edition-tagline {
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+    max-width: 58ch;
+  }
+
+  /* ------------------------------------------------------------------------
+     Homepage Full-Viewport Hero Showcase:
+     100% full-bleed first-screen cover + minimal bottom-right 3-bar timer
+     ------------------------------------------------------------------------ */
+  .section-block--flush-top {
+    border-top: 0;
+    padding-top: var(--space-2);
+  }
+
+  .hero-showcase {
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - var(--header-height));
+    min-height: 36rem;
+    max-height: 60rem;
+    background: #16110f;
+    border-bottom: 2px solid var(--accent-gold);
+    overflow: hidden;
+  }
+
+  .hero-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    /* Contain only horizontal scroll axis so vertical page scrolling stays natural */
+    overscroll-behavior-x: contain;
+    touch-action: manipulation;
+  }
+
+  .hero-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-track {
+      scroll-behavior: smooth;
+    }
+  }
+
+  .hero-slide {
+    position: relative;
+    flex: 0 0 100%;
+    min-width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-slide-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* Option 1 (active): Upper 56% completely untouched, gentle bottom scrim for white text.
+     Previous warm full-bleed cinema scrim preserved for instant rollback:
+       background:
+         linear-gradient(90deg, rgb(16 11 9 / 0.56) 0%, rgb(16 11 9 / 0.16) 55%, transparent 100%),
+         linear-gradient(180deg, rgb(16 11 9 / 0.08) 0%, rgb(16 11 9 / 0.14) 48%, rgb(14 10 8 / 0.86) 100%);
+  */
+  .hero-slide-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent 56%,
+      rgb(10 10 10 / 0.22) 74%,
+      rgb(10 10 10 / 0.62) 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero-slide-inner {
+    position: relative;
+    z-index: 2;
+    padding-block: var(--space-6) clamp(2.25rem, 5vh, 3.75rem);
+    padding-inline-end: clamp(0rem, 12vw, 13rem);
+  }
+
+  .hero-slide-overlay {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 52ch;
+    color: #fbf6ee;
+  }
+
+  .hero-slide-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.55rem + 2.3vw, 3.75rem);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: #fbf6ee;
+    text-shadow: 0 2px 24px rgb(0 0 0 / 0.35);
+  }
+
+  .hero-slide-title a {
+    color: inherit;
+  }
+
+  .hero-slide-title a:hover {
+    color: #e6be72;
+  }
+
+  .hero-slide-excerpt {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: #f5efe7;
+    text-shadow: 0 1px 14px rgb(0 0 0 / 0.45);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Minimal Bottom-Right 3-Bar Timed Progress Indicator */
+  .hero-dock {
+    position: absolute;
+    inset: auto 0 clamp(2.25rem, 5vh, 3.75rem) 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .hero-dock-inner {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .hero-markers {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .hero-marker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding-block: 0.75rem;
+    padding-inline: 0;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .hero-marker-bar {
+    position: relative;
+    display: block;
+    width: 2.35rem;
+    height: 2px;
+    background: rgb(251 246 238 / 0.3);
+    overflow: hidden;
+    transition: width var(--dur-fast) var(--ease-editorial), background-color var(--dur-fast) ease, height var(--dur-fast) ease;
+  }
+
+  .hero-marker:hover .hero-marker-bar {
+    background: rgb(251 246 238 / 0.58);
+  }
+
+  .hero-marker-fill {
+    position: absolute;
+    inset: 0;
+    background: #e6be72;
+    transform-origin: left center;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  /* Non-color + color active cue (wider + taller track with real-time gold progress fill) */
+  .hero-marker[aria-current="true"] .hero-marker-bar {
+    width: 3.75rem;
+    height: 3px;
+    background: rgb(251 246 238 / 0.28);
+  }
+
+  .hero-marker[aria-current="true"] .hero-marker-fill {
+    transform: scaleX(var(--hero-progress, 0));
+  }
+
+  /* ------------------------------------------------------------------------
+     Artikle-Inspired 3-Column Asymmetric Broadsheet Hero
+     Left: Lead Copy (27%) | Center: Sharp 0px Photo (48%) | Right: | Featured Rail (25%)
+     ------------------------------------------------------------------------ */
+  .broadsheet-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.85fr) minmax(0, 0.95fr);
+    gap: var(--space-6);
+    align-items: stretch;
+    padding-bottom: var(--space-7);
+    margin-bottom: var(--space-7);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .broadsheet-hero--no-rail {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr);
+  }
+
+  .broadsheet-lead {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .broadsheet-lead-top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .broadsheet-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 1.35rem + 1.45vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  .broadsheet-title a:hover {
+    color: var(--accent-seal-text);
+  }
+
+  .broadsheet-excerpt {
+    font-size: var(--text-sm);
+    line-height: 1.68;
+    color: var(--ink-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .broadsheet-lead-foot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .broadsheet-media {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 22rem;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--surface-sunken);
+  }
+
+  .broadsheet-media img {
+    transition: scale var(--dur-slow) var(--ease-editorial);
+  }
+
+  .broadsheet-hero:hover .broadsheet-media img {
+    scale: 1.02;
+  }
+
+  .broadsheet-media--text-fallback {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-6);
+    background: var(--secondary-tint);
+    border-inline-start: 2px solid var(--secondary-solid);
+  }
+
+  /* Right | Featured Hairline Stack */
+  .featured-rail {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding-inline-start: var(--space-5);
+    border-inline-start: 1px solid var(--rule-subtle);
+  }
+
+  .featured-rail-list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-rail-item {
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .featured-rail-item:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .featured-rail-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .featured-rail-title {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    font-weight: 500;
+    line-height: 1.24;
+  }
+
+  .featured-rail-title a:hover {
+    color: var(--accent-seal-text);
+  }
+
+  .featured-rail-meta {
+    margin-top: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-tertiary);
+  }
+
+  /* ------------------------------------------------------------------------
+     Specialty Interactive Portals Strip (4-Column Hairline Desk)
+     ------------------------------------------------------------------------ */
+  .portal-desk {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .portal-desk-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-inline-end: 1px solid var(--rule-subtle);
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .portal-desk-card:last-child {
+    border-inline-end: 0;
+  }
+
+  .portal-desk-card:hover {
+    background: var(--surface-raised);
+  }
+
+  .portal-desk-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--ink-primary);
+  }
+
+  .portal-desk-desc {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ink-secondary);
+  }
+
+  .portal-desk-cta {
+    margin-top: auto;
+    padding-top: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-seal-text);
+  }
+
+  /* ------------------------------------------------------------------------
+     Wayfare-Inspired Palace Wall Interactive Chapter (Left Photo + Right 01–06 Rows)
+     ------------------------------------------------------------------------ */
+  .palace-chapter {
+    margin-top: var(--space-8);
+    padding: clamp(2rem, 4.5vw, 3.75rem);
+    background: var(--secondary-solid);
+    color: var(--secondary-ink);
+    border-top: 2px solid var(--accent-gold);
+  }
+
+  .palace-chapter-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--secondary-rule);
+  }
+
+  .palace-chapter .eyebrow {
+    color: var(--secondary-ink-muted);
+  }
+
+  .palace-chapter .eyebrow--accent::before {
+    background: var(--accent-gold-on-dark);
+  }
+
+  .palace-chapter h2 {
+    margin-top: var(--space-2);
+    color: var(--secondary-ink);
+  }
+
+  .palace-chapter .editorial-link {
+    color: var(--secondary-ink);
+    border-bottom-color: var(--secondary-rule-strong);
+  }
+
+  .palace-chapter .editorial-link:hover {
+    color: var(--accent-gold-on-dark);
+    border-bottom-color: var(--accent-gold-on-dark);
+  }
+
+  .palace-chapter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .palace-visual {
+    position: sticky;
+    inset-block-start: calc(var(--header-height) + var(--space-5));
+  }
+
+  .palace-visual-frame {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--secondary-solid-elevated);
+    border: 1px solid var(--secondary-rule);
+  }
+
+  .palace-visual-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--dur-base) ease;
+  }
+
+  .palace-visual-caption {
+    margin-top: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--secondary-ink-muted);
+  }
+
+  .palace-rows {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--secondary-rule);
+  }
+
+  .palace-row-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-3);
+    border-bottom: 1px solid var(--secondary-rule);
+    transition: background-color var(--dur-fast) ease, padding-inline var(--dur-fast) ease;
+  }
+
+  .palace-row-link:hover,
+  .palace-row-link[data-active="true"] {
+    background: var(--secondary-solid-elevated);
+    color: var(--secondary-ink);
+  }
+
+  .palace-row-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--accent-gold-on-dark);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .palace-row-copy {
+    min-width: 0;
+  }
+
+  .palace-row-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.05rem + 0.55vw, 1.55rem);
+    line-height: 1.2;
+    color: var(--secondary-ink);
+  }
+
+  .palace-row-desc {
+    margin-top: 0.25rem;
+    font-size: var(--text-xs);
+    line-height: 1.55;
+    color: var(--secondary-ink-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .palace-row-arrow {
+    color: var(--accent-gold-on-dark);
+    transition: translate var(--dur-fast) var(--ease-editorial);
+  }
+
+  .palace-row-link:hover .palace-row-arrow {
+    translate: 4px 0;
+  }
+
+  @media (max-width: 1080px) {
+    .hero-slide-inner {
+      padding-inline-end: 0;
+      padding-bottom: 5.5rem;
+    }
+
+    .portal-desk {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .portal-desk-card:nth-child(2n) {
+      border-inline-end: 0;
+    }
+
+    .portal-desk-card:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--rule-subtle);
+    }
+
+    .broadsheet-hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    }
+
+    .featured-rail {
+      grid-column: 1 / -1;
+      padding-inline-start: 0;
+      padding-top: var(--space-5);
+      border-inline-start: 0;
+      border-top: 1px solid var(--rule-subtle);
+    }
+
+    .featured-rail-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+
+    .featured-rail-item {
+      border-top: 0;
+      padding-block: 0;
+    }
+  }
+
+  @media (max-width: 920px) {
+    .hero-showcase {
+      height: calc(100dvh - var(--header-height));
+      min-height: 28rem;
+      max-height: 44rem;
+    }
+
+    .hero-slide-inner {
+      padding-inline-end: 0;
+      padding-bottom: 5.25rem;
+    }
+
+    .hero-dock {
+      inset-block-end: 1.25rem;
+    }
+
+    .hero-dock-inner {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .portal-desk {
+      grid-template-columns: 1fr;
+    }
+
+    .portal-desk-card {
+      border-inline-end: 0;
+      border-bottom: 1px solid var(--rule-subtle);
+    }
+
+    .portal-desk-card:last-child {
+      border-bottom: 0;
+    }
+
+    .broadsheet-hero,
+    .broadsheet-hero--no-rail {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+
+    .broadsheet-media {
+      order: -1;
+      min-height: 0;
+      height: auto;
+      aspect-ratio: 16 / 10;
+    }
+
+    .featured-rail-list {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .featured-rail-item {
+      border-top: 1px solid var(--rule-subtle);
+      padding-block: var(--space-4);
+    }
+
+    .featured-rail-item:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .palace-chapter-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .palace-visual {
+      position: static;
+    }
+  }
+}

@@ -1,0 +1,36 @@
+---
+/**
+ * LinkButton — Editorial inline text-action link with optional trailing icon
+ */
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  href: string;
+  tone?: 'accent' | 'neutral' | 'gold';
+  size?: 'sm' | 'md';
+  icon?: string;
+  external?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  tone = 'accent',
+  size = 'md',
+  icon = 'arrow',
+  external = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+---
+<a
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  class:list={['cw-link-btn', `cw-link-btn--${tone}`, size === 'sm' && 'cw-link-btn--sm', className]}
+  {...rest}
+>
+  <span><slot /></span>
+  {icon && <Icon name={external ? 'external' : icon} size={size === 'sm' ? 13 : 15} />}
+</a>

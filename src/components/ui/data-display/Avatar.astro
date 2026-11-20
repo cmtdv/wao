@@ -1,0 +1,45 @@
+---
+/**
+ * Avatar — Editorial monogram / portrait badge with optional status indicator
+ */
+interface Props {
+  name: string;
+  src?: string;
+  initials?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  tone?: 'palace' | 'gold' | 'ink' | 'sage';
+  status?: 'online' | 'away' | 'offline';
+  class?: string;
+}
+
+const {
+  name,
+  src,
+  initials,
+  size = 'md',
+  tone = 'palace',
+  status,
+  class: className = '',
+} = Astro.props;
+
+const computedInitials =
+  initials ??
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+---
+<span
+  class:list={['cw-avatar', `cw-avatar--${size}`, `cw-avatar--${tone}`, className]}
+  role="img"
+  aria-label={status ? `${name} (${status})` : name}
+>
+  {src ? (
+    <img src={src} alt={name} class="cw-avatar-img" loading="lazy" />
+  ) : (
+    <span class="cw-avatar-initials" aria-hidden="true">{computedInitials}</span>
+  )}
+  {status && <span class:list={['cw-avatar-status', `cw-avatar-status--${status}`]} aria-hidden="true"></span>}
+</span>

@@ -1,0 +1,208 @@
+---
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import Icon from '@site/Icon.astro';
+import StatsStrip from '@blocks/editorial/StatsStrip.astro';
+import { publicContext } from '@lib/cms';
+import { categoryPath } from '@lib/format';
+import { getAtlasPillars } from '@data/mock-portal-zh';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import '../../styles/specialty.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+const pillars = getAtlasPillars(locale);
+
+const taxonomy = await publicContext(() =>
+  getTaxonomyTermsWithCacheHint('category', { includeCounts: true, locale }),
+).catch(() => null);
+
+if (taxonomy && Astro.cache?.enabled) {
+  Astro.cache.set(taxonomy.cacheHint);
+}
+
+type Term = NonNullable<typeof taxonomy>['data'][number];
+const flatten = (items: Term[]): Term[] =>
+  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+
+const allTerms = taxonomy ? flatten(taxonomy.data) : [];
+const termBySlug = new Map<string, { slug: string; count: number }>();
+
+for (const term of allTerms) {
+  const count = 'count' in term && typeof term.count === 'number' ? term.count : 0;
+  termBySlug.set(term.slug, { slug: term.slug, count });
+}
+
+const totalTopics = pillars.reduce((sum, pillar) => sum + pillar.children.length, 0);
+const activeTopicsCount = pillars.reduce(
+  (sum, pillar) =>
+    sum + pillar.children.filter((topic) => (termBySlug.get(topic.slug)?.count ?? 0) > 0).length,
+  0,
+);
+---
+<Layout
+  title={strings.atlas.title}
+  description={strings.atlas.lead}
+>
+  <div class="container portal-shell">
+    <div class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{strings.atlas.crumb}</span>
+      </nav>
+      <span class="eyebrow eyebrow--accent">{strings.atlas.kicker}</span>
+      <h1>{strings.atlas.title}</h1>
+      <p class="archive-lead">{strings.atlas.lead}</p>
+      <div class="portal-meta-strip">
+        <span><strong>12</strong> {isZh ? '大核心支柱' : 'Core Pillars'}</span>
+        <span><strong>{totalTopics}</strong> {isZh ? '项标准主题' : 'Structured Topics'}</span>
+        <span><strong>{activeTopicsCount}</strong> {isZh ? '个主题已上线实录' : 'Subtopics with Live Mock Dispatches'}</span>
+      </div>
+    </div>
+
+    <StatsStrip
+      ariaLabel={isZh ? 'ChinaWao 知识图谱核心指标' : 'ChinaWao Atlas key metrics'}
+      items={isZh ? [
+        { value: '34', label: '省级行政区', note: '覆盖全国省、自治区、直辖市与特别行政区' },
+        { value: '59', label: '世界遗产地', note: '中国世界文化、自然与双重遗产名录地标' },
+        { value: '45,000 km', label: '高铁营业里程', note: '支持外籍护照刷证直通电子闸机的现代高铁网' },
+        { value: '48', label: '核验官方入口', note: '零中介直连国家部委与政府免费公开数据库' },
+      ] : [
+        { value: '34', label: 'Provincial Regions', note: 'Provinces, municipalities, autonomous & special regions' },
+        { value: '59', label: 'UNESCO Sites', note: 'World cultural, natural & mixed heritage landmarks' },
+        { value: '45,000 km', label: 'High-Speed Rail', note: 'Passport-enabled e-gate bullet train network' },
+        { value: '48', label: 'Verified Portals', note: 'Zero-middleman official ministries & open datasets' },
+      ]}
+    />
+
+    <nav class="pipe-bar" aria-label={isZh ? '快速跳转支柱' : 'Jump to pillar'} style="margin-top: var(--space-4);">
+      {pillars.map((pillar) => (
+        <a href={`#pillar-${pillar.slug}`} class="pipe-link">
+          <span>{pillar.id.padStart(2, '0')} {isZh ? pillar.navZh : pillar.navEn}</span>
+          <span class="pipe-count">({pillar.children.length})</span>
+        </a>
+      ))}
+    </nav>
+
+    <search class="atlas-toolbar" aria-label={isZh ? '筛选知识图谱主题' : 'Filter Atlas topics'}>
+      <label class="atlas-search" aria-label={isZh ? '检索全部 97 项主题' : 'Filter all 97 topics'}>
+        <Icon name="search" size={16} />
+        <input
+          type="search"
+          data-atlas-filter
+          placeholder={strings.atlas.searchPlaceholder}
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+        />
+      </label>
+      <span class="atlas-count" data-atlas-count aria-live="polite">
+        {isZh
+          ? `当前展示 12 大支柱下的全部 ${totalTopics} 项主题`
+          : `Showing ${totalTopics} of ${totalTopics} topics across 12 pillars`}
+      </span>
+    </search>
+
+    <div class="atlas-pillars" data-atlas-list>
+      {pillars.map((pillar) => {
+        const pillarTerm = termBySlug.get(pillar.slug);
+        const pillarCount = pillarTerm?.count ?? 0;
+        return (
+          <section
+            id={`pillar-${pillar.slug}`}
+            class="atlas-pillar"
+            data-atlas-pillar
+            aria-labelledby={`heading-${pillar.slug}`}
+          >
+            <div class="atlas-pillar-head">
+              <div class="atlas-pillar-title">
+                <span class="atlas-pillar-icon" aria-hidden="true">
+                  <Icon name={pillar.icon} size={18} />
+                </span>
+                <div>
+                  <span class="eyebrow">{isZh ? `第 ${pillar.id.padStart(2, '0')} 支柱` : `Pillar ${pillar.id.padStart(2, '0')}`}</span>
+                  <h2 id={`heading-${pillar.slug}`}>
+                    {isZh ? pillar.navZh : pillar.navEn}
+                  </h2>
+                </div>
+              </div>
+
+              {pillarTerm && pillarCount > 0 ? (
+                <a href={lp(categoryPath(pillar.slug))} class="editorial-link">
+                  <span>{isZh ? `进入「${pillar.navZh}」专栏（${pillarCount}）` : `Open ${pillar.navEn} dossier (${pillarCount})`}</span>
+                  <Icon name="arrow" size={15} />
+                </a>
+              ) : pillar.slug === 'tools-data' ? (
+                <a href={lp('/tools/')} class="editorial-link">
+                  <span>{isZh ? '打开实用工具与目录' : 'Open Tools & Directory'}</span>
+                  <Icon name="arrow" size={15} />
+                </a>
+              ) : (
+                <span class="atlas-badge atlas-badge--planned">{isZh ? '专栏筹备中' : 'Editorial Pillar Planned'}</span>
+              )}
+            </div>
+
+            <p class="atlas-pillar-blurb">{pillar.blurb}</p>
+
+            <div class="atlas-grid">
+              {pillar.children.map((topic) => {
+                const match = termBySlug.get(topic.slug);
+                const liveCount = match?.count ?? 0;
+                const isToolLink =
+                  topic.slug === 'visa-checker'
+                    ? lp('/tools/#visa-checker')
+                    : topic.slug === 'station-taxi-cards' || topic.slug === 'medical-sos-cards'
+                      ? lp('/tools/#flashcards')
+                      : topic.slug === 'gov-open-data'
+                        ? lp('/directory/?domain=open-data')
+                        : null;
+                const liveHref = liveCount > 0 ? lp(categoryPath(topic.slug)) : isToolLink;
+                const searchHay = `${pillar.navEn} ${pillar.navZh} ${topic.id} ${topic.navEn} ${topic.navZh} ${topic.scopeZh}`.toLowerCase();
+
+                return (
+                  <article
+                    class:list={['atlas-topic', { 'atlas-topic--live': Boolean(liveHref) }]}
+                    data-atlas-topic
+                    data-search={searchHay}
+                  >
+                    <div class="atlas-topic-top">
+                      <span>{topic.id}</span>
+                      {liveCount > 0 ? (
+                        <span class="atlas-badge atlas-badge--live">
+                          {isZh ? `${liveCount} 篇实录` : `${liveCount} ${liveCount === 1 ? 'note' : 'notes'}`}
+                        </span>
+                      ) : isToolLink ? (
+                        <span class="atlas-badge atlas-badge--live">{isZh ? '在线工具' : 'Mock Tool'}</span>
+                      ) : (
+                        <span class="atlas-badge atlas-badge--planned">{isZh ? '规划中' : 'Planned'}</span>
+                      )}
+                    </div>
+
+                    <h3 class="atlas-topic-name">
+                      {liveHref ? (
+                        <a href={liveHref}>{isZh ? topic.navZh : topic.navEn}</a>
+                      ) : (
+                        <span>{isZh ? topic.navZh : topic.navEn}</span>
+                      )}
+                    </h3>
+
+                    {isZh && <p class="atlas-topic-scope">{topic.scopeZh}</p>}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+
+    <div class="empty-panel" data-atlas-empty hidden>
+      <h2>{isZh ? '未找到匹配的主题' : 'No matching topics in the Atlas'}</h2>
+      <p>{isZh ? '可尝试换用更宽泛的中英文关键词，如「免签」「高铁」「茶」「熊猫」「GB」。' : 'Try a broader English or Chinese keyword such as “visa”, “tea”, “rail”, “panda”, or “GB”.'}</p>
+    </div>
+  </div>
+</Layout>

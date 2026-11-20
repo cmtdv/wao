@@ -1,0 +1,36 @@
+---
+/**
+ * PopoverCard — Rich contextual Popover panel anchored via CSS Anchor Positioning + @supports fallback
+ */
+interface Props {
+  id: string;
+  triggerLabel: string;
+  title: string;
+  eyebrow?: string;
+  variant?: 'secondary' | 'ghost';
+  class?: string;
+}
+
+const {
+  id,
+  triggerLabel,
+  title,
+  eyebrow,
+  variant = 'secondary',
+  class: className = '',
+} = Astro.props;
+---
+<div class:list={['cw-popover-wrap', className]}>
+  <button type="button" class={`btn btn--${variant} btn--sm`} popovertarget={id}>
+    {triggerLabel}
+  </button>
+  <div id={id} popover="auto" class="cw-popover-card">
+    <div class="cw-popover-head">
+      {eyebrow && <span class="kicker">{eyebrow}</span>}
+      <h4 class="cw-popover-title">{title}</h4>
+    </div>
+    <div class="cw-popover-body">
+      <slot />
+    </div>
+  </div>
+</div>

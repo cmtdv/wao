@@ -1,0 +1,46 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  value?: string;
+  min?: string;
+  max?: string;
+  hint?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  value = '2026-12-15',
+  min,
+  max,
+  hint,
+  required = false,
+  class: className = '',
+} = Astro.props;
+
+const hintId = hint ? `${id}-hint` : undefined;
+---
+<div class:list={['cw-field', className]}>
+  <label class="cw-label" for={id}>
+    <span>{label}</span>
+    {required && <span class="cw-required" aria-hidden="true">*</span>}
+  </label>
+  <input
+    id={id}
+    name={name}
+    type="date"
+    value={value}
+    min={min}
+    max={max}
+    required={required}
+    aria-describedby={hintId}
+    class="cw-input cw-date-input"
+    data-cw-date-input
+  />
+  {hint && <span id={hintId} class="cw-hint">{hint}</span>}
+</div>

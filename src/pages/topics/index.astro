@@ -1,0 +1,133 @@
+---
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import CategoryBranch from '@site/CategoryBranch.astro';
+import Icon from '@site/Icon.astro';
+import { publicContext } from '@lib/cms';
+import { categoryPath, topicIconName } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/directory.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const taxonomy = await publicContext(() =>
+  getTaxonomyTermsWithCacheHint('category', { includeCounts: true, locale }),
+).catch(() => null);
+
+if (!taxonomy) {
+  return new Response('Topics directory is temporarily unavailable.', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(taxonomy.cacheHint);
+}
+
+type Term = (typeof taxonomy.data)[number];
+const flatten = (items: Term[]): Term[] =>
+  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+
+const allTerms = flatten(taxonomy.data);
+const roots = taxonomy.data.filter((term) => !term.parentId);
+
+function getChildTerms(term: Term): Term[] {
+  return term.children?.length
+    ? term.children
+    : allTerms.filter((item) => item.parentId === term.id);
+}
+
+function getTermCount(term: Term): number | null {
+  if ('count' in term && typeof term.count === 'number') return term.count;
+  return null;
+}
+---
+<Layout
+  title={isZh ? '全部栏目索引' : 'Topics'}
+  description={isZh ? '浏览 ChinaWao 全站栏目与二级子专题索引。' : 'Browse all editorial sections and subtopics across ChinaWao.'}
+>
+  <div class="container directory-shell">
+    <div class="directory-header">
+      <div class="directory-header-copy">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <span aria-current="page">{isZh ? '栏目索引' : 'Topics'}</span>
+        </nav>
+        <p class="eyebrow eyebrow--accent">{isZh ? '精选栏目目录' : 'Curated Directory'}</p>
+        <h1>{isZh ? '栏目总索引' : 'Topics index.'}</h1>
+        <p class="archive-lead">
+          {isZh ? '按支柱与子专题组织的动态目录，点击任意栏目即可直达对应实录卷宗。' : 'Every published section and nested subtopic, organized as a living table of contents.'}
+        </p>
+      </div>
+
+      <div class="directory-stats">
+        <span class="meta-line">
+          {isZh ? `${roots.length} 个主栏目` : `${roots.length} ${roots.length === 1 ? 'section' : 'sections'}`}
+        </span>
+        {allTerms.length > roots.length && (
+          <span class="meta-line">
+            <span class="meta-dot" aria-hidden="true">/</span>
+            {isZh ? `共 ${allTerms.length} 个主题` : `${allTerms.length} total topics`}
+          </span>
+        )}
+      </div>
+    </div>
+
+    {roots.length > 0 ? (
+      <div class="topics-directory">
+        {roots.map((root, index) => {
+          const children = getChildTerms(root);
+          const count = getTermCount(root);
+          return (
+            <section class="topic-section-card" aria-labelledby={`topic-${root.id}`}>
+              <div class="topic-card-top">
+                <span class="topic-card-badge">
+                  <Icon name={topicIconName(root.slug)} size={22} />
+                  <span class="topic-card-num">{String(index + 1).padStart(2, '0')}</span>
+                </span>
+                <span class="meta-line">
+                  {count !== null
+                    ? (isZh ? `${count} 篇实录` : `${count} ${count === 1 ? 'dispatch' : 'dispatches'}`)
+                    : (isZh ? '主栏目' : 'Section')}
+                </span>
+              </div>
+
+              <h2 id={`topic-${root.id}`} class="topic-card-title">
+                <a href={lp(categoryPath(root.slug))}>{root.label}</a>
+              </h2>
+
+              {root.description && <p class="topic-card-desc">{root.description}</p>}
+
+              {children.length > 0 ? (
+                <div class="topic-sub-branch">
+                  <p class="eyebrow topic-sub-label">{isZh ? '子专题' : 'Subtopics'}</p>
+                  <ul class="category-tree">
+                    {children.map((child) => (
+                      <CategoryBranch term={child} terms={allTerms} />
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div class="topic-sub-branch">
+                  <a href={lp(categoryPath(root.slug))} class="editorial-link">
+                    <span>{isZh ? '进入栏目' : 'Open section'}</span>
+                    <Icon name="arrow" size={15} />
+                  </a>
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="empty-panel">
+        <h2>{isZh ? '暂未创建栏目。' : 'No topics created yet.'}</h2>
+        <p>{isZh ? '在 EmDash 后台添加分类即可生成栏目索引。' : 'Create categories in the EmDash admin to populate the topics directory.'}</p>
+        <div class="empty-actions">
+          <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,33 @@
+# Web 工程与设计系统规范
+
+## 1. 项目定位与目录架构
+
+本仓库为独立网站与 100% 原生设计系统工程（Astro 7 + EmDash 1.5 + 分层原生 CSS + 现代 HTML/DOM API，无第三方重型 UI 框架，无 AlignUI 付费代码或 Figma 像素搬运，100% 原创零授权限制）：
+
+- `src/components/site/`：站点外壳与编辑部专有组件（页头、页脚、搜索命令框、全屏首图轮播、分页、目录、印章等）
+- `src/components/ui/`：完整基础 UI 原语套件（按 `actions` / `data-display` / `feedback` / `forms` / `navigation` / `overlays` 六大域组织，全面覆盖 49 类基础交互原语）
+- `src/components/blocks/`：全套 Pro 级页面区块套件（按 `marketing` / `editorial` / `application` 三大域组织，全面覆盖 39 类业务与营销区块）
+- `src/styles/`：严格 CSS `@layer` 分层架构（`reset → tokens → base → layout → components → blocks → pages`）
+- `src/pages/design-system/`：站内交互式设计系统规范与验收双展台（`/design-system/` 基础令牌与 49 原语；`/design-system/blocks/` 39 Pro 级区块与完整覆盖对照表）
+
+## 2. 浏览器支持基线（Browser Support Policy）
+
+- **Browser Support**：现代浏览器基线（Chrome 135+ / Edge 135+ / Firefox 144+ / Safari 26.2+，Baseline Newly Available 2025+）。不引入第三方 polyfill，对有限支持特性（`<dialog closedby="any">`、`appearance: base-select`、`field-sizing: content`、`position-area`、`animation-timeline: scroll()`、`moveBefore()`）全部采用 `@supports` 与渐进增强优雅降级。
+
+## 3. 视觉、字体与无障碍硬约束
+
+1. **宣纸质感与 60 / 30 / 10 故宫宫墙配色体系（日光素宣 / 夜读徽墨双模）**：
+   - 60% 主底面：`--surface-canvas` / `--surface-raised`（素宣 `#F7F3E9` / 徽墨 `#141110`）+ 极轻宣纸微纹；
+   - 30% 辅助结构：`--secondary-solid` 故宫宫墙绛红（`#732520` / `#4F1C18`）+ `--secondary-tint` 藕荷暖宣（`#EFE5DC` / `#251D1A`）+ `1px` 细线网格；
+   - 10% 点缀强调：`--accent-gold` 琉璃泥金（`#B8893D` / `#E6BE72`）与 `--accent-seal` 正朱砂（`#C93B2B`）。
+2. **零商业版权字体**：
+   - 仅使用自托管 SIL OFL 1.1 开源字体（`@fontsource/newsreader`、`@fontsource/dm-sans`、`@fontsource/jetbrains-mono`）及通用字体族回退（`serif` / `sans-serif` / `monospace`）；严禁出现商业字体名。
+3. **几何、对比度与键盘红线**：
+   - 控件统一 **2px 极简微方角**（`--control-radius: 2px`），单选框保留圆形以区分复选框；
+   - 正文、辅助文字、占位符对比度一律 ≥ `4.5:1`，控件边框与 `:focus-visible` 焦点环 ≥ `3.0:1`，亮/暗双态必检；
+   - 每页/弹窗/独立卡片至多 1 个 `primary` 主按钮；所有原语优先通过 `@ui/*`、`@blocks/*`、`@site/*` 路径别名引入，禁止散写裸控件。
+4. **EmDash 生产与模板分发边界**：
+   - 公开路由必须经 `publicContext()` 读取已发布版本；保留 `decodeSlug()`、`queryPage()` 与 `EmDashHead/BodyStart/BodyEnd`；
+   - `seed/seed.json` 保持纯净不混入本地 Mock 扩充数据，本地测试内容仅存 `data.db`。
+5. **验收同步机制**：
+   - 新增或修改任何组件/区块/令牌，必须同步维护 `/design-system/` 与 `/design-system/blocks/`，并通过 `pnpm check`、`pnpm build` 及实机亮/暗/移动端验证。

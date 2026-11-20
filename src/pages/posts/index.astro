@@ -1,0 +1,168 @@
+---
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import PostCard from '@site/PostCard.astro';
+import Pagination from '@site/Pagination.astro';
+import Icon from '@site/Icon.astro';
+import NewsletterBlock from '@blocks/editorial/NewsletterBlock.astro';
+import { getPublicPosts, publicContext, queryPage } from '@lib/cms';
+import { categoryPath, cleanSearchQuery } from '@lib/format';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+
+const cursor = Astro.url.searchParams.get('cursor') || undefined;
+const initialQ = cleanSearchQuery(Astro.url.searchParams.get('q'));
+const initialTopic = Astro.url.searchParams.get('topic') || '';
+const initialTag = Astro.url.searchParams.get('tag') || '';
+
+const [{ result, invalidCursor }, categoriesRes, tagsRes] = await Promise.all([
+  queryPage(() => getPublicPosts({ limit: 24, cursor, locale })),
+  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })),
+  publicContext(() => getTaxonomyTermsWithCacheHint('tag', { includeCounts: false, locale })),
+]);
+
+if (invalidCursor) {
+  return Astro.redirect(lp('/posts/'), 302);
+}
+
+if (!result || result.error) {
+  return new Response('The article archive is temporarily unavailable.', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(result.cacheHint);
+  Astro.cache.set(categoriesRes.cacheHint);
+  Astro.cache.set(tagsRes.cacheHint);
+}
+
+type Term = (typeof categoriesRes.data)[number];
+const flatten = (items: Term[]): Term[] =>
+  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+const allCategories = flatten(categoriesRes.data);
+const rootCategories = categoriesRes.data.filter((t) => !t.parentId);
+const allTags = tagsRes.data.toSorted((a, b) => a.label.localeCompare(b.label, isZh ? 'zh-CN' : 'en'));
+---
+<Layout title={strings.posts.title} description={strings.posts.lead}>
+  <div class="container archive-shell">
+    <div class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{strings.nav.journal}</span>
+      </nav>
+      <p class="eyebrow eyebrow--accent">{isZh ? 'ChinaWao 实证志刊' : 'ChinaWao Journal'}</p>
+      <h1>{isZh ? '田野实录与深度志刊' : 'Field notes & dispatches.'}</h1>
+      <p class="archive-lead">{strings.posts.lead}</p>
+    </div>
+
+    {rootCategories.length > 0 && (
+      <nav class="pipe-bar" aria-label={isZh ? '按栏目浏览' : 'Browse by section'}>
+        <a href={lp('/posts/')} class="pipe-link" aria-current="page">{isZh ? '全部志刊' : 'All Journal'}</a>
+        {rootCategories.map((term) => (
+          <a href={lp(categoryPath(term.slug))} class="pipe-link">{term.label}</a>
+        ))}
+      </nav>
+    )}
+
+    <search aria-label={isZh ? '筛选志刊文章' : 'Filter dispatches'}>
+      <form class="finder-bar" action={lp('/posts/')} method="get" data-journal-finder>
+        <div class="finder-field finder-field--search">
+          <Icon name="search" size={16} />
+          <label for="finder-q" class="visually-hidden">{isZh ? '按关键词筛选' : 'Filter by keyword'}</label>
+          <input
+            id="finder-q"
+            name="q"
+            type="search"
+            value={initialQ}
+            placeholder={isZh ? '筛选文章，如：高铁、上海、茶、免签…' : 'Filter dispatches, e.g. rail, Shanghai, tea…'}
+            maxlength="120"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="finder-field finder-field--topic">
+          <label for="finder-topic" class="visually-hidden">{isZh ? '按栏目筛选' : 'Filter by topic'}</label>
+          <select id="finder-topic" name="topic" class="cw-select cw-select--bare">
+            <option value="">{isZh ? '全部栏目' : 'All Topics'}</option>
+            {allCategories.map((cat) => (
+              <option value={cat.slug} selected={cat.slug === initialTopic}>
+                {cat.parentId ? `— ${cat.label}` : cat.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="finder-field finder-field--tag">
+          <label for="finder-tag" class="visually-hidden">{isZh ? '按标签筛选' : 'Filter by tag'}</label>
+          <select id="finder-tag" name="tag" class="cw-select cw-select--bare">
+            <option value="">{isZh ? '全部标签' : 'All Tags'}</option>
+            {allTags.map((tag) => (
+              <option value={tag.slug} selected={tag.slug === initialTag}>
+                #{tag.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="finder-actions">
+          <button type="button" class="finder-clear" data-finder-clear hidden>
+            {isZh ? '清除' : 'Clear'}
+          </button>
+        </div>
+      </form>
+    </search>
+
+    <div class="finder-status">
+      <span data-finder-count>
+        {isZh
+          ? `共 ${result.entries.length} 篇实录`
+          : `${result.entries.length} ${result.entries.length === 1 ? 'dispatch' : 'dispatches'}`}
+      </span>
+      <a href={lp('/search/')} class="editorial-link">
+        <span>{isZh ? '全站检索' : 'Full-site search'}</span>
+        <Icon name="arrow" size={14} />
+      </a>
+    </div>
+
+    {result.entries.length > 0 ? (
+      <>
+        <div class="post-grid">
+          {result.entries.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+
+        <div class="empty-panel" data-finder-empty hidden>
+          <h2>{isZh ? '当前筛选条件下暂无匹配文章。' : 'No matching dispatches in this view.'}</h2>
+          <p>{isZh ? '尝试清除筛选条件，或使用全站检索查找所有文章与页面。' : 'Try clearing a filter or run a full-archive search across all posts and pages.'}</p>
+          <div class="empty-actions">
+            <a href={lp('/posts/')} class="btn">{isZh ? '重置列表' : 'Reset archive'}</a>
+            <a href={lp('/search/')} class="editorial-link">{isZh ? '全站检索' : 'Full-site search'}</a>
+          </div>
+        </div>
+      </>
+    ) : (
+      <div class="empty-panel">
+        <h2>{isZh ? '本页暂无已发布文章。' : 'No published posts on this page yet.'}</h2>
+        <p>{isZh ? '请稍后回来查看或返回首页。' : 'Check back soon or return to the front page.'}</p>
+      </div>
+    )}
+
+    <Pagination
+      basePath="/posts/"
+      hasCursor={Boolean(cursor)}
+      nextCursor={result.nextCursor}
+    />
+
+    <div style="margin-top: var(--space-7);">
+      <NewsletterBlock id="posts-newsletter-email" />
+    </div>
+  </div>
+</Layout>

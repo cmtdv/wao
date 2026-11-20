@@ -1,0 +1,165 @@
+---
+import '@fontsource/dm-sans/latin-400.css';
+import '@fontsource/dm-sans/latin-500.css';
+import '@fontsource/dm-sans/latin-600.css';
+import '@fontsource/newsreader/latin-400.css';
+import '@fontsource/newsreader/latin-400-italic.css';
+import '@fontsource/newsreader/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+interface Props {
+  title: string;
+  description: string;
+  active: 'overview' | 'v1' | 'v2' | 'v3' | 'v4';
+  dockTone?: 'light' | 'dark';
+}
+
+const { title, description, active, dockTone = 'dark' } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+const originalPathname = Astro.locals.originalPathname ?? Astro.url.pathname;
+const switchLangHref = localePath(originalPathname, isZh ? 'en' : 'zh');
+
+const navItems = isZh
+  ? ([
+      { id: 'overview', label: '对比总览', href: lp('/concepts/') },
+      { id: 'v1', label: '01 画报卷宗', href: lp('/concepts/v1-editorial/') },
+      { id: 'v2', label: '02 基建票根', href: lp('/concepts/v2-transit/') },
+      { id: 'v3', label: '03 时空展厅', href: lp('/concepts/v3-exhibition/') },
+      { id: 'v4', label: '04 瑞士网格', href: lp('/concepts/v4-swiss/') },
+    ] as const)
+  : ([
+      { id: 'overview', label: 'Overview', href: lp('/concepts/') },
+      { id: 'v1', label: '01 Editorial', href: lp('/concepts/v1-editorial/') },
+      { id: 'v2', label: '02 Transit', href: lp('/concepts/v2-transit/') },
+      { id: 'v3', label: '03 Exhibition', href: lp('/concepts/v3-exhibition/') },
+      { id: 'v4', label: '04 Swiss Grid', href: lp('/concepts/v4-swiss/') },
+    ] as const);
+---
+<!doctype html>
+<html lang={isZh ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {isZh ? 'ChinaWao 概念实验场' : 'ChinaWao Concept Lab'}</title>
+    <meta name="description" content={description} />
+    <style is:global>
+      *, *::before, *::after { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      img { display: block; max-width: 100%; }
+      button, input, select { font: inherit; }
+      a { color: inherit; }
+
+      /* Progressive-enhancement MPA cross-document transitions */
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+
+      /* Floating Concept Lab Switcher Dock */
+      .cw-concept-dock {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px;
+        max-width: calc(100vw - 24px);
+        overflow-x: auto;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(14, 15, 18, 0.88);
+        color: #f4f4f6;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+        font-family: 'JetBrains Mono', 'PingFang SC', 'Microsoft YaHei', monospace;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .cw-concept-dock--light {
+        border-color: rgba(17, 17, 17, 0.16);
+        background: rgba(255, 255, 255, 0.92);
+        color: #111111;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14);
+      }
+
+      .cw-concept-dock a {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        text-decoration: none;
+        opacity: 0.72;
+        transition: opacity 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+      }
+
+      .cw-concept-dock a:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .cw-concept-dock--light a:hover {
+        background: rgba(17, 17, 17, 0.06);
+      }
+
+      .cw-concept-dock a[aria-current='page'] {
+        opacity: 1;
+        background: #e62e04;
+        color: #ffffff;
+        font-weight: 500;
+      }
+
+      .cw-concept-dock-sep {
+        width: 1px;
+        height: 16px;
+        background: currentColor;
+        opacity: 0.2;
+        margin: 0 2px;
+        flex-shrink: 0;
+      }
+
+      .cw-concept-dock a:focus-visible {
+        outline: 2px solid #e62e04;
+        outline-offset: 2px;
+      }
+    </style>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+
+    <nav
+      class:list={['cw-concept-dock', dockTone === 'light' && 'cw-concept-dock--light']}
+      aria-label={isZh ? 'ChinaWao 视觉方向原型切换' : 'Switch ChinaWao visual concept'}
+    >
+      {navItems.map((item) => (
+        <a href={item.href} aria-current={active === item.id ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+      <span class="cw-concept-dock-sep" aria-hidden="true"></span>
+      <a href={switchLangHref}>{isZh ? 'EN' : '简中'}</a>
+      <span class="cw-concept-dock-sep" aria-hidden="true"></span>
+      {active !== 'overview' ? (
+        <a href={`${lp('/')}?style=${active}`}>{isZh ? '全站应用此版 ↗' : 'Apply Site-Wide ↗'}</a>
+      ) : (
+        <a href={lp('/')}>{isZh ? '返回主站 ↗' : 'Main Site ↗'}</a>
+      )}
+    </nav>
+  </body>
+</html>

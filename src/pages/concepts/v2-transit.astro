@@ -1,0 +1,526 @@
+---
+import ConceptLayout from '@layouts/ConceptLayout.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const passports = isZh
+  ? [
+      { code: 'FR', name: '法国', unilateral: 30, mutual: 0, transit240: true, gate: 'A1 通道 · 30 天单免', note: '单方面免签 30 天（旅游、商贸、探亲、过境），无需预先办签。' },
+      { code: 'DE', name: '德国', unilateral: 30, mutual: 0, transit240: true, gate: 'A1 通道 · 30 天单免', note: '单方面免签 30 天，全国对外开放口岸直通。' },
+      { code: 'SG', name: '新加坡', unilateral: 0, mutual: 30, transit240: true, gate: 'M1 通道 · 30 天互免', note: '中新互免签证协定，单次停留最长 30 天。' },
+      { code: 'JP', name: '日本', unilateral: 30, mutual: 0, transit240: true, gate: 'A2 通道 · 30 天单免', note: '持普通护照可享 30 天单方面免签入境。' },
+      { code: 'US', name: '美国', unilateral: 0, mutual: 0, transit240: true, gate: 'T240 通道 · 60 口岸', note: '持前往第三国或港澳台联程机票，可在 24 省 60 口岸享 240 小时跨省过境免签。' },
+      { code: 'UK', name: '英国', unilateral: 0, mutual: 0, transit240: true, gate: 'T240 通道 · 60 口岸', note: '适用 240 小时（10 天）过境免签；直飞往返需提前办 L/M 签证。' },
+      { code: 'AU', name: '澳大利亚', unilateral: 30, mutual: 0, transit240: true, gate: 'A3 通道 · 30 天单免', note: '普通护照享 30 天单方面免签入境。' },
+    ]
+  : [
+      { code: 'FR', name: 'France', unilateral: 30, mutual: 0, transit240: true, gate: 'LANE A1 · 30D EXEMPT', note: '30-day unilateral visa-free entry for tourism, business, family visits, and transit.' },
+      { code: 'DE', name: 'Germany', unilateral: 30, mutual: 0, transit240: true, gate: 'LANE A1 · 30D EXEMPT', note: '30-day unilateral visa-free entry across all open Chinese ports.' },
+      { code: 'SG', name: 'Singapore', unilateral: 0, mutual: 30, transit240: true, gate: 'LANE M1 · MUTUAL 30D', note: 'Bilateral mutual visa exemption up to 30 days per entry.' },
+      { code: 'JP', name: 'Japan', unilateral: 30, mutual: 0, transit240: true, gate: 'LANE A2 · 30D EXEMPT', note: '30-day unilateral visa-free stay for ordinary passport holders.' },
+      { code: 'US', name: 'United States', unilateral: 0, mutual: 0, transit240: true, gate: 'LANE T240 · 60 PORTS', note: 'Eligible for 240-hour cross-province transit across 24 provinces with a confirmed onward third-country/HK/Macao/Taiwan ticket.' },
+      { code: 'UK', name: 'United Kingdom', unilateral: 0, mutual: 0, transit240: true, gate: 'LANE T240 · 60 PORTS', note: 'Eligible for 240-hour (10-day) visa-free transit; direct round-trips require an L/M visa.' },
+      { code: 'AU', name: 'Australia', unilateral: 30, mutual: 0, transit240: true, gate: 'LANE A3 · 30D EXEMPT', note: '30-day unilateral visa-free stay for ordinary passports.' },
+    ];
+
+const stations = isZh
+  ? [
+      { num: '01', code: '签证', name: '核对免签资格', window: '出发前 3–6 周', detail: '核对护照有效期 6 个月以上，确认 30 天单免或 240 小时过境联程票（含港澳台）。' },
+      { num: '02', code: '支付', name: '绑定移动支付', window: '出发前 1–2 周', detail: '下载支付宝与微信并绑定国际银行卡；单笔 ¥200 以下免 3% 国际卡手续费。' },
+      { num: '03', code: '联网', name: '部署 eSIM 漫游', window: '出发前 3–5 天', detail: '提前购置国际漫游 eSIM 或机场实体 SIM，落地开机即连地图、翻译与支付。' },
+      { num: '04', code: '入境', name: '线上填报入境卡', window: '航班落地前', detail: '经国家移民管理局 12367 小程序预先填写电子入境卡，下机直接扫码走边检。' },
+      { num: '05', code: '高铁', name: '12306 护照核验', window: '提前 15 天抢票', detail: '在铁路 12306 上传护照页核验，直接刷护照原件过高铁闸机，无需取纸质票。' },
+      { num: '06', code: '预约', name: '热门景区预约', window: '提前 7 天 20:00', detail: '故宫、国博等均实行实名制预约放票，设置北京时间 20:00 闹钟准点锁定。' },
+      { num: '07', code: '退税', name: '离境退税 2.0', window: '离境前 3 小时', detail: '同店满 ¥200 即可开具退税单；认准「即买即退」标识现场拿款，离境海关核验盖章。' },
+    ]
+  : [
+      { num: '01', code: 'VISA', name: 'Verify Entry Policy', window: '3–6 weeks prior', detail: 'Verify 6+ months passport validity and confirm 30-day exemption or 240-hour onward third-country/HK/Macao ticket.' },
+      { num: '02', code: 'PAY', name: 'Link Mobile Pay', window: '1–2 weeks prior', detail: 'Bind Visa/Mastercard inside Alipay and WeChat Pay; transactions under ¥200 waive the 3% international card fee.' },
+      { num: '03', code: 'NET', name: 'Activate Roaming eSIM', window: '3–5 days prior', detail: 'Install a roaming eSIM before takeoff so maps, translation, and ride-hailing work the moment you land.' },
+      { num: '04', code: 'PORT', name: 'Digital Arrival Card', window: 'Before landing', detail: 'Pre-fill the NIA 12367 digital arrival card to clear border inspection smoothly via QR code.' },
+      { num: '05', code: 'RAIL', name: '12306 Passport Check', window: '15 days prior', detail: 'Verify your passport in the English Railway 12306 app and tap your physical passport directly at station e-gates.' },
+      { num: '06', code: 'BOOK', name: 'Reserve Top Sites', window: '7 days prior 20:00', detail: 'The Palace Museum and National Museum release real-name tickets 7 days ahead at 20:00 Beijing Time.' },
+      { num: '07', code: 'TAX', name: 'Tax Refund 2.0', window: '3h before flight', detail: 'Spend ¥200+ in one tax-free shop, request instant cash refund where offered, and stamp forms at airport customs.' },
+    ];
+
+const ui = isZh
+  ? {
+      title: '方向 02 · 硬核基建导视与电子通行票根',
+      desc: '复兴号电子水牌、实时北京时间与即时签发的入境通行票根。',
+      brand: 'ChinaWao 实时服务终端',
+      pause: '暂停播报',
+      resume: '恢复播报',
+      clockLabel: '北京时间',
+      kicker: '版本 02 · 硬核基建导视与电子票根',
+      h1Prefix: '把当代中国做成一张',
+      h1Accent: '即刻出票',
+      h1Suffix: '的登机牌',
+      lead: '彻底打破仿古刻板印象。灵感来自复兴号电子水牌与大型国际航空枢纽导视：用实时航显、高反差票根与高铁站点图，把入境政策、支付、高铁与字卡直接变成手里能用的通行证。',
+      consoleLeft: '12.1 实时签发终端',
+      consoleRight: '2026 现行政策',
+      passportLabel: '护照签发国',
+      daysLabel: '计划停留天数',
+      daysUnit: '天',
+      transitLabel: '持有前往第三国或港澳台地区联程机票（启用 240 小时过境判定）',
+      passHeader: 'ChinaWao 电子入境通行证',
+      destLabel: '全国 60 开放口岸',
+      channelLabel: '通关通道',
+      cardLabel: '电子入境卡',
+      cardVal: '移民局 12367 线上填报',
+      payLabel: '支付备选',
+      payVal: '支付宝 / 微信外卡',
+      flipToCard: '翻面：大字打车字卡 ⇄',
+      flipToPass: '翻回：电子入境通行证 ⇄',
+      cardHint: '直接向司机或站务员出示此屏',
+      railHeading: '首次来华 7 步路线',
+      railMeta: '7 个关键节点',
+      openChecklist: '打开完整 7 步清单 →',
+      badgeMutual: (d: number) => `${d} 天双边互免`,
+      badgeUnilateral: (d: number) => `${d} 天单方面免签`,
+      badgeTransit: '240 小时过境免签',
+      badgeNeedTicket: '需第三方联程票',
+      badgeVisa: '需提前办理签证',
+      verdictMutual: (d: number) => `适用 ${d} 天双边互免签证直通入境`,
+      verdictUnilateral: (d: number) => `适用 ${d} 天单方面免签直通入境`,
+      verdictTransit: '适用 240 小时（10 天）跨省过境免签',
+      verdictNeedTicket: '缺少第三国/港澳台联程票，需补票或办签',
+      noteNeedTicket: '直飞原路往返不适用 240 小时过境；经由香港、澳门或第三国中转即可免签停留 10 天。',
+      verdictVisa: (d: number) => `需提前办理常规中国签证（${d} 天）`,
+      noteVisa: (n: string) => `${n}在当前停留与路线条件下需通过签证中心提前申请签证。`,
+      stayChip: (d: number) => `停留 ${String(d).padStart(2, '0')} 天`,
+    }
+  : {
+      title: 'Direction 02 · Transit Board & Live Boarding Pass',
+      desc: 'High-speed rail departure board, live Beijing clock, and real-time perforated China Entry Boarding Pass.',
+      brand: 'CHINAWAO // TRANSIT TERMINAL',
+      pause: 'Pause',
+      resume: 'Resume',
+      clockLabel: 'BJT',
+      kicker: 'DIRECTION 02 · INFRASTRUCTURE & LIVE BOARDING PASS',
+      h1Prefix: 'Turn Modern China Into an ',
+      h1Accent: 'Instant',
+      h1Suffix: ' Boarding Pass',
+      lead: 'Zero tourist clichés. Inspired by Fuxing bullet-train departure boards and international airport wayfinding: live telemetry, perforated entry passes, and an interactive 7-station arrival line.',
+      consoleLeft: '12.1 PASS GENERATOR',
+      consoleRight: 'NIA 2026 POLICY',
+      passportLabel: 'PASSPORT NATIONALITY',
+      daysLabel: 'PLANNED STAY',
+      daysUnit: 'days',
+      transitLabel: 'Hold confirmed onward ticket to a third country/region (incl. HK, Macao, Taiwan)',
+      passHeader: 'CHINAWAO ENTRY PASS',
+      destLabel: '60 OPEN PORTS',
+      channelLabel: 'CHANNEL',
+      cardLabel: 'ARRIVAL CARD',
+      cardVal: 'NIA 12367 Digital Form',
+      payLabel: 'MOBILE PAY',
+      payVal: 'Alipay / WeChat Foreign Card',
+      flipToCard: 'Flip: Show-Driver Taxi Card ⇄',
+      flipToPass: 'Flip Back: Entry Boarding Pass ⇄',
+      cardHint: 'SHOW SCREEN DIRECTLY TO TAXI DRIVER OR STATION STAFF',
+      railHeading: 'First Trip 7-Step Route',
+      railMeta: 'LINE CW-01 · 7 STATIONS',
+      openChecklist: 'Open Full 7-Step Playbook →',
+      badgeMutual: (d: number) => `MUTUAL ${d}D`,
+      badgeUnilateral: (d: number) => `${d}D VISA-FREE`,
+      badgeTransit: '240H TRANSIT',
+      badgeNeedTicket: 'NEED 3RD TICKET',
+      badgeVisa: 'VISA REQUIRED',
+      verdictMutual: (d: number) => `Eligible for ${d}-Day Mutual Visa-Free Entry`,
+      verdictUnilateral: (d: number) => `Eligible for ${d}-Day Unilateral Visa-Free Entry`,
+      verdictTransit: 'Eligible for 240-Hour (10-Day) Visa-Free Transit',
+      verdictNeedTicket: 'Add a Third-Country Onward Ticket or Apply for a Visa',
+      noteNeedTicket: 'Direct round-trips do not qualify for 240-hour transit; routing via Hong Kong, Macao, or a third country unlocks 10-day transit.',
+      verdictVisa: (d: number) => `Apply for a Chinese Visa Prior to Departure (${d} days)`,
+      noteVisa: (n: string) => `${n} passport holders planning this route should apply via CVASC prior to departure.`,
+      stayChip: (d: number) => `${String(d).padStart(2, '0')} DAYS`,
+    };
+---
+<ConceptLayout title={ui.title} description={ui.desc} active="v2" dockTone="light">
+  <Fragment slot="head">
+    <style>
+      :root {
+        --v2-bg: #0a0c10; --v2-panel: #11151c; --v2-border: #232a36; --v2-ink: #f3f5f8;
+        --v2-muted: #8b95a5; --v2-signal: #ff3b1d; --v2-amber: #f5b800; --v2-green: #00d68f;
+        --v2-ticket: #f5f3ec; --v2-ticket-ink: #0c0e12;
+      }
+      body { background: var(--v2-bg); color: var(--v2-ink); }
+      .v2-board-bar {
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        padding: 12px 28px; background: #06080b; border-bottom: 1px solid var(--v2-border);
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px;
+      }
+      .v2-board-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; }
+      .v2-led { width: 8px; height: 8px; background: var(--v2-green); box-shadow: 0 0 10px var(--v2-green); }
+      .v2-ticker-wrap { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; max-width: 760px; }
+      .v2-ticker-viewport { flex: 1; min-width: 0; overflow: hidden; }
+      .v2-ticker-track { display: inline-flex; gap: 28px; white-space: nowrap; color: var(--v2-amber); }
+      @media (prefers-reduced-motion: no-preference) {
+        .v2-ticker-track[data-running='true'] { animation: v2-scroll 26s linear infinite; }
+      }
+      @keyframes v2-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .v2-pause-btn {
+        appearance: none; border: 1px solid var(--v2-border); background: var(--v2-panel);
+        color: var(--v2-muted); padding: 4px 9px; font-size: 11px; cursor: pointer; flex-shrink: 0;
+      }
+      .v2-pause-btn:hover { color: var(--v2-ink); border-color: var(--v2-amber); }
+      .v2-bjt { color: var(--v2-ink); white-space: nowrap; }
+      .v2-bjt strong { color: var(--v2-amber); }
+      .v2-shell { max-width: 1360px; margin: 0 auto; padding: 42px 28px 132px; }
+      .v2-hero {
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 36px;
+        align-items: stretch; padding-bottom: 48px; border-bottom: 1px solid var(--v2-border);
+      }
+      .v2-kicker {
+        display: inline-flex; align-items: center; padding: 5px 10px; background: rgba(255, 59, 29, 0.14);
+        border: 1px solid rgba(255, 59, 29, 0.5); color: #ff7761;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px; margin-bottom: 18px;
+      }
+      .v2-hero h1 { margin: 0; font-size: clamp(2.3rem, 4.4vw, 4rem); font-weight: 600; line-height: 1.06; letter-spacing: -0.03em; }
+      .v2-hero h1 span { color: var(--v2-amber); }
+      .v2-lead { margin: 18px 0 28px; color: var(--v2-muted); font-size: 15.5px; line-height: 1.7; max-width: 48ch; }
+      .v2-console { background: var(--v2-panel); border: 1px solid var(--v2-border); padding: 22px; display: grid; gap: 18px; }
+      .v2-console-head {
+        display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11.5px; color: var(--v2-amber); border-bottom: 1px solid var(--v2-border); padding-bottom: 10px;
+      }
+      .v2-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .v2-label { display: block; font-size: 11.5px; color: var(--v2-muted); margin-bottom: 7px; }
+      .v2-select, .v2-range-wrap { width: 100%; background: #080a0e; border: 1px solid var(--v2-border); color: var(--v2-ink); padding: 10px 12px; font-size: 14px; }
+      .v2-range-wrap { display: flex; align-items: center; gap: 12px; }
+      .v2-range-wrap input[type='range'] { flex: 1; accent-color: var(--v2-amber); }
+      .v2-range-val { font-family: 'JetBrains Mono', 'PingFang SC', monospace; color: var(--v2-amber); font-weight: 600; min-width: 58px; text-align: right; }
+      .v2-check { display: flex; align-items: center; gap: 10px; font-size: 13.5px; cursor: pointer; }
+      .v2-check input { width: 17px; height: 17px; accent-color: var(--v2-green); }
+      .v2-ticket {
+        position: relative; background: var(--v2-ticket); color: var(--v2-ticket-ink);
+        display: grid; grid-template-rows: auto 1fr auto; min-height: 410px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      }
+      .v2-ticket::before, .v2-ticket::after {
+        content: ''; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: var(--v2-bg); bottom: 94px; z-index: 3;
+      }
+      .v2-ticket::before { left: -12px; }
+      .v2-ticket::after { right: -12px; }
+      .v2-ticket-top {
+        display: flex; justify-content: space-between; align-items: center; padding: 16px 24px;
+        background: #0c0e12; color: #ffffff; font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 12px; border-top: 5px solid var(--v2-green);
+      }
+      .v2-ticket[data-tone='transit'] .v2-ticket-top { border-top-color: var(--v2-amber); }
+      .v2-ticket[data-tone='visa'] .v2-ticket-top { border-top-color: var(--v2-signal); }
+      .v2-ticket-badge { padding: 4px 10px; background: var(--v2-green); color: #06140e; font-weight: 700; }
+      .v2-ticket[data-tone='transit'] .v2-ticket-badge { background: var(--v2-amber); color: #191200; }
+      .v2-ticket[data-tone='visa'] .v2-ticket-badge { background: var(--v2-signal); color: #ffffff; }
+      .v2-ticket-body { padding: 24px 26px 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+      .v2-route-codes { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+      .v2-iata { font-family: 'JetBrains Mono', monospace; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 600; line-height: 1; }
+      .v2-iata small { display: block; font-size: 11px; font-weight: 400; color: #555b66; margin-top: 4px; font-family: 'DM Sans', 'PingFang SC', sans-serif; }
+      .v2-route-arrow { flex: 1; border-top: 2px dashed rgba(12, 14, 18, 0.25); text-align: center; }
+      .v2-route-arrow span { position: relative; top: -11px; background: var(--v2-ticket); padding: 0 10px; font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px; color: var(--v2-signal); font-weight: 600; }
+      .v2-ticket-verdict { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.3; }
+      .v2-ticket-note { margin: 6px 0 0; font-size: 13.5px; line-height: 1.6; color: #424854; }
+      .v2-ticket-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 14px; border-top: 1px solid rgba(12, 14, 18, 0.14); }
+      .v2-ticket-meta dt { font-size: 10.5px; color: #6b7280; }
+      .v2-ticket-meta dd { margin: 3px 0 0; font-size: 13px; font-weight: 600; }
+      .v2-ticket-stub { border-top: 2px dashed rgba(12, 14, 18, 0.28); padding: 18px 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ece9df; }
+      .v2-barcode { height: 44px; width: 190px; background: repeating-linear-gradient(90deg, #0c0e12 0 2px, transparent 2px 4px, #0c0e12 4px 7px, transparent 7px 9px, #0c0e12 9px 10px, transparent 10px 13px, #0c0e12 13px 17px, transparent 17px 19px); }
+      .v2-flip-btn { appearance: none; border: 1.5px solid #0c0e12; background: #0c0e12; color: #ffffff; padding: 10px 14px; font-size: 12px; cursor: pointer; }
+      .v2-flip-btn:hover { background: var(--v2-signal); border-color: var(--v2-signal); }
+      .v2-ticket-cardmode { padding: 32px 28px; background: #0c0e12; color: #ffffff; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+      .v2-ticket-cardmode[hidden], .v2-ticket-passmode[hidden] { display: none; }
+      .v2-big-hanzi { font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 700; line-height: 1.25; color: var(--v2-amber); margin: 0; }
+      .v2-rail-section { padding-top: 48px; }
+      .v2-rail-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+      .v2-rail-head h2 { margin: 0; font-size: 24px; font-weight: 600; }
+      .v2-rail-line { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-bottom: 24px; }
+      .v2-rail-line::before { content: ''; position: absolute; left: 28px; right: 28px; top: 22px; height: 2px; background: var(--v2-border); z-index: 0; }
+      .v2-station {
+        appearance: none; border: 1px solid var(--v2-border); background: var(--v2-panel); color: var(--v2-muted);
+        padding: 14px 10px; text-align: center; cursor: pointer; position: relative; z-index: 1;
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+      }
+      .v2-station-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--v2-bg); border: 2px solid var(--v2-muted); }
+      .v2-station[aria-selected='true'] { border-color: var(--v2-amber); background: #171c26; color: var(--v2-ink); }
+      .v2-station[aria-selected='true'] .v2-station-dot { background: var(--v2-amber); border-color: var(--v2-amber); box-shadow: 0 0 12px rgba(245, 184, 0, 0.7); }
+      .v2-station-code { font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px; }
+      .v2-station-name { font-size: 13px; font-weight: 600; }
+      .v2-station-detail {
+        display: grid; grid-template-columns: 200px 1fr auto; align-items: center; gap: 24px;
+        padding: 24px 28px; background: var(--v2-panel); border: 1px solid var(--v2-border); border-left: 4px solid var(--v2-amber);
+      }
+      .v2-station-detail h3 { margin: 4px 0 0; font-size: 20px; }
+      .v2-station-detail p { margin: 0; color: var(--v2-muted); font-size: 15px; line-height: 1.65; }
+      @media (max-width: 980px) {
+        .v2-hero, .v2-station-detail { grid-template-columns: 1fr; }
+        .v2-rail-line { grid-template-columns: repeat(2, 1fr); }
+        .v2-rail-line::before { display: none; }
+        .v2-board-bar { flex-wrap: wrap; }
+      }
+    </style>
+  </Fragment>
+
+  <header class="v2-board-bar">
+    <a href={lp('/concepts/v2-transit/')} class="v2-board-brand">
+      <span class="v2-led" aria-hidden="true"></span>
+      <span>{ui.brand}</span>
+    </a>
+
+    <div class="v2-ticker-wrap">
+      <div class="v2-ticker-viewport">
+        <div class="v2-ticker-track" data-v2-ticker data-running="true">
+          {isZh ? (
+            <>
+              <span>● G1 北京南 → 上海虹桥 04h18m 准点</span>
+              <span>● 240 小时过境免签 · 24 省 60 口岸生效</span>
+              <span>● 支付宝 / 微信外卡绑定 · ¥200 内免手续费</span>
+              <span>● 离境退税 2.0 · 同店满 ¥200 起退</span>
+              <span>● G1 北京南 → 上海虹桥 04h18m 准点</span>
+              <span>● 240 小时过境免签 · 24 省 60 口岸生效</span>
+            </>
+          ) : (
+            <>
+              <span>● G1 BEIJING → SHANGHAI 04h18m ON TIME</span>
+              <span>● 240H VISA-FREE TRANSIT · 24 PROVINCES · 60 PORTS</span>
+              <span>● ALIPAY &amp; WECHAT FOREIGN CARDS · 0% FEE UNDER ¥200</span>
+              <span>● TAX REFUND 2.0 · ¥200 MIN SPEND</span>
+              <span>● G1 BEIJING → SHANGHAI 04h18m ON TIME</span>
+              <span>● 240H VISA-FREE TRANSIT · 24 PROVINCES · 60 PORTS</span>
+            </>
+          )}
+        </div>
+      </div>
+      <button type="button" class="v2-pause-btn" data-v2-pause>{ui.pause}</button>
+    </div>
+
+    <div class="v2-bjt">{ui.clockLabel} <strong data-v2-clock>--:--:--</strong></div>
+  </header>
+
+  <main class="v2-shell">
+    <section class="v2-hero">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;gap:24px;">
+        <div>
+          <h1>{ui.h1Prefix}<span>{ui.h1Accent}</span>{ui.h1Suffix}</h1>
+        </div>
+
+        <div class="v2-console">
+          <div class="v2-field-row">
+            <div>
+              <label class="v2-label" for="v2-passport">{ui.passportLabel}</label>
+              <select id="v2-passport" class="v2-select" data-v2-passport>
+                {passports.map((p, idx) => (
+                  <option value={idx}>{p.code} · {p.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label class="v2-label" for="v2-days">{ui.daysLabel}</label>
+              <div class="v2-range-wrap">
+                <input id="v2-days" type="range" min="1" max="30" value="8" data-v2-days />
+                <span class="v2-range-val" data-v2-days-val>8 {ui.daysUnit}</span>
+              </div>
+            </div>
+          </div>
+
+          <label class="v2-check">
+            <input type="checkbox" checked data-v2-transit />
+            <span>{ui.transitLabel}</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <article class="v2-ticket" data-v2-ticket data-tone="exempt">
+          <div class="v2-ticket-top">
+            <span>{ui.passHeader}</span>
+            <span class="v2-ticket-badge" data-v2-badge>{ui.badgeUnilateral(30)}</span>
+          </div>
+
+          <div class="v2-ticket-body v2-ticket-passmode" data-v2-passmode>
+            <div class="v2-route-codes">
+              <div class="v2-iata">
+                <span data-v2-from>FR</span>
+                <small data-v2-from-name>{passports[0].name}</small>
+              </div>
+              <div class="v2-route-arrow">
+                <span data-v2-stay-chip>{ui.stayChip(8)}</span>
+              </div>
+              <div class="v2-iata" style="text-align:right;">
+                <span>CHN</span>
+                <small>{ui.destLabel}</small>
+              </div>
+            </div>
+
+            <div>
+              <h2 class="v2-ticket-verdict" data-v2-verdict>{ui.verdictUnilateral(30)}</h2>
+              <p class="v2-ticket-note" data-v2-note>{passports[0].note}</p>
+            </div>
+
+            <dl class="v2-ticket-meta">
+              <div><dt>{ui.channelLabel}</dt><dd data-v2-gate>{passports[0].gate}</dd></div>
+              <div><dt>{ui.cardLabel}</dt><dd>{ui.cardVal}</dd></div>
+              <div><dt>{ui.payLabel}</dt><dd>{ui.payVal}</dd></div>
+            </dl>
+          </div>
+
+          <div class="v2-ticket-cardmode" data-v2-cardmode hidden>
+            <span style="font-size:11.5px;color:#00d68f;">{ui.cardHint}</span>
+            <p class="v2-big-hanzi">师傅你好，请带我去高铁站，请打表，谢谢！</p>
+            {!isZh && (
+              <div>
+                <p style="margin:0;font-family:'JetBrains Mono',monospace;color:#f5b800;font-size:14px;">
+                  Shīfu nǐ hǎo, qǐng dài wǒ qù gāotiě zhàn, qǐng dǎbiǎo!
+                </p>
+                <p style="margin:6px 0 0;color:#9aa3b2;font-size:13.5px;">
+                  Hello driver, please take me to the High-Speed Rail Station and use the meter. Thank you!
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div class="v2-ticket-stub">
+            <div class="v2-barcode" aria-hidden="true"></div>
+            <button type="button" class="v2-flip-btn" data-v2-flip>{ui.flipToCard}</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="v2-rail-section">
+      <div class="v2-rail-head">
+        <h2>{ui.railHeading}</h2>
+      </div>
+
+      <div class="v2-rail-line" role="tablist">
+        {stations.map((st, idx) => (
+          <button type="button" class="v2-station" role="tab" aria-selected={idx === 0 ? 'true' : 'false'} data-v2-station={idx}>
+            <span class="v2-station-dot" aria-hidden="true"></span>
+            <span class="v2-station-code">{st.num} · {st.code}</span>
+            <span class="v2-station-name">{st.name}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="v2-station-detail">
+        <div>
+          <span style="font-size:11.5px;color:var(--v2-amber);" data-v2-st-win>{stations[0].window}</span>
+          <h3 data-v2-st-title>{stations[0].num} · {stations[0].name}</h3>
+        </div>
+        <p data-v2-st-desc>{stations[0].detail}</p>
+        <a href={lp('/journeys/')} class="v2-flip-btn" style="text-decoration:none;">{ui.openChecklist}</a>
+      </div>
+    </section>
+  </main>
+
+  <script define:vars={{ passports, stations, isZh, pauseLabel: ui.pause, resumeLabel: ui.resume, flipToCard: ui.flipToCard, flipToPass: ui.flipToPass, daysUnit: ui.daysUnit }}>
+    const clockEl = document.querySelector('[data-v2-clock]');
+    const updateClock = () => {
+      if (!clockEl) return;
+      clockEl.textContent = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+      }).format(new Date());
+    };
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const ticker = document.querySelector('[data-v2-ticker]');
+    const pauseBtn = document.querySelector('[data-v2-pause]');
+    pauseBtn?.addEventListener('click', () => {
+      if (!ticker) return;
+      const running = ticker.dataset.running === 'true';
+      ticker.dataset.running = String(!running);
+      pauseBtn.textContent = running ? resumeLabel : pauseLabel;
+    });
+
+    const passSelect = document.querySelector('[data-v2-passport]');
+    const daysInput = document.querySelector('[data-v2-days]');
+    const daysValEl = document.querySelector('[data-v2-days-val]');
+    const transitChk = document.querySelector('[data-v2-transit]');
+    const ticketEl = document.querySelector('[data-v2-ticket]');
+    const badgeEl = document.querySelector('[data-v2-badge]');
+    const fromEl = document.querySelector('[data-v2-from]');
+    const fromNameEl = document.querySelector('[data-v2-from-name]');
+    const stayChipEl = document.querySelector('[data-v2-stay-chip]');
+    const verdictEl = document.querySelector('[data-v2-verdict]');
+    const noteEl = document.querySelector('[data-v2-note]');
+    const gateEl = document.querySelector('[data-v2-gate]');
+
+    const renderPass = () => {
+      const p = passports[Number(passSelect?.value ?? 0)] ?? passports[0];
+      const days = Number(daysInput?.value ?? 8);
+      const hasTransit = Boolean(transitChk?.checked);
+
+      if (daysValEl) daysValEl.textContent = `${days} ${daysUnit}`;
+      if (fromEl) fromEl.textContent = p.code;
+      if (fromNameEl) fromNameEl.textContent = p.name;
+      if (stayChipEl) stayChipEl.textContent = isZh ? `停留 ${String(days).padStart(2, '0')} 天` : `${String(days).padStart(2, '0')} DAYS`;
+      if (gateEl) gateEl.textContent = p.gate;
+
+      let tone = 'visa';
+      let badge = isZh ? '需提前办理签证' : 'VISA REQUIRED';
+      let verdict = isZh ? `需提前办理常规中国签证（${days} 天）` : `Apply for a Chinese Visa Prior to Departure (${days} days)`;
+      let note = isZh ? `${p.name}在当前停留与路线条件下需通过签证中心提前申请签证。` : `${p.name} passport holders planning this route should apply via CVASC prior to departure.`;
+
+      if (p.mutual > 0 && days <= p.mutual) {
+        tone = 'exempt';
+        badge = isZh ? `${p.mutual} 天双边互免` : `MUTUAL ${p.mutual}D`;
+        verdict = isZh ? `适用 ${p.mutual} 天双边互免签证直通入境` : `Eligible for ${p.mutual}-Day Mutual Visa-Free Entry`;
+        note = p.note;
+      } else if (p.unilateral > 0 && days <= p.unilateral) {
+        tone = 'exempt';
+        badge = isZh ? `${p.unilateral} 天单方面免签` : `${p.unilateral}D VISA-FREE`;
+        verdict = isZh ? `适用 ${p.unilateral} 天单方面免签直通入境` : `Eligible for ${p.unilateral}-Day Unilateral Visa-Free Entry`;
+        note = p.note;
+      } else if (p.transit240 && days <= 10 && hasTransit) {
+        tone = 'transit';
+        badge = isZh ? '240 小时过境免签' : '240H TRANSIT';
+        verdict = isZh ? '适用 240 小时（10 天）跨省过境免签' : 'Eligible for 240-Hour (10-Day) Visa-Free Transit';
+        note = p.note;
+      } else if (p.transit240 && days <= 10 && !hasTransit) {
+        tone = 'visa';
+        badge = isZh ? '需第三方联程票' : 'NEED 3RD TICKET';
+        verdict = isZh ? '缺少第三国/港澳台联程票，需补票或办签' : 'Add a Third-Country Onward Ticket or Apply for a Visa';
+        note = isZh
+          ? '直飞原路往返不适用 240 小时过境；经由香港、澳门或第三国中转即可免签停留 10 天。'
+          : 'Direct round-trips do not qualify for 240-hour transit; routing via Hong Kong, Macao, or a third country unlocks 10-day transit.';
+      }
+
+      if (ticketEl) ticketEl.dataset.tone = tone;
+      if (badgeEl) badgeEl.textContent = badge;
+      if (verdictEl) verdictEl.textContent = verdict;
+      if (noteEl) noteEl.textContent = note;
+    };
+
+    passSelect?.addEventListener('change', renderPass);
+    daysInput?.addEventListener('input', renderPass);
+    transitChk?.addEventListener('change', renderPass);
+    renderPass();
+
+    const flipBtn = document.querySelector('[data-v2-flip]');
+    const passMode = document.querySelector('[data-v2-passmode]');
+    const cardMode = document.querySelector('[data-v2-cardmode]');
+    let isCardMode = false;
+    flipBtn?.addEventListener('click', () => {
+      isCardMode = !isCardMode;
+      if (passMode) passMode.hidden = isCardMode;
+      if (cardMode) cardMode.hidden = !isCardMode;
+      if (flipBtn) flipBtn.textContent = isCardMode ? flipToPass : flipToCard;
+    });
+
+    const stBtns = Array.from(document.querySelectorAll('[data-v2-station]'));
+    const stWin = document.querySelector('[data-v2-st-win]');
+    const stTitle = document.querySelector('[data-v2-st-title]');
+    const stDesc = document.querySelector('[data-v2-st-desc]');
+    stBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const st = stations[Number(btn.dataset.v2Station)];
+        if (!st) return;
+        stBtns.forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+        if (stWin) stWin.textContent = st.window;
+        if (stTitle) stTitle.textContent = `${st.num} · ${st.name}`;
+        if (stDesc) stDesc.textContent = st.detail;
+      });
+    });
+  </script>
+</ConceptLayout>

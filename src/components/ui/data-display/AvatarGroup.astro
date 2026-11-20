@@ -1,0 +1,47 @@
+---
+/**
+ * AvatarGroup — Overlapping avatar stack (standard & compact modes)
+ */
+import Avatar from './Avatar.astro';
+
+export interface AvatarItem {
+  name: string;
+  src?: string;
+  initials?: string;
+  tone?: 'palace' | 'gold' | 'ink' | 'sage';
+}
+
+interface Props {
+  items: AvatarItem[];
+  max?: number;
+  size?: 'xs' | 'sm' | 'md';
+  variant?: 'default' | 'compact';
+  caption?: string;
+  class?: string;
+}
+
+const {
+  items,
+  max = 4,
+  size = 'sm',
+  variant = 'default',
+  caption,
+  class: className = '',
+} = Astro.props;
+
+const visible = items.slice(0, max);
+const overflow = Math.max(0, items.length - max);
+---
+<div class:list={['cw-avatar-group', variant === 'compact' && 'cw-avatar-group--compact', className]}>
+  <div class="cw-avatar-stack">
+    {visible.map((item) => (
+      <Avatar name={item.name} src={item.src} initials={item.initials} tone={item.tone} size={size} />
+    ))}
+    {overflow > 0 && (
+      <span class:list={['cw-avatar', `cw-avatar--${size}`, 'cw-avatar--overflow']} aria-label={`${overflow} more contributors`}>
+        +{overflow}
+      </span>
+    )}
+  </div>
+  {caption && <span class="cw-avatar-group-caption">{caption}</span>}
+</div>

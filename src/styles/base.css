@@ -1,0 +1,287 @@
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html {
+  scrollbar-gutter: stable;
+  scroll-padding-top: calc(var(--header-height) + var(--space-5));
+  background-color: var(--surface-canvas);
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--surface-canvas);
+  /* Subtle organic handmade-pulp warm mottling */
+  background-image:
+    radial-gradient(ellipse 90% 60% at 12% 8%, light-dark(rgb(255 252 244 / 0.58), rgb(82 32 26 / 0.14)), transparent 65%),
+    radial-gradient(ellipse 75% 55% at 88% 28%, light-dark(rgb(225 206 184 / 0.18), rgb(20 12 10 / 0.3)), transparent 70%),
+    radial-gradient(ellipse 85% 65% at 45% 88%, light-dark(rgb(229 211 188 / 0.16), rgb(62 28 22 / 0.14)), transparent 68%);
+  background-attachment: fixed;
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle Xuan-paper surface relief only (clean, no fibers/flecks) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--xuan-pulp);
+  background-repeat: repeat;
+  background-size: 320px 320px;
+  mix-blend-mode: var(--xuan-blend);
+  opacity: var(--xuan-pulp-opacity);
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  flex: 1 0 auto;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Editorial Display & Heading Hierarchy */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  color: var(--ink-primary);
+}
+
+h1 {
+  font-size: var(--text-display);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+h3 {
+  font-size: var(--text-xl);
+}
+
+/* Composite Semantic Text Styles (5-Tier Editorial Scale: Title / Subheading / Label / Paragraph / Docs) */
+.t-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink-primary);
+}
+
+.t-subheading {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+
+.t-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink-primary);
+}
+
+.t-paragraph {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+}
+
+.t-docs {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-weight: 400;
+  line-height: 1.78;
+  max-width: var(--measure-prose);
+  color: var(--ink-primary);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+a:hover {
+  color: var(--accent-seal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 1px;
+}
+
+::placeholder {
+  color: var(--control-placeholder);
+  opacity: 1;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-ink);
+}
+
+[id] {
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface-raised);
+  color: var(--ink-secondary);
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
+  min-height: var(--control-h-md);
+  padding: 0.55rem 0.85rem;
+  background: var(--control-bg);
+  color: var(--ink-primary);
+  border: 1px solid var(--control-border);
+  border-radius: var(--control-radius);
+  font: inherit;
+  font-size: max(1rem, 1em);
+  transition:
+    border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease;
+}
+
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: var(--control-border-hover);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--control-border-focus);
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px var(--focus-ring-soft);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--control-bg-disabled);
+  color: var(--ink-tertiary);
+  border-color: var(--rule-subtle);
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    min-height: 3rem;
+  }
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* Native Modal Dialog scroll containment — per Modern Web Guidance */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Forced Colors / High Contrast Mode */
+@media (forced-colors: active) {
+  body::before {
+    display: none;
+  }
+
+  .btn,
+  .icon-btn,
+  .term-pill,
+  .theme-segment {
+    border: 1px solid ButtonText;
+  }
+
+  [aria-current="page"],
+  [aria-pressed="true"] {
+    outline: 1px solid Highlight;
+  }
+}
+
+/* Print Editorial Output */
+@media print {
+  body::before,
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .toc-rail,
+  .toc-mobile,
+  dialog {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}

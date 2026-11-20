@@ -1,0 +1,91 @@
+---
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import { publicContext } from '@lib/cms';
+import { tagPath } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/directory.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const taxonomy = await publicContext(() =>
+  getTaxonomyTermsWithCacheHint('tag', { includeCounts: true, locale }),
+).catch(() => null);
+
+if (!taxonomy) {
+  return new Response('Tags directory is temporarily unavailable.', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(taxonomy.cacheHint);
+}
+
+type Term = (typeof taxonomy.data)[number];
+
+function getTermCount(term: Term): number | null {
+  if ('count' in term && typeof term.count === 'number') return term.count;
+  return null;
+}
+
+const tags = taxonomy.data.toSorted((a, b) => a.label.localeCompare(b.label, isZh ? 'zh-CN' : 'en'));
+---
+<Layout
+  title={isZh ? '全部标签索引' : 'Tags'}
+  description={isZh ? '浏览 ChinaWao 全站跨栏目高频主题标签。' : 'Browse all recurring themes and editorial tags across ChinaWao.'}
+>
+  <div class="container directory-shell">
+    <div class="directory-header">
+      <div class="directory-header-copy">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <span aria-current="page">{isZh ? '标签索引' : 'Tags'}</span>
+        </nav>
+        <p class="eyebrow eyebrow--accent">{isZh ? '交叉索引' : 'Cross-Reference'}</p>
+        <h1>{isZh ? '主题标签总索引' : 'Tags index.'}</h1>
+        <p class="archive-lead">
+          {isZh ? '串联不同支柱实录的城市、政策与文化高频关键词。' : 'Cross-cutting threads, places, and recurring motifs linking dispatches across sections.'}
+        </p>
+      </div>
+
+      <div class="directory-stats">
+        <span class="meta-line">
+          {isZh ? `共 ${tags.length} 个标签` : `${tags.length} ${tags.length === 1 ? 'tag' : 'tags'}`}
+        </span>
+      </div>
+    </div>
+
+    {tags.length > 0 ? (
+      <div class="tags-index-grid">
+        {tags.map((term) => {
+          const count = getTermCount(term);
+          return (
+            <a href={lp(tagPath(term.slug))} class="tag-index-card">
+              <div class="tag-index-head">
+                <span class="tag-index-name">
+                  <span class="tag-index-hash" aria-hidden="true">#</span>
+                  {term.label}
+                </span>
+                {count !== null && (
+                  <span class="meta-line">{count}</span>
+                )}
+              </div>
+              {term.description && <p class="tag-index-desc">{term.description}</p>}
+            </a>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="empty-panel">
+        <h2>{isZh ? '暂无已发布标签。' : 'No tags published yet.'}</h2>
+        <p>{isZh ? '在 EmDash 后台为文章绑定标签即可自动生成主题索引。' : 'Assign tags to posts in EmDash to build a cross-referenced theme index.'}</p>
+        <div class="empty-actions">
+          <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+          <a href={lp('/topics/')} class="editorial-link">{isZh ? '浏览栏目' : 'Explore topics'}</a>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,125 @@
+---
+import { Image } from 'emdash/ui';
+import Icon from '@site/Icon.astro';
+import type { getPublicPost } from '@lib/cms';
+import { categoryPath, postPath } from '@lib/format';
+import { estimateReadingMinutes } from '@lib/portable-text';
+import { formatLocalizedDate, formatReadTime, getLocaleFromContext, localePath } from '@i18n/ui';
+
+type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
+
+interface Props {
+  lead: Post;
+  railPosts?: Post[];
+  railTitle?: string;
+  headingLevel?: 'h1' | 'h2';
+}
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const {
+  lead,
+  railPosts = [],
+  railTitle = isZh ? '精选实录' : 'Featured',
+  headingLevel = 'h1',
+} = Astro.props;
+
+const slug = lead.data.slug || lead.id;
+const href = lp(postPath(slug));
+const primaryCategory = lead.data.terms?.category?.[0];
+const published = formatLocalizedDate(lead.data.publishedAt, locale);
+const readingMinutes = estimateReadingMinutes(lead.data.content);
+const Heading = headingLevel;
+const hasRail = railPosts.length > 0;
+---
+<section class:list={['broadsheet-hero', !hasRail && 'broadsheet-hero--no-rail']} aria-label={isZh ? '精选封面实录' : 'Featured dispatch'}>
+  <div class="broadsheet-lead">
+    <div class="broadsheet-lead-top">
+      <div class="post-card-meta">
+        {primaryCategory ? (
+          <a href={lp(categoryPath(primaryCategory.slug))}>{primaryCategory.label}</a>
+        ) : (
+          <span>{isZh ? '精选实录' : 'Featured Dispatch'}</span>
+        )}
+        {readingMinutes && <span>{formatReadTime(readingMinutes, locale)}</span>}
+      </div>
+
+      <Heading class="broadsheet-title">
+        <a href={href}>{lead.data.title}</a>
+      </Heading>
+
+      {lead.data.excerpt && (
+        <p class="broadsheet-excerpt">{lead.data.excerpt}</p>
+      )}
+    </div>
+
+    <div class="broadsheet-lead-foot">
+      {published && (
+        <time class="meta-line" datetime={lead.data.publishedAt?.toISOString()}>
+          {published}
+        </time>
+      )}
+      <a href={href} class="btn btn--primary">
+        <span>{isZh ? '阅读全文' : 'Read dispatch'}</span>
+        <Icon name="arrow" size={16} />
+      </a>
+    </div>
+  </div>
+
+  {lead.data.featured_image ? (
+    <a href={href} class="broadsheet-media" aria-label={lead.data.title}>
+      <Image
+        image={lead.data.featured_image}
+        sizes="(max-width: 860px) 100vw, 48vw"
+        priority
+        placeholder={false}
+        decoding="sync"
+      />
+    </a>
+  ) : (
+    <a href={href} class="broadsheet-media broadsheet-media--text-fallback">
+      <span class="eyebrow eyebrow--accent">{isZh ? '封面实录' : 'Cover Essay'}</span>
+      <p class="broadsheet-title">{lead.data.title}</p>
+      <span class="editorial-link">
+        <span>{isZh ? '打开全文' : 'Open full essay'}</span>
+        <Icon name="arrow" size={15} />
+      </span>
+    </a>
+  )}
+
+  {hasRail && (
+    <aside class="featured-rail" aria-label={railTitle}>
+      <h2 class="rail-heading">{railTitle}</h2>
+      <ul class="featured-rail-list">
+        {railPosts.map((item) => {
+          const itemHref = lp(postPath(item.data.slug || item.id));
+          const itemCat = item.data.terms?.category?.[0];
+          const itemDate = formatLocalizedDate(item.data.publishedAt, locale);
+          const itemMin = estimateReadingMinutes(item.data.content);
+          return (
+            <li class="featured-rail-item">
+              <div class="post-card-meta">
+                {itemCat ? (
+                  <a href={lp(categoryPath(itemCat.slug))}>{itemCat.label}</a>
+                ) : (
+                  <span>{isZh ? '志刊' : 'Journal'}</span>
+                )}
+                {itemMin && <span>{isZh ? `${itemMin} 分钟` : `${itemMin} min`}</span>}
+              </div>
+              <h3 class="featured-rail-title">
+                <a href={itemHref}>{item.data.title}</a>
+              </h3>
+              {itemDate && (
+                <p class="featured-rail-meta">
+                  <time datetime={item.data.publishedAt?.toISOString()}>{itemDate}</time>
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </aside>
+  )}
+</section>

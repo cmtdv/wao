@@ -1,0 +1,766 @@
+/* ==========================================================================
+   Reusable Editorial Components
+   ========================================================================== */
+
+/* Eyebrow / Kicker Metadata (Mono Tabular Style) */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-secondary);
+}
+
+.eyebrow--accent::before {
+  content: "";
+  width: 1.35rem;
+  height: 1.5px;
+  background: var(--accent-seal);
+  flex-shrink: 0;
+}
+
+.meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-tertiary);
+}
+
+.meta-dot {
+  opacity: 0.5;
+}
+
+/* Buttons & Links */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface-raised);
+  color: var(--ink-primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--ink-primary);
+  color: var(--ink-primary);
+}
+
+.btn--primary {
+  background: var(--accent-seal);
+  border-color: var(--accent-seal);
+  color: var(--accent-on-seal);
+}
+
+.btn--primary:hover {
+  background: var(--accent-seal-hover);
+  border-color: var(--accent-seal-hover);
+  color: var(--accent-on-seal);
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-xs);
+  color: var(--ink-secondary);
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.icon-btn:hover {
+  background: var(--surface-hover);
+  color: var(--ink-primary);
+}
+
+.icon-btn.menu-trigger {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .icon-btn.menu-trigger {
+    display: inline-flex;
+  }
+}
+
+.editorial-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-primary);
+  padding-block: 0.35rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.editorial-link svg {
+  transition: translate var(--dur-fast) var(--ease-editorial);
+}
+
+.editorial-link:hover {
+  color: var(--accent-seal);
+  border-bottom-color: var(--accent-seal);
+}
+
+.editorial-link:hover svg {
+  translate: 3px 0;
+}
+
+/* --------------------------------------------------------------------------
+   Theme Controls (Header 2-State Comfort Toggle + Footer 3-State Switcher)
+   Pure CSS icon visibility synced with <meta name="color-scheme">
+   -------------------------------------------------------------------------- */
+.theme-quick-btn .icon-sun,
+.theme-quick-btn .icon-moon {
+  display: none;
+}
+
+/* Default OS Light -> show Moon ("Switch to dark") */
+.theme-quick-btn .icon-moon {
+  display: inline-flex;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-quick-btn .icon-moon {
+    display: none;
+  }
+
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-quick-btn .icon-sun {
+    display: inline-flex;
+  }
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-quick-btn .icon-moon {
+  display: none;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-quick-btn .icon-sun {
+  display: inline-flex;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) .theme-quick-btn .icon-sun {
+  display: none;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) .theme-quick-btn .icon-moon {
+  display: inline-flex;
+}
+
+/* Footer Explicit 3-State Segmented Switcher */
+.theme-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--rule-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--surface-canvas);
+}
+
+.theme-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-secondary);
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.theme-segment:hover {
+  color: var(--ink-primary);
+}
+
+.theme-segment[aria-pressed="true"] {
+  background: var(--ink-primary);
+  color: var(--surface-canvas);
+}
+
+/* Footer Theme Switcher (same @layer components so it wins cleanly over base) */
+.site-footer .theme-switcher {
+  background: var(--secondary-solid-elevated);
+  border-color: var(--secondary-rule);
+}
+
+.site-footer .theme-segment {
+  color: var(--secondary-ink-muted);
+}
+
+.site-footer .theme-segment:hover {
+  color: var(--secondary-ink);
+}
+
+.site-footer .theme-segment[aria-pressed="true"] {
+  background: var(--accent-gold-on-dark);
+  color: #221b18;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Section Headers & Breadcrumbs
+   -------------------------------------------------------------------------- */
+.section-block {
+  padding-block: var(--space-7);
+  border-top: 1px solid var(--rule-subtle);
+}
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.section-header h2 {
+  font-size: var(--text-2xl);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+
+.breadcrumb a {
+  color: var(--ink-secondary);
+}
+
+.breadcrumb a:hover {
+  color: var(--accent-seal);
+}
+
+.breadcrumb [aria-current="page"] {
+  color: var(--ink-primary);
+  font-weight: 500;
+}
+
+.breadcrumb-sep {
+  opacity: 0.5;
+}
+
+/* Breadcrumbs inside Deep Pine headers across all templates */
+:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb {
+  color: var(--secondary-ink-muted);
+}
+
+:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb a {
+  color: var(--secondary-ink-muted);
+}
+
+:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb a:hover {
+  color: var(--accent-seal-on-dark);
+}
+
+:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb [aria-current="page"] {
+  color: var(--secondary-ink);
+}
+
+/* Pills / Term Tags */
+.term-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.term-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.1rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--rule-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--surface-raised);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-secondary);
+  overflow-wrap: anywhere;
+}
+
+.term-pill:hover {
+  border-color: var(--accent-seal);
+  color: var(--accent-seal);
+}
+
+.term-pill--active,
+.term-pill[aria-current="page"] {
+  background: var(--accent-pine);
+  border-color: var(--accent-pine);
+  color: var(--accent-on-pine);
+}
+
+/* --------------------------------------------------------------------------
+   Artikle-Inspired Section Accent Bar & Inline Pipe-Delimited Subtopic Bar
+   -------------------------------------------------------------------------- */
+.rail-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-primary);
+}
+
+.rail-heading::before {
+  content: "";
+  width: 2px;
+  height: 0.95rem;
+  background: var(--accent-seal);
+  flex-shrink: 0;
+}
+
+.pipe-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0;
+  padding-block: var(--space-4);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--rule-subtle);
+  font-size: var(--text-sm);
+}
+
+.pipe-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  color: var(--ink-secondary);
+  padding-block: 0.2rem;
+  position: relative;
+  white-space: nowrap;
+}
+
+.pipe-link:not(:last-child)::after {
+  content: "|";
+  margin-inline: 0.85rem;
+  color: var(--rule-strong);
+  font-weight: 400;
+  pointer-events: none;
+}
+
+.pipe-link:hover {
+  color: var(--ink-primary);
+}
+
+.pipe-link[aria-current="page"] {
+  color: var(--ink-primary);
+  font-weight: 500;
+}
+
+.pipe-link[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-inline-end: 1.5rem;
+  inset-block-end: -0.1rem;
+  height: 1.5px;
+  background: var(--accent-seal);
+}
+
+.pipe-link:last-child[aria-current="page"]::before {
+  inset-inline-end: 0;
+}
+
+.pipe-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-tertiary);
+}
+
+/* --------------------------------------------------------------------------
+   Wayfare-Inspired Unified Multi-Facet Finder Bar (Keyword | Topic | Tag | Clear)
+   -------------------------------------------------------------------------- */
+.finder-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--paper-sheet-shadow);
+  margin-bottom: var(--space-5);
+}
+
+.finder-field {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.2rem 0.9rem;
+  min-width: 0;
+  border-inline-end: 1px solid var(--rule-subtle);
+  color: var(--ink-secondary);
+}
+
+.finder-field input,
+.finder-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.35rem 0;
+  font-size: var(--text-sm);
+  color: var(--ink-primary);
+  box-shadow: none;
+}
+
+.finder-field input:focus-visible,
+.finder-field select:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.finder-field:focus-within {
+  background: var(--surface-hover);
+  box-shadow: inset 0 -2px 0 var(--focus-ring-color);
+}
+
+.finder-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.65rem;
+}
+
+.finder-actions:not(:has(button:not([hidden]))) {
+  display: none;
+}
+
+.finder-field:has(+ .finder-actions:not(:has(button:not([hidden])))) {
+  border-inline-end: 0;
+}
+
+.finder-clear {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.75rem;
+  color: var(--ink-secondary);
+  border-radius: var(--radius-xs);
+}
+
+.finder-clear:hover {
+  color: var(--accent-seal-text);
+  background: var(--surface-hover);
+}
+
+.finder-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+@media (max-width: 860px) {
+  .finder-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .finder-field--search {
+    grid-column: 1 / -1;
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .finder-field--tag {
+    border-inline-end: 0;
+  }
+
+  .finder-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    border-top: 1px solid var(--rule-subtle);
+  }
+}
+
+@media (max-width: 520px) {
+  .finder-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .finder-field {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .finder-actions {
+    border-top: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Editorial Post Grid & Cards (Artikle Zero-Border Hairline Discipline)
+   -------------------------------------------------------------------------- */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-7) var(--space-6);
+  align-items: stretch;
+}
+
+.post-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.post-card-media {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+  background: var(--surface-sunken);
+}
+
+.post-card-media :is(picture, .emdash-image-media, img) {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-card-media img {
+  transition: scale var(--dur-slow) var(--ease-editorial);
+}
+
+.post-card:hover .post-card-media img {
+  scale: 1.025;
+}
+
+/* Dual-anchor micro-meta row (left category, right reading time) */
+.post-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-tertiary);
+}
+
+.post-card-meta a {
+  color: var(--accent-seal-text);
+  font-weight: 500;
+}
+
+.post-card-meta a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.post-card--text-only {
+  background-color: var(--secondary-tint);
+  border-top: 1px solid var(--secondary-tint-border);
+  border-inline-start: 2px solid var(--secondary-solid);
+  padding: var(--space-5);
+}
+
+.post-card--text-only:hover {
+  border-inline-start-color: var(--accent-seal);
+}
+
+.post-card-title {
+  margin-top: 0.55rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1.1rem + 0.55vw, 1.55rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+}
+
+.post-card--text-only .post-card-title {
+  font-size: clamp(1.45rem, 1.2rem + 0.75vw, 1.85rem);
+  line-height: 1.15;
+}
+
+.post-card-title a {
+  display: block;
+}
+
+.post-card-excerpt {
+  margin-top: 0.55rem;
+  color: var(--ink-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.62;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-card--text-only .post-card-excerpt {
+  font-size: var(--text-base);
+  -webkit-line-clamp: 4;
+}
+
+.post-card-foot {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.post-card--text-only .post-card-foot {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--secondary-tint-border);
+}
+
+@media (max-width: 980px) {
+  .post-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .post-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Archive Header, Pagination & Empty State
+   -------------------------------------------------------------------------- */
+.archive-shell {
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.archive-header {
+  max-width: none;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  margin-bottom: var(--space-7);
+  background: var(--secondary-solid);
+  color: var(--secondary-ink);
+  border-bottom: 3px solid var(--accent-gold);
+}
+
+.archive-header .eyebrow {
+  color: var(--secondary-ink-muted);
+}
+
+.archive-header .eyebrow--accent::before {
+  background: var(--accent-seal-on-dark);
+}
+
+.archive-header h1 {
+  margin-top: var(--space-3);
+  color: var(--secondary-ink);
+}
+
+.archive-lead {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  line-height: 1.65;
+  color: var(--secondary-ink-muted);
+  max-width: 56ch;
+}
+
+.error-shell .archive-lead {
+  color: var(--ink-secondary);
+}
+
+.archive-subterms {
+  margin-top: var(--space-5);
+}
+
+.pagination {
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.empty-panel {
+  padding: var(--space-8) var(--space-6);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-subtle);
+  text-align: center;
+}
+
+.empty-panel h2 {
+  font-size: var(--text-2xl);
+}
+
+.empty-panel p {
+  margin: var(--space-3) auto 0;
+  max-width: 44ch;
+  color: var(--ink-secondary);
+}
+
+.empty-panel .empty-actions {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* Ensure EmDashImage fills 3:2 card frame cleanly */
+.post-card-media .emdash-image-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

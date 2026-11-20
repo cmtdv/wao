@@ -1,0 +1,286 @@
+---
+import ConceptLayout from '@layouts/ConceptLayout.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const concepts = isZh
+  ? [
+      {
+        num: '01',
+        id: 'v1',
+        name: '当代精装画报与书册卷宗',
+        mood: '克制 · 大刊书卷气 · 杂志跨页张力',
+        anchor: '棉质宣纸双细线扉页 + 左侧通用编号索引条（01–06）+ 实体活页卷宗翻阅',
+        interaction: '点击目录即刻切换活页卷宗、坐标与纪实影像，阅读像翻开一本当代中国精装大刊。',
+        themeClass: 'card--v1',
+        previewChar: '04',
+        previewTag: '第 04 辑 · 31°14′N',
+      },
+      {
+        num: '02',
+        id: 'v2',
+        name: '硬核基建导视与电子票根',
+        mood: '锋利 · 现代基础设施 · 反刻板印象',
+        anchor: '复兴号电子水牌 + 实时北京时间 + 可即时生成带齿孔与条码的入境通行票根',
+        interaction: '选择护照与天数实时「出票」带撕裂齿孔的登机牌，一键翻面切换大字打车通行证；高铁线路图式 7 步通关。',
+        themeClass: 'card--v2',
+        previewChar: 'G1',
+        previewTag: '240 小时过境 · 在线',
+      },
+      {
+        num: '03',
+        id: 'v3',
+        name: '沉浸式数字展厅与 24 小时切片',
+        mood: '电影感 · 时空漫游 · 强传播记忆点',
+        anchor: '全屏光影画廊 + 24 小时时间轴拨盘 + 实时旋转经纬度罗盘 + 场景化悬浮口袋工具',
+        interaction: '点击 06:30 成都早茶 → 14:00 复兴号 → 21:30 上海夜生活，整个展厅光影、坐标与工具实时切换。',
+        themeClass: 'card--v3',
+        previewChar: '24h',
+        previewTag: '24 小时中国数字展厅',
+      },
+      {
+        num: '04',
+        id: 'v4',
+        name: '极简瑞士网格系统',
+        mood: '冷峻 · 国际多语原生 · 建筑秩序',
+        anchor: '纯白画布 + 裸露 1px 黑色瑞士网格 + 全球通用数字编号（01–12）+ 手术刀式单色朱红',
+        interaction: '零废话实时筛选全部核心领域，点击任意方格即刻展开技术规格卡与一键复制短语。',
+        themeClass: 'card--v4',
+        previewChar: '09',
+        previewTag: '建筑方格索引',
+      },
+    ]
+  : [
+      {
+        num: '01',
+        id: 'v1',
+        name: 'Editorial Folio & Quarterly',
+        mood: 'Restrained · Fine-Press Craft · Asymmetric Spreads',
+        anchor: 'Archival cotton paper + double hairline masthead + numbered index spine (01–06) + interactive folio binder',
+        interaction: 'Flip through live archival chapter folios with documentary photography and coordinates like a collector quarterly.',
+        themeClass: 'card--v1',
+        previewChar: '04',
+        previewTag: 'ISSUE 04 · 31°14′N',
+      },
+      {
+        num: '02',
+        id: 'v2',
+        name: 'Transit Board & Live Boarding Pass',
+        mood: 'Sharp · Modern Infrastructure · Zero Clichés',
+        anchor: 'High-speed rail departure ticker + live Beijing time + real-time perforated China Entry Boarding Pass',
+        interaction: 'Select passport & days to issue a perforated entry pass live, flip it into a taxi flashcard, and navigate a 7-station rail map.',
+        themeClass: 'card--v2',
+        previewChar: 'G1',
+        previewTag: '240H TRANSIT · LIVE',
+      },
+      {
+        num: '03',
+        id: 'v3',
+        name: '24-Hour Spatial Exhibition',
+        mood: 'Cinematic · Chronoscope · Memorable Storytelling',
+        anchor: 'Full-bleed luminous photography + 24-hour timeline scrubber + rotating coordinate compass + floating pocket tools',
+        interaction: 'Scrub from 06:30 Chengdu teahouses to 14:00 Fuxing rail to 21:30 Shanghai nightlife as lighting, compass & tools transform.',
+        themeClass: 'card--v3',
+        previewChar: '24h',
+        previewTag: 'CHRONOSCOPE GALLERY',
+      },
+      {
+        num: '04',
+        id: 'v4',
+        name: 'Exposed Swiss Grid System',
+        mood: 'Precise · i18n-Native · Architectural Order',
+        anchor: 'Stark gallery white + exposed 1px pure-black grid + universal tabular indices (01–12) + surgical vermilion',
+        interaction: 'Filter every major China subject instantaneously and click any cell to inspect verified sources & quick phrases.',
+        themeClass: 'card--v4',
+        previewChar: '09',
+        previewTag: 'SWISS INDEX · SPEC',
+      },
+    ];
+
+const hrefs: Record<string, string> = {
+  v1: lp('/concepts/v1-editorial/'),
+  v2: lp('/concepts/v2-transit/'),
+  v3: lp('/concepts/v3-exhibition/'),
+  v4: lp('/concepts/v4-swiss/'),
+};
+---
+<ConceptLayout
+  title={isZh ? '四大视觉与交互方向原型对比' : 'Four Visual & Interaction Direction Prototypes'}
+  description={isZh ? 'ChinaWao 品牌视觉与交互记忆点 4 套独立重构原型横向对比。' : 'Side-by-side interactive comparison of 4 distinct ChinaWao design directions.'}
+  active="overview"
+  dockTone="dark"
+>
+  <Fragment slot="head">
+    <style>
+      body { background: #0e1013; color: #f3f3f1; }
+      .lab-shell { max-width: 1400px; margin: 0 auto; padding: 44px 32px 120px; }
+      .lab-head {
+        display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
+        gap: 24px; padding-bottom: 32px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); margin-bottom: 36px;
+      }
+      .lab-kicker {
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px;
+        letter-spacing: 0.12em; color: #ff4b2b; margin: 0 0 12px;
+      }
+      .lab-head h1 {
+        margin: 0; font-family: 'Newsreader', 'Noto Serif SC', 'Songti SC', serif;
+        font-size: clamp(2.1rem, 4.2vw, 3.6rem); font-weight: 400; line-height: 1.08; letter-spacing: -0.02em;
+      }
+      .lab-lead { max-width: 52ch; margin: 0; color: rgba(243, 243, 241, 0.68); font-size: 15px; line-height: 1.65; }
+      .lab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+      @media (max-width: 960px) { .lab-grid { grid-template-columns: 1fr; } .lab-shell { padding: 28px 18px 110px; } }
+      .concept-card {
+        display: flex; flex-direction: column; justify-content: space-between; text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.12); background: #15181d; overflow: hidden;
+        transition: border-color 0.2s ease, transform 0.25s ease;
+      }
+      .concept-card:hover { border-color: rgba(255, 255, 255, 0.42); }
+      @media (prefers-reduced-motion: no-preference) { .concept-card:hover { transform: translateY(-3px); } }
+      .stage {
+        position: relative; height: 210px; padding: 22px 24px;
+        display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+      }
+      .stage-top {
+        display: flex; justify-content: space-between; align-items: center;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px; position: relative; z-index: 2;
+      }
+      .stage-glyph {
+        position: absolute; right: 22px; bottom: -14px; font-family: 'JetBrains Mono', monospace;
+        font-size: 138px; line-height: 0.85; font-weight: 700; pointer-events: none; user-select: none;
+      }
+      .card--v1 .stage { background: #f4efe5; color: #151412; padding-left: 62px; }
+      .card--v1 .stage::before {
+        content: '01 02 03 04 05 06'; position: absolute; left: 0; top: 0; bottom: 0; width: 42px;
+        border-right: 1px solid rgba(21, 20, 18, 0.22); writing-mode: vertical-rl;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; color: rgba(21, 20, 18, 0.6);
+      }
+      .card--v1 .stage-seal {
+        display: inline-grid; place-items: center; width: 28px; height: 28px;
+        background: #d13224; color: #f4efe5; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      }
+      .card--v1 .stage-glyph { color: rgba(21, 20, 18, 0.1); }
+      .card--v2 .stage { background: #0a0c0f; color: #f4f5f7; border-bottom: 1px solid #222831; }
+      .card--v2 .stage-ticket-bar {
+        display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px;
+        background: #f5f4ef; color: #0a0c0f; font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11px; font-weight: 600; width: fit-content; border-left: 4px solid #ff3b1d; position: relative; z-index: 2;
+      }
+      .card--v2 .stage-glyph { color: rgba(245, 184, 0, 0.18); }
+      .card--v3 .stage {
+        background: linear-gradient(180deg, rgba(8, 9, 11, 0.28) 0%, rgba(8, 9, 11, 0.86) 100%),
+          url('/images/hero.webp') center / cover no-repeat;
+        color: #ffffff;
+      }
+      .card--v3 .stage-timeline {
+        display: flex; gap: 14px; font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px;
+        color: rgba(255, 255, 255, 0.75); border-top: 1px solid rgba(255, 255, 255, 0.25);
+        padding-top: 10px; position: relative; z-index: 2;
+      }
+      .card--v3 .stage-timeline strong { color: #f7c96b; }
+      .card--v3 .stage-glyph { color: rgba(255, 255, 255, 0.14); font-size: 118px; }
+      .card--v4 .stage {
+        background-color: #ffffff;
+        background-image: linear-gradient(to right, #e5e5e5 1px, transparent 1px), linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+        background-size: 48px 48px; color: #111111;
+      }
+      .card--v4 .stage-red-dot { display: inline-block; width: 10px; height: 10px; background: #e62e04; }
+      .card--v4 .stage-glyph { color: #111111; font-size: 148px; bottom: -18px; right: 18px; }
+      .card-body { padding: 24px 26px 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+      .card-title-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+      .card-title-row h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+      .card-num { font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 12.5px; color: #ff4b2b; }
+      .card-mood { margin: -8px 0 0; font-size: 12.5px; color: rgba(243, 243, 241, 0.56); }
+      .card-specs {
+        display: grid; gap: 10px; margin: 4px 0 6px; padding: 14px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.09); border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        font-size: 13.5px; line-height: 1.55;
+      }
+      .card-specs dt { font-size: 11px; color: rgba(243, 243, 241, 0.45); margin-bottom: 2px; }
+      .card-specs dd { margin: 0; color: rgba(243, 243, 241, 0.86); }
+      .card-cta { display: inline-flex; align-items: center; justify-content: space-between; font-size: 13px; color: #ffffff; padding-top: 4px; }
+      .card-cta span:last-child { color: #ff4b2b; }
+    </style>
+  </Fragment>
+
+  <main class="lab-shell">
+    <header class="lab-head">
+      <div>
+        <p class="lab-kicker">{isZh ? 'ChinaWao · 2026 品牌视觉与交互实验场' : 'ChinaWao · 2026 Identity & UX Concept Lab'}</p>
+        <h1>{isZh ? '4 套彻底不同的视觉与交互方向' : '4 Distinct Visual & Interaction Systems'}</h1>
+      </div>
+      <p class="lab-lead">
+        {isZh
+          ? '全部采用多语原生设计（简中版纯简中、英文版纯英文，点击底部 EN / 简中 可随时切换检验），各自拥有独立的版式结构与可实操交互。'
+          : '100% i18n-native across English and Simplified Chinese (use the bottom dock EN / 简中 switch anytime). Each concept pairs a distinct architectural layout with a signature interaction.'}
+      </p>
+    </header>
+
+    <section class="lab-grid" aria-label={isZh ? '四个设计方向原型入口' : 'Four design direction prototypes'}>
+      {concepts.map((c) => (
+        <a href={hrefs[c.id]} class:list={['concept-card', c.themeClass]}>
+          <div class="stage">
+            <div class="stage-top">
+              <span>{c.previewTag}</span>
+              {c.id === 'v1' && <span class="stage-seal">CW</span>}
+              {c.id === 'v4' && <span class="stage-red-dot" aria-hidden="true"></span>}
+            </div>
+            {c.id === 'v2' && (
+              <div class="stage-ticket-bar">
+                <span>{isZh ? '北京 / 上海 → 240h 通行证' : 'PEK / PVG → 240H PASS'}</span>
+                <span>■ ■ ■ ■</span>
+              </div>
+            )}
+            {c.id === 'v3' && (
+              <div class="stage-timeline">
+                {isZh ? (
+                  <>
+                    <span>06:30 成都</span>
+                    <span>10:15 景德镇</span>
+                    <strong>17:40 阳朔</strong>
+                    <span>21:30 上海</span>
+                  </>
+                ) : (
+                  <>
+                    <span>06:30 Chengdu</span>
+                    <span>10:15 Jingdezhen</span>
+                    <strong>17:40 Yangshuo</strong>
+                    <span>21:30 Shanghai</span>
+                  </>
+                )}
+              </div>
+            )}
+            <span class="stage-glyph" aria-hidden="true">{c.previewChar}</span>
+          </div>
+
+          <div class="card-body">
+            <div class="card-title-row">
+              <h2>{c.name}</h2>
+              <span class="card-num">{isZh ? `方案 ${c.num}` : `DIRECTION ${c.num}`}</span>
+            </div>
+            <p class="card-mood">{c.mood}</p>
+
+            <dl class="card-specs">
+              <div>
+                <dt>{isZh ? '第一眼视觉记忆点' : 'Visual Signature'}</dt>
+                <dd>{c.anchor}</dd>
+              </div>
+              <div>
+                <dt>{isZh ? '核心交互体验' : 'Signature Interaction'}</dt>
+                <dd>{c.interaction}</dd>
+              </div>
+            </dl>
+
+            <div class="card-cta">
+              <span>{isZh ? '进入全屏交互原型' : 'Open full-screen prototype'}</span>
+              <span>{isZh ? `查看方案 ${c.num} →` : `Inspect ${c.num} →`}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </section>
+  </main>
+</ConceptLayout>

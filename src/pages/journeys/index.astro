@@ -1,0 +1,183 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Icon from '@site/Icon.astro';
+import Checkbox from '@ui/forms/Checkbox.astro';
+import { getJourneySteps } from '@data/mock-portal-zh';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import '../../styles/specialty.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+const steps = getJourneySteps(locale);
+const totalSteps = steps.length;
+---
+<Layout
+  title={strings.journeys.title}
+  description={strings.journeys.lead}
+>
+  <div class="container portal-shell">
+    <div class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{strings.journeys.crumb}</span>
+      </nav>
+      <span class="eyebrow eyebrow--accent">{strings.journeys.kicker}</span>
+      <h1>{strings.journeys.title}</h1>
+      <p class="archive-lead">{strings.journeys.lead}</p>
+      <div class="portal-meta-strip">
+        <span><strong>{totalSteps}</strong> {isZh ? '个时间线关键节点' : 'Chronological Milestones'}</span>
+        <span><strong>{isZh ? '本地存档' : 'Local Save'}</strong> {isZh ? '浏览器自动保存进度' : 'Browser Progress'}</span>
+        <span><strong>{isZh ? '一手直达' : 'Direct Links'}</strong> {isZh ? '经核验的官方门户' : 'Verified Official Portals'}</span>
+      </div>
+    </div>
+
+    <div class="journey-layout">
+      <div>
+        <div class="journey-controls" data-journey-controls>
+          <div class="journey-progress-meta">
+            <span class="journey-progress-text" data-journey-status aria-live="polite">
+              {isZh ? `已完成 0 / ${totalSteps} 步` : `0 of ${totalSteps} steps completed`}
+            </span>
+            <div class="journey-progress-track" aria-hidden="true">
+              <div class="journey-progress-fill" data-journey-bar></div>
+            </div>
+          </div>
+
+          <div class="journey-action-btns">
+            <button
+              type="button"
+              class="btn"
+              commandfor="journey-accordion"
+              command="--toggle-all"
+              aria-expanded="false"
+            >
+              <span class="expand-label">{isZh ? '全部展开' : 'Expand all'}</span>
+              <span class="collapse-label">{isZh ? '全部收起' : 'Collapse all'}</span>
+            </button>
+            <button type="button" class="btn" data-journey-reset>
+              {isZh ? '重置进度' : 'Reset progress'}
+            </button>
+          </div>
+        </div>
+
+        <section
+          class="journey-accordion"
+          id="journey-accordion"
+          aria-labelledby="journey-steps-heading"
+          data-journey-accordion
+        >
+          <h2 id="journey-steps-heading" class="visually-hidden">
+            {isZh ? '首次来华七步通关清单' : 'Seven chronological travel steps for visiting China'}
+          </h2>
+
+          {steps.map((step, idx) => (
+            <details
+              class="journey-step"
+              id={step.id}
+              open={idx === 0}
+              data-journey-step={step.id}
+            >
+              <summary>
+                <span class="journey-step-num" aria-hidden="true">{step.number}</span>
+                <span class="journey-step-head">
+                  <span class="journey-step-phase">
+                    {step.phase} · {step.timing}
+                  </span>
+                  <span class="journey-step-title">{step.title}</span>
+                </span>
+              </summary>
+
+              <div class="journey-step-body">
+                <p class="journey-step-summary">{step.summary}</p>
+
+                <ul class="journey-checklist">
+                  {step.checklist.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+
+                <div class="journey-step-links">
+                  {step.guideLinks.map((link) => (
+                    <a href={link.href} class="editorial-link">
+                      <span>{link.label}</span>
+                      <Icon name="arrow" size={14} />
+                    </a>
+                  ))}
+                  <a
+                    href={step.officialLink.href}
+                    class="term-pill"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>{isZh ? `官方：${step.officialLink.label} ↗` : `Official: ${step.officialLink.label} ↗`}</span>
+                  </a>
+                </div>
+
+                <Checkbox class="journey-done-toggle" data-journey-check={step.id}>
+                  {isZh ? `标记第 ${step.number} 步已完成` : `Mark Step ${step.number} completed`}
+                </Checkbox>
+              </div>
+            </details>
+          ))}
+        </section>
+      </div>
+
+      <aside class="journey-aside" aria-label={isZh ? '配套工具与热线' : 'Companion tools and links'}>
+        <div class="journey-aside-card">
+          <span class="eyebrow eyebrow--accent">{isZh ? '快捷配套' : 'Quick Companions'}</span>
+          <h2>{isZh ? '本行程常用工具' : 'Tools for This Journey'}</h2>
+          <p>
+            {isZh
+              ? '配合免签与过境判定器、全屏双语打车/急救大字卡与官方公共服务目录一起使用，行前与落地更从容。'
+              : 'Pair this checklist with our instant visa checker, fullscreen Chinese taxi cards, and verified official service links.'}
+          </p>
+          <ul class="journey-aside-links">
+            <li>
+              <a href={lp('/tools/#visa-checker')}>
+                <span>{isZh ? '12.1 免签与 240h 过境判定器' : '12.1 Visa-Free Quick Checker'}</span>
+                <Icon name="arrow" size={14} />
+              </a>
+            </li>
+            <li>
+              <a href={lp('/tools/#flashcards')}>
+                <span>{isZh ? '12.2 / 12.4 双语打车与急救字卡' : '12.2 / 12.4 Driver & SOS Cards'}</span>
+                <Icon name="arrow" size={14} />
+              </a>
+            </li>
+            <li>
+              <a href={lp('/directory/')}>
+                <span>{isZh ? '官方公共服务与开放数据目录' : 'Official Public Service Directory'}</span>
+                <Icon name="arrow" size={14} />
+              </a>
+            </li>
+            <li>
+              <a href={lp('/category/visit-china/')}>
+                <span>{isZh ? '浏览全部「来华旅行」实录' : 'All Visit China Dispatches'}</span>
+                <Icon name="arrow" size={14} />
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="journey-aside-card">
+          <span class="eyebrow">{isZh ? '全国常用紧急号码' : 'Emergency Numbers'}</span>
+          <h2>{isZh ? '落地必备官方热线' : 'On-the-Ground Hotlines'}</h2>
+          <p>
+            {isZh ? (
+              <>
+                建议抵华前收藏以下全国通用电话：<strong>110</strong> 报警、<strong>120</strong> 医疗急救、<strong>119</strong> 火警、<strong>12367</strong> 国家移民管理局（中英 24 小时）、<strong>12345</strong> 政务服务多语种热线。
+              </>
+            ) : (
+              <>
+                Save these nationwide numbers before landing: <strong>110</strong> Police, <strong>120</strong> Medical Ambulance, <strong>119</strong> Fire, <strong>12367</strong> NIA Immigration (EN/ZH 24h), and <strong>12345</strong> Municipal Multilingual Service.
+              </>
+            )}
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Layout>

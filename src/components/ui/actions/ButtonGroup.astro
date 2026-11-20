@@ -1,0 +1,15 @@
+---
+/**
+ * ButtonGroup — Joined architectural action bar (2px outer corners, hairline dividers)
+ */
+interface Props {
+  label?: string;
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { label = 'Action group', size = 'md', class: className = '' } = Astro.props;
+---
+<div class:list={['cw-btn-group', size === 'sm' && 'cw-btn-group--sm', className]} role="group" aria-label={label}>
+  <slot />
+</div>

@@ -1,0 +1,32 @@
+---
+/**
+ * Accessible Toggletip / Tooltip (modern-web-guidance: interest-triggered-tooltips)
+ * Uses both interestfor (hover/focus) and popovertargetaction="show" (click/tap)
+ * paired with popover="hint" placed immediately after the trigger in DOM order.
+ */
+interface Props {
+  id: string;
+  label: string;
+  symbol?: string;
+  class?: string;
+}
+
+const { id, label, symbol = '?', class: className = '' } = Astro.props;
+const interestAttr = { interestfor: id } as Record<string, string>;
+const hintAttr = { popover: 'hint' } as Record<string, string>;
+---
+<button
+  type="button"
+  class:list={['cw-tooltip-trigger', className]}
+  popovertarget={id}
+  popovertargetaction="show"
+  aria-label={label}
+  aria-expanded="false"
+  data-cw-tooltip-trigger
+  {...interestAttr}
+>
+  {symbol}
+</button>
+<div id={id} role="tooltip" class="cw-tooltip" {...hintAttr}>
+  <slot />
+</div>

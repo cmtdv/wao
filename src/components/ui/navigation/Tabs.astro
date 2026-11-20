@@ -1,0 +1,68 @@
+---
+/**
+ * Accessible Tabbed Interface (modern-web-guidance: tabs)
+ * - Initial state rendered in HTML (aria-selected="true" + hidden="until-found")
+ * - Single-row scrollable tablist with focusgroup="tablist nomemory" + keyboard fallback
+ * - Panel box styles live on .cw-tabpanel-inner (never on [role="tabpanel"] itself)
+ */
+export interface TabItem {
+  id: string;
+  label: string;
+  heading?: string;
+  body: string;
+  meta?: string;
+}
+
+interface Props {
+  label: string;
+  tabs: TabItem[];
+  class?: string;
+}
+
+const { label, tabs, class: className = '' } = Astro.props;
+const focusgroupAttr = { focusgroup: 'tablist nomemory' } as Record<string, string>;
+---
+<div class:list={['cw-tabs', className]} data-cw-tabs>
+  <div class="cw-tablist" role="tablist" aria-label={label} {...focusgroupAttr}>
+    {tabs.map((tab, idx) => {
+      const startAttr = idx === 0 ? ({ focusgroupstart: '' } as Record<string, string>) : {};
+      return (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${tab.id}`}
+          class="cw-tab"
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          tabindex={idx === 0 ? 0 : -1}
+          data-cw-tab={tab.id}
+          {...startAttr}
+        >
+          {tab.label}
+        </button>
+      );
+    })}
+  </div>
+
+  <div class="cw-tabpanels">
+    {tabs.map((tab, idx) => {
+      const hiddenAttr = idx === 0 ? {} : ({ hidden: 'until-found' } as Record<string, string>);
+      return (
+        <div
+          role="tabpanel"
+          id={`panel-${tab.id}`}
+          class="cw-tabpanel"
+          aria-labelledby={`tab-${tab.id}`}
+          tabindex={idx === 0 ? 0 : undefined}
+          data-cw-tabpanel={tab.id}
+          {...hiddenAttr}
+        >
+          <div class="cw-tabpanel-inner">
+            {tab.meta && <p class="t-subheading" style="margin-bottom: var(--space-2);">{tab.meta}</p>}
+            {tab.heading && <h3 style="margin-bottom: var(--space-2);">{tab.heading}</h3>}
+            <p class="t-paragraph">{tab.body}</p>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>

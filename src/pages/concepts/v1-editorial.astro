@@ -1,0 +1,425 @@
+---
+import ConceptLayout from '@layouts/ConceptLayout.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const chapters = isZh
+  ? [
+      {
+        num: '01',
+        short: '地理',
+        title: '地理版图',
+        meta: '第 01 支柱 · 9 项主题',
+        coords: '24°46′N  110°29′E · 桂林阳朔',
+        image: '/images/hero.webp',
+        summary: '从漓江喀斯特峰林、江南水乡古镇，到由江河与高速铁路共同塑造的 34 个省级政区与超大都市群。',
+        topics: ['1.1 国家概览', '1.3 省级政区', '1.6 街区胡同', '1.7 古镇古村', '1.8 山河奇观', '1.9 熊猫生态'],
+        dispatch: '《江南水乡古镇慢行：避开一日游团客的清晨运河线》',
+      },
+      {
+        num: '02',
+        short: '历史',
+        title: '历史文脉',
+        meta: '第 02 支柱 · 10 项主题',
+        coords: '39°55′N  116°23′E · 北京中轴',
+        image: '/images/beijing.webp',
+        summary: '五千年朝代更迭、59 处世界遗产、国家博物国宝，以及至今依然清晰可读于日常街巷肌理的古建与节庆。',
+        topics: ['2.1 五千年史', '2.3 世界遗产', '2.4 博物国宝', '2.6 宗教寺观', '2.7 古建园林', '2.9 传统节庆'],
+        dispatch: '《北京古建屋脊读法：从榫卯斗拱到四合院的空间礼序》',
+      },
+      {
+        num: '06',
+        short: '饮食',
+        title: '饮食茶酒',
+        meta: '第 06 支柱 · 7 项主题',
+        coords: '30°14′N  120°08′E · 杭州龙井',
+        image: '/images/tea.webp',
+        summary: '八大菜系风味谱系、六大茶类春采制艺、深夜市井火锅粉面，以及读懂中国合餐桌与过敏忌口的实用手册。',
+        topics: ['6.1 八大菜系', '6.2 火锅粉面', '6.4 六大茶类', '6.5 白酒茶饮', '6.6 合餐老字号', '6.7 过敏忌口'],
+        dispatch: '《清明前西湖茶山记：一盏明前龙井背后的温度与时间》',
+      },
+      {
+        num: '07',
+        short: '艺文',
+        title: '语言艺术',
+        meta: '第 07 支柱 · 7 项主题',
+        coords: '29°17′N  117°10′E · 景德镇窑',
+        image: '/images/craft.webp',
+        summary: '汉字方言密码、学中文街头识字法、古典诗词水墨，以及仍在景德镇与宣州工坊里呼吸的瓷绸非遗。',
+        topics: ['7.1 汉字方言', '7.2 学中文指南', '7.4 书法水墨', '7.5 民乐戏曲', '7.6 当代艺建', '7.7 瓷绸非遗'],
+        dispatch: '《景德镇老窑口实录：七十二道工序如何塑成当代器物》',
+      },
+      {
+        num: '09',
+        short: '来华',
+        title: '来华旅行',
+        meta: '第 09 支柱 · 11 项主题',
+        coords: '31°11′N  121°19′E · 上海虹桥',
+        image: '/images/rail.webp',
+        summary: '面向全球旅客的 30 天免签与 240 小时过境、外卡绑支付宝微信、12306 高铁购票与离境退税 2.0 一线实操。',
+        topics: ['9.1 签证免签', '9.2 移动支付', '9.3 联网与App', '9.4 高铁出行', '9.6 景区预约', '9.8 购物退税'],
+        dispatch: '《2026 复兴号跨城实测：外籍护照 12306 核验与刷证进站全流程》',
+      },
+      {
+        num: '12',
+        short: '工具',
+        title: '实用工具',
+        meta: '第 12 支柱 · 9 项主题',
+        coords: '39°54′N  116°24′E · 国家公开数据',
+        image: '/images/shanghai.webp',
+        summary: '把复杂政策压缩为即开即用的随身工具：免签判定器、全屏双语打车急救字卡、放票日历与 18 个官方数据源名录。',
+        topics: ['12.1 免签判定器', '12.2 车站字卡', '12.3 放票日历', '12.4 急救字卡', '12.5 预算退税算', '12.8 公开数据库'],
+        dispatch: '《一手政务核验台账：18 个官方门户与反爬备用源透明状态》',
+      },
+    ]
+  : [
+      {
+        num: '01',
+        short: 'GEO',
+        title: 'Geography',
+        meta: 'PILLAR 01 · 9 TOPICS',
+        coords: '24°46′N  110°29′E · Yangshuo, Guangxi',
+        image: '/images/hero.webp',
+        summary: 'From Li River limestone peaks and Jiangnan canal towns to 34 provincial divisions linked by high-speed rail.',
+        topics: ['1.1 China at a Glance', '1.3 34 Provinces', '1.6 City Walks', '1.7 Ancient Towns', '1.8 Natural Wonders', '1.9 Pandas & Wildlife'],
+        dispatch: 'Slow Mornings in Jiangnan Water Towns: Walking Beyond Day-Trip Crowds',
+      },
+      {
+        num: '02',
+        short: 'HIS',
+        title: 'History',
+        meta: 'PILLAR 02 · 10 TOPICS',
+        coords: '39°55′N  116°23′E · Beijing Central Axis',
+        image: '/images/beijing.webp',
+        summary: 'Five millennia of dynasties, 59 UNESCO heritage sites, national museums, and architectural order still legible on daily streets.',
+        topics: ['2.1 Imperial Dynasties', '2.3 World Heritage', '2.4 National Museums', '2.6 Religions & Temples', '2.7 Ancient Architecture', '2.9 Festivals & Zodiac'],
+        dispatch: 'Reading Beijing Timber Joinery: From Courtyard Geometry to Palace Roofs',
+      },
+      {
+        num: '06',
+        short: 'TEA',
+        title: 'Food & Tea',
+        meta: 'PILLAR 06 · 7 TOPICS',
+        coords: '30°14′N  120°08′E · Longjing, Hangzhou',
+        image: '/images/tea.webp',
+        summary: 'Eight regional culinary lineages, six classical tea families, late-night noodle stalls, and practical dietary navigation.',
+        topics: ['6.1 8 Great Cuisines', '6.2 Street Food & Hotpot', '6.4 Chinese Tea', '6.5 Baijiu & Drinks', '6.6 Dining Etiquette', '6.7 Dietary Needs'],
+        dispatch: 'Pre-Qingming West Lake Harvest: Temperature and Time in a Cup of Longjing',
+      },
+      {
+        num: '07',
+        short: 'ART',
+        title: 'Language & Arts',
+        meta: 'PILLAR 07 · 7 TOPICS',
+        coords: '29°17′N  117°10′E · Jingdezhen Kilns',
+        image: '/images/craft.webp',
+        summary: 'Practical street-level Mandarin, classical poetry, ink traditions, and living porcelain and silk workshops.',
+        topics: ['7.1 Chinese Language', '7.2 Learn Mandarin', '7.4 Calligraphy & Ink', '7.5 Music & Opera', '7.6 Modern Arts', '7.7 Heritage Crafts'],
+        dispatch: 'Inside Jingdezhen Working Kilns: Seventy-Two Steps from Clay to Glaze',
+      },
+      {
+        num: '09',
+        short: 'VIS',
+        title: 'Visit China',
+        meta: 'PILLAR 09 · 11 TOPICS',
+        coords: '31°11′N  121°19′E · Shanghai Hongqiao',
+        image: '/images/rail.webp',
+        summary: '30-day visa-free entry, 240-hour cross-province transit, linking foreign cards to Alipay/WeChat, 12306 rail, and Tax Refund 2.0.',
+        topics: ['9.1 Visas & Entry', '9.2 Mobile Payments', '9.3 Internet & Apps', '9.4 High-Speed Rail', '9.6 Ticket Booking', '9.8 Shopping & Tax-Free'],
+        dispatch: '2026 Fuxing Rail Field Check: Passport Verification and E-Gate Boarding',
+      },
+      {
+        num: '12',
+        short: 'TLS',
+        title: 'Tools & Data',
+        meta: 'PILLAR 12 · 9 TOPICS',
+        coords: '39°54′N  116°24′E · National Open Data',
+        image: '/images/shanghai.webp',
+        summary: 'Turn complex policy into pocket-ready utilities: visa checker, fullscreen taxi & SOS cards, release calendars, and 18 official portals.',
+        topics: ['12.1 Visa Checker', '12.2 Station & Taxi Cards', '12.3 Ticket Calendar', '12.4 Medical SOS Cards', '12.5 Budget Calculator', '12.8 Gov Open Data'],
+        dispatch: 'Primary Source Verification Ledger: 18 Government Portals & Standby Status',
+      },
+    ];
+---
+<ConceptLayout
+  title={isZh ? '方向 01 · 当代精装画报与书册卷宗' : 'Direction 01 · Editorial Folio & Quarterly'}
+  description={isZh ? '棉质宣纸、双细线扉页、通用编号索引栏与可翻阅的实体活页卷宗。' : 'Archival cotton paper, fine-press double hairline masthead, numbered index spine, and interactive folio binder.'}
+  active="v1"
+  dockTone="dark"
+>
+  <Fragment slot="head">
+    <style>
+      :root {
+        --v1-paper: #f5f0e6;
+        --v1-paper-deep: #ece4d5;
+        --v1-ink: #161412;
+        --v1-muted: #5d564c;
+        --v1-rule: rgba(22, 20, 18, 0.16);
+        --v1-rule-strong: rgba(22, 20, 18, 0.82);
+        --v1-seal: #c82d20;
+      }
+      body { background: var(--v1-paper); color: var(--v1-ink); padding-left: 58px; }
+      .v1-spine {
+        position: fixed; inset: 0 auto 0 0; width: 58px; background: var(--v1-paper-deep);
+        border-right: 1px solid var(--v1-rule-strong); display: flex; flex-direction: column;
+        align-items: center; justify-content: space-between; padding: 16px 0; z-index: 40;
+      }
+      .v1-seal-mark {
+        display: grid; place-items: center; width: 34px; height: 34px; background: var(--v1-seal);
+        color: var(--v1-paper); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        font-weight: 700; text-decoration: none;
+      }
+      .v1-spine-nav { display: flex; flex-direction: column; gap: 2px; width: 100%; align-items: center; }
+      .v1-spine-btn {
+        appearance: none; border: 0; background: transparent; color: var(--v1-muted);
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px; padding: 10px 4px;
+        cursor: pointer; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 2px;
+        position: relative; transition: color 0.16s ease, background-color 0.16s ease;
+      }
+      .v1-spine-btn span { font-size: 9.5px; opacity: 0.72; }
+      .v1-spine-btn:hover { color: var(--v1-ink); background: rgba(22, 20, 18, 0.04); }
+      .v1-spine-btn[aria-selected='true'] { color: var(--v1-seal); font-weight: 700; background: var(--v1-paper); }
+      .v1-spine-btn[aria-selected='true']::after {
+        content: ''; position: absolute; right: -1px; top: 6px; bottom: 6px; width: 3px; background: var(--v1-seal);
+      }
+      .v1-spine-colophon { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--v1-muted); }
+      .v1-main { max-width: 1320px; margin: 0 auto; padding: 0 44px 128px; }
+      .v1-masthead {
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        padding: 18px 0 14px; border-bottom: 2px solid var(--v1-ink);
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 12px;
+      }
+      .v1-masthead-brand {
+        font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 24px; font-weight: 500;
+        letter-spacing: -0.02em; text-decoration: none;
+      }
+      .v1-masthead-right { display: flex; justify-content: flex-end; gap: 22px; }
+      .v1-masthead-right a { text-decoration: none; color: var(--v1-muted); }
+      .v1-masthead-right a:hover { color: var(--v1-seal); }
+      .v1-spread {
+        display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.2fr); gap: 44px;
+        padding: 46px 0 54px; border-bottom: 1px solid var(--v1-rule-strong); align-items: end;
+      }
+      .v1-issue-meta {
+        display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11.5px; color: var(--v1-seal); margin-bottom: 22px;
+      }
+      .v1-issue-meta::before { content: ''; width: 24px; height: 1px; background: var(--v1-seal); }
+      .v1-headline {
+        margin: 0; font-family: 'Newsreader', 'Noto Serif SC', 'Songti SC', serif;
+        font-size: clamp(2.8rem, 5.5vw, 5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.025em;
+      }
+      .v1-headline em { font-style: italic; color: var(--v1-seal); }
+      .v1-dek { margin: 24px 0 32px; font-size: 16px; line-height: 1.75; color: var(--v1-muted); max-width: 44ch; }
+      .v1-editorial-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+      .v1-btn-ink {
+        display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px;
+        background: var(--v1-ink); color: var(--v1-paper); text-decoration: none; font-size: 13.5px;
+      }
+      .v1-btn-ink:hover { background: var(--v1-seal); }
+      .v1-btn-line {
+        display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px;
+        border: 1px solid var(--v1-rule-strong); text-decoration: none; font-size: 13.5px;
+      }
+      .v1-btn-line:hover { border-color: var(--v1-seal); color: var(--v1-seal); }
+      .v1-cover-frame { aspect-ratio: 4 / 3; overflow: hidden; background: #d9cfbe; border: 1px solid var(--v1-rule-strong); }
+      .v1-cover-frame img { width: 100%; height: 100%; object-fit: cover; }
+      .v1-marginalia {
+        display: flex; justify-content: space-between; gap: 12px; padding: 10px 0 8px;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px;
+        color: var(--v1-muted); border-bottom: 1px solid var(--v1-rule);
+      }
+      .v1-folio-section { padding: 56px 0; border-bottom: 1px solid var(--v1-rule-strong); }
+      .v1-section-bar { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+      .v1-section-bar h2 { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: clamp(1.6rem, 2.6vw, 2.3rem); font-weight: 400; }
+      .v1-section-bar span { font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px; color: var(--v1-muted); }
+      .v1-folio-sheet {
+        display: grid; grid-template-columns: 240px minmax(0, 1fr) minmax(0, 0.92fr);
+        border-top: 2px solid var(--v1-ink); border-bottom: 1px solid var(--v1-rule-strong); background: #faf6ee;
+      }
+      .v1-folio-tabs { border-right: 1px solid var(--v1-rule); display: flex; flex-direction: column; }
+      .v1-folio-tab {
+        appearance: none; border: 0; border-bottom: 1px solid var(--v1-rule); background: transparent;
+        text-align: left; padding: 16px 18px; cursor: pointer; display: flex; align-items: baseline;
+        justify-content: space-between; gap: 10px; color: var(--v1-muted);
+      }
+      .v1-folio-tab:last-child { border-bottom: 0; }
+      .v1-folio-tab:hover { background: var(--v1-paper-deep); color: var(--v1-ink); }
+      .v1-folio-tab[aria-selected='true'] { background: var(--v1-ink); color: var(--v1-paper); }
+      .v1-folio-tab-cn { font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 16px; font-weight: 600; }
+      .v1-folio-tab-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.65; }
+      .v1-folio-content { padding: 34px 36px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+      .v1-folio-en { font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px; color: var(--v1-seal); margin: 0 0 10px; }
+      .v1-folio-title { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 36px; font-weight: 400; line-height: 1.15; }
+      .v1-folio-summary { margin: 14px 0 0; font-size: 15px; line-height: 1.75; color: var(--v1-muted); max-width: 44ch; }
+      .v1-topic-slips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .v1-topic-slip { padding: 9px 12px; border: 1px solid var(--v1-rule); background: var(--v1-paper); font-size: 13px; }
+      .v1-folio-dispatch { padding-top: 16px; border-top: 1px dashed var(--v1-rule-strong); font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 14.5px; }
+      .v1-folio-dispatch strong { color: var(--v1-seal); font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11.5px; margin-right: 8px; }
+      .v1-folio-photo { position: relative; min-height: 360px; border-left: 1px solid var(--v1-rule); overflow: hidden; background: #1a1816; }
+      .v1-folio-photo img { width: 100%; height: 100%; object-fit: cover; }
+      .v1-folio-coord-stamp {
+        position: absolute; left: 16px; bottom: 16px; padding: 6px 10px;
+        background: rgba(245, 240, 230, 0.94); color: var(--v1-ink);
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px; border: 1px solid var(--v1-ink);
+      }
+      .v1-slips-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding-top: 44px; }
+      .v1-slip {
+        padding: 26px 28px 28px; border-top: 1px solid var(--v1-rule-strong); border-right: 1px solid var(--v1-rule);
+        text-decoration: none; display: flex; flex-direction: column; gap: 12px;
+      }
+      .v1-slip:last-child { border-right: 0; }
+      .v1-slip:hover { background: var(--v1-paper-deep); }
+      .v1-slip-index { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', 'PingFang SC', monospace; font-size: 11px; color: var(--v1-seal); }
+      .v1-slip h3 { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 23px; font-weight: 400; }
+      .v1-slip p { margin: 0; font-size: 14px; line-height: 1.68; color: var(--v1-muted); }
+      @media (max-width: 1040px) {
+        .v1-spread, .v1-folio-sheet, .v1-slips-grid { grid-template-columns: 1fr; }
+        .v1-folio-tabs { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--v1-rule); }
+        .v1-folio-photo { border-left: 0; border-top: 1px solid var(--v1-rule); min-height: 260px; }
+        .v1-slip { border-right: 0; }
+      }
+      @media (max-width: 680px) {
+        body { padding-left: 0; }
+        .v1-spine { display: none; }
+        .v1-main { padding: 0 18px 110px; }
+        .v1-masthead { grid-template-columns: 1fr; }
+        .v1-masthead-right { justify-content: flex-start; }
+      }
+    </style>
+  </Fragment>
+
+  <aside class="v1-spine" aria-label={isZh ? '卷宗编号导览' : 'Editorial folio index'}>
+    <a href={lp('/concepts/v1-editorial/')} class="v1-seal-mark" title="ChinaWao">CW</a>
+    <div class="v1-spine-nav" role="tablist" aria-orientation="vertical">
+      {chapters.map((ch, idx) => (
+        <button type="button" class="v1-spine-btn" role="tab" aria-selected={idx === 4 ? 'true' : 'false'} data-v1-pick={idx}>
+          <strong>{ch.num}</strong>
+          <span>{ch.short}</span>
+        </button>
+      ))}
+    </div>
+    <span aria-hidden="true"></span>
+  </aside>
+
+  <main class="v1-main">
+    <header class="v1-masthead">
+      <a href={lp('/concepts/v1-editorial/')} class="v1-masthead-brand">{isZh ? 'ChinaWao 志' : 'ChinaWao Journal'}</a>
+      <nav class="v1-masthead-right">
+        <a href={lp('/posts/')}>{isZh ? '田野志刊' : 'Journal'}</a>
+        <a href={lp('/atlas/')}>{isZh ? '全景图谱' : 'Atlas'}</a>
+        <a href={lp('/journeys/')}>{isZh ? '首访行程' : 'Journeys'}</a>
+        <a href={lp('/tools/')}>{isZh ? '实用工具' : 'Tools'}</a>
+      </nav>
+    </header>
+
+    <section class="v1-spread">
+      <div>
+        <h1 class="v1-headline">
+          {isZh ? (<>读懂当代中国的<br /><em>97 枚</em>田野切片</>) : (<><em>97 Field Slices</em><br />of Modern China</>)}
+        </h1>
+        <div class="v1-editorial-actions" style="margin-top: 32px;">
+          <a href="#v1-binder" class="v1-btn-ink">{isZh ? '翻阅全站活页卷宗 ↓' : 'Flip the Topic Folio ↓'}</a>
+          <a href={lp('/journeys/')} class="v1-btn-line">{isZh ? '首次来华 7 步剧本 →' : '7-Step First Trip Playbook →'}</a>
+        </div>
+      </div>
+
+      <figure style="margin:0;">
+        <div class="v1-cover-frame">
+          <img src="/images/hero.webp" alt={isZh ? '漓江喀斯特峰林日出' : 'Sunrise over the Li River limestone peaks in Yangshuo'} width="960" height="720" />
+        </div>
+        <figcaption class="v1-marginalia">
+          <span>{isZh ? '漓江峰林晨雾 · 桂林阳朔' : 'Li River Morning Mist · Yangshuo'}</span>
+          <span>24°46′N 110°29′E</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section id="v1-binder" class="v1-folio-section">
+      <div class="v1-section-bar">
+        <h2>{isZh ? '活页卷宗' : 'Topic Folio'}</h2>
+      </div>
+
+      <div class="v1-folio-sheet">
+        <div class="v1-folio-tabs" role="tablist">
+          {chapters.map((ch, idx) => (
+            <button type="button" class="v1-folio-tab" role="tab" aria-selected={idx === 4 ? 'true' : 'false'} data-v1-pick={idx}>
+              <span class="v1-folio-tab-cn">{ch.title}</span>
+              <span class="v1-folio-tab-num">{ch.num}</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="v1-folio-content">
+          <div>
+            <h3 class="v1-folio-title" data-v1-title>{chapters[4].title}</h3>
+            <p class="v1-folio-summary" data-v1-summary>{chapters[4].summary}</p>
+          </div>
+
+          <div class="v1-topic-slips" data-v1-topics>
+            {chapters[4].topics.map((t) => <span class="v1-topic-slip">{t}</span>)}
+          </div>
+
+          <div class="v1-folio-dispatch">
+            <strong>{isZh ? '精选实录' : 'FEATURED'}</strong>
+            <span data-v1-dispatch>{chapters[4].dispatch}</span>
+          </div>
+        </div>
+
+        <div class="v1-folio-photo">
+          <img src={chapters[4].image} alt={chapters[4].title} data-v1-img />
+          <span class="v1-folio-coord-stamp" data-v1-coords>{chapters[4].coords}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="v1-slips-grid" aria-label={isZh ? '三大随身卷宗入口' : 'Three archival field slips'}>
+      <a href={lp('/journeys/')} class="v1-slip">
+        <h3>{isZh ? '首次来华 7 步通关剧本' : '7-Step First Trip Playbook'}</h3>
+        <p>{isZh ? '把免签核验、外卡绑支付宝、eSIM 联网、12306 护照认证与离境退税压成一份按时间推进的折叠行程单。' : 'Visa rules, foreign card setup, eSIM connectivity, 12306 rail verification, and tax refunds in one timeline.'}</p>
+      </a>
+      <a href={lp('/tools/')} class="v1-slip">
+        <h3>{isZh ? '240 小时免签与实用字卡' : '240h Visa Checker & Flashcards'}</h3>
+        <p>{isZh ? '输入护照与天数即时判定适用政策；点开全屏高对比中文大字卡，直接出示给司机、车站与医院导诊台。' : 'Check instant visa-free eligibility and open fullscreen show-the-driver cards for taxis, stations, and hospitals.'}</p>
+      </a>
+      <a href={lp('/directory/')} class="v1-slip">
+        <h3>{isZh ? '核验官方公共服务名录' : 'Verified Official Directory'}</h3>
+        <p>{isZh ? '严选国家移民局、12306、税务总局与开放数据直达入口，彻底剔除软文空壳并透明标注反爬备用状态。' : 'Curated ministry portals and free open datasets with transparent WAF standby status and zero commercial filler.'}</p>
+      </a>
+    </section>
+  </main>
+
+  <script define:vars={{ chapters }}>
+    const buttons = Array.from(document.querySelectorAll('[data-v1-pick]'));
+    const titleEl = document.querySelector('[data-v1-title]');
+    const summaryEl = document.querySelector('[data-v1-summary]');
+    const topicsEl = document.querySelector('[data-v1-topics]');
+    const dispatchEl = document.querySelector('[data-v1-dispatch]');
+    const imgEl = document.querySelector('[data-v1-img]');
+    const coordsEl = document.querySelector('[data-v1-coords]');
+
+    const activate = (idx) => {
+      const item = chapters[idx];
+      if (!item) return;
+      buttons.forEach((btn) => btn.setAttribute('aria-selected', String(Number(btn.dataset.v1Pick) === idx)));
+      if (titleEl) titleEl.textContent = item.title;
+      if (summaryEl) summaryEl.textContent = item.summary;
+      if (dispatchEl) dispatchEl.textContent = item.dispatch;
+      if (coordsEl) coordsEl.textContent = item.coords;
+      if (imgEl) { imgEl.src = item.image; imgEl.alt = item.title; }
+      if (topicsEl) {
+        topicsEl.innerHTML = '';
+        item.topics.forEach((t) => {
+          const span = document.createElement('span');
+          span.className = 'v1-topic-slip';
+          span.textContent = t;
+          topicsEl.appendChild(span);
+        });
+      }
+    };
+    buttons.forEach((btn) => btn.addEventListener('click', () => activate(Number(btn.dataset.v1Pick))));
+  </script>
+</ConceptLayout>

@@ -1,0 +1,221 @@
+---
+import { decodeSlug, getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import AsymmetricHero from '@site/AsymmetricHero.astro';
+import PostCard from '@site/PostCard.astro';
+import Pagination from '@site/Pagination.astro';
+import Icon from '@site/Icon.astro';
+import { getPublicPosts, publicContext, queryPage } from '@lib/cms';
+import { categoryPath, topicIconName } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/home.css';
+import '../../styles/topic.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return new Response(null, { status: 404 });
+
+const terms = await publicContext(() =>
+  getTaxonomyTermsWithCacheHint('category', { includeCounts: true, locale }),
+).catch(() => null);
+if (!terms) {
+  return new Response('Categories are temporarily unavailable.', { status: 503 });
+}
+
+type Term = (typeof terms.data)[number];
+const flatten = (items: Term[]): Term[] =>
+  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+const allTerms = flatten(terms.data);
+const term = allTerms.find((item) => item.slug === slug);
+if (!term) return new Response(null, { status: 404 });
+
+function getTermCount(t: Term): number | null {
+  if ('count' in t && typeof t.count === 'number') return t.count;
+  return null;
+}
+
+const ancestors: Term[] = [];
+const visited = new Set<string>([term.id]);
+let parentId = term.parentId;
+while (parentId && !visited.has(parentId)) {
+  const parent = allTerms.find((item) => item.id === parentId);
+  if (!parent) break;
+  ancestors.unshift(parent);
+  visited.add(parent.id);
+  parentId = parent.parentId;
+}
+
+const parentTerm = ancestors.at(-1) ?? null;
+
+const subTerms = term.children?.length
+  ? term.children
+  : allTerms.filter((item) => item.parentId === term.id);
+
+const siblingTerms = parentTerm
+  ? (parentTerm.children?.length
+      ? parentTerm.children
+      : allTerms.filter((item) => item.parentId === parentTerm.id))
+  : [];
+
+const cursor = Astro.url.searchParams.get('cursor') || undefined;
+const path = categoryPath(term.slug);
+const { result, invalidCursor } = await queryPage(() =>
+  getPublicPosts({ limit: 12, cursor, locale, where: { category: term.slug } }),
+);
+
+if (invalidCursor) {
+  return Astro.redirect(lp(path), 302);
+}
+
+if (!result || result.error) {
+  return new Response('The article archive is temporarily unavailable.', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(terms.cacheHint);
+  Astro.cache.set(result.cacheHint);
+}
+
+const showBroadsheet = !cursor && result.entries.length >= 2;
+const leadPost = showBroadsheet ? result.entries[0] : null;
+const railPosts = showBroadsheet ? result.entries.slice(1, 4) : [];
+const gridPosts = showBroadsheet
+  ? (result.entries.length > 4 ? result.entries.slice(4) : result.entries.slice(1))
+  : result.entries;
+const totalCount = getTermCount(term) ?? result.entries.length;
+---
+<Layout
+  title={term.label}
+  description={term.description || (isZh ? `${term.label} 专题实录与指南` : `Editorial dossier for ${term.label}`)}
+>
+  <div class="container dossier-shell">
+    <div class="dossier-header">
+      <div class="dossier-header-main">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <a href={lp('/topics/')}>{isZh ? '栏目' : 'Topics'}</a>
+          {ancestors.map((ancestor) => (
+            <>
+              <span class="breadcrumb-sep" aria-hidden="true">/</span>
+              <a href={lp(categoryPath(ancestor.slug))}>{ancestor.label}</a>
+            </>
+          ))}
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <span aria-current="page">{term.label}</span>
+        </nav>
+
+        <div class="dossier-kicker-row">
+          <Icon name={topicIconName(term.slug)} size={20} />
+          <p class="eyebrow eyebrow--accent">
+            {parentTerm
+              ? (isZh ? `${parentTerm.label} · 子专题` : `${parentTerm.label} · Subtopic`)
+              : (isZh ? '专题卷宗' : 'Topic Dossier')}
+          </p>
+        </div>
+        <h1>{term.label}</h1>
+        {term.description && <p class="archive-lead">{term.description}</p>}
+      </div>
+
+      <div class="dossier-stats">
+        <span class="meta-line">
+          {isZh ? `${totalCount} 篇实录` : `${totalCount} ${totalCount === 1 ? 'dispatch' : 'dispatches'}`}
+        </span>
+        {subTerms.length > 0 && (
+          <span class="meta-line">
+            <span class="meta-dot" aria-hidden="true">/</span>
+            {isZh ? `${subTerms.length} 个子主题` : `${subTerms.length} ${subTerms.length === 1 ? 'subtopic' : 'subtopics'}`}
+          </span>
+        )}
+      </div>
+    </div>
+
+    {subTerms.length > 0 && (
+      <nav class="pipe-bar" aria-label={isZh ? `${term.label} 子主题` : `Subtopics in ${term.label}`}>
+        <a href={lp(path)} class="pipe-link" aria-current="page">
+          <span>{isZh ? `全部「${term.label}」` : `All ${term.label}`}</span>
+        </a>
+        {subTerms.map((child) => {
+          const childCount = getTermCount(child);
+          return (
+            <a href={lp(categoryPath(child.slug))} class="pipe-link">
+              <span>{child.label}</span>
+              {childCount !== null && <span class="pipe-count">({childCount})</span>}
+            </a>
+          );
+        })}
+      </nav>
+    )}
+
+    {parentTerm && siblingTerms.length > 1 && (
+      <nav class="pipe-bar" aria-label={isZh ? `${parentTerm.label} 同级子主题` : `Subtopics in ${parentTerm.label}`}>
+        <a href={lp(categoryPath(parentTerm.slug))} class="pipe-link">
+          <span>{isZh ? `全部「${parentTerm.label}」` : `All ${parentTerm.label}`}</span>
+        </a>
+        {siblingTerms.map((sibling) => {
+          const isCurrent = sibling.slug === term.slug;
+          const sibCount = getTermCount(sibling);
+          return (
+            <a
+              href={lp(categoryPath(sibling.slug))}
+              class="pipe-link"
+              aria-current={isCurrent ? 'page' : undefined}
+            >
+              <span>{sibling.label}</span>
+              {sibCount !== null && <span class="pipe-count">({sibCount})</span>}
+            </a>
+          );
+        })}
+      </nav>
+    )}
+
+    {leadPost && (
+      <AsymmetricHero
+        lead={leadPost}
+        railPosts={railPosts}
+        railTitle={isZh ? `「${term.label}」精选` : `Featured in ${term.label}`}
+        headingLevel="h2"
+      />
+    )}
+
+    {gridPosts.length > 0 ? (
+      <section aria-label={isZh ? '专题文章列表' : 'Topic dispatches'}>
+        {leadPost && (
+          <div class="section-header">
+            <div>
+              <p class="rail-heading">{isZh ? `更多「${term.label}」实录` : `More in ${term.label}`}</p>
+              <h2>{isZh ? '专题归档' : 'Archive dispatches'}</h2>
+            </div>
+            <a href={lp('/topics/')} class="editorial-link">
+              <span>{isZh ? '全部栏目' : 'All topics'}</span>
+              <Icon name="arrow" size={15} />
+            </a>
+          </div>
+        )}
+        <div class="post-grid">
+          {gridPosts.map((post) => (
+            <PostCard post={post} headingLevel={leadPost ? 'h3' : 'h2'} />
+          ))}
+        </div>
+      </section>
+    ) : !leadPost && (
+      <div class="empty-panel">
+        <h2>{isZh ? '该专题下暂未发布实录文章。' : 'No published dispatches in this topic yet.'}</h2>
+        <p>{isZh ? '可切换上方子主题，或浏览全部志刊归档。' : 'Explore subtopics above or browse the full journal archive.'}</p>
+        <div class="empty-actions">
+          <a href={lp('/topics/')} class="btn">{isZh ? '全部栏目' : 'All topics'}</a>
+          <a href={lp('/posts/')} class="editorial-link">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+        </div>
+      </div>
+    )}
+
+    <Pagination
+      basePath={path}
+      hasCursor={Boolean(cursor)}
+      nextCursor={result.nextCursor}
+    />
+  </div>
+</Layout>

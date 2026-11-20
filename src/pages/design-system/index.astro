@@ -1,0 +1,589 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Button from '@ui/actions/Button.astro';
+import ButtonGroup from '@ui/actions/ButtonGroup.astro';
+import CompactButton from '@ui/actions/CompactButton.astro';
+import FancyButton from '@ui/actions/FancyButton.astro';
+import LinkButton from '@ui/actions/LinkButton.astro';
+import Avatar from '@ui/data-display/Avatar.astro';
+import AvatarGroup from '@ui/data-display/AvatarGroup.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import DataTable from '@ui/data-display/DataTable.astro';
+import Divider from '@ui/data-display/Divider.astro';
+import Kbd from '@ui/data-display/Kbd.astro';
+import ProgressBar from '@ui/data-display/ProgressBar.astro';
+import ProgressCircle from '@ui/data-display/ProgressCircle.astro';
+import Rating from '@ui/data-display/Rating.astro';
+import Skeleton from '@ui/data-display/Skeleton.astro';
+import Tag from '@ui/data-display/Tag.astro';
+import Alert from '@ui/feedback/Alert.astro';
+import Banner from '@ui/feedback/Banner.astro';
+import NotificationCard from '@ui/feedback/NotificationCard.astro';
+import Tooltip from '@ui/feedback/Tooltip.astro';
+import Checkbox from '@ui/forms/Checkbox.astro';
+import ColorPicker from '@ui/forms/ColorPicker.astro';
+import DateInput from '@ui/forms/DateInput.astro';
+import DigitInput from '@ui/forms/DigitInput.astro';
+import FileUpload from '@ui/forms/FileUpload.astro';
+import Input from '@ui/forms/Input.astro';
+import RadioGroup from '@ui/forms/RadioGroup.astro';
+import Select from '@ui/forms/Select.astro';
+import Slider from '@ui/forms/Slider.astro';
+import Textarea from '@ui/forms/Textarea.astro';
+import Accordion from '@ui/navigation/Accordion.astro';
+import Breadcrumb from '@ui/navigation/Breadcrumb.astro';
+import SegmentedControl from '@ui/navigation/SegmentedControl.astro';
+import Stepper from '@ui/navigation/Stepper.astro';
+import Tabs from '@ui/navigation/Tabs.astro';
+import VerticalTabs from '@ui/navigation/VerticalTabs.astro';
+import Drawer from '@ui/overlays/Drawer.astro';
+import DropdownMenu from '@ui/overlays/DropdownMenu.astro';
+import Modal from '@ui/overlays/Modal.astro';
+import PopoverCard from '@ui/overlays/PopoverCard.astro';
+import {
+  BASE_PRIMITIVE_COVERAGE,
+  DS_FAQ_ITEMS,
+  DS_HOW_STEPS,
+  DS_VTAB_ITEMS,
+} from '@data/design-system-catalog';
+import { getVisaMatrixTable } from '@data/mock-portal-zh';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '@styles/specialty.css';
+import '@styles/design-system.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+const visaMatrix = getVisaMatrixTable(locale);
+
+const swatches = isZh
+  ? [
+      { name: '素宣画布 (60%)', token: '--surface-canvas', bg: 'var(--surface-canvas)' },
+      { name: '浮宣纸面 (60%)', token: '--surface-raised', bg: 'var(--surface-raised)' },
+      { name: '故宫墙红 (30%)', token: '--secondary-solid', bg: 'var(--secondary-solid)' },
+      { name: '暖杏底韵 (30%)', token: '--secondary-tint', bg: 'var(--secondary-tint)' },
+      { name: '朱砂印泥 (10%)', token: '--accent-seal', bg: 'var(--accent-seal)' },
+      { name: '鎏金点缀 (10%)', token: '--accent-gold', bg: 'var(--accent-gold)' },
+      { name: '核验青瓷绿', token: '--status-verified-ink', bg: 'var(--status-verified-ink)' },
+      { name: '备用琥珀黄', token: '--status-standby-ink', bg: 'var(--status-standby-ink)' },
+    ]
+  : [
+      { name: 'Xuan Canvas (60%)', token: '--surface-canvas', bg: 'var(--surface-canvas)' },
+      { name: 'Raised Paper (60%)', token: '--surface-raised', bg: 'var(--surface-raised)' },
+      { name: 'Palace Wall (30%)', token: '--secondary-solid', bg: 'var(--secondary-solid)' },
+      { name: 'Warm Tint (30%)', token: '--secondary-tint', bg: 'var(--secondary-tint)' },
+      { name: 'Cinnabar Seal (10%)', token: '--accent-seal', bg: 'var(--accent-seal)' },
+      { name: 'Imperial Gold (10%)', token: '--accent-gold', bg: 'var(--accent-gold)' },
+      { name: 'Verified Celadon', token: '--status-verified-ink', bg: 'var(--status-verified-ink)' },
+      { name: 'Standby Amber', token: '--status-standby-ink', bg: 'var(--status-standby-ink)' },
+    ];
+
+const dsTabs = isZh
+  ? [
+      {
+        id: 'spec',
+        label: '几何与设计令牌',
+        heading: '2px 建筑微方标准',
+        body: '所有交互原子组件共享 --control-radius: 2px、同心焦点环（:focus-visible），并在亮色（素宣纸）与暗色（徽墨夜）双模态下严格满足 WCAG AA 对比度。',
+      },
+      {
+        id: 'a11y',
+        label: '键盘与无障碍语义',
+        heading: '原生 Web 平台语义优先',
+        body: '基于原生 <dialog closedby="any">、Popover API、appearance: base-select、commandfor 触发器、field-sizing: content 与 ARIA 实时播报，零重型 JS 运行时负担。',
+      },
+      {
+        id: 'license',
+        label: '100% 原创产权',
+        heading: '零商业字体或付费模板负债',
+        body: '全站采用自托管 SIL OFL 1.1 开源字体（Newsreader、DM Sans、JetBrains Mono）及 f:\\chinawao-web 内的 100% 原创 Astro + CSS 代码。',
+      },
+    ]
+  : [
+      {
+        id: 'spec',
+        label: 'Geometry & Tokens',
+        heading: '2px Architectural Micro-Square Standard',
+        body: 'Every interactive primitive shares --control-radius: 2px, flush concentric :focus-visible rings, and WCAG AA contrast across Light (Xuan Paper) and Dark (Hui Ink) modes.',
+      },
+      {
+        id: 'a11y',
+        label: 'Keyboard & Screen Readers',
+        heading: 'Native Platform Semantics First',
+        body: 'Built on native <dialog closedby="any">, Popover API, appearance: base-select, commandfor invokers, field-sizing: content, and ARIA live announcements without heavy JS frameworks.',
+      },
+      {
+        id: 'license',
+        label: '100% Original Ownership',
+        heading: 'Zero Commercial Font or Paid Template Debt',
+        body: 'Uses self-hosted SIL OFL 1.1 fonts (Newsreader, DM Sans, JetBrains Mono) and 100% original Astro + CSS code inside f:\\chinawao-web.',
+      },
+    ];
+---
+<Layout
+  title={isZh ? '设计系统 · 49 项基础组件套件' : 'Design System · 49 Base Primitives'}
+  description={
+    isZh
+      ? 'ChinaWao 路线 A 原生设计系统——素宣与徽墨双模态语义令牌、排版层级与全部 49 项基础 UI 原子组件。'
+      : 'ChinaWao Route A 100% Native Design System — Tokens, Local Styles, and all 49 Base UI Primitives in Xuan Paper & Hui Ink.'
+  }
+>
+  <div class="container ds-shell">
+    <Breadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '设计系统' : 'Design System' },
+      ]}
+      jsonLd
+    />
+
+    <header class="portal-hero">
+      <div class="portal-hero-head">
+        <div class="portal-hero-copy">
+          <span class="kicker">{isZh ? 'ChinaWao 路线 A · 全量原生设计系统' : 'ChinaWao Route A · Complete Native UI Kit'}</span>
+          <h1>{isZh ? '基础令牌与 49 项核心原子组件' : 'Foundations & 49 Base Primitives'}</h1>
+          <p class="portal-lead">
+            {isZh
+              ? '100% 原创 Astro + 现代原生 HTML/CSS 设计系统（2px 建筑微方控件、故宫 60/30/10 东方配色、WCAG AA 双模态对比度）。可在此检视全部 49 项基础原子组件，或切换至配套展台查看 39 类 Pro 级页面区块。'
+              : '100% original Astro + modern HTML/CSS design system (`2px` micro-square controls, Forbidden City 60/30/10 palette, WCAG AA dual-mode parity). Switch between all 49 Base Primitives here and all 39 Pro-grade Page Blocks on the companion showcase.'}
+          </p>
+          <div class="ds-row" style="margin-top: var(--space-3);">
+            <Button href={lp('/design-system/')} variant="primary" size="sm">{isZh ? '基础组件套件 (49)' : 'Base UI Kit (49)'}</Button>
+            <Button href={lp('/design-system/blocks/')} variant="secondary" size="sm">{isZh ? 'Pro 区块展台 (39) →' : 'Pro Blocks Showcase (39) →'}</Button>
+          </div>
+        </div>
+        <div class="portal-hero-meta">
+          <div class="portal-stat-box">
+            <span class="kicker">{isZh ? '基础覆盖' : 'Coverage'}</span>
+            <strong>49 / 49</strong>
+            <span class="portal-stat-note">{isZh ? '基础 UI 原子组件' : 'Base UI primitives'}</span>
+          </div>
+          <div class="portal-stat-box">
+            <span class="kicker">{isZh ? '页面区块' : 'Blocks'}</span>
+            <strong>39 / 39</strong>
+            <span class="portal-stat-note">{isZh ? 'Pro 级区块全覆盖' : 'Pro block equivalents'}</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="pillar-jump-bar" aria-label={isZh ? '跳转至设计系统章节' : 'Jump to design system section'}>
+        <a href="#ds-tokens" class="pillar-jump-link">{isZh ? '色彩与字体令牌' : 'Tokens & Styles'}</a>
+        <a href="#ds-actions" class="pillar-jump-link">{isZh ? '操作按钮' : 'Actions'}</a>
+        <a href="#ds-data-display" class="pillar-jump-link">{isZh ? '数据展示' : 'Data Display'}</a>
+        <a href="#ds-table" class="pillar-jump-link">{isZh ? '排序数据表' : 'DataTable'}</a>
+        <a href="#ds-progress" class="pillar-jump-link">{isZh ? '进度与评分' : 'Progress & Rating'}</a>
+        <a href="#ds-forms" class="pillar-jump-link">{isZh ? '核心表单' : 'Core Forms'}</a>
+        <a href="#ds-advanced-forms" class="pillar-jump-link">{isZh ? '高级表单' : 'Advanced Forms'}</a>
+        <a href="#ds-feedback" class="pillar-jump-link">{isZh ? '状态反馈' : 'Feedback'}</a>
+        <a href="#ds-navigation" class="pillar-jump-link">{isZh ? '导航结构' : 'Navigation'}</a>
+        <a href="#ds-overlays" class="pillar-jump-link">{isZh ? '浮层交互' : 'Overlays'}</a>
+      </nav>
+    </header>
+
+    {/* 1. Tokens & Local Styles */}
+    <section id="ds-tokens" class="ds-section">
+      <span class="kicker">{isZh ? '01 · 基础令牌与局部样式' : '01 · Foundations & Local Styles'}</span>
+      <h2>{isZh ? '双模态色彩令牌、五级排版与微阴影' : 'Color Tokens, 5-Tier Typography & Micro-Shadows'}</h2>
+      <p class="ds-lead">
+        {isZh
+          ? <>所有语义画布、墨色、控件、焦点环与状态令牌均通过 <code>light-dark()</code> 自动适配。可在页眉或页脚切换素宣/徽墨模式实时检验对比度。</>
+          : <>All semantic surface, ink, control, focus, and status tokens adapt automatically via <code>light-dark()</code>. Toggle Light/Dark in the header to verify both palettes.</>}
+      </p>
+
+      <div class="ds-swatch-grid">
+        {swatches.map((s) => (
+          <div class="ds-swatch">
+            <div class="ds-swatch-chip" style={`background:${s.bg};`}></div>
+            <div class="ds-swatch-body">
+              <strong class="ds-swatch-name">{s.name}</strong>
+              <span class="ds-swatch-token">{s.token}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="ds-type-list" style="margin-top: var(--space-5);">
+        <div class="ds-type-row">
+          <span class="ds-swatch-token">.t-title</span>
+          <p class="t-title">Newsreader Editorial Title — 240-Hour Transit Playbook</p>
+        </div>
+        <div class="ds-type-row">
+          <span class="ds-swatch-token">.t-subheading</span>
+          <p class="t-subheading">Subheading · Verified Field Procedures</p>
+        </div>
+        <div class="ds-type-row">
+          <span class="ds-swatch-token">.t-label</span>
+          <p class="t-label">Control Label · Passport Nationality</p>
+        </div>
+        <div class="ds-type-row">
+          <span class="ds-swatch-token">.t-paragraph</span>
+          <p class="t-paragraph">Body paragraph — High-legibility DM Sans copy set for sustained reading on Xuan Paper or Hui Ink.</p>
+        </div>
+        <div class="ds-type-row">
+          <span class="ds-swatch-token">.t-docs</span>
+          <p class="t-docs">Docs &amp; Monospace Spec — GB/T 2026 · NIA 12367 · Verified 2026-11-20</p>
+        </div>
+      </div>
+    </section>
+
+    {/* 2. Actions */}
+    <section id="ds-actions" class="ds-section">
+      <span class="kicker">{isZh ? '02 · 操作按钮（5 项原子）' : '02 · Actions (5 Primitives)'}</span>
+      <h2>{isZh ? '主次按钮、按钮组、紧凑图标按钮与外链按钮' : 'Button, ButtonGroup, CompactButton, FancyButton & LinkButton'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-panel">
+          <span class="ds-panel-title">{isZh ? '按钮变体与印章强调按钮（Button / FancyButton）' : 'Button Variants & FancyButton'}</span>
+          <div class="ds-row">
+            <Button variant="primary">{isZh ? '主要操作' : 'Primary Action'}</Button>
+            <Button variant="secondary">{isZh ? '次要按钮' : 'Secondary'}</Button>
+            <Button variant="ghost">{isZh ? '幽灵按钮' : 'Ghost'}</Button>
+            <Button variant="secondary" disabled>{isZh ? '禁用态' : 'Disabled'}</Button>
+          </div>
+          <div class="ds-row">
+            <FancyButton tone="seal">{isZh ? '朱砂印章行动键' : 'Palace Seal CTA'}</FancyButton>
+            <FancyButton tone="palace">{isZh ? '宫墙红行动键' : 'Palace Wall CTA'}</FancyButton>
+            <FancyButton tone="ink">{isZh ? '徽墨主行动键' : 'Hui Ink CTA'}</FancyButton>
+          </div>
+        </div>
+
+        <div class="ds-panel">
+          <span class="ds-panel-title">{isZh ? '按钮组、紧凑按钮与文字链按钮' : 'ButtonGroup, CompactButton & LinkButton'}</span>
+          <div class="ds-row">
+            <ButtonGroup label={isZh ? '视图切换' : 'View switch'}>
+              <button type="button" aria-pressed="true">{isZh ? '网格' : 'Grid'}</button>
+              <button type="button">{isZh ? '表格' : 'Table'}</button>
+              <button type="button">{isZh ? '地图' : 'Map'}</button>
+            </ButtonGroup>
+            <CompactButton icon="copy" label={isZh ? '复制引用' : 'Copy citation'} variant="stroke" data-cw-toast-trigger={isZh ? '引用已复制到剪贴板。' : 'Citation copied to clipboard.'} />
+            <CompactButton icon="share" label={isZh ? '分享实录' : 'Share dispatch'} variant="ghost" data-cw-toast-trigger={isZh ? '分享链接已复制。' : 'Share link copied.'} />
+            <CompactButton icon="plus" label={isZh ? '添加条目' : 'Add entry'} variant="filled" data-cw-toast-trigger={isZh ? '新条目已加入队列。' : 'New entry queued.'} />
+          </div>
+          <div class="ds-row">
+            <LinkButton href={lp('/atlas/')} tone="accent">{isZh ? '浏览中国图谱' : 'Explore China Atlas'}</LinkButton>
+            <LinkButton href={lp('/directory/')} tone="neutral">{isZh ? '官方名录' : 'Official Directory'}</LinkButton>
+            <LinkButton href="https://en.nia.gov.cn/" external>{isZh ? '国家移民管理局外链' : 'External NIA Portal'}</LinkButton>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* 3. Data Display */}
+    <section id="ds-data-display" class="ds-section">
+      <span class="kicker">{isZh ? '03 · 数据展示（Avatar · Badge · Tag · Divider · Kbd）' : '03 · Data Display (Avatar, Badge, Tag, Divider, Kbd)'}</span>
+      <h2>{isZh ? '头像组、状态徽章、可移除标签、分隔线与快捷键位' : 'Identity, Status Badges, Removable Tags, Dividers & Keycaps'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-panel">
+          <span class="ds-panel-title">Avatar &amp; AvatarGroup (Default + Compact)</span>
+          <div class="ds-row">
+            <Avatar name="Shen Ming" size="xs" tone="palace" />
+            <Avatar name="Lin Wei" size="sm" tone="gold" status="online" />
+            <Avatar name="Hannah Reid" size="md" tone="ink" status="away" />
+            <Avatar name="Chen Tao" size="lg" tone="sage" status="offline" />
+          </div>
+          <AvatarGroup
+            caption="6 contributing editors"
+            items={[
+              { name: 'Shen Ming', tone: 'palace' },
+              { name: 'Lin Wei', tone: 'gold' },
+              { name: 'Hannah Reid', tone: 'ink' },
+              { name: 'Chen Tao', tone: 'sage' },
+              { name: 'Maya Sato', tone: 'palace' },
+              { name: 'Zhou Qi', tone: 'ink' },
+            ]}
+          />
+          <AvatarGroup
+            variant="compact"
+            max={3}
+            caption="Compact group badge"
+            items={[
+              { name: 'Shen Ming', tone: 'palace' },
+              { name: 'Lin Wei', tone: 'gold' },
+              { name: 'Hannah Reid', tone: 'ink' },
+              { name: 'Chen Tao', tone: 'sage' },
+            ]}
+          />
+        </div>
+
+        <div class="ds-panel">
+          <span class="ds-panel-title">Badge, Removable Tag, Kbd &amp; Divider</span>
+          <div class="ds-row">
+            <Badge tone="neutral">Neutral</Badge>
+            <Badge tone="editorial">Editorial</Badge>
+            <Badge tone="verified">Verified Live</Badge>
+            <Badge tone="standby">WAF Standby</Badge>
+            <Badge tone="danger">Suspended</Badge>
+          </div>
+          <div class="ds-row">
+            <Tag label="Visas & Entry" count={14} tone="editorial" removable />
+            <Tag label="High-Speed Rail" tone="verified" removable />
+            <Tag label="English UI" tone="neutral" removable />
+          </div>
+          <div class="ds-row">
+            <span class="t-label">Quick search shortcut:</span>
+            <Kbd keys={['⌘', 'K']} />
+            <Divider orientation="vertical" />
+            <span class="t-label">Dismiss modal:</span>
+            <Kbd>Esc</Kbd>
+          </div>
+          <Divider label="Section Break · 宣纸细线" tone="gold" />
+        </div>
+      </div>
+    </section>
+
+    {/* 4. DataTable */}
+    <section id="ds-table" class="ds-section">
+      <span class="kicker">{isZh ? '04 · 可排序响应式数据表（DataTable）' : '04 · Sortable & Responsive DataTable'}</span>
+      <h2>{isZh ? '点击列头实时排序 · 580px 以下自动卡片堆叠' : 'Click Column Headers to Sort — Stacks Cleanly Under 580px'}</h2>
+      <p class="ds-lead">
+        {isZh
+          ? <>基于原生 <code>command="--sort"</code> 触发器、<code>Intl.Collator</code>、原始数值 <code>data-value</code> 比较与 <code>moveBefore()</code> 就地行重排，支持粘性表头与容器查询卡片折叠。</>
+          : <>Uses native <code>command="--sort"</code> invokers, <code>Intl.Collator</code>, raw numeric <code>data-value</code> comparison, in-place <code>moveBefore()</code> row reordering, sticky headers, and container-query card stacking.</>}
+      </p>
+      <DataTable
+        id="ds-visa-table"
+        caption={isZh ? '9.1 中国免签与 240 小时过境免签对照表（点击列头排序）' : '9.1 China Visa-Free & 240-Hour Transit Matrix (Click headers to sort)'}
+        columns={visaMatrix.columns}
+        rows={visaMatrix.rows}
+      />
+    </section>
+
+    {/* 5. Progress & Rating */}
+    <section id="ds-progress" class="ds-section">
+      <span class="kicker">{isZh ? '05 · 进度与评分（Progress · Rating）' : '05 · Progress & Rating'}</span>
+      <h2>{isZh ? '进度条、环形进度指示器与无障碍星级评分' : 'ProgressBar, ProgressCircle & Interactive Rating'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-panel">
+          <span class="ds-panel-title">ProgressBar &amp; ProgressCircle</span>
+          <ProgressBar value={84} max={97} label="97-Topic Coverage" valueLabel="84 / 97" tone="seal" />
+          <ProgressBar value={92} label="Official Source Freshness" tone="verified" />
+          <div class="ds-row">
+            <ProgressCircle value={88} label="Atlas Ready" tone="seal" />
+            <ProgressCircle value={96} label="WCAG AA" tone="verified" />
+            <ProgressCircle value={72} label="OKF Sync" tone="gold" />
+          </div>
+        </div>
+
+        <div class="ds-panel">
+          <span class="ds-panel-title">Rating (Readonly &amp; Interactive Radio Fieldset)</span>
+          <Rating value={4.8} count={42} readonly />
+          <Divider />
+          <Rating name="ds-field-rating" legend="Rate airport e-gate smoothness" value={4} />
+        </div>
+      </div>
+    </section>
+
+    {/* 6. Core Forms */}
+    <section id="ds-forms" class="ds-section">
+      <span class="kicker">{isZh ? '06 · 核心表单原子' : '06 · Core Form Primitives'}</span>
+      <h2>{isZh ? '输入框、自动增高文本域、品牌下拉选框与开关单选组' : 'Input, Textarea (field-sizing), Select (base-select), Checkbox, Switch & RadioGroup'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-panel">
+          <span class="ds-panel-title">Text Inputs &amp; Auto-Growing Textarea</span>
+          <Input
+            id="ds-input-city"
+            name="city"
+            label="Arrival port or city"
+            placeholder="e.g. Shanghai Pudong (PVG)"
+            hint="Supports English name or 3-letter IATA code."
+          />
+          <Input
+            id="ds-input-code"
+            name="uscc"
+            label="USCC 18-digit code (blur empty to test :user-invalid)"
+            placeholder="91310000XXXXXXXXXX"
+            required
+            error="Enter an 18-character Unified Social Credit Code."
+          />
+          <Textarea
+            id="ds-textarea"
+            label="Field verification note (grows vertically via field-sizing: content)"
+            placeholder="Type multiple lines to observe vertical auto-sizing and live counter..."
+            maxlength={280}
+            hint="Markdown links to official .gov.cn sources welcomed."
+          />
+        </div>
+
+        <div class="ds-panel">
+          <span class="ds-panel-title">Branded Select, Checkbox, Switch &amp; RadioGroup</span>
+          <Select
+            id="ds-select-pillar"
+            name="pillar"
+            label="ChinaWao Editorial Section"
+            hint="Zero OS blue highlight — pure Xuan paper ::picker(select)."
+            options={[
+              { value: 'visit', label: '9. Visit China (11 topics)' },
+              { value: 'live', label: '10. Live & Study (6 topics)' },
+              { value: 'business', label: '11. Business & Sourcing (6 topics)' },
+              { value: 'tools', label: '12. Tools & Open Data (9 topics)' },
+            ]}
+          />
+          <Checkbox id="ds-chk-transit" checked>Hold confirmed third-country onward ticket</Checkbox>
+          <Checkbox id="ds-sw-standby" variant="switch" checked>Include WAF-Protected Official Standby portals</Checkbox>
+          <RadioGroup
+            name="ds-rail-class"
+            legend="High-speed rail seat tier"
+            options={[
+              { value: 'second', label: 'Second Class (2+3) — best value under 4h' },
+              { value: 'first', label: 'First Class (2+2) — wider seats & power outlets', checked: true },
+            ]}
+          />
+        </div>
+      </div>
+    </section>
+
+    {/* 7. Advanced Forms */}
+    <section id="ds-advanced-forms" class="ds-section">
+      <span class="kicker">{isZh ? '07 · 高级表单原子' : '07 · Advanced Form Primitives'}</span>
+      <h2>{isZh ? '滑块、日期选择、取色器、六位 OTP 验证码与文件拖拽上传' : 'Slider, DateInput, ColorPicker, DigitInput (OTP) & FileUpload'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-panel">
+          <span class="ds-panel-title">Slider, DateInput &amp; ColorPicker</span>
+          <Slider id="ds-slider" name="spend" label="Tax-free purchase amount" min={200} max={20000} step={100} value={3500} unitPrefix="¥" />
+          <DateInput id="ds-date" name="departure" label="Target departure date" value="2026-12-05" hint="Used for 15-day Railway 12306 ticket release calculation." />
+          <ColorPicker id="ds-color" label="Editorial highlight swatch" value="#C93B2B" />
+        </div>
+
+        <div class="ds-panel">
+          <span class="ds-panel-title">DigitInput (6-Box OTP) &amp; FileUpload Dropzone</span>
+          <DigitInput id="ds-otp" label="Verification code (try pasting 240198)" hint="Supports sequential typing, paste, arrows, and Backspace." />
+          <FileUpload id="ds-upload" label="Attach boarding pass or official PDF notice" />
+        </div>
+      </div>
+    </section>
+
+    {/* 8. Feedback */}
+    <section id="ds-feedback" class="ds-section">
+      <span class="kicker">{isZh ? '08 · 反馈与加载状态' : '08 · Feedback & Loading States'}</span>
+      <h2>{isZh ? '政策横幅、告警框、通知卡片、常驻吐司与骨架屏' : 'Banner, Alert, NotificationCard, Persistent Toast & Skeleton'}</h2>
+      <div class="ds-stack">
+        <Banner variant="palace" kicker={isZh ? '政策更新' : 'Policy Update'} dismissible>
+          {isZh ? (
+            <>240 小时过境免签现已覆盖全国 24 省 60 个口岸 —— <a href={lp('/tools/')}>立即核验您的行程 &rarr;</a></>
+          ) : (
+            <>240-Hour Visa-Free Transit now spans 60 ports across 24 provinces — <a href={lp('/tools/')}>verify your route &rarr;</a></>
+          )}
+        </Banner>
+        <div class="ds-grid-2">
+          <div class="ds-stack">
+            <Alert tone="verified" title="Primary source verified">NIA portal checked live on 2026-11-20 with matching Chinese &amp; English clauses.</Alert>
+            <Alert tone="warning" title="WAF-Protected Official Standby">Automated script received HTTP 412; human browser access works normally.</Alert>
+            <Alert tone="danger" title="Expired temporary notice">This 2024 port pilot has been superseded by the 240-hour national policy.</Alert>
+          </div>
+          <div class="ds-stack">
+            <NotificationCard
+              title="Palace Museum Summer Hours Published"
+              body="Entry window shifted to 08:30–17:00; tickets release 7 days prior at 20:00 Beijing Time."
+              timestamp="14 mins ago"
+              category="9.6 Ticketing"
+              tone="verified"
+              unread
+            />
+            <div class="ds-panel">
+              <span class="ds-panel-title">Sitewide Toast &amp; Skeleton Loading</span>
+              <div class="ds-row">
+                <Button size="sm" variant="primary" data-cw-toast-trigger="Saved to your local ChinaWao reading list.">Trigger Persistent Toast</Button>
+              </div>
+              <Skeleton variant="title" />
+              <Skeleton variant="text" />
+              <Skeleton variant="short" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* 9. Navigation */}
+    <section id="ds-navigation" class="ds-section">
+      <span class="kicker">{isZh ? '09 · 导航组件' : '09 · Navigation Primitives'}</span>
+      <h2>{isZh ? '横纵标签页、分段控制器、折叠面板、面包屑与步骤条' : 'Tabs (Horizontal & Vertical), SegmentedControl, Accordion, Breadcrumb & Stepper'}</h2>
+      <div class="ds-stack">
+        <div class="ds-grid-2">
+          <div class="ds-panel">
+            <span class="ds-panel-title">SegmentedControl &amp; Dot Stepper</span>
+            <SegmentedControl
+              label="Mode"
+              options={[
+                { value: 'all', label: 'All Entries' },
+                { value: 'verified', label: 'Verified' },
+                { value: 'standby', label: 'Standby' },
+              ]}
+            />
+            <Stepper steps={DS_HOW_STEPS} orientation="dot" label="Dot progress" />
+          </div>
+          <div class="ds-panel">
+            <span class="ds-panel-title">Vertical Stepper</span>
+            <Stepper steps={DS_HOW_STEPS.slice(0, 3)} orientation="vertical" label="Arrival flow" />
+          </div>
+        </div>
+
+        <Tabs label="Design system pillars" tabs={dsTabs} />
+        <VerticalTabs id="ds-vtabs" label="Travel reference tabs" items={DS_VTAB_ITEMS} />
+        <Accordion items={DS_FAQ_ITEMS} name="ds-faq-group" />
+      </div>
+    </section>
+
+    {/* 10. Overlays */}
+    <section id="ds-overlays" class="ds-section">
+      <span class="kicker">{isZh ? '10 · 浮层组件（Modal · Drawer · Dropdown · Popover · Tooltip）' : '10 · Overlays (Modal, Drawer, DropdownMenu, PopoverCard, Tooltip)'}</span>
+      <h2>{isZh ? '原生顶层模态框、可滑动抽屉与锚点浮窗' : 'Native Top-Layer Dialogs, Swipeable Scroll-Snap Drawer & Anchored Popovers'}</h2>
+      <div class="ds-panel">
+        <div class="ds-row">
+          <Modal id="ds-modal-demo" title={isZh ? '确认导出核验条目' : 'Confirm Verified Entry Export'} eyebrow={isZh ? '原生 Dialog' : 'Native Dialog'} triggerLabel={isZh ? '打开模态框' : 'Open Modal'} triggerVariant="primary">
+            <p>{isZh ? <>本模态框采用原生 <code>&lt;dialog closedby="any"&gt;</code>，内置 Esc 关闭、点击遮罩轻关闭、背景惰性锁定与焦点自动归位。</> : <>This modal uses native <code>&lt;dialog closedby="any"&gt;</code> for Escape dismissal, backdrop light-dismiss, inert background, and automatic focus restoration.</>}</p>
+            <div slot="footer">
+              <form method="dialog">
+                <Button type="submit" variant="ghost" size="sm">{isZh ? '取消' : 'Cancel'}</Button>
+              </form>
+              <Button size="sm" variant="primary" data-cw-toast-trigger={isZh ? '导出任务已加入队列（本地演示）。' : 'Export queued (mock demo).'}>
+                {isZh ? '确认导出' : 'Confirm Export'}
+              </Button>
+            </div>
+          </Modal>
+
+          <Drawer id="ds-drawer-demo" triggerLabel={isZh ? '打开滑动抽屉' : 'Open Swipe Drawer'} title={isZh ? '筛选抽屉' : 'Field Filter Drawer'} eyebrow={isZh ? 'Scroll-Snap 抽屉' : 'Scroll-Snap Sheet'}>
+            <p class="t-paragraph">{isZh ? <>支持左滑、点击遮罩、按 Esc 或关闭按钮收起。遮罩透明度通过原生 <code>animation-timeline: scroll()</code> 跟随滚动位置同步。</> : <>Swipe left, click the dimmed backdrop, press Escape, or click close. Backdrop opacity tracks scroll position natively via <code>animation-timeline: scroll()</code>.</>}</p>
+            <Checkbox id="ds-drw-1" checked>{isZh ? '仅显示英文友好官方门户' : 'Show English-friendly official portals only'}</Checkbox>
+            <Checkbox id="ds-drw-2">{isZh ? '包含反爬官方备用源' : 'Include WAF-Protected Standby sources'}</Checkbox>
+            <Button variant="primary" size="sm" data-cw-toast-trigger={isZh ? '抽屉筛选已应用。' : 'Drawer filters applied.'}>{isZh ? '应用筛选' : 'Apply Filters'}</Button>
+          </Drawer>
+
+          <DropdownMenu
+            id="ds-dropdown-demo"
+            triggerLabel={isZh ? '操作菜单' : 'Action Menu'}
+            items={[
+              { label: isZh ? '复制固定链接' : 'Copy permalink', icon: 'copy', toastMessage: isZh ? '固定链接已复制。' : 'Permalink copied.' },
+              { label: isZh ? '查看 Pro 区块展台' : 'View Pro Blocks', icon: 'spark', href: lp('/design-system/blocks/') },
+              { label: isZh ? '上报失效官方链接' : 'Report broken official URL', icon: 'mail', tone: 'danger', toastMessage: isZh ? '失效链接上报已记录。' : 'Broken link report logged.' },
+            ]}
+          />
+
+          <PopoverCard id="ds-popover-demo" triggerLabel={isZh ? '打开浮窗卡片' : 'Open Popover Card'} eyebrow={isZh ? 'OKF 元数据' : 'OKF Metadata'} title={isZh ? '来源核验台账' : 'Source Verification Ledger'}>
+            <p>{isZh ? <>通过 CSS 锚点定位（<code>position-area: block-end span-inline-end</code>）与边缘自动翻转精确定位。</> : <>Positioned with CSS Anchor Positioning (<code>position-area: block-end span-inline-end</code>) and automatic edge flip fallbacks.</>}</p>
+          </PopoverCard>
+
+          <Tooltip id="ds-tooltip-demo" label={isZh ? '什么是路线 A？' : 'What is Route A?'}>
+            {isZh
+              ? '100% 原创 Astro + 现代原生 HTML/CSS 组件，零外部 UI 运行时与商业字体限制。'
+              : '100% original Astro + modern HTML/CSS primitives with zero external UI runtime or commercial font restrictions.'}
+          </Tooltip>
+        </div>
+      </div>
+
+      <div class="ds-panel" style="margin-top: var(--space-5);">
+        <span class="ds-panel-title">{isZh ? '49 / 49 基础原子组件全量映射清单' : 'Complete 49 / 49 Base Primitive Mapping'}</span>
+        <p class="t-paragraph">
+          {isZh ? (
+            <>全部 49 项基础组件类别均已映射至 ChinaWao 路线 A 专属原生组件。点击查看全部 39 类 Pro 级页面区块：<a href={lp('/design-system/blocks/')} class="text-link">/zh/design-system/blocks/ &rarr;</a></>
+          ) : (
+            <>Every AlignUI 2.0 base category is mapped cleanly to a dedicated ChinaWao Route A component. Inspect all 39 Pro-grade Page Blocks on <a href={lp('/design-system/blocks/')} class="text-link">/design-system/blocks/ &rarr;</a></>
+          )}
+        </p>
+        <div class="ds-row">
+          {BASE_PRIMITIVE_COVERAGE.map((row) => (
+            <a href={row.anchor} class="cw-tag cw-tag--neutral">{row.category}</a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

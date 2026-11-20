@@ -1,0 +1,34 @@
+---
+interface Props {
+  tone?: 'info' | 'verified' | 'warning' | 'danger';
+  title: string;
+  label?: string;
+  role?: 'status' | 'alert' | 'note';
+  class?: string;
+}
+
+const {
+  tone = 'info',
+  title,
+  label,
+  role = tone === 'danger' ? 'alert' : 'note',
+  class: className = '',
+} = Astro.props;
+
+const defaultLabels: Record<NonNullable<Props['tone']>, string> = {
+  info: 'Note',
+  verified: 'Verified',
+  warning: 'Notice',
+  danger: 'Alert',
+};
+---
+<div class:list={['cw-alert', `cw-alert--${tone}`, className]} role={role}>
+  <span class="cw-alert-badge">{label ?? defaultLabels[tone]}</span>
+  <div class="cw-alert-body">
+    <p class="cw-alert-title">{title}</p>
+    <div class="cw-alert-desc">
+      <slot />
+    </div>
+  </div>
+  <slot name="action" />
+</div>

@@ -1,0 +1,40 @@
+---
+/**
+ * CtaBlock — Palace Wall high-contrast call-to-action band
+ */
+import Button from '@ui/actions/Button.astro';
+import FancyButton from '@ui/actions/FancyButton.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'Field Verification Network',
+  title,
+  description,
+  primaryLabel = 'Open Practical Tools',
+  primaryHref = '/tools/',
+  secondaryLabel = 'Browse Official Directory',
+  secondaryHref = '/directory/',
+  class: className = '',
+} = Astro.props;
+---
+<section class:list={['cw-block-cta', className]}>
+  <div class="cw-block-cta-copy">
+    <span class="cw-block-cta-eyebrow">{eyebrow}</span>
+    <h3 class="cw-block-cta-title">{title}</h3>
+    <p class="cw-block-cta-desc">{description}</p>
+  </div>
+  <div class="cw-block-cta-actions">
+    <FancyButton href={primaryHref} tone="seal">{primaryLabel}</FancyButton>
+    <Button href={secondaryHref} variant="ghost" class="cw-cta-ghost">{secondaryLabel}</Button>
+  </div>
+</section>

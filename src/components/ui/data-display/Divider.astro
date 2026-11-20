@@ -1,0 +1,27 @@
+---
+/**
+ * Divider — Architectural 1px rule with optional centered editorial label or seal motif
+ */
+interface Props {
+  label?: string;
+  orientation?: 'horizontal' | 'vertical';
+  tone?: 'subtle' | 'strong' | 'gold';
+  class?: string;
+}
+
+const {
+  label,
+  orientation = 'horizontal',
+  tone = 'subtle',
+  class: className = '',
+} = Astro.props;
+---
+{orientation === 'vertical' ? (
+  <span class:list={['cw-divider-v', `cw-divider--${tone}`, className]} role="separator" aria-orientation="vertical"></span>
+) : label ? (
+  <div class:list={['cw-divider-h', `cw-divider--${tone}`, className]} role="separator">
+    <span class="cw-divider-label">{label}</span>
+  </div>
+) : (
+  <hr class:list={['cw-divider-line', `cw-divider--${tone}`, className]} />
+)}

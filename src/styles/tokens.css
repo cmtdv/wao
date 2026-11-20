@@ -1,0 +1,213 @@
+/* ==========================================================================
+   ChinaWao Editorial Design Tokens — 故宫宫墙体系 (Forbidden City Palace Wall)
+   - True 60 / 30 / 10 Traditional Chinese Color Architecture:
+       60% Dominant  — 素宣暖白 (#F7F3E9) / 夜读徽墨 (#141110) + 极轻宣纸凹凸
+       30% Secondary — 故宫宫墙绛红 (#732520) + 藕荷暖宣 (#EFE5DC)
+       10% Accent    — 琉璃泥金 (#B8893D / #E6BE72) + 正朱砂 (#C93B2B)
+   - Fonts: 100% SIL OFL 1.1 open-source self-hosted + CSS generic fallbacks
+   ========================================================================== */
+
+:root {
+  /* Native light/dark cascade driven by <meta name="color-scheme"> */
+  color-scheme: light dark;
+
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+
+  /* ========================================================================
+     60% DOMINANT — 素宣暖白 (Light) / 徽墨玄夜 (Dark)
+     ======================================================================== */
+  --surface-canvas: light-dark(#f7f3e9, #141110);
+  --surface-raised: light-dark(#fcf9f2, #1d1816);
+  --surface-overlay: light-dark(rgb(247 243 233 / 0.96), rgb(20 17 16 / 0.96));
+  --surface-hover: light-dark(#ede5d8, #28211e);
+
+  /* ========================================================================
+     30% SECONDARY — 故宫宫墙绛红 + 藕荷暖宣 + 徽墨文字层级
+     ======================================================================== */
+  --secondary-solid: light-dark(#732520, #4f1c18);
+  --secondary-solid-elevated: light-dark(#862d27, #61231e);
+  --secondary-ink: #fbf6ee;
+  --secondary-solid-ink: var(--secondary-ink);
+  --secondary-ink-muted: #e6d5c8;
+  --secondary-rule: rgb(251 246 238 / 0.18);
+  --secondary-rule-strong: rgb(251 246 238 / 0.34);
+
+  --secondary-tint: light-dark(#efe5dc, #251d1a);
+  --secondary-tint-border: light-dark(rgb(115 37 32 / 0.2), rgb(230 213 200 / 0.2));
+
+  --surface-sunken: var(--secondary-tint);
+  --ink-primary: light-dark(#221b18, #f2ece1);
+  --ink-secondary: light-dark(#5c4d45, #bfb2a6);
+  --ink-tertiary: light-dark(#78675d, #94867a);
+  --rule-subtle: light-dark(rgb(34 27 24 / 0.1), rgb(242 236 225 / 0.11));
+  --rule-strong: light-dark(rgb(34 27 24 / 0.22), rgb(242 236 225 / 0.24));
+  --backdrop-scrim: light-dark(rgb(28 16 14 / 0.52), rgb(8 5 4 / 0.74));
+
+  /* ========================================================================
+     10% ACCENT — 琉璃泥金 (Glazed Gold) + 正朱砂 (Imperial Vermilion)
+     ======================================================================== */
+  --accent-gold: light-dark(#b8893d, #dfb362);
+  --accent-gold-on-dark: #e6be72;
+  --accent-gold-soft: light-dark(rgb(184 137 61 / 0.15), rgb(223 179 98 / 0.2));
+
+  --accent-seal: light-dark(#c93b2b, #c93d2e);
+  --accent-seal-hover: light-dark(#a82e20, #de4d3d);
+  --accent-seal-text: light-dark(#b83223, #ec7766);
+  --accent-seal-on-dark: var(--accent-gold-on-dark);
+  --accent-seal-soft: light-dark(rgb(201 59 43 / 0.1), rgb(236 119 102 / 0.16));
+  --accent-on-seal: #fcf9f2;
+  --accent-pine: var(--secondary-solid);
+  --accent-on-pine: var(--secondary-ink);
+
+  /* Selection & Focus */
+  --selection-bg: light-dark(#ebd1b3, #662922);
+  --selection-ink: light-dark(#221b18, #fcf9f2);
+
+  /* Whisper-light Xuan-Paper Relief Only (zero fibers, zero flecks, reading-first clarity) */
+  --xuan-pulp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cfilter id='p' x='0%25' y='0%25' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.06 0.065' numOctaves='3' seed='7' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23fffdf9' surfaceScale='0.55' result='l'%3E%3CfeDistantLight azimuth='55' elevation='78'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23p)'/%3E%3C/svg%3E");
+
+  --xuan-pulp-opacity: 0.11;
+  --xuan-blend: multiply;
+
+  --paper-sheet-shadow: light-dark(
+    inset 0 1px 0 rgb(255 253 248 / 0.85),
+    inset 0 1px 0 rgb(255 253 248 / 0.06)
+  ), light-dark(
+    0 2px 12px -6px rgb(54 32 24 / 0.14),
+    0 6px 20px -10px rgb(0 0 0 / 0.5)
+  );
+
+  /* Typography — Zero copyrighted commercial font families */
+  --font-display: "Newsreader", serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Type Scale */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: clamp(1.35rem, 1.1rem + 0.8vw, 1.65rem);
+  --text-2xl: clamp(1.85rem, 1.35rem + 1.6vw, 2.5rem);
+  --text-3xl: clamp(2.25rem, 1.45rem + 2.6vw, 3.6rem);
+  --text-display: clamp(2.5rem, 1.6rem + 3vw, 4.25rem);
+
+  /* Measure & Layout */
+  --container-max: 1320px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --measure-prose: 65ch;
+  --header-height: 4.5rem;
+
+  /* Spacing Rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6rem;
+
+  /* Crisp Editorial Radii & Effect Styles (Local Styles: Regular / Button / Control / Tooltip) */
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-pill: 999px;
+  --shadow-regular: var(--paper-sheet-shadow);
+  --shadow-button: light-dark(
+    0 1px 2px rgb(34 27 24 / 0.12),
+    0 1px 2px rgb(0 0 0 / 0.45)
+  );
+  --shadow-control: light-dark(
+    inset 0 1px 1px rgb(34 27 24 / 0.06),
+    inset 0 1px 2px rgb(0 0 0 / 0.35)
+  );
+  --shadow-thumb: light-dark(
+    0 1px 3px rgb(34 27 24 / 0.24),
+    0 1px 3px rgb(0 0 0 / 0.55)
+  );
+  --shadow-tooltip: light-dark(
+    0 10px 26px -10px rgb(34 27 24 / 0.26),
+    0 12px 28px -10px rgb(0 0 0 / 0.72)
+  );
+  --shadow-float: light-dark(
+    0 18px 42px -18px rgb(54 24 20 / 0.2),
+    0 22px 48px -16px rgb(0 0 0 / 0.6)
+  );
+
+  /* Subtle Editorial Color Styles (Restrained Gradients — zero glossy SaaS pills) */
+  --grad-palace-band: linear-gradient(
+    180deg,
+    var(--secondary-solid) 0%,
+    light-dark(#641f1b, #431714) 100%
+  );
+  --grad-seal-btn: linear-gradient(
+    180deg,
+    light-dark(#d44332, #d44636) 0%,
+    var(--accent-seal) 100%
+  );
+
+  /* ========================================================================
+     DESIGN SYSTEM CONTROLS, FOCUS & SEMANTIC STATUS TOKENS (WCAG AA Audited)
+     ======================================================================== */
+  --control-radius: var(--radius-xs);
+  --control-h-sm: 2.25rem;
+  --control-h-md: 2.75rem;
+  --control-h-lg: 3rem;
+
+  --control-bg: var(--surface-raised);
+  --control-bg-hover: light-dark(#f4eee2, #251e1b);
+  --control-bg-disabled: light-dark(#eee8dc, #191513);
+  --control-border: light-dark(#8e7f75, #7d6e64);
+  --control-border-hover: light-dark(#5c4d45, #a99a8e);
+  --control-border-focus: light-dark(#b83223, #e6be72);
+  --control-border-error: light-dark(#9e2318, #f07b6e);
+  --control-placeholder: light-dark(#695950, #a5968a);
+
+  --focus-ring-color: light-dark(#b83223, #e6be72);
+  --focus-ring-soft: light-dark(rgb(184 50 35 / 0.16), rgb(230 190 114 / 0.22));
+
+  /* Semantic Status Badges & Alerts (Info / Verified / Standby / Error) */
+  --status-info-bg: light-dark(#edf1f5, #18212b);
+  --status-info-border: light-dark(#9ab0c7, #364e68);
+  --status-info-ink: light-dark(#1f466b, #99c2eb);
+
+  --status-verified-bg: light-dark(#eaf4ee, #192b21);
+  --status-verified-border: light-dark(#9fc7ae, #2e5940);
+  --status-verified-ink: light-dark(#1f5c3a, #8fd6ab);
+
+  --status-standby-bg: light-dark(#f7eedb, #2d2316);
+  --status-standby-border: light-dark(#cfa86a, #6b522c);
+  --status-standby-ink: light-dark(#754c11, #ecc57a);
+
+  --status-error-bg: light-dark(#fcedeb, #331917);
+  --status-error-border: light-dark(#d98c84, #7a362e);
+  --status-error-ink: light-dark(#9e2318, #f5978c);
+
+  /* Motion */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-normal: 260ms;
+  --dur-slow: 420ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) {
+    --xuan-pulp-opacity: 0.045;
+    --xuan-blend: soft-light;
+  }
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  --xuan-pulp-opacity: 0.045;
+  --xuan-blend: soft-light;
+}

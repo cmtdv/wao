@@ -1,0 +1,64 @@
+---
+/**
+ * BlogGridBlock — 3-column editorial dispatch showcase block
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import LinkButton from '@ui/actions/LinkButton.astro';
+
+export interface BlogPreviewItem {
+  title: string;
+  excerpt: string;
+  category: string;
+  date: string;
+  readTime: string;
+  href: string;
+  image?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  moreHref?: string;
+  items: BlogPreviewItem[];
+  class?: string;
+}
+
+const {
+  eyebrow = 'Editorial Dispatches',
+  title,
+  moreHref = '/posts/',
+  items,
+  class: className = '',
+} = Astro.props;
+---
+<section class:list={['cw-block-section', className]}>
+  <div class="cw-pricing-head">
+    <header class="cw-block-head">
+      <span class="kicker">{eyebrow}</span>
+      <h3 class="cw-block-title">{title}</h3>
+    </header>
+    {moreHref && <LinkButton href={moreHref} size="sm">View all dispatches</LinkButton>}
+  </div>
+
+  <div class="cw-blog-grid">
+    {items.map((item) => (
+      <article class="cw-blog-card">
+        {item.image && (
+          <a href={item.href} class="cw-blog-media">
+            <img src={item.image} alt={item.title} loading="lazy" />
+          </a>
+        )}
+        <div class="cw-blog-body">
+          <div class="cw-blog-meta">
+            <Badge tone="editorial">{item.category}</Badge>
+            <span>{item.date} · {item.readTime}</span>
+          </div>
+          <h4 class="cw-blog-title">
+            <a href={item.href}>{item.title}</a>
+          </h4>
+          <p class="cw-blog-excerpt">{item.excerpt}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,69 @@
+---
+/**
+ * Textarea — Vertical auto-growing textarea (field-sizing: content) + live character counter
+ */
+interface Props {
+  id: string;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  rows?: number;
+  maxlength?: number;
+  required?: boolean;
+  disabled?: boolean;
+  hint?: string;
+  errorText?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  placeholder,
+  value = '',
+  rows = 3,
+  maxlength,
+  required = false,
+  disabled = false,
+  hint,
+  errorText,
+  class: className = '',
+} = Astro.props;
+
+const hintId = hint || maxlength ? `${id}-hint` : undefined;
+const errId = errorText ? `${id}-err` : undefined;
+const describedBy = [hintId, errId].filter(Boolean).join(' ') || undefined;
+---
+<div class:list={['cw-field', className]} data-cw-textarea-wrap>
+  {label && (
+    <label for={id} class="cw-label">
+      {label}
+      {required && <span class="cw-required" aria-hidden="true">*</span>}
+    </label>
+  )}
+  <textarea
+    id={id}
+    name={name ?? id}
+    rows={rows}
+    maxlength={maxlength}
+    placeholder={placeholder}
+    required={required}
+    disabled={disabled}
+    aria-describedby={describedBy}
+    class="cw-textarea"
+    data-cw-textarea
+  >{value}</textarea>
+  {(hint || maxlength) && (
+    <div id={hintId} class="cw-textarea-foot">
+      <span class="cw-field-hint">{hint ?? ''}</span>
+      {maxlength && (
+        <span class="cw-char-count" data-cw-char-count data-max={maxlength}>
+          {value.length} / {maxlength}
+        </span>
+      )}
+    </div>
+  )}
+  {errorText && <p id={errId} class="cw-field-error">{errorText}</p>}
+</div>

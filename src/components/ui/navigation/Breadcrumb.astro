@@ -1,0 +1,56 @@
+---
+/**
+ * Breadcrumb — Semantic hierarchical path + optional Schema.org BreadcrumbList JSON-LD
+ */
+import Icon from '@site/Icon.astro';
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  jsonLd?: boolean;
+  class?: string;
+}
+
+const { items, jsonLd = false, class: className = '' } = Astro.props;
+
+const structured = jsonLd
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((item, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: item.label,
+        ...(item.href ? { item: item.href } : {}),
+      })),
+    }
+  : null;
+---
+<nav class:list={['cw-breadcrumb', className]} aria-label="Breadcrumb">
+  <ol class="cw-breadcrumb-list">
+    {items.map((item, idx) => {
+      const isLast = idx === items.length - 1;
+      return (
+        <li class="cw-breadcrumb-item">
+          {idx > 0 && (
+            <span class="cw-breadcrumb-sep" aria-hidden="true">
+              <Icon name="chevron" size={12} />
+            </span>
+          )}
+          {isLast || !item.href ? (
+            <span class="cw-breadcrumb-current" aria-current={isLast ? 'page' : undefined}>
+              {item.label}
+            </span>
+          ) : (
+            <a href={item.href} class="cw-breadcrumb-link">{item.label}</a>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+{structured && <script type="application/ld+json" set:html={JSON.stringify(structured)} />}

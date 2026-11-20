@@ -1,0 +1,35 @@
+@layer reset, tokens, base, layout, components, blocks, pages, utilities, theme-overrides;
+
+@import "./reset.css" layer(reset);
+@import "./tokens.css" layer(tokens);
+@import "./base.css" layer(base);
+@import "./layout.css" layer(layout);
+@import "./components.css" layer(components);
+@import "./controls.css" layer(components);
+@import "./ui-kit.css" layer(components);
+@import "./blocks.css" layer(blocks);
+@import "./themes-v1-v4.css";
+
+/* Registered custom property for scroll-driven drawer backdrop fade (modern-web-guidance: navigation-drawer) */
+@property --drawer-backdrop {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Unlayered higher-specificity overrides so EmDashImage's scoped height:auto yields to cover & card frames */
+.hero-showcase .hero-slide-media picture,
+.hero-showcase .hero-slide-media img.emdash-image-media,
+.hero-showcase .hero-slide-media img,
+.broadsheet-hero .broadsheet-media picture,
+.broadsheet-hero .broadsheet-media img.emdash-image-media,
+.broadsheet-hero .broadsheet-media img,
+.post-card .post-card-media picture,
+.post-card .post-card-media img.emdash-image-media,
+.post-card .post-card-media img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

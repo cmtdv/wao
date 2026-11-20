@@ -1,0 +1,749 @@
+/* ==========================================================================
+   ChinaWao Route A Pro-Grade Page Blocks Styles (39-Category Native Coverage)
+   Marketing · Editorial · Application Blocks
+   ========================================================================== */
+
+.cw-block-section {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.cw-block-head {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 62ch;
+}
+
+.cw-block-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.15rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ink-primary);
+}
+
+.cw-block-sub {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+  line-height: 1.65;
+}
+
+/* Announcement Block */
+.cw-block-announce {
+  padding: 0.7rem var(--space-4);
+  border: 1px solid var(--rule-subtle);
+}
+
+.cw-block-announce--palace {
+  background: var(--grad-palace-band);
+  border-color: var(--accent-gold);
+  color: var(--secondary-solid-ink);
+}
+
+.cw-block-announce--subtle {
+  background: var(--secondary-tint);
+  color: var(--ink-primary);
+}
+
+.cw-block-announce-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem var(--space-4);
+}
+
+.cw-block-announce-text {
+  font-size: var(--text-sm);
+  flex: 1 1 20rem;
+}
+
+/* Marketing Hero Block */
+.cw-block-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+  gap: var(--space-6);
+  align-items: center;
+  padding: var(--space-6);
+  border: 1px solid var(--rule-subtle);
+  border-top: 3px solid var(--secondary-solid);
+  background: var(--surface-raised);
+}
+
+.cw-block-hero-copy {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.cw-block-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.cw-block-hero-sub {
+  font-size: var(--text-base);
+  color: var(--ink-secondary);
+  line-height: 1.65;
+  max-width: 52ch;
+}
+
+.cw-block-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.cw-block-hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  width: 100%;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule-subtle);
+}
+
+.cw-block-hero-metrics dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-secondary);
+}
+
+.cw-block-hero-metrics dd {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.cw-block-hero-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--rule-subtle);
+}
+
+.cw-block-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Features Grid */
+.cw-features-grid,
+.cw-testimonials-grid,
+.cw-teams-grid,
+.cw-integrations-grid,
+.cw-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.cw-feature-card,
+.cw-testimonial-card,
+.cw-team-card,
+.cw-integration-card,
+.cw-blog-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-raised);
+}
+
+.cw-feature-top,
+.cw-integration-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cw-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid var(--rule-subtle);
+  border-radius: var(--control-radius);
+  background: var(--secondary-tint);
+  color: var(--accent-seal);
+}
+
+.cw-feature-title,
+.cw-integration-name,
+.cw-team-name,
+.cw-blog-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.cw-feature-desc,
+.cw-integration-desc,
+.cw-team-bio,
+.cw-blog-excerpt {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+  line-height: 1.65;
+}
+
+/* CTA Block */
+.cw-block-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--grad-palace-band);
+  border-top: 2px solid var(--accent-gold);
+  border-bottom: 2px solid var(--accent-gold);
+  color: var(--secondary-solid-ink);
+}
+
+.cw-block-cta-copy {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 56ch;
+}
+
+.cw-block-cta-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e6be72;
+}
+
+.cw-block-cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem);
+  font-weight: 500;
+  color: #fbf6ee;
+}
+
+.cw-block-cta-desc {
+  font-size: var(--text-sm);
+  color: #e6d5c8;
+}
+
+.cw-block-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cw-cta-ghost {
+  color: #fbf6ee;
+  border-color: rgb(251 246 238 / 0.35);
+}
+
+.cw-cta-ghost:hover {
+  background: rgb(251 246 238 / 0.12);
+  color: #e6be72;
+}
+
+/* Pricing Block */
+.cw-pricing-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.cw-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.cw-pricing-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-raised);
+}
+
+.cw-pricing-card--featured {
+  border-color: var(--accent-gold);
+  border-top: 3px solid var(--accent-seal);
+  background: var(--secondary-tint);
+}
+
+.cw-pricing-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cw-pricing-top h4 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+.cw-pricing-desc {
+  font-size: var(--text-xs);
+  color: var(--ink-secondary);
+  line-height: 1.6;
+}
+
+.cw-pricing-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--rule-subtle);
+}
+
+.cw-pricing-amount {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.6rem + 1vw, 2.5rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.cw-pricing-period {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-secondary);
+}
+
+.cw-pricing-list {
+  display: grid;
+  gap: 0.55rem;
+  font-size: var(--text-sm);
+  color: var(--ink-primary);
+  margin-bottom: auto;
+}
+
+.cw-pricing-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.cw-pricing-list svg {
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  color: var(--status-verified-ink);
+}
+
+.cw-pricing-btn {
+  width: 100%;
+}
+
+/* Testimonials, Teams, Careers, Brand Strip */
+.cw-testimonial-quote {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--ink-primary);
+  margin-bottom: auto;
+}
+
+.cw-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-subtle);
+}
+
+.cw-testimonial-author strong {
+  display: block;
+  font-size: var(--text-sm);
+}
+
+.cw-testimonial-author span {
+  font-size: var(--text-xs);
+  color: var(--ink-secondary);
+}
+
+.cw-team-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cw-team-role {
+  font-size: var(--text-xs);
+  color: var(--ink-secondary);
+}
+
+.cw-careers-list {
+  border-top: 1px solid var(--rule-strong);
+}
+
+.cw-career-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--rule-subtle);
+}
+
+.cw-career-main {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+}
+
+.cw-career-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+.cw-career-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-secondary);
+}
+
+.cw-brand-strip {
+  padding: var(--space-5);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-sunken);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.cw-brand-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.cw-brand-cell {
+  display: grid;
+  gap: 0.2rem;
+  padding: var(--space-3);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-raised);
+}
+
+.cw-brand-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  color: var(--accent-seal);
+}
+
+.cw-brand-name {
+  font-size: var(--text-sm);
+}
+
+.cw-brand-role {
+  font-size: var(--text-xs);
+  color: var(--ink-secondary);
+}
+
+/* Editorial Blocks: Blog, FAQ, Contact, FilterBar */
+.cw-blog-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cw-blog-media {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.cw-blog-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cw-blog-body {
+  display: grid;
+  gap: 0.55rem;
+  padding: var(--space-4);
+}
+
+.cw-blog-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-secondary);
+}
+
+.cw-block-faq {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.cw-block-faq-intro {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.cw-block-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--space-6);
+  padding: var(--space-6);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-raised);
+}
+
+.cw-block-contact-info {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+}
+
+.cw-contact-meta {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule-subtle);
+}
+
+.cw-contact-meta dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-secondary);
+}
+
+.cw-contact-meta dd {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.cw-block-contact-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.cw-form-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.cw-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cw-block-filter {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cw-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Application Blocks: Auth, Profile, NotificationFeed */
+.cw-auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.cw-auth-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--rule-subtle);
+  border-top: 3px solid var(--secondary-solid);
+  background: var(--surface-raised);
+}
+
+.cw-auth-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.cw-auth-head h4 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+.cw-auth-sub {
+  font-size: var(--text-xs);
+  color: var(--ink-secondary);
+  margin-top: 0.25rem;
+}
+
+.cw-auth-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cw-block-profile {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--rule-subtle);
+  border-top: 3px solid var(--accent-gold);
+  background: var(--surface-raised);
+}
+
+.cw-profile-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.cw-profile-ident {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cw-profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.cw-profile-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+.cw-profile-role,
+.cw-profile-bio {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+}
+
+.cw-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cw-profile-metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--rule-subtle);
+  background: var(--surface-sunken);
+}
+
+.cw-profile-bars {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cw-profile-foot {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-subtle);
+}
+
+.cw-block-notif-feed {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cw-notif-feed-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cw-notif-feed-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cw-notif-feed-title h4 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+.cw-notif-feed-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (max-width: 980px) {
+  .cw-block-hero,
+  .cw-block-faq,
+  .cw-block-contact,
+  .cw-auth-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-features-grid,
+  .cw-pricing-grid,
+  .cw-testimonials-grid,
+  .cw-teams-grid,
+  .cw-integrations-grid,
+  .cw-blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cw-brand-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .cw-features-grid,
+  .cw-pricing-grid,
+  .cw-testimonials-grid,
+  .cw-teams-grid,
+  .cw-integrations-grid,
+  .cw-blog-grid,
+  .cw-form-row-2,
+  .cw-profile-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-block-hero-metrics {
+    grid-template-columns: 1fr;
+  }
+}

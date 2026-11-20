@@ -1,0 +1,33 @@
+---
+import type { getTaxonomyTermsWithCacheHint } from 'emdash';
+import { categoryPath } from '@lib/format';
+import { getLocaleFromContext, localePath, stripLocalePrefix } from '@i18n/ui';
+
+type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
+
+interface Props {
+  term: Term;
+  terms: Term[];
+}
+
+const { term, terms } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const children = term.children?.length
+  ? term.children
+  : terms.filter((child) => child.parentId === term.id);
+const rawPath = categoryPath(term.slug);
+const path = localePath(rawPath, locale);
+const currentPath = stripLocalePrefix(Astro.locals.originalPathname ?? Astro.url.pathname);
+---
+<li>
+  <a href={path} aria-current={currentPath === rawPath ? 'page' : undefined}>
+    {term.label}
+  </a>
+  {children.length > 0 && (
+    <ul>
+      {children.map((child) => (
+        <Astro.self term={child} terms={terms} />
+      ))}
+    </ul>
+  )}
+</li>

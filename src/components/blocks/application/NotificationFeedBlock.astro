@@ -1,0 +1,55 @@
+---
+/**
+ * NotificationFeedBlock — Filterable policy & system updates inbox with Mark All Read
+ */
+import NotificationCard from '@ui/feedback/NotificationCard.astro';
+import Button from '@ui/actions/Button.astro';
+import Badge from '@ui/data-display/Badge.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+<section class:list={['cw-block-notif-feed', className]} data-cw-notif-feed>
+  <header class="cw-notif-feed-head">
+    <div class="cw-notif-feed-title">
+      <h4>Policy & Portal Alerts</h4>
+      <Badge tone="editorial" data-cw-notif-badge>2 Unread</Badge>
+    </div>
+    <Button size="sm" variant="ghost" data-cw-notif-mark-all>Mark all read</Button>
+  </header>
+
+  <div class="cw-notif-feed-list">
+    <NotificationCard
+      title="240-Hour Visa-Free Transit Port List Updated"
+      body="NIA confirmed 60 eligible entry/exit ports across 24 provinces with cross-provincial rail travel permitted."
+      timestamp="2 hours ago"
+      category="9.1 Visas & Entry"
+      tone="verified"
+      unread
+      actionLabel="Open Visa Checker →"
+      actionHref="/tools/"
+    />
+    <NotificationCard
+      title="National Public Data Portal Returned WAF 412"
+      body="Automated availability check flagged anti-bot challenge; entry remains marked WAF-Protected Official Standby."
+      timestamp="Yesterday"
+      category="12.8 Gov Open Data"
+      tone="standby"
+      unread
+      actionLabel="Inspect Directory →"
+      actionHref="/directory/"
+    />
+    <NotificationCard
+      title="Spring 2026 Canton Fair Buyer Badge Registration Open"
+      body="Overseas buyer pre-registration and passport verification window is now live on the official portal."
+      timestamp="3 days ago"
+      category="11.2 Trade Fairs"
+      tone="info"
+      actionLabel="Read Sourcing Guide →"
+      actionHref="/posts/"
+    />
+  </div>
+</section>

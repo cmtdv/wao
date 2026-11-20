@@ -1,0 +1,49 @@
+---
+/**
+ * FileUpload — Accessible drag-and-drop zone + native file input + live selected file list
+ */
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  id: string;
+  name?: string;
+  label?: string;
+  accept?: string;
+  multiple?: boolean;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name = 'attachment',
+  label = 'Upload field evidence or PDF',
+  accept = '.pdf,.png,.jpg,.jpeg,.webp',
+  multiple = true,
+  hint = 'PDF, PNG, JPG or WebP up to 10 MB per file (local preview only).',
+  class: className = '',
+} = Astro.props;
+---
+<div class:list={['cw-field cw-upload', className]} data-cw-upload>
+  <span class="cw-label" id={`${id}-label`}>{label}</span>
+  <label for={id} class="cw-upload-zone" data-cw-upload-zone>
+    <input
+      id={id}
+      name={name}
+      type="file"
+      accept={accept}
+      multiple={multiple}
+      class="visually-hidden"
+      aria-labelledby={`${id}-label`}
+      data-cw-upload-input
+    />
+    <span class="cw-upload-icon" aria-hidden="true">
+      <Icon name="upload" size={20} />
+    </span>
+    <span class="cw-upload-copy">
+      <strong>Choose files</strong> or drag and drop here
+    </span>
+    <span class="cw-upload-meta">{hint}</span>
+  </label>
+  <ul class="cw-upload-list" data-cw-upload-list aria-live="polite" hidden></ul>
+</div>

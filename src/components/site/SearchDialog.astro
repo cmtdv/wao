@@ -1,0 +1,54 @@
+---
+import Icon from '@site/Icon.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+---
+<dialog
+  id="search-dialog"
+  class="search-dialog"
+  closedby="any"
+  aria-labelledby="search-heading"
+>
+  <div class="dialog-head">
+    <h2 id="search-heading" class="eyebrow eyebrow--accent">{isZh ? '全站检索' : 'Archive Search'}</h2>
+    <button
+      type="button"
+      class="icon-btn"
+      commandfor="search-dialog"
+      command="close"
+      aria-label={isZh ? '关闭搜索弹窗' : 'Close search dialog'}
+    >
+      <Icon name="close" size={18} />
+    </button>
+  </div>
+
+  <search>
+    <form action={localePath('/search/', locale)} method="get" class="dialog-form">
+      <Icon name="search" size={20} />
+      <label for="quick-search" class="visually-hidden">{isZh ? '搜索文章与页面' : 'Search posts and pages'}</label>
+      <input
+        id="quick-search"
+        name="q"
+        type="search"
+        placeholder={isZh ? '搜索文章、城市、签证、高铁攻略…' : 'Search stories, places, guides…'}
+        maxlength="200"
+        autocomplete="off"
+        autofocus
+      />
+      <button type="submit" class="btn btn--primary">
+        <span>{isZh ? '搜索' : 'Search'}</span>
+        <Icon name="arrow" size={15} />
+      </button>
+    </form>
+  </search>
+
+  <div class="dialog-foot">
+    <span>{isZh ? '检索全部已发布志刊与编辑部页面' : 'Searches published posts and pages'}</span>
+    <span class="dialog-shortcuts">
+      <span><kbd>Enter</kbd> {isZh ? '提交' : 'submit'}</span>
+      <span><kbd>Esc</kbd> {isZh ? '关闭' : 'close'}</span>
+    </span>
+  </div>
+</dialog>

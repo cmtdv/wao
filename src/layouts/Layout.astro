@@ -1,0 +1,277 @@
+---
+import '@fontsource/dm-sans/latin-400.css';
+import '@fontsource/dm-sans/latin-500.css';
+import '@fontsource/dm-sans/latin-600.css';
+import '@fontsource/newsreader/latin-400.css';
+import '@fontsource/newsreader/latin-400-italic.css';
+import '@fontsource/newsreader/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+
+import {
+  getEmDashCollection,
+  getHreflangAlternates,
+  getSiteSettingsWithCacheHint,
+  getTaxonomyTermsWithCacheHint,
+} from 'emdash';
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
+import { createPublicPageContext } from 'emdash/page';
+import { publicContext } from '@lib/cms';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import SiteHeader from '@site/SiteHeader.astro';
+import SiteFooter from '@site/SiteFooter.astro';
+import SearchDialog from '@site/SearchDialog.astro';
+import '../styles/index.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageTitle?: string | null;
+  image?: string | null;
+  canonical?: string | null;
+  robots?: string | null;
+  type?: 'website' | 'article';
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
+  author?: string | null;
+  content?: { collection: string; id: string; slug?: string | null };
+}
+
+const props = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const originalPathname = Astro.locals.originalPathname ?? Astro.url.pathname;
+const strings = getStrings(locale);
+
+const [settings, taxonomyPrimary, pagesPrimary] = await Promise.all([
+  getSiteSettingsWithCacheHint(),
+  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })),
+  publicContext(() => getEmDashCollection('pages', { status: 'published', limit: 20, locale })),
+]);
+
+const pages =
+  pagesPrimary.entries.length > 0 || locale === 'en'
+    ? pagesPrimary
+    : await publicContext(() => getEmDashCollection('pages', { status: 'published', limit: 20, locale: 'en' }));
+
+const taxonomy =
+  taxonomyPrimary.data.length > 0 || locale === 'en'
+    ? taxonomyPrimary
+    : await publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale: 'en' }));
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(settings.cacheHint);
+  Astro.cache.set(taxonomy.cacheHint);
+  Astro.cache.set(pages.cacheHint);
+}
+
+if (pages.error) {
+  throw new Error('Unable to load page navigation');
+}
+
+const site = settings.data;
+const siteTitle = site.title || 'ChinaWao';
+const roots = taxonomy.data.filter((term) => !term.parentId);
+const fullTitle = props.title ? `${props.title} — ${siteTitle}` : siteTitle;
+
+// Resolve native EmDash hreflang alternates for CMS entries, or deterministic route alternates for custom pages
+let hreflangLinks: { hreflang: string; href: string }[] = [];
+if (props.content) {
+  hreflangLinks = await getHreflangAlternates(props.content.collection, props.content.id, {
+    siteUrl: Astro.url.origin,
+  }).catch(() => []);
+}
+if (hreflangLinks.length === 0) {
+  const origin = Astro.url.origin;
+  const enHref = `${origin}${localePath(originalPathname, 'en')}`;
+  const zhHref = `${origin}${localePath(originalPathname, 'zh')}`;
+  hreflangLinks = [
+    { hreflang: 'en', href: enHref },
+    { hreflang: 'zh-CN', href: zhHref },
+    { hreflang: 'x-default', href: enHref },
+  ];
+}
+
+const page = createPublicPageContext({
+  Astro,
+  kind: props.content ? 'content' : 'custom',
+  title: fullTitle,
+  pageTitle: props.pageTitle ?? props.title ?? siteTitle,
+  description: props.description ?? site.tagline,
+  siteName: siteTitle,
+  image: props.image,
+  canonical: props.canonical,
+  content: props.content,
+  pageType: props.type ?? 'website',
+  seo: { robots: props.robots, ogImage: props.image },
+  articleMeta: {
+    publishedTime: props.publishedTime,
+    modifiedTime: props.modifiedTime,
+    author: props.author,
+  },
+});
+const lp = (path: string) => localePath(path, locale);
+const isZh = locale === 'zh';
+const cleanPath = originalPathname.replace(/^\/zh(?=\/|$)/, '') || '/';
+const routeIndex = cleanPath.startsWith('/journeys')
+  ? (isZh ? '栏 04' : 'SEC 04')
+  : cleanPath.startsWith('/atlas')
+    ? (isZh ? '栏 03' : 'SEC 03')
+    : cleanPath.startsWith('/directory')
+      ? (isZh ? '栏 05' : 'SEC 05')
+      : cleanPath.startsWith('/tools')
+        ? (isZh ? '栏 06' : 'SEC 06')
+        : cleanPath.startsWith('/posts')
+          ? (isZh ? '栏 01' : 'SEC 01')
+          : cleanPath.startsWith('/topics') || cleanPath.startsWith('/category')
+            ? (isZh ? '栏 02' : 'SEC 02')
+            : cleanPath.startsWith('/tags') || cleanPath.startsWith('/tag')
+              ? (isZh ? '索引 · 标签' : 'IDX · TAGS')
+              : cleanPath.startsWith('/search')
+                ? (isZh ? '全站检索' : 'SEARCH')
+                : cleanPath.startsWith('/design-system')
+                  ? (isZh ? '设计系统' : 'SYSTEM')
+                  : '2026';
+
+const v1SpineLinks = [
+  { num: '01', short: isZh ? '志刊' : 'JRN', title: strings.nav.journal, href: lp('/posts/'), match: '/posts' },
+  { num: '02', short: isZh ? '栏目' : 'TOP', title: strings.nav.topics, href: lp('/topics/'), match: '/topics' },
+  { num: '03', short: isZh ? '图谱' : 'ATL', title: strings.nav.atlas, href: lp('/atlas/'), match: '/atlas' },
+  { num: '04', short: isZh ? '首访' : 'JNY', title: strings.nav.journeys, href: lp('/journeys/'), match: '/journeys' },
+  { num: '05', short: isZh ? '名录' : 'DIR', title: strings.nav.directory, href: lp('/directory/'), match: '/directory' },
+  { num: '06', short: isZh ? '工具' : 'TLS', title: strings.nav.tools, href: lp('/tools/'), match: '/tools' },
+];
+---
+<!doctype html>
+<html lang={strings.htmlLang} style={`--cw-route-index: '${routeIndex}';`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      try {
+        var s = localStorage.getItem('color-scheme');
+        if (s === 'light' || s === 'dark') {
+          document.querySelector('meta[name="color-scheme"]').content = s;
+        }
+        var validStyles = ['v1', 'v2', 'v3', 'v4', 'classic'];
+        var qStyle = new URLSearchParams(window.location.search).get('style');
+        var savedStyle = localStorage.getItem('cw-site-style');
+        var activeStyle = validStyles.indexOf(qStyle) !== -1
+          ? qStyle
+          : (validStyles.indexOf(savedStyle) !== -1 ? savedStyle : 'v1');
+        if (validStyles.indexOf(qStyle) !== -1) {
+          localStorage.setItem('cw-site-style', qStyle);
+        }
+        document.documentElement.setAttribute('data-cw-style', activeStyle);
+      } catch (e) {
+        document.documentElement.setAttribute('data-cw-style', 'v1');
+      }
+    </script>
+    <meta name="theme-color" content="#f7f3e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)" />
+    <title>{fullTitle}</title>
+    <EmDashHead page={page} />
+    {hreflangLinks.map((alt) => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${siteTitle} RSS Feed`}
+      href="/rss.xml"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <EmDashBodyStart page={page} />
+    <a class="skip-link" href="#main-content">{strings.skipToContent}</a>
+
+    {/* V1 Editorial Folio Fixed Numbered Index Spine Rail (100% i18n-native) */}
+    <aside class="cw-v1-spine" aria-label={locale === 'zh' ? '卷宗编号导览' : 'Editorial index spine'}>
+      <a href={lp('/')} class="cw-v1-seal" title="ChinaWao">CW</a>
+      <nav class="cw-v1-spine-links">
+        {v1SpineLinks.map((item) => (
+          <a
+            href={item.href}
+            title={item.title}
+            aria-current={cleanPath.startsWith(item.match) ? 'page' : undefined}
+          >
+            <strong>{item.num}</strong>
+            <span>{item.short}</span>
+          </a>
+        ))}
+      </nav>
+      <span aria-hidden="true"></span>
+    </aside>
+
+    {/* V2 Fuxing Transit Terminal Top Live Status Bar */}
+    <div class="cw-v2-terminal-bar" aria-label={isZh ? '实时基础设施状态条' : 'Live transit terminal status'}>
+      <span><span class="cw-v2-led" aria-hidden="true"></span>{isZh ? 'ChinaWao 实时服务终端' : 'CHINAWAO // TERMINAL'}</span>
+      <div class="cw-v2-chips">
+        {isZh ? (
+          <>
+            <span>● 240 小时过境免签 · 60 口岸</span>
+            <span>● 12306 外籍护照直刷</span>
+            <span>● 离境退税 2.0 · 满 ¥200 起退</span>
+          </>
+        ) : (
+          <>
+            <span>● 240H Transit · 60 Ports</span>
+            <span>● 12306 Passport E-Gate</span>
+            <span>● Tax Refund 2.0 · ¥200 Min</span>
+          </>
+        )}
+      </div>
+      <span class="cw-v2-clock">{isZh ? '北京时间' : 'BJT'} <strong data-cw-bjt-clock>--:--:--</strong></span>
+    </div>
+
+    <SiteHeader
+      siteTitle={siteTitle}
+      roots={roots}
+      terms={taxonomy.data}
+      pages={pages.entries}
+      locale={locale}
+      originalPathname={originalPathname}
+    />
+
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <SiteFooter
+      siteTitle={siteTitle}
+      tagline={locale === 'zh' ? strings.home.editionTagline : (site.tagline || 'Independent English dispatches on modern China.')}
+      roots={roots}
+      pages={pages.entries}
+      locale={locale}
+      originalPathname={originalPathname}
+    />
+
+    <SearchDialog />
+
+    {/* Global Live 4-Version Site-Wide Style Switcher Dock */}
+    <nav class="cw-style-dock" aria-label={isZh ? '全站视觉体系实时切换' : 'Live site-wide visual theme switcher'} data-cw-style-dock>
+      <button type="button" data-cw-set-style="v1" aria-pressed="false">{isZh ? '01 画报卷宗' : '01 Editorial'}</button>
+      <button type="button" data-cw-set-style="v2" aria-pressed="false">{isZh ? '02 基建票根' : '02 Transit'}</button>
+      <button type="button" data-cw-set-style="v3" aria-pressed="false">{isZh ? '03 时空展厅' : '03 Exhibition'}</button>
+      <button type="button" data-cw-set-style="v4" aria-pressed="false">{isZh ? '04 瑞士网格' : '04 Swiss Grid'}</button>
+      <button type="button" data-cw-set-style="classic" aria-pressed="false">{isZh ? '原版' : 'Classic'}</button>
+      <span class="cw-style-dock-sep" aria-hidden="true"></span>
+      <a href={lp('/concepts/')}>{isZh ? '概念实验室 ↗' : 'Concepts ↗'}</a>
+    </nav>
+
+    {/* Sitewide Persistent Toast Stack (modern-web-guidance: persistent-toast-notifications) */}
+    <div
+      id="cw-toast-region"
+      class="cw-toast-region"
+      popover="manual"
+      role="region"
+      aria-label="Site notifications"
+      data-cw-toast-region
+    ></div>
+    <div class="visually-hidden" aria-live="polite" aria-atomic="true" data-cw-toast-live></div>
+
+    <script src="../scripts/site.ts"></script>
+    <EmDashBodyEnd page={page} />
+  </body>
+</html>

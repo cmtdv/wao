@@ -1,0 +1,19 @@
+---
+interface Props {
+  tone?: 'neutral' | 'editorial' | 'verified' | 'standby' | 'danger';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { tone = 'neutral', class: className = '', ...rest } = Astro.props;
+---
+<span
+  class:list={[
+    'cw-badge',
+    tone !== 'neutral' && `cw-badge--${tone}`,
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+</span>

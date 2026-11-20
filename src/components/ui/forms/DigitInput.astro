@@ -1,0 +1,44 @@
+---
+/**
+ * DigitInput — 6-box accessible OTP / verification code input
+ * Supports auto-advance, paste-to-fill, Backspace reversal, and arrow keys
+ */
+interface Props {
+  id: string;
+  name?: string;
+  label?: string;
+  length?: number;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name = 'otp',
+  label = '6-digit verification code',
+  length = 6,
+  hint,
+  class: className = '',
+} = Astro.props;
+
+const slots = Array.from({ length }, (_, idx) => idx);
+---
+<fieldset class:list={['cw-field cw-digit-group', className]} data-cw-digit-group>
+  <legend class="cw-label">{label}</legend>
+  <input type="hidden" name={name} id={id} value="" data-cw-digit-hidden />
+  <div class="cw-digit-row">
+    {slots.map((idx) => (
+      <input
+        type="text"
+        inputmode="numeric"
+        autocomplete={idx === 0 ? 'one-time-code' : 'off'}
+        maxlength="1"
+        pattern="[0-9]"
+        class="cw-digit-box"
+        aria-label={`Digit ${idx + 1} of ${length}`}
+        data-cw-digit-box={idx}
+      />
+    ))}
+  </div>
+  {hint && <p class="cw-field-hint">{hint}</p>}
+</fieldset>

@@ -1,0 +1,68 @@
+---
+import { decodeSlug, getSeoMeta } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import Layout from '@layouts/Layout.astro';
+import TableOfContents from '@site/TableOfContents.astro';
+import { getPublicPage } from '@lib/cms';
+import { extractToc } from '@lib/portable-text';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+
+const locale = getLocaleFromContext(Astro);
+const lp = (path: string) => localePath(path, locale);
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return new Response(null, { status: 404 });
+
+const result = await getPublicPage(slug, locale).catch(() => null);
+if (!result || result.error) {
+  return new Response('This page is temporarily unavailable.', { status: 503 });
+}
+
+const page = result.entry;
+if (!page || page.data.status !== 'published') {
+  return new Response(null, { status: 404 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(result.cacheHint);
+}
+
+const seo = getSeoMeta(page, { siteUrl: Astro.url.origin, path: Astro.locals.originalPathname ?? Astro.url.pathname });
+const tocItems = extractToc(page.data.content);
+---
+<Layout
+  title={seo.title ?? page.data.title}
+  description={seo.description ?? ''}
+  pageTitle={seo.ogTitle}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  content={{ collection: 'pages', id: page.data.id, slug }}
+>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <article class="container article-shell">
+    <div class="article-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{locale === 'zh' ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{page.data.title}</span>
+      </nav>
+      <p class="eyebrow eyebrow--accent">{locale === 'zh' ? '编辑部页面' : 'Editorial Page'}</p>
+      <h1>{page.data.title}</h1>
+    </div>
+
+    <TableOfContents items={tocItems} variant="mobile" />
+
+    <div class:list={['article-layout', tocItems.length > 0 && 'article-layout--with-toc']}>
+      <div class="prose" data-article-prose>
+        {page.data.content?.length ? (
+          <PortableText value={page.data.content} />
+        ) : (
+          <p>{locale === 'zh' ? '该页面暂未发布正文内容。' : 'This page has no content yet.'}</p>
+        )}
+      </div>
+
+      <TableOfContents items={tocItems} variant="desktop" />
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,89 @@
+---
+/**
+ * PricingBlock — 3-tier membership / enterprise licensing grid with Monthly / Annual toggle
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import Icon from '@site/Icon.astro';
+
+export interface PricingTier {
+  name: string;
+  badge?: string;
+  description: string;
+  monthlyPrice: string;
+  annualPrice: string;
+  periodNote: string;
+  featured?: boolean;
+  ctaLabel: string;
+  features: string[];
+}
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  tiers: PricingTier[];
+  class?: string;
+}
+
+const {
+  id = 'cw-pricing-block',
+  eyebrow = 'Reader & Research Access',
+  title,
+  subtitle,
+  tiers,
+  class: className = '',
+} = Astro.props;
+---
+<section id={id} class:list={['cw-block-section cw-pricing', className]} data-cw-pricing>
+  <div class="cw-pricing-head">
+    <header class="cw-block-head">
+      <span class="kicker">{eyebrow}</span>
+      <h3 class="cw-block-title">{title}</h3>
+      {subtitle && <p class="cw-block-sub">{subtitle}</p>}
+    </header>
+    <div class="cw-segmented" role="group" aria-label="Billing interval">
+      <button type="button" class="cw-segmented-btn" data-cw-billing="monthly" aria-pressed="true">Monthly</button>
+      <button type="button" class="cw-segmented-btn" data-cw-billing="annual" aria-pressed="false">Annual (−20%)</button>
+    </div>
+  </div>
+
+  <div class="cw-pricing-grid">
+    {tiers.map((tier) => (
+      <article class:list={['cw-pricing-card', tier.featured && 'cw-pricing-card--featured']}>
+        <div class="cw-pricing-top">
+          <h4>{tier.name}</h4>
+          {tier.badge && <Badge tone={tier.featured ? 'editorial' : 'neutral'}>{tier.badge}</Badge>}
+        </div>
+        <p class="cw-pricing-desc">{tier.description}</p>
+        <div class="cw-pricing-price">
+          <strong
+            class="cw-pricing-amount"
+            data-cw-price
+            data-monthly={tier.monthlyPrice}
+            data-annual={tier.annualPrice}
+          >
+            {tier.monthlyPrice}
+          </strong>
+          <span class="cw-pricing-period">{tier.periodNote}</span>
+        </div>
+        <ul class="cw-pricing-list">
+          {tier.features.map((f) => (
+            <li>
+              <Icon name="check" size={14} />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+        <Button
+          variant={tier.featured ? 'primary' : 'secondary'}
+          class="cw-pricing-btn"
+          data-cw-toast-trigger={`Selected ${tier.name} preview plan (mock UI Kit demo).`}
+        >
+          {tier.ctaLabel}
+        </Button>
+      </article>
+    ))}
+  </div>
+</section>

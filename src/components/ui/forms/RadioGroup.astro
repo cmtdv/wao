@@ -1,0 +1,49 @@
+---
+export interface RadioOption {
+  value: string;
+  label: string;
+  checked?: boolean;
+  disabled?: boolean;
+}
+
+interface Props {
+  name: string;
+  legend: string;
+  options: RadioOption[];
+  inline?: boolean;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  name,
+  legend,
+  options,
+  inline = false,
+  hint,
+  class: className = '',
+} = Astro.props;
+---
+<fieldset class:list={['cw-radio-group', className]}>
+  <legend>{legend}</legend>
+  <div class:list={['cw-radio-list', inline && 'cw-radio-list--inline']}>
+    {options.map((opt, idx) => {
+      const id = `${name}-${idx}`;
+      return (
+        <label class="cw-check-label" for={id}>
+          <input
+            id={id}
+            type="radio"
+            name={name}
+            value={opt.value}
+            checked={opt.checked}
+            disabled={opt.disabled}
+            class="cw-radio"
+          />
+          <span>{opt.label}</span>
+        </label>
+      );
+    })}
+  </div>
+  {hint && <span class="cw-hint">{hint}</span>}
+</fieldset>

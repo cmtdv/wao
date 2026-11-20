@@ -1,0 +1,36 @@
+---
+/**
+ * AnnouncementBlock — Top-of-page editorial & policy release announcement bar
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import LinkButton from '@ui/actions/LinkButton.astro';
+
+interface Props {
+  badge?: string;
+  text: string;
+  linkLabel?: string;
+  linkHref?: string;
+  tone?: 'palace' | 'subtle';
+  class?: string;
+}
+
+const {
+  badge = '2026 Policy Desk',
+  text,
+  linkLabel = 'Read brief',
+  linkHref = '/tools/',
+  tone = 'palace',
+  class: className = '',
+} = Astro.props;
+---
+<div class:list={['cw-block-announce', `cw-block-announce--${tone}`, className]}>
+  <div class="cw-block-announce-inner">
+    <Badge tone={tone === 'palace' ? 'standby' : 'editorial'}>{badge}</Badge>
+    <p class="cw-block-announce-text">{text}</p>
+    {linkHref && (
+      <LinkButton href={linkHref} tone={tone === 'palace' ? 'gold' : 'accent'} size="sm">
+        {linkLabel}
+      </LinkButton>
+    )}
+  </div>
+</div>

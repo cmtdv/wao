@@ -1,0 +1,40 @@
+---
+/**
+ * Accordion — Native <details>/<summary> disclosure group with optional exclusive name
+ */
+import Icon from '@site/Icon.astro';
+
+export interface AccordionItem {
+  id?: string;
+  question: string;
+  answer: string;
+  badge?: string;
+  open?: boolean;
+}
+
+interface Props {
+  items: AccordionItem[];
+  name?: string;
+  class?: string;
+}
+
+const { items, name, class: className = '' } = Astro.props;
+---
+<div class:list={['cw-accordion', className]}>
+  {items.map((item) => (
+    <details class="cw-accordion-item" id={item.id} name={name} open={item.open}>
+      <summary class="cw-accordion-trigger">
+        <span class="cw-accordion-title">
+          <span>{item.question}</span>
+          {item.badge && <span class="cw-badge cw-badge--neutral">{item.badge}</span>}
+        </span>
+        <span class="cw-accordion-icon" aria-hidden="true">
+          <Icon name="down" size={16} />
+        </span>
+      </summary>
+      <div class="cw-accordion-body">
+        <p>{item.answer}</p>
+      </div>
+    </details>
+  ))}
+</div>

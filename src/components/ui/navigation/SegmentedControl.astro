@@ -1,0 +1,47 @@
+---
+/**
+ * SegmentedControl — Architectural 2–5 option single-select toggle bar
+ */
+export interface SegmentOption {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  id?: string;
+  label: string;
+  options: SegmentOption[];
+  activeValue?: string;
+  dataAttr?: string;
+  class?: string;
+}
+
+const {
+  id,
+  label,
+  options,
+  activeValue,
+  dataAttr,
+  class: className = '',
+} = Astro.props;
+
+const active = activeValue ?? options[0]?.value;
+---
+<div
+  id={id}
+  class:list={['cw-segmented', className]}
+  role="group"
+  aria-label={label}
+  data-cw-segmented={dataAttr ?? 'true'}
+>
+  {options.map((opt) => (
+    <button
+      type="button"
+      class="cw-segmented-btn"
+      data-segment-value={opt.value}
+      aria-pressed={opt.value === active ? 'true' : 'false'}
+    >
+      {opt.label}
+    </button>
+  ))}
+</div>

@@ -1,0 +1,57 @@
+---
+/**
+ * ColorPicker — Native <input type="color"> paired with hex readout & Forbidden City palette presets
+ */
+interface Props {
+  id: string;
+  name?: string;
+  label?: string;
+  value?: string;
+  swatches?: { label: string; hex: string }[];
+  hint?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  label = 'Accent color',
+  value = '#C93B2B',
+  swatches = [
+    { label: 'Cinnabar Seal', hex: '#C93B2B' },
+    { label: 'Palace Wall', hex: '#732520' },
+    { label: 'Imperial Gold', hex: '#B8893D' },
+    { label: 'Celadon Green', hex: '#1E5B3A' },
+    { label: 'Hui Ink', hex: '#1C1917' },
+  ],
+  hint,
+  class: className = '',
+} = Astro.props;
+---
+<div class:list={['cw-field cw-color-picker', className]} data-cw-color-picker>
+  <label for={id} class="cw-label">{label}</label>
+  <div class="cw-color-row">
+    <input
+      id={id}
+      name={name ?? id}
+      type="color"
+      value={value}
+      class="cw-color-input"
+      data-cw-color-input
+    />
+    <span class="cw-color-hex" data-cw-color-hex>{value.toUpperCase()}</span>
+    <div class="cw-color-swatches" role="group" aria-label="Preset swatches">
+      {swatches.map((s) => (
+        <button
+          type="button"
+          class="cw-color-swatch"
+          data-cw-swatch={s.hex}
+          style={`background:${s.hex};`}
+          aria-label={`Use ${s.label} (${s.hex})`}
+          title={`${s.label} · ${s.hex}`}
+        ></button>
+      ))}
+    </div>
+  </div>
+  {hint && <p class="cw-field-hint">{hint}</p>}
+</div>

@@ -1,0 +1,53 @@
+---
+import Icon from '@site/Icon.astro';
+import type { TocItem } from '@lib/portable-text';
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  items: TocItem[];
+  variant: 'desktop' | 'mobile';
+}
+
+const { items, variant } = Astro.props;
+const isZh = getLocaleFromContext(Astro) === 'zh';
+---
+{items.length > 0 && variant === 'desktop' && (
+  <aside class="toc-rail" aria-label={isZh ? '本文目录' : 'On this page'}>
+    <p class="eyebrow eyebrow--accent toc-title">{isZh ? '目录导航' : 'Contents'}</p>
+    <ol class="toc-list">
+      {items.map((item) => (
+        <li>
+          <a
+            href={`#${item.id}`}
+            data-toc-link
+            class:list={['toc-link', item.level === 3 && 'toc-link--sub']}
+          >
+            {item.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </aside>
+)}
+
+{items.length > 0 && variant === 'mobile' && (
+  <details class="toc-mobile">
+    <summary>
+      <span>{isZh ? `本文目录（${items.length}）` : `On this page (${items.length})`}</span>
+      <Icon name="down" size={16} />
+    </summary>
+    <ol class="toc-list">
+      {items.map((item) => (
+        <li>
+          <a
+            href={`#${item.id}`}
+            data-toc-link
+            class:list={['toc-link', item.level === 3 && 'toc-link--sub']}
+          >
+            {item.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </details>
+)}

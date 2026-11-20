@@ -1,0 +1,28 @@
+---
+/**
+ * BrandSocialBlock — Source institutions & editorial channels proof strip
+ */
+interface Props {
+  eyebrow?: string;
+  brands: { name: string; code: string; role: string }[];
+  class?: string;
+}
+
+const {
+  eyebrow = 'Primary Official & Institutional Sources Tracked',
+  brands,
+  class: className = '',
+} = Astro.props;
+---
+<section class:list={['cw-brand-strip', className]} aria-label={eyebrow}>
+  <p class="kicker cw-brand-strip-eyebrow">{eyebrow}</p>
+  <ul class="cw-brand-grid">
+    {brands.map((b) => (
+      <li class="cw-brand-cell">
+        <span class="cw-brand-code">{b.code}</span>
+        <strong class="cw-brand-name">{b.name}</strong>
+        <span class="cw-brand-role">{b.role}</span>
+      </li>
+    ))}
+  </ul>
+</section>

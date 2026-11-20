@@ -1,0 +1,41 @@
+---
+import Icon from '@site/Icon.astro';
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  variant?: 'quick' | 'segmented';
+}
+
+const { variant = 'quick' } = Astro.props;
+const isZh = getLocaleFromContext(Astro) === 'zh';
+---
+{variant === 'quick' ? (
+  <button
+    type="button"
+    class="icon-btn theme-quick-btn"
+    data-theme-quick-toggle
+    aria-label={isZh ? '切换日光素宣 / 夜读徽墨模式' : 'Toggle color theme'}
+  >
+    <span class="icon-moon" aria-hidden="true">
+      <Icon name="moon" size={18} />
+    </span>
+    <span class="icon-sun" aria-hidden="true">
+      <Icon name="sun" size={18} />
+    </span>
+  </button>
+) : (
+  <div class="theme-switcher" role="group" aria-label={isZh ? '色彩模式' : 'Color theme'}>
+    <button type="button" class="theme-segment" data-theme-choice="light" aria-pressed="false">
+      <Icon name="sun" size={13} />
+      <span>{isZh ? '素宣' : 'Paper'}</span>
+    </button>
+    <button type="button" class="theme-segment" data-theme-choice="dark" aria-pressed="false">
+      <Icon name="moon" size={13} />
+      <span>{isZh ? '徽墨' : 'Ink'}</span>
+    </button>
+    <button type="button" class="theme-segment" data-theme-choice="system" aria-pressed="true">
+      <Icon name="system" size={13} />
+      <span>{isZh ? '跟随系统' : 'System'}</span>
+    </button>
+  </div>
+)}

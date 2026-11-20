@@ -1,0 +1,10 @@
+node_modules/
+.astro/
+.emdash/
+dist/
+data.db*
+uploads/
+.env
+.env.*
+*.pem
+*.key

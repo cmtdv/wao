@@ -1,0 +1,66 @@
+---
+/**
+ * Drawer — Scroll-snap swipeable modal <dialog> drawer
+ * Follows modern-web-guidance (navigation-drawer):
+ * - Top-layer modal <dialog> + scroll-snap scroller + ::after closed spacer
+ * - Scroll-driven backdrop fade gated in @supports (animation-timeline: scroll())
+ * - IntersectionObserver closes dialog cleanly after slide-out completes
+ */
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  id: string;
+  triggerLabel: string;
+  title: string;
+  eyebrow?: string;
+  triggerVariant?: 'primary' | 'secondary' | 'ghost';
+  class?: string;
+}
+
+const {
+  id,
+  triggerLabel,
+  title,
+  eyebrow = 'Panel',
+  triggerVariant = 'secondary',
+  class: className = '',
+} = Astro.props;
+
+const titleId = `${id}-title`;
+---
+<div class:list={['cw-drawer-wrap', className]} data-cw-drawer-root={id}>
+  <button
+    type="button"
+    class={`btn btn--${triggerVariant}`}
+    aria-expanded="false"
+    aria-controls={id}
+    data-cw-drawer-open={id}
+  >
+    {triggerLabel}
+  </button>
+
+  <dialog id={id} class="cw-drawer" aria-labelledby={titleId} data-cw-drawer>
+    <div class="cw-drawer-scroller" data-cw-drawer-scroller>
+      <div class="cw-drawer-sheet" data-cw-drawer-sheet>
+        <div class="cw-drawer-head">
+          <div>
+            <span class="kicker">{eyebrow}</span>
+            <h3 id={titleId} class="cw-drawer-title">{title}</h3>
+          </div>
+          <button
+            type="button"
+            class="cw-compact-btn cw-compact-btn--stroke cw-compact-btn--sm"
+            aria-label={`Close ${title}`}
+            autofocus
+            data-cw-drawer-close
+          >
+            <Icon name="close" size={14} />
+          </button>
+        </div>
+        <div class="cw-drawer-body">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </dialog>
+</div>

@@ -1,0 +1,70 @@
+---
+/**
+ * DropdownMenu — Viewport-aware Popover button-group panel
+ * Follows modern-web-guidance (viewport-aware-dropdowns):
+ * - Plain button-revealing-a-button-group inside popover="auto" (no misleading role="menu"/aria-haspopup)
+ * - CSS Anchor Positioning gated inside @supports (position-area: block-end) with flip fallbacks
+ */
+import Icon from '@site/Icon.astro';
+
+export interface DropdownAction {
+  label: string;
+  href?: string;
+  icon?: string;
+  tone?: 'default' | 'danger';
+  toastMessage?: string;
+}
+
+interface Props {
+  id: string;
+  triggerLabel: string;
+  items: DropdownAction[];
+  variant?: 'secondary' | 'ghost';
+  class?: string;
+}
+
+const {
+  id,
+  triggerLabel,
+  items,
+  variant = 'secondary',
+  class: className = '',
+} = Astro.props;
+---
+<div class:list={['cw-dropdown', className]}>
+  <button
+    type="button"
+    class={`btn btn--${variant} btn--sm cw-dropdown-trigger`}
+    popovertarget={id}
+  >
+    <span>{triggerLabel}</span>
+    <Icon name="down" size={14} />
+  </button>
+
+  <div id={id} popover="auto" class="cw-dropdown-panel">
+    <div class="cw-dropdown-list">
+      {items.map((item) =>
+        item.href ? (
+          <a
+            href={item.href}
+            class:list={['cw-dropdown-item', item.tone === 'danger' && 'cw-dropdown-item--danger']}
+          >
+            {item.icon && <Icon name={item.icon} size={15} />}
+            <span>{item.label}</span>
+          </a>
+        ) : (
+          <button
+            type="button"
+            class:list={['cw-dropdown-item', item.tone === 'danger' && 'cw-dropdown-item--danger']}
+            popovertarget={id}
+            popovertargetaction="hide"
+            data-cw-toast-trigger={item.toastMessage ?? `${item.label} triggered`}
+          >
+            {item.icon && <Icon name={item.icon} size={15} />}
+            <span>{item.label}</span>
+          </button>
+        )
+      )}
+    </div>
+  </div>
+</div>

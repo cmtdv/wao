@@ -1,0 +1,64 @@
+---
+/**
+ * ProgressCircle — Architectural SVG ring progress gauge
+ */
+interface Props {
+  value: number;
+  max?: number;
+  size?: number;
+  strokeWidth?: number;
+  label?: string;
+  tone?: 'seal' | 'palace' | 'gold' | 'verified';
+  class?: string;
+}
+
+const {
+  value,
+  max = 100,
+  size = 76,
+  strokeWidth = 6,
+  label,
+  tone = 'seal',
+  class: className = '',
+} = Astro.props;
+
+const pct = Math.max(0, Math.min(100, (value / max) * 100));
+const radius = (size - strokeWidth) / 2;
+const circumference = 2 * Math.PI * radius;
+const dashOffset = circumference * (1 - pct / 100);
+---
+<div class:list={['cw-ring', className]}>
+  <div
+    class="cw-ring-wrap"
+    style={`width:${size}px;height:${size}px;`}
+    role="progressbar"
+    aria-valuenow={value}
+    aria-valuemin={0}
+    aria-valuemax={max}
+    aria-label={label ?? 'Completion rate'}
+  >
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+      <circle
+        class="cw-ring-track"
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke-width={strokeWidth}
+        fill="none"
+      />
+      <circle
+        class:list={['cw-ring-fill', `cw-ring-fill--${tone}`]}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke-width={strokeWidth}
+        stroke-dasharray={circumference}
+        stroke-dashoffset={dashOffset}
+        stroke-linecap="butt"
+        fill="none"
+      />
+    </svg>
+    <span class="cw-ring-value">{Math.round(pct)}%</span>
+  </div>
+  {label && <span class="cw-ring-label">{label}</span>}
+</div>

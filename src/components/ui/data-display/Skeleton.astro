@@ -1,0 +1,14 @@
+---
+interface Props {
+  variant?: 'title' | 'text' | 'short' | 'card';
+  label?: string;
+  class?: string;
+}
+
+const { variant = 'text', label = 'Loading content', class: className = '' } = Astro.props;
+---
+<span
+  class:list={['cw-skeleton', `cw-skeleton--${variant}`, className]}
+  role="status"
+  aria-label={label}
+></span>

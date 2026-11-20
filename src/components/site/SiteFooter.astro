@@ -1,0 +1,100 @@
+---
+import type { getEmDashCollection, getTaxonomyTermsWithCacheHint } from 'emdash';
+import BrandSeal from '@site/BrandSeal.astro';
+import ThemeToggle from '@site/ThemeToggle.astro';
+import { categoryPath, pagePath } from '@lib/format';
+import { getStrings, localePath, switchLocaleHref, type Locale } from '@i18n/ui';
+
+type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
+type PageEntry = Awaited<ReturnType<typeof getEmDashCollection<'pages'>>>['entries'][number];
+
+interface Props {
+  siteTitle: string;
+  tagline: string;
+  roots: Term[];
+  pages: PageEntry[];
+  locale?: Locale;
+  originalPathname?: string;
+}
+
+const { siteTitle, tagline, roots, pages, locale = 'en', originalPathname } = Astro.props;
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
+const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href={lp('/')} class="brand">
+        <BrandSeal />
+        <span>{siteTitle}<span class="brand-period">.</span></span>
+      </a>
+      <p>{tagline}</p>
+      <nav class="lang-switch" aria-label={strings.langLabel} style="margin-top: var(--space-3);">
+        <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>English</a>
+        <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简体中文</a>
+      </nav>
+    </div>
+
+    <div class="footer-col">
+      <h2>{strings.footer.explore}</h2>
+      <ul class="footer-links">
+        <li><a href={lp('/posts/')}>{strings.footer.links.posts}</a></li>
+        <li><a href={lp('/atlas/')}>{strings.footer.links.atlas}</a></li>
+        <li><a href={lp('/journeys/')}>{strings.footer.links.journeys}</a></li>
+        <li><a href={lp('/directory/')}>{strings.footer.links.directory}</a></li>
+        <li><a href={lp('/tools/')}>{strings.footer.links.tools}</a></li>
+        <li><a href={lp('/design-system/')}>{strings.footer.links.dsKit}</a></li>
+        <li><a href={lp('/design-system/blocks/')}>{strings.footer.links.dsBlocks}</a></li>
+        <li><a href={lp('/topics/')}>{strings.footer.links.topics}</a></li>
+        <li><a href={lp('/tags/')}>{strings.footer.links.tags}</a></li>
+        <li><a href={lp('/search/')}>{strings.footer.links.search}</a></li>
+        <li><a href="/rss.xml">{strings.footer.links.rss}</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h2>{strings.footer.topics}</h2>
+      {roots.length > 0 ? (
+        <ul class="footer-links">
+          {roots.map((term) => (
+            <li><a href={lp(categoryPath(term.slug))}>{term.label}</a></li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="footer-links">
+          <li><a href={lp('/posts/')}>{strings.footer.links.posts}</a></li>
+        </ul>
+      )}
+    </div>
+
+    <div class="footer-col">
+      <h2>{strings.footer.pages}</h2>
+      {pages.length > 0 ? (
+        <ul class="footer-links">
+          {pages.map((entry) => (
+            <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="footer-links">
+          <li><a href={lp('/search/')}>{strings.footer.links.search}</a></li>
+        </ul>
+      )}
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <div class="footer-colophon">
+      <span>© {year} {siteTitle}</span>
+      <span>{strings.footer.powered}</span>
+    </div>
+    <ThemeToggle variant="segmented" />
+  </div>
+
+  <div class="container footer-watermark" aria-hidden="true">
+    <span>{siteTitle}.</span>
+  </div>
+</footer>

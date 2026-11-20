@@ -1,0 +1,134 @@
+---
+/**
+ * DataTable — Semantic responsive & sortable data table
+ * Follows modern-web-guidance (responsive-table + sortable-table):
+ * - Scrollable region wrapper with tabindex="0", role="region", aria-labelledby
+ * - Sticky column & row headers with @container stacked card fallback (< 620px)
+ * - <button type="button" commandfor={id} command="--sort"> inside <th scope="col">
+ * - Single active aria-sort attribute + visually hidden role="status" announcer
+ */
+export interface TableColumn {
+  key: string;
+  label: string;
+  type?: 'string' | 'number';
+  sortable?: boolean;
+  align?: 'start' | 'end';
+  rowHeader?: boolean;
+}
+
+export interface TableCellValue {
+  text: string;
+  value?: string | number;
+  badgeTone?: 'neutral' | 'editorial' | 'verified' | 'standby' | 'danger';
+  href?: string;
+}
+
+export type TableRow = Record<string, string | number | TableCellValue>;
+
+interface Props {
+  id: string;
+  caption: string;
+  columns: TableColumn[];
+  rows: TableRow[];
+  emptyMessage?: string;
+  compact?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  caption,
+  columns,
+  rows,
+  emptyMessage = 'No records match the current selection.',
+  compact = false,
+  class: className = '',
+} = Astro.props;
+
+const captionId = `${id}-caption`;
+const statusId = `${id}-status`;
+
+const labelVars = columns
+  .map((col, idx) => `--col-label-${idx + 1}: "${col.label.replace(/"/g, '\\"')}"`)
+  .join('; ');
+
+function normalizeCell(raw: string | number | TableCellValue | undefined): TableCellValue {
+  if (raw === undefined || raw === null) return { text: '—', value: '' };
+  if (typeof raw === 'object') return raw;
+  return { text: String(raw), value: raw };
+}
+---
+<div class:list={['cw-table-block', className]} data-cw-table-root>
+  <div
+    tabindex="0"
+    role="region"
+    aria-labelledby={captionId}
+    class:list={['cw-table-wrap', compact && 'cw-table-wrap--compact']}
+  >
+    <table id={id} class="cw-table" style={labelVars} data-cw-sortable-table data-status-id={statusId}>
+      <caption id={captionId} class="cw-table-caption">{caption}</caption>
+      <thead>
+        <tr>
+          {columns.map((col) => (
+            <th
+              scope="col"
+              data-type={col.type ?? 'string'}
+              class:list={[col.align === 'end' && 'cw-table-num']}
+            >
+              {col.sortable !== false ? (
+                <button
+                  type="button"
+                  class="cw-table-sort-btn"
+                  {...({ commandfor: id, command: '--sort' } as Record<string, string>)}
+                >
+                  <span>{col.label}</span>
+                  <svg class="cw-table-sort-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path class="cw-sort-up" d="M3 5 6 2 9 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" />
+                    <path class="cw-sort-down" d="M3 7 6 10 9 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" />
+                  </svg>
+                </button>
+              ) : (
+                col.label
+              )}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.length > 0 ? (
+          rows.map((row) => (
+            <tr>
+              {columns.map((col, cIdx) => {
+                const cell = normalizeCell(row[col.key]);
+                const rawVal = cell.value !== undefined ? String(cell.value) : cell.text;
+                const isRowHeader = col.rowHeader ?? cIdx === 0;
+                const CellTag = isRowHeader ? 'th' : 'td';
+                return (
+                  <CellTag
+                    scope={isRowHeader ? 'row' : undefined}
+                    data-value={rawVal}
+                    data-col-label={col.label}
+                    class:list={[col.align === 'end' && 'cw-table-num']}
+                  >
+                    {cell.badgeTone ? (
+                      <span class={`cw-badge cw-badge--${cell.badgeTone}`}>{cell.text}</span>
+                    ) : cell.href ? (
+                      <a href={cell.href} class="text-link">{cell.text}</a>
+                    ) : (
+                      cell.text
+                    )}
+                  </CellTag>
+                );
+              })}
+            </tr>
+          ))
+        ) : (
+          <tr class="cw-table-empty-row">
+            <td colspan={columns.length}>{emptyMessage}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  <p id={statusId} class="visually-hidden" role="status"></p>
+</div>

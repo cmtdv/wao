@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Topic Dossier Page (/category/[slug]/) — 1st-Level Pillar & 2nd-Level Subtopic
+   ========================================================================== */
+
+@layer pages {
+  .dossier-shell {
+    padding-block: var(--space-7) var(--space-8);
+  }
+
+  /* 30% Palace Wall Topic Dossier Masthead + Glazed Gold Trim */
+  .dossier-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-4) var(--space-6);
+    padding: clamp(1.75rem, 3.8vw, 3rem);
+    margin-bottom: var(--space-6);
+    background: var(--secondary-solid);
+    color: var(--secondary-ink);
+    border-bottom: 3px solid var(--accent-gold);
+  }
+
+  .dossier-kicker-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--accent-gold-on-dark);
+  }
+
+  .dossier-header-main {
+    max-width: 48rem;
+  }
+
+  .dossier-header .eyebrow {
+    color: var(--secondary-ink-muted);
+  }
+
+  .dossier-header .eyebrow--accent::before {
+    background: var(--accent-seal-on-dark);
+  }
+
+  .dossier-header-main h1 {
+    margin-top: var(--space-3);
+    color: var(--secondary-ink);
+  }
+
+  .dossier-header .archive-lead {
+    color: var(--secondary-ink-muted);
+  }
+
+  .dossier-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .dossier-header .meta-line {
+    color: var(--secondary-ink-muted);
+  }
+
+  /* 2nd-Level Subtopic Cards Strip on 1st-Level Dossier */
+  .subtopic-band {
+    margin-bottom: var(--space-7);
+  }
+
+  .subtopic-band-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .subtopic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 1px;
+    background: var(--rule-subtle);
+    border: 1px solid var(--rule-subtle);
+  }
+
+  .subtopic-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--surface-canvas);
+    min-width: 0;
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .subtopic-card:hover {
+    background: var(--surface-raised);
+  }
+
+  .subtopic-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .subtopic-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-gold);
+  }
+
+  .subtopic-card-index {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--accent-seal-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .subtopic-card-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.2;
+    color: var(--ink-primary);
+    overflow-wrap: break-word;
+  }
+
+  .subtopic-card:hover .subtopic-card-title {
+    color: var(--accent-seal);
+  }
+
+  .subtopic-card-desc {
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    color: var(--ink-secondary);
+    overflow-wrap: break-word;
+  }
+
+  /* Sibling Navigation Bar (30% Celadon Secondary Tint + 10% Vermilion Active) */
+  .sibling-bar {
+    margin-bottom: var(--space-7);
+    padding: var(--space-4) var(--space-5);
+    background: var(--secondary-tint);
+    border: 1px solid var(--secondary-tint-border);
+    border-inline-start: 3px solid var(--secondary-solid);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .sibling-bar .term-pill--active,
+  .sibling-bar .term-pill[aria-current="page"] {
+    background: var(--accent-seal);
+    border-color: var(--accent-seal);
+    color: var(--accent-on-seal);
+  }
+
+  .sibling-bar-label {
+    margin-inline-end: var(--space-2);
+  }
+
+  .dossier-lead {
+    margin-bottom: var(--space-7);
+  }
+
+  @media (max-width: 760px) {
+    .dossier-header {
+      grid-template-columns: 1fr;
+    }
+  }
+}

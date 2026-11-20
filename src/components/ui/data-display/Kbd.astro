@@ -1,0 +1,20 @@
+---
+/**
+ * Kbd — Architectural 2px keyboard shortcut keycap
+ */
+interface Props {
+  keys?: string[];
+  class?: string;
+}
+
+const { keys, class: className = '' } = Astro.props;
+---
+{keys && keys.length > 0 ? (
+  <span class:list={['cw-kbd-group', className]}>
+    {keys.map((key) => (
+      <kbd class="cw-kbd">{key}</kbd>
+    ))}
+  </span>
+) : (
+  <kbd class:list={['cw-kbd', className]}><slot /></kbd>
+)}

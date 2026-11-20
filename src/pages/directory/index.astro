@@ -1,0 +1,209 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Icon from '@site/Icon.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import Tooltip from '@ui/feedback/Tooltip.astro';
+import { getDirectoryEntries } from '@data/mock-portal-zh';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import '../../styles/specialty.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+const entries = getDirectoryEntries(locale);
+
+const initialQ = (Astro.url.searchParams.get('q') ?? '').trim();
+const initialDomain = (Astro.url.searchParams.get('domain') ?? '').trim();
+const initialAccess = (Astro.url.searchParams.get('access') ?? '').trim();
+
+const domainOptions = isZh
+  ? [
+      { value: 'entry-visa', label: '签证与入境' },
+      { value: 'transport-pay', label: '交通与支付' },
+      { value: 'city-culture', label: '城市与文旅' },
+      { value: 'business-legal', label: '商务与法律' },
+      { value: 'open-data', label: '政府开放数据' },
+    ]
+  : [
+      { value: 'entry-visa', label: 'Entry & Visa' },
+      { value: 'transport-pay', label: 'Transport & Payments' },
+      { value: 'city-culture', label: 'Cities & Culture' },
+      { value: 'business-legal', label: 'Business & Legal' },
+      { value: 'open-data', label: 'Gov Open Data' },
+    ];
+
+const accessOptions = isZh
+  ? [
+      { value: 'english-portal', label: '官方英文门户' },
+      { value: 'bilingual-service', label: '双语申报与服务' },
+      { value: 'open-dataset', label: '免费开放数据集' },
+      { value: 'waf-standby', label: 'WAF 官方反爬备用源' },
+    ]
+  : [
+      { value: 'english-portal', label: 'English Official Portal' },
+      { value: 'bilingual-service', label: 'Bilingual Service / Filing' },
+      { value: 'open-dataset', label: 'Free Open Dataset' },
+      { value: 'waf-standby', label: 'WAF-Protected Official Standby' },
+    ];
+---
+<Layout
+  title={strings.directory.title}
+  description={strings.directory.lead}
+>
+  <div class="container portal-shell">
+    <div class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{strings.directory.crumb}</span>
+      </nav>
+      <span class="eyebrow eyebrow--accent">{strings.directory.kicker}</span>
+      <h1>{strings.directory.title}</h1>
+      <p class="archive-lead">{strings.directory.lead}</p>
+      <div class="portal-meta-strip">
+        <span><strong>{entries.length}</strong> {isZh ? '个精选官方门户' : 'Featured Official Portals'}</span>
+        <span><strong>48</strong> {isZh ? '项仓库已核验 OKF 条目' : 'Total Verified OKF Entries in Repo'}</span>
+        <span><strong>{isZh ? '严格过滤' : 'Strict Filter'}</strong> {isZh ? '零商业中介与引流软文' : 'Zero Commercial Middlemen'}</span>
+      </div>
+    </div>
+
+    <search aria-label={isZh ? '筛选官方公共服务门户' : 'Filter official service portals'}>
+      <form
+        class="finder-bar"
+        method="get"
+        action={lp('/directory/')}
+        data-directory-finder
+      >
+        <label class="finder-field finder-field--search">
+          <Icon name="search" size={16} />
+          <span class="visually-hidden">{isZh ? '按关键词搜索官方门户' : 'Filter official portals by keyword'}</span>
+          <input
+            type="search"
+            name="q"
+            value={initialQ}
+            placeholder={isZh ? '搜索 12306、移民局、故宫、商务部、国标…' : 'Search 12306, NIA, visa, Palace Museum, MOFCOM, GB...'}
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+          />
+        </label>
+
+        <label class="finder-field">
+          <span class="visually-hidden">{isZh ? '按服务领域筛选' : 'Filter by service domain'}</span>
+          <select name="domain" aria-label={isZh ? '服务领域' : 'Service domain'} class="cw-select cw-select--bare">
+            <option value="">{isZh ? '全部领域' : 'All domains'}</option>
+            {domainOptions.map((opt) => (
+              <option value={opt.value} selected={initialDomain === opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label class="finder-field finder-field--tag">
+          <span class="visually-hidden">{isZh ? '按访问类型筛选' : 'Filter by access type'}</span>
+          <select name="access" aria-label={isZh ? '访问类型' : 'Access type'} class="cw-select cw-select--bare">
+            <option value="">{isZh ? '全部访问类型' : 'All access types'}</option>
+            {accessOptions.map((opt) => (
+              <option value={opt.value} selected={initialAccess === opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div class="finder-actions">
+          <button
+            type="button"
+            class="finder-clear"
+            data-directory-clear
+            hidden={!initialQ && !initialDomain && !initialAccess}
+          >
+            {isZh ? '清除' : 'Clear'}
+          </button>
+        </div>
+      </form>
+    </search>
+
+    <div class="finder-status">
+      <span data-directory-count aria-live="polite">
+        {isZh ? `共展示 ${entries.length} 个官方门户` : `Showing ${entries.length} official portals`}
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:0.45rem;">
+        <span>{isZh ? '均核验自 ChinaWao OKF 官方台账' : 'Verified against ChinaWao OKF Registry'}</span>
+        <Tooltip id="tip-waf-standby" label={isZh ? '什么是 WAF 官方备用源？' : 'About WAF-Protected Standby portals'}>
+          {isZh ? (
+            <>
+              <strong>WAF 官方反爬备用源：</strong>国家部委或省市政府主办且提供免费公开数据的官方平台，但开启了 412/521/403 反爬拦截。本站将其备案为官方备用源，读者可在普通浏览器中直接打开访问。
+            </>
+          ) : (
+            <>
+              <strong>WAF-Protected Standby:</strong> Official government open-data portals that enforce anti-bot verification (412/521/403). They remain recorded as official standby sources for interactive browser access.
+            </>
+          )}
+        </Tooltip>
+      </span>
+    </div>
+
+    <div class="directory-grid">
+      {entries.map((entry) => {
+        const searchHay = `${entry.name} ${entry.operator} ${entry.domainLabel} ${entry.accessLabel} ${entry.languages} ${entry.summary}`.toLowerCase();
+        const isStandby = entry.accessType === 'waf-standby';
+        return (
+          <article
+            class:list={['portal-card', { 'portal-card--standby': isStandby }]}
+            data-directory-card
+            data-domain={entry.domain}
+            data-access={entry.accessType}
+            data-search={searchHay}
+          >
+            <div class="portal-card-top">
+              <span class="portal-domain-tag">{entry.domainLabel}</span>
+              <Badge tone={isStandby ? 'standby' : 'verified'}>
+                {entry.accessLabel}
+              </Badge>
+            </div>
+
+            <div>
+              <h2>{entry.name}</h2>
+              <p class="portal-operator">
+                {entry.operator} · {entry.languages}
+              </p>
+            </div>
+
+            <p>{entry.summary}</p>
+
+            <div class="portal-card-foot">
+              <span class="portal-card-meta">{isZh ? `核验于 ${entry.verifiedOn}` : `Verified ${entry.verifiedOn}`}</span>
+              <div class="portal-card-actions">
+                {entry.guideHref && (
+                  <a href={entry.guideHref} class="editorial-link">
+                    <span>{entry.guideLabel ?? (isZh ? '阅读攻略' : 'Read guide')}</span>
+                    <Icon name="arrow" size={14} />
+                  </a>
+                )}
+                <Button
+                  href={entry.url}
+                  variant="secondary"
+                  size="sm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>{isZh ? '访问官方门户 ↗' : 'Visit Portal ↗'}</span>
+                </Button>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="empty-panel" data-directory-empty hidden>
+      <h2>{isZh ? '没有符合当前筛选条件的官方门户' : 'No official portals match these filters'}</h2>
+      <p>{isZh ? `清除一项或多项筛选即可恢复浏览全部 ${entries.length} 个官方入口。` : `Clear one or more filter facets to browse all ${entries.length} verified entries.`}</p>
+    </div>
+  </div>
+</Layout>

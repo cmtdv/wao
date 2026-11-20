@@ -1,0 +1,59 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'input'>, 'size'> {
+  id?: string;
+  name: string;
+  type?: 'text' | 'search' | 'email' | 'number' | 'tel' | 'url' | 'password';
+  label?: string;
+  hint?: string;
+  error?: string;
+  size?: 'sm' | 'md' | 'lg';
+  required?: boolean;
+  disabled?: boolean;
+}
+
+const {
+  id,
+  name,
+  type = 'text',
+  label,
+  hint,
+  error,
+  size = 'md',
+  required = false,
+  disabled = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const inputId = id ?? `input-${name}`;
+const hintId = hint ? `${inputId}-hint` : undefined;
+const errorId = error ? `${inputId}-error` : undefined;
+const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
+---
+<div class="cw-field">
+  {label && (
+    <label class="cw-label" for={inputId}>
+      <span>{label}</span>
+      {required && <span class="cw-required" aria-hidden="true">*</span>}
+    </label>
+  )}
+  <input
+    id={inputId}
+    name={name}
+    type={type}
+    required={required}
+    disabled={disabled}
+    aria-describedby={describedBy}
+    aria-invalid={error ? 'true' : undefined}
+    class:list={[
+      'cw-input',
+      size !== 'md' && `cw-input--${size}`,
+      className,
+    ]}
+    {...rest}
+  />
+  {hint && <span id={hintId} class="cw-hint">{hint}</span>}
+  {error && <span id={errorId} class="cw-error-msg" role="alert">{error}</span>}
+</div>

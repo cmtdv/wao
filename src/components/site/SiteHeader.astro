@@ -1,0 +1,211 @@
+---
+import type { getEmDashCollection, getTaxonomyTermsWithCacheHint } from 'emdash';
+import BrandSeal from '@site/BrandSeal.astro';
+import CategoryBranch from '@site/CategoryBranch.astro';
+import Icon from '@site/Icon.astro';
+import ThemeToggle from '@site/ThemeToggle.astro';
+import { pagePath } from '@lib/format';
+import { getStrings, localePath, stripLocalePrefix, switchLocaleHref, type Locale } from '@i18n/ui';
+
+type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
+type PageEntry = Awaited<ReturnType<typeof getEmDashCollection<'pages'>>>['entries'][number];
+
+interface Props {
+  siteTitle: string;
+  roots: Term[];
+  terms: Term[];
+  pages: PageEntry[];
+  locale?: Locale;
+  originalPathname?: string;
+}
+
+const { siteTitle, roots, terms, pages, locale = 'en', originalPathname } = Astro.props;
+const strings = getStrings(locale);
+const pathname = stripLocalePrefix(originalPathname ?? Astro.url.pathname);
+const isPostsSection = pathname === '/posts/' || pathname.startsWith('/posts/');
+const isAtlas = pathname === '/atlas/' || pathname.startsWith('/atlas');
+const isJourneys = pathname === '/journeys/' || pathname.startsWith('/journeys');
+const isDirectory = pathname === '/directory/' || pathname.startsWith('/directory');
+const isTools = pathname === '/tools/' || pathname.startsWith('/tools');
+
+const lp = (path: string) => localePath(path, locale);
+const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
+const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a href={lp('/')} class="brand" aria-label={`${siteTitle} home`}>
+      <BrandSeal />
+      <span>{siteTitle}<span class="brand-period">.</span></span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li>
+          <a
+            href={lp('/posts/')}
+            class="nav-link"
+            aria-current={pathname === '/posts/' ? 'page' : isPostsSection ? 'true' : undefined}
+          >
+            {strings.nav.journal}
+          </a>
+        </li>
+        {roots.length > 0 && (
+          <li>
+            <button
+              type="button"
+              class="nav-trigger"
+              commandfor="category-menu"
+              command="toggle-popover"
+            >
+              <span>{strings.nav.topics}</span>
+              <Icon name="down" size={14} />
+            </button>
+          </li>
+        )}
+        <li>
+          <a href={lp('/atlas/')} class="nav-link" aria-current={isAtlas ? 'page' : undefined}>
+            {strings.nav.atlas}
+          </a>
+        </li>
+        <li>
+          <a href={lp('/journeys/')} class="nav-link" aria-current={isJourneys ? 'page' : undefined}>
+            {strings.nav.journeys}
+          </a>
+        </li>
+        <li>
+          <a href={lp('/directory/')} class="nav-link" aria-current={isDirectory ? 'page' : undefined}>
+            {strings.nav.directory}
+          </a>
+        </li>
+        <li>
+          <a href={lp('/tools/')} class="nav-link" aria-current={isTools ? 'page' : undefined}>
+            {strings.nav.tools}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <nav class="lang-switch" aria-label={strings.langLabel}>
+        <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>EN</a>
+        <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简中</a>
+      </nav>
+
+      <button
+        type="button"
+        class="search-trigger"
+        commandfor="search-dialog"
+        command="show-modal"
+        aria-label={strings.nav.search}
+      >
+        <Icon name="search" size={16} />
+        <span class="search-trigger-label">{strings.nav.search}</span>
+        <kbd aria-hidden="true">⌘K</kbd>
+      </button>
+
+      <ThemeToggle variant="quick" />
+
+      <button
+        type="button"
+        class="icon-btn menu-trigger"
+        commandfor="mobile-drawer"
+        command="show-modal"
+        aria-label="Open navigation menu"
+      >
+        <Icon name="menu" size={20} />
+      </button>
+    </div>
+  </div>
+</header>
+
+{roots.length > 0 && (
+  <div id="category-menu" popover="auto" class="category-popover" aria-label="Topics directory">
+    <div class="category-popover-head">
+      <span class="eyebrow eyebrow--accent">{strings.nav.topics}</span>
+      <a href={lp('/topics/')} class="editorial-link">
+        <span>{strings.nav.allTopics}</span>
+      </a>
+    </div>
+    <ul class="category-tree">
+      {roots.map((term) => (
+        <CategoryBranch term={term} terms={terms} />
+      ))}
+    </ul>
+    {pages.length > 0 && (
+      <div class="category-popover-pages">
+        <span class="eyebrow">{strings.nav.editorialPages}</span>
+        <ul class="category-popover-pages-list">
+          {pages.map((entry) => {
+            const href = lp(pagePath(entry.data.slug || entry.id));
+            return (
+              <li>
+                <a href={href} aria-current={pathname === pagePath(entry.data.slug || entry.id) ? 'page' : undefined}>
+                  {entry.data.title}
+                </a>
+              </li>
+            );
+          })}
+          <li>
+            <a href={lp('/design-system/')} aria-current={pathname.startsWith('/design-system') ? 'page' : undefined}>
+              {strings.nav.designSystem}
+            </a>
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+)}
+
+<dialog id="mobile-drawer" closedby="any" class="mobile-drawer" aria-label="Mobile navigation">
+  <div class="drawer-head">
+    <a href={lp('/')} class="brand">
+      <BrandSeal />
+      <span>{siteTitle}<span class="brand-period">.</span></span>
+    </a>
+    <button
+      type="button"
+      class="icon-btn"
+      commandfor="mobile-drawer"
+      command="close"
+      aria-label="Close navigation menu"
+    >
+      <Icon name="close" size={20} />
+    </button>
+  </div>
+
+  <div class="drawer-lang-row">
+    <span class="eyebrow">{strings.langLabel}</span>
+    <nav class="lang-switch" aria-label={strings.langLabel}>
+      <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>English</a>
+      <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简体中文</a>
+    </nav>
+  </div>
+
+  <nav aria-label="Primary mobile">
+    <p class="eyebrow drawer-section-label">{strings.footer.explore}</p>
+    <ul class="drawer-links">
+      <li><a href={lp('/')} aria-current={pathname === '/' ? 'page' : undefined}>{locale === 'zh' ? '首页' : 'Home'}</a></li>
+      <li><a href={lp('/posts/')} aria-current={pathname === '/posts/' ? 'page' : undefined}>{strings.nav.journal}</a></li>
+      <li><a href={lp('/atlas/')} aria-current={isAtlas ? 'page' : undefined}>{strings.nav.atlas}</a></li>
+      <li><a href={lp('/journeys/')} aria-current={isJourneys ? 'page' : undefined}>{strings.nav.journeys}</a></li>
+      <li><a href={lp('/directory/')} aria-current={isDirectory ? 'page' : undefined}>{strings.nav.directory}</a></li>
+      <li><a href={lp('/tools/')} aria-current={isTools ? 'page' : undefined}>{strings.nav.tools}</a></li>
+      <li><a href={lp('/topics/')} aria-current={pathname === '/topics/' ? 'page' : undefined}>{strings.nav.topics}</a></li>
+      <li><a href={lp('/tags/')} aria-current={pathname === '/tags/' ? 'page' : undefined}>{locale === 'zh' ? '标签' : 'Tags'}</a></li>
+      <li><a href={lp('/search/')} aria-current={pathname === '/search/' ? 'page' : undefined}>{strings.nav.search}</a></li>
+      <li><a href={lp('/design-system/')} aria-current={pathname.startsWith('/design-system') ? 'page' : undefined}>{strings.nav.designSystem}</a></li>
+    </ul>
+  </nav>
+
+  {roots.length > 0 && (
+    <div class="drawer-categories">
+      <p class="eyebrow drawer-section-label">{strings.nav.topics}</p>
+      <ul class="category-tree">
+        {roots.map((term) => (
+          <CategoryBranch term={term} terms={terms} />
+        ))}
+      </ul>
+    </div>
+  )}
+</dialog>

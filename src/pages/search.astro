@@ -1,0 +1,140 @@
+---
+import { search } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import Icon from '@site/Icon.astro';
+import Pagination from '@site/Pagination.astro';
+import { publicContext, queryPage } from '@lib/cms';
+import { cleanSearchQuery, pagePath, postPath } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../styles/search.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const q = cleanSearchQuery(Astro.url.searchParams.get('q'));
+const cursor = Astro.url.searchParams.get('cursor') || undefined;
+
+const { result: results, invalidCursor } = await queryPage(async () =>
+  q
+    ? publicContext(() =>
+        search(q, {
+          collections: ['posts', 'pages'],
+          status: 'published',
+          locale,
+          limit: 30,
+          cursor,
+        }),
+      )
+    : { items: [], nextCursor: undefined },
+);
+
+if (invalidCursor) {
+  return Astro.redirect(`${lp('/search/')}?${new URLSearchParams({ q })}`, 302);
+}
+
+if (!results) {
+  return new Response('Search is temporarily unavailable. Please try again later.', {
+    status: 503,
+  });
+}
+---
+<Layout
+  title={q ? (isZh ? `检索：${q}` : `Search: ${q}`) : (isZh ? '全站检索' : 'Search')}
+  description={isZh ? '全文检索 ChinaWao 已发布的全部志刊文章与编辑部页面。' : 'Search published articles and pages.'}
+>
+  <div class="container search-shell">
+    <div class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '全站检索' : 'Search'}</span>
+      </nav>
+      <p class="eyebrow eyebrow--accent">{isZh ? '全文索引' : 'Archive Index'}</p>
+      <h1>{isZh ? '全站检索' : 'Search'}</h1>
+      <p class="archive-lead">
+        {isZh ? '支持全文检索所有已发布的中文志刊实录与编辑部说明页面。' : 'Full-text search across all published journal dispatches and editorial pages.'}
+      </p>
+    </div>
+
+    <div class="search-content">
+      <search>
+        <form action={lp('/search/')} method="get" class="search-form-bar">
+          <label for="search-query" class="visually-hidden">{isZh ? '搜索文章与页面' : 'Search posts and pages'}</label>
+          <Icon name="search" size={20} />
+          <input
+            id="search-query"
+            name="q"
+            type="search"
+            value={q}
+            placeholder={isZh ? '输入关键词，如：高铁、过境免签、退税、故宫…' : 'Search stories, places, guides…'}
+            maxlength="200"
+          />
+          <button type="submit" class="btn btn--primary">
+            <span>{isZh ? '搜索' : 'Search'}</span>
+            <Icon name="arrow" size={16} />
+          </button>
+        </form>
+      </search>
+
+      {q && (
+        <p class="search-summary">
+          {isZh
+            ? `找到 ${results.items.length} 条与「${q}」相关的结果`
+            : `${results.items.length} ${results.items.length === 1 ? 'result' : 'results'} for “${q}”`}
+        </p>
+      )}
+
+      {results.items.length > 0 ? (
+        <div class="search-results">
+          {results.items.map((item) => {
+            const href = lp(
+              item.collection === 'pages'
+                ? pagePath(item.slug || item.id)
+                : postPath(item.slug || item.id),
+            );
+            return (
+              <article class="search-item">
+                <div class="search-item-body">
+                  <p class="eyebrow">
+                    {item.collection === 'pages'
+                      ? (isZh ? '编辑部页面' : 'Page')
+                      : (isZh ? '志刊实录' : 'Journal')}
+                  </p>
+                  <h2>
+                    <a href={href}>{item.title}</a>
+                  </h2>
+                </div>
+                <a href={href} class="icon-btn" aria-label={item.title}>
+                  <Icon name="arrow" size={18} />
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : q ? (
+        <div class="empty-panel">
+          <h2>{isZh ? '未找到匹配的实录或页面。' : 'No matching dispatches found.'}</h2>
+          <p>{isZh ? '请尝试更简短的关键词，或直接浏览全部志刊归档。' : 'Try a broader keyword or browse the full journal archive.'}</p>
+          <div class="empty-actions">
+            <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+          </div>
+        </div>
+      ) : (
+        <div class="empty-panel">
+          <h2>{isZh ? '检索全站归档' : 'Search the archive.'}</h2>
+          <p>{isZh ? '在上方输入关键词即可检索全部已发布的实录文章与页面。' : 'Enter a keyword above to search across all published journal dispatches and editorial pages.'}</p>
+        </div>
+      )}
+
+      {q && (
+        <Pagination
+          basePath="/search/"
+          hasCursor={Boolean(cursor)}
+          nextCursor={results.nextCursor}
+          query={{ q }}
+        />
+      )}
+    </div>
+  </div>
+</Layout>

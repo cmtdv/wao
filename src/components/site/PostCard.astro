@@ -1,0 +1,82 @@
+---
+import { Image } from 'emdash/ui';
+import Icon from '@site/Icon.astro';
+import type { getPublicPost } from '@lib/cms';
+import { categoryPath, postPath } from '@lib/format';
+import { estimateReadingMinutes } from '@lib/portable-text';
+import { formatLocalizedDate, formatReadTime, getLocaleFromContext, localePath } from '@i18n/ui';
+
+type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
+
+interface Props {
+  post: Post;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { post, headingLevel = 'h2' } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const slug = post.data.slug || post.id;
+const href = localePath(postPath(slug), locale);
+const categories = post.data.terms?.category ?? [];
+const tags = post.data.terms?.tag ?? [];
+const primaryCategory = categories[0];
+const published = formatLocalizedDate(post.data.publishedAt, locale);
+const readingMinutes = estimateReadingMinutes(post.data.content);
+const readTimeText = readingMinutes ? formatReadTime(readingMinutes, locale) : '';
+const hasImage = Boolean(post.data.featured_image);
+const Heading = headingLevel;
+
+const catSlugs = categories.map((c) => c.slug).join(',');
+const tagSlugs = tags.map((t) => t.slug).join(',');
+const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.map((c) => c.label).join(' ')} ${tags.map((t) => t.label).join(' ')}`.toLowerCase();
+---
+<article
+  class:list={['post-card', !hasImage && 'post-card--text-only']}
+  data-filter-card
+  data-cats={catSlugs}
+  data-tags={tagSlugs}
+  data-search={searchable}
+>
+  {post.data.featured_image && (
+    <a href={href} class="post-card-media" tabindex="-1" aria-hidden="true">
+      <Image
+        image={post.data.featured_image}
+        sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, 33vw"
+        placeholder={false}
+        loading="eager"
+        decoding="sync"
+      />
+    </a>
+  )}
+
+  <div class="post-card-meta">
+    {primaryCategory ? (
+      <a href={localePath(categoryPath(primaryCategory.slug), locale)}>{primaryCategory.label}</a>
+    ) : (
+      <span>{locale === 'zh' ? '志刊' : 'Journal'}</span>
+    )}
+    {readTimeText && <span>{readTimeText}</span>}
+  </div>
+
+  <Heading class="post-card-title">
+    <a href={href}>{post.data.title}</a>
+  </Heading>
+
+  {post.data.excerpt && (
+    <p class="post-card-excerpt">{post.data.excerpt}</p>
+  )}
+
+  <div class="post-card-foot">
+    {published ? (
+      <time class="meta-line" datetime={post.data.publishedAt?.toISOString()}>
+        {published}
+      </time>
+    ) : <span />}
+    {!hasImage && (
+      <a href={href} class="editorial-link">
+        <span>{locale === 'zh' ? '阅读全文' : 'Read essay'}</span>
+        <Icon name="arrow" size={14} />
+      </a>
+    )}
+  </div>
+</article>

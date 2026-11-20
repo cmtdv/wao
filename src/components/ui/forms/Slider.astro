@@ -1,0 +1,62 @@
+---
+/**
+ * Brand-Consistent Native Range Slider (modern-web-guidance: slider)
+ * Exposes live formatted value in DOM and syncs aria-valuetext + CSS variables.
+ */
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  value?: number;
+  unitPrefix?: string;
+  unitSuffix?: string;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  min = 0,
+  max = 100,
+  step = 1,
+  value = 50,
+  unitPrefix = '',
+  unitSuffix = '',
+  hint,
+  class: className = '',
+} = Astro.props;
+
+const hintId = hint ? `${id}-hint` : undefined;
+const formatted = `${unitPrefix}${value.toLocaleString('en-US')}${unitSuffix}`;
+---
+<div class:list={['cw-field', className]} data-cw-slider-field>
+  <div class="cw-slider-head">
+    <label class="cw-label" for={id}>{label}</label>
+    <output class="cw-slider-value" for={id} data-cw-slider-output>{formatted}</output>
+  </div>
+  <input
+    id={id}
+    name={name}
+    type="range"
+    min={min}
+    max={max}
+    step={step}
+    value={value}
+    aria-describedby={hintId}
+    aria-valuetext={formatted}
+    class="cw-slider"
+    data-cw-slider
+    data-unit-prefix={unitPrefix}
+    data-unit-suffix={unitSuffix}
+  />
+  <div class="cw-slider-bounds" aria-hidden="true">
+    <span>{unitPrefix}{min.toLocaleString('en-US')}{unitSuffix}</span>
+    <span>{unitPrefix}{max.toLocaleString('en-US')}{unitSuffix}</span>
+  </div>
+  {hint && <span id={hintId} class="cw-hint">{hint}</span>}
+</div>

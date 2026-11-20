@@ -1,0 +1,112 @@
+---
+import { Image } from 'emdash/ui';
+import type { getPublicPost } from '@lib/cms';
+import { postPath } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
+
+interface Props {
+  slides: Post[];
+}
+
+const { slides } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const visibleSlides = slides.slice(0, 3);
+const total = visibleSlides.length;
+---
+{total > 0 && (
+  <section
+    class="hero-showcase"
+    aria-roledescription="carousel"
+    aria-label="Featured ChinaWao cover stories"
+    data-hero-carousel
+  >
+    {/* Pure full-bleed viewport-filling cover track */}
+    <div class="hero-stage">
+      <div
+        class="hero-track"
+        tabindex="0"
+        role="group"
+        aria-label="Featured cover slides"
+        data-hero-track
+      >
+        {visibleSlides.map((post, idx) => {
+          const slug = post.data.slug || post.id;
+          const href = localePath(postPath(slug), locale);
+          const Heading = idx === 0 ? 'h1' : 'h2';
+
+          return (
+            <article
+              class="hero-slide"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${idx + 1} of ${total}`}
+              data-hero-slide={idx}
+            >
+              <div class="hero-slide-media">
+                {post.data.featured_image ? (
+                  <Image
+                    image={post.data.featured_image}
+                    sizes="100vw"
+                    priority={idx === 0}
+                    loading="eager"
+                    placeholder={false}
+                    decoding="sync"
+                  />
+                ) : (
+                  <img
+                    src="/images/hero.webp"
+                    alt="China landscape cover"
+                    width="1920"
+                    height="1080"
+                    loading="eager"
+                  />
+                )}
+              </div>
+
+              <div class="hero-slide-scrim" aria-hidden="true"></div>
+
+              <div class="container hero-slide-inner">
+                <div class="hero-slide-overlay">
+                  <Heading class="hero-slide-title">
+                    <a href={href}>{post.data.title}</a>
+                  </Heading>
+
+                  {post.data.excerpt && (
+                    <p class="hero-slide-excerpt">{post.data.excerpt}</p>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <p class="visually-hidden" role="status" aria-live="polite" data-hero-status></p>
+    </div>
+
+    {/* Minimal bottom-right three-bar timed progress switcher */}
+    {total > 1 && (
+      <div class="hero-dock">
+        <div class="container hero-dock-inner">
+          <nav class="hero-markers" aria-label="Choose a featured cover story">
+            {visibleSlides.map((post, idx) => (
+              <button
+                type="button"
+                class="hero-marker"
+                data-hero-marker={idx}
+                aria-current={idx === 0 ? 'true' : undefined}
+                aria-label={`Show cover story ${idx + 1} of ${total}: ${post.data.title}`}
+              >
+                <span class="hero-marker-bar" aria-hidden="true">
+                  <span class="hero-marker-fill" data-hero-fill></span>
+                </span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+    )}
+  </section>
+)}

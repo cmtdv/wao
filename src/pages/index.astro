@@ -1,0 +1,188 @@
+---
+import { getSiteSettings, getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import HeroShowcase from '@site/HeroShowcase.astro';
+import PostCard from '@site/PostCard.astro';
+import Icon from '@site/Icon.astro';
+import { getPublicPosts, publicContext } from '@lib/cms';
+import { categoryPath, topicIconName, topicPreviewMedia } from '@lib/format';
+import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import '../styles/home.css';
+
+const locale = getLocaleFromContext(Astro);
+const strings = getStrings(locale);
+const lp = (path: string) => localePath(path, locale);
+
+const [settings, postsResult, taxonomyPrimary] = await Promise.all([
+  getSiteSettings(),
+  getPublicPosts({ limit: 10, locale }),
+  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })),
+]);
+
+const taxonomy =
+  taxonomyPrimary.data.length > 0 || locale === 'en'
+    ? taxonomyPrimary
+    : await publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale: 'en' }));
+
+if (postsResult.error) {
+  return new Response('Unable to load posts', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(postsResult.cacheHint);
+  Astro.cache.set(taxonomy.cacheHint);
+}
+
+const photoPosts = postsResult.entries.filter((entry) => Boolean(entry.data.featured_image));
+const heroSlides = (photoPosts.length >= 3 ? photoPosts : postsResult.entries).slice(0, 3);
+const heroIds = new Set(heroSlides.map((entry) => entry.id));
+const remainingPosts = postsResult.entries.filter((entry) => !heroIds.has(entry.id));
+const gridPosts = remainingPosts.slice(0, 6);
+const fallbackGrid = gridPosts.length > 0 ? gridPosts : postsResult.entries.slice(1);
+const rootCategories = taxonomy.data.filter((term) => !term.parentId);
+const chapterCategories = rootCategories.slice(0, 6);
+const initialPreview = chapterCategories[0]
+  ? topicPreviewMedia(chapterCategories[0].slug, locale)
+  : topicPreviewMedia('journal', locale);
+
+const specialtyPortals = strings.home.desks.map((d, i) => ({
+  code: `${String(i + 1).padStart(2, '0')} · ${d.kicker}`,
+  title: d.title,
+  desc: d.desc,
+  href: lp(d.href),
+  cta: locale === 'zh' ? '进入工作台' : 'Open desk',
+}));
+---
+<Layout>
+  {heroSlides.length > 0 && <HeroShowcase slides={heroSlides} />}
+
+  <div id="front-edition" class="container home-shell">
+    <div class="edition-bar">
+      <p class="eyebrow eyebrow--accent">{strings.home.editionBadge}</p>
+      <p class="edition-tagline">{locale === 'zh' ? strings.home.editionTagline : (settings.tagline || strings.home.editionTagline)}</p>
+      <a href={lp('/posts/')} class="editorial-link">
+        <span>{strings.home.recentMore}</span>
+      </a>
+    </div>
+
+    {heroSlides.length > 0 ? (
+      <>
+        {fallbackGrid.length > 0 && (
+          <section class="section-block section-block--flush-top" aria-labelledby="latest-heading">
+            <div class="section-header">
+              <div>
+                <p class="rail-heading">{strings.home.recentEyebrow}</p>
+                <h2 id="latest-heading">{strings.home.recentTitle}</h2>
+              </div>
+              <a href={lp('/posts/')} class="editorial-link">
+                <span>{strings.home.browseAll}</span>
+                <Icon name="arrow" size={15} />
+              </a>
+            </div>
+            <div class="post-grid">
+              {fallbackGrid.map((post) => (
+                <PostCard post={post} headingLevel="h3" />
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    ) : (
+      <section class="empty-panel">
+        <p class="eyebrow eyebrow--accent">Editorial Desk</p>
+        <h2>{locale === 'zh' ? '暂未发布志刊。' : 'No dispatches published yet.'}</h2>
+      </section>
+    )}
+
+    <section class="section-block" aria-labelledby="portals-heading">
+      <div class="section-header">
+        <div>
+          <p class="rail-heading">{strings.home.desksEyebrow}</p>
+          <h2 id="portals-heading">{strings.home.desksTitle}</h2>
+        </div>
+        <a href={lp('/atlas/')} class="editorial-link">
+          <span>{strings.home.desksLink}</span>
+          <Icon name="arrow" size={15} />
+        </a>
+      </div>
+      <div class="portal-desk">
+        {specialtyPortals.map((item) => (
+          <a href={item.href} class="portal-desk-card">
+            <span class="eyebrow">{item.code}</span>
+            <h3 class="portal-desk-title">{item.title}</h3>
+            <p class="portal-desk-desc">{item.desc}</p>
+            <span class="portal-desk-cta">
+              <span>{item.cta}</span>
+              <Icon name="arrow" size={14} />
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {chapterCategories.length > 0 && (
+      <section class="palace-chapter" aria-labelledby="topics-heading">
+        <div class="palace-chapter-head">
+          <div>
+            <p class="eyebrow eyebrow--accent">{strings.home.palaceEyebrow}</p>
+            <h2 id="topics-heading">{strings.home.palaceTitle}</h2>
+          </div>
+          <a href={lp('/atlas/')} class="editorial-link">
+            <span>{strings.home.palaceCta}</span>
+            <Icon name="arrow" size={15} />
+          </a>
+        </div>
+
+        <div class="palace-chapter-grid">
+          <div class="palace-visual">
+            <div class="palace-visual-frame">
+              <img
+                src={initialPreview.src}
+                alt={initialPreview.alt}
+                data-palace-preview-img
+                width="960"
+                height="720"
+                loading="eager"
+              />
+            </div>
+            <div class="palace-visual-caption">
+              <span data-palace-preview-caption>{initialPreview.caption}</span>
+              <span>{locale === 'zh' ? '悬停栏目预览实景' : 'Hover section to preview'}</span>
+            </div>
+          </div>
+
+          <ul class="palace-rows">
+            {chapterCategories.map((term, index) => {
+              const preview = topicPreviewMedia(term.slug, locale);
+              return (
+                <li>
+                  <a
+                    href={lp(categoryPath(term.slug))}
+                    class="palace-row-link"
+                    data-palace-row
+                    data-active={index === 0 ? 'true' : 'false'}
+                    data-preview-src={preview.src}
+                    data-preview-alt={preview.alt}
+                    data-preview-caption={preview.caption}
+                  >
+                    <span class="palace-row-badge">
+                      <Icon name={topicIconName(term.slug)} size={20} />
+                      <span>{String(index + 1).padStart(2, '0')}</span>
+                    </span>
+                    <span class="palace-row-copy">
+                      <span class="palace-row-title">{term.label}</span>
+                      {term.description && <span class="palace-row-desc">{term.description}</span>}
+                    </span>
+                    <span class="palace-row-arrow" aria-hidden="true">
+                      <Icon name="arrow" size={16} />
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>

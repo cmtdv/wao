@@ -1,0 +1,227 @@
+/* ==========================================================================
+   Editorial Directories (/topics/ and /tags/)
+   ========================================================================== */
+
+@layer pages {
+  .directory-shell {
+    padding-block: var(--space-7) var(--space-8);
+  }
+
+  /* 30% Palace Wall Directory Header Banner + Glazed Gold Trim */
+  .directory-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+    padding: clamp(1.75rem, 3.8vw, 3rem);
+    margin-bottom: var(--space-7);
+    background: var(--secondary-solid);
+    color: var(--secondary-ink);
+    border-bottom: 3px solid var(--accent-gold);
+  }
+
+  .directory-header .eyebrow {
+    color: var(--secondary-ink-muted);
+  }
+
+  .directory-header .eyebrow--accent::before {
+    background: var(--accent-seal-on-dark);
+  }
+
+  .directory-header-copy {
+    max-width: 46rem;
+  }
+
+  .directory-header-copy h1 {
+    margin-top: var(--space-3);
+    color: var(--secondary-ink);
+  }
+
+  .directory-header .archive-lead {
+    color: var(--secondary-ink-muted);
+  }
+
+  .directory-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .directory-header .meta-line {
+    color: var(--secondary-ink-muted);
+  }
+
+  /* Topics Editorial Index Grid — zero doubled borders */
+  .topics-directory {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule-subtle);
+    border: 1px solid var(--rule-subtle);
+  }
+
+  .topic-section-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    background: var(--surface-canvas);
+    min-width: 0;
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .topic-section-card:hover {
+    background: var(--surface-raised);
+  }
+
+  .topic-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .topic-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--accent-gold);
+  }
+
+  .topic-card-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.1em;
+    color: var(--accent-seal-text);
+  }
+
+  .topic-card-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
+  .topic-card-title a:hover {
+    color: var(--accent-seal);
+  }
+
+  .topic-card-desc {
+    color: var(--ink-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.65;
+    max-width: 52ch;
+  }
+
+  .topic-sub-branch {
+    margin-top: auto;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .topic-sub-label {
+    margin-bottom: var(--space-3);
+  }
+
+  .topic-sub-branch .category-tree {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .topic-sub-branch .category-tree > li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--ink-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-underline-offset: 0.25em;
+  }
+
+  .topic-sub-branch .category-tree > li > a:hover {
+    color: var(--accent-seal);
+    text-decoration-color: var(--accent-seal);
+  }
+
+  /* Tags Index Wall — exact 3-col desktop grid, zero doubled borders */
+  .tags-index-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule-subtle);
+    border: 1px solid var(--rule-subtle);
+  }
+
+  .tag-index-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--surface-canvas);
+    min-width: 0;
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .tag-index-card:hover {
+    background: var(--surface-raised);
+  }
+
+  .tag-index-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .tag-index-name {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--ink-primary);
+    overflow-wrap: break-word;
+  }
+
+  .tag-index-card:hover .tag-index-name {
+    color: var(--accent-seal);
+  }
+
+  .tag-index-hash {
+    color: var(--accent-seal);
+    margin-inline-end: 0.1rem;
+  }
+
+  .tag-index-desc {
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    color: var(--ink-secondary);
+    overflow-wrap: break-word;
+  }
+
+  @media (max-width: 900px) {
+    .tags-index-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 820px) {
+    .topics-directory {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .tags-index-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .topic-sub-branch .category-tree {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,92 @@
+---
+/**
+ * AuthCardBlock — Dual-mode editorial sign-in & 6-digit OTP verification card
+ * Composes Input, DigitInput, Checkbox, Divider, and Button primitives
+ */
+import Input from '@ui/forms/Input.astro';
+import DigitInput from '@ui/forms/DigitInput.astro';
+import Checkbox from '@ui/forms/Checkbox.astro';
+import Divider from '@ui/data-display/Divider.astro';
+import Button from '@ui/actions/Button.astro';
+import BrandSeal from '@site/BrandSeal.astro';
+
+interface Props {
+  id?: string;
+  class?: string;
+}
+
+const { id = 'cw-auth-demo', class: className = '' } = Astro.props;
+---
+<section class:list={['cw-block-auth', className]} data-cw-auth-card>
+  <div class="cw-auth-grid">
+    <form class="cw-auth-card" novalidate data-cw-demo-form data-toast-msg="Mock editorial sign-in verified (UI Kit demo).">
+      <div class="cw-auth-head">
+        <BrandSeal />
+        <div>
+          <span class="kicker">Contributor Portal</span>
+          <h4>Sign in to Editorial Desk</h4>
+        </div>
+      </div>
+
+      <Input
+        id={`${id}-email`}
+        name="email"
+        type="email"
+        label="Work or editorial email"
+        placeholder="editor@chinawao.org"
+        required
+      />
+      <Input
+        id={`${id}-pass`}
+        name="password"
+        type="password"
+        label="Passphrase"
+        placeholder="••••••••••••"
+        required
+      />
+      <div class="cw-auth-meta-row">
+        <Checkbox id={`${id}-remember`} checked>Keep session on this device</Checkbox>
+        <a href="#auth-otp" class="text-link">Use 6-digit code</a>
+      </div>
+
+      <Button type="submit" variant="primary" class="cw-w-full">Continue with Email</Button>
+      <Divider label="Or single sign-on" />
+      <Button
+        type="button"
+        variant="secondary"
+        class="cw-w-full"
+        data-cw-toast-trigger="Passkey prompt simulated (UI Kit demo)."
+      >
+        Sign in with Passkey
+      </Button>
+    </form>
+
+    <form id="auth-otp" class="cw-auth-card" novalidate data-cw-demo-form data-toast-msg="6-digit OTP verified (UI Kit demo).">
+      <div class="cw-auth-head">
+        <div>
+          <span class="kicker">Two-Step Verification</span>
+          <h4>Enter 6-digit security code</h4>
+          <p class="cw-auth-sub">Paste any 6 digits or type sequentially; backspace moves cleanly across cells.</p>
+        </div>
+      </div>
+
+      <DigitInput
+        id={`${id}-otp`}
+        name="otp"
+        label="Verification code"
+        hint="Try pasting 240198 or typing 6 numbers."
+      />
+
+      <Button type="submit" variant="primary" class="cw-w-full">Verify Code</Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        class="cw-w-full"
+        data-cw-toast-trigger="Fresh 6-digit code dispatched (mock preview)."
+      >
+        Resend code
+      </Button>
+    </form>
+  </div>
+</section>

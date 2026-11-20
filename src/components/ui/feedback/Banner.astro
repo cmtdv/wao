@@ -1,0 +1,41 @@
+---
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  kicker?: string;
+  variant?: 'palace' | 'subtle';
+  dismissible?: boolean;
+  id?: string;
+  class?: string;
+}
+
+const {
+  kicker = 'Policy Update',
+  variant = 'palace',
+  dismissible = false,
+  id,
+  class: className = '',
+} = Astro.props;
+---
+<div
+  id={id}
+  class:list={['cw-banner', variant === 'subtle' && 'cw-banner--subtle', className]}
+  data-cw-banner
+  role="region"
+  aria-label={kicker}
+>
+  <div class="cw-banner-content">
+    <span class="cw-banner-kicker">{kicker}</span>
+    <span><slot /></span>
+  </div>
+  {dismissible && (
+    <button
+      type="button"
+      class="cw-banner-close"
+      data-cw-banner-dismiss
+      aria-label={`Dismiss ${kicker}`}
+    >
+      <Icon name="close" size={16} />
+    </button>
+  )}
+</div>

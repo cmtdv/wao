@@ -1,0 +1,82 @@
+---
+/**
+ * ProfileCardBlock — Contributor / Field Researcher identity & verification metrics card
+ */
+import Avatar from '@ui/data-display/Avatar.astro';
+import AvatarGroup from '@ui/data-display/AvatarGroup.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import ProgressBar from '@ui/data-display/ProgressBar.astro';
+import ProgressCircle from '@ui/data-display/ProgressCircle.astro';
+import Button from '@ui/actions/Button.astro';
+import DropdownMenu from '@ui/overlays/DropdownMenu.astro';
+
+interface Props {
+  name?: string;
+  role?: string;
+  location?: string;
+  bio?: string;
+  verifiedCount?: number;
+  class?: string;
+}
+
+const {
+  name = 'Shen Ming',
+  role = 'Senior Field Editor · Visit China & Rail Desk',
+  location = 'Chengdu / Shanghai',
+  bio = 'Tracks 240-hour transit port procedures, 12306 foreign-passport onboarding, and departure tax refund counters across Tier-1 and Tier-2 hubs.',
+  verifiedCount = 84,
+  class: className = '',
+} = Astro.props;
+---
+<article class:list={['cw-block-profile', className]}>
+  <div class="cw-profile-top">
+    <div class="cw-profile-ident">
+      <Avatar name={name} tone="palace" size="xl" status="online" />
+      <div>
+        <div class="cw-profile-badges">
+          <Badge tone="verified">Verified Editor</Badge>
+          <Badge tone="editorial">Editorial Lead</Badge>
+        </div>
+        <h4 class="cw-profile-name">{name}</h4>
+        <p class="cw-profile-role">{role} · {location}</p>
+      </div>
+    </div>
+
+    <div class="cw-profile-actions">
+      <DropdownMenu
+        id="cw-profile-actions-menu"
+        triggerLabel="Actions"
+        items={[
+          { label: 'Copy editor profile link', icon: 'copy', toastMessage: 'Editor profile link copied.' },
+          { label: 'View verified entries', icon: 'book', href: '/directory/' },
+          { label: 'Flag correction', icon: 'mail', toastMessage: 'Correction drawer queued (mock preview).' },
+        ]}
+      />
+      <Button size="sm" variant="primary" href="/tools/#ground-pulse">Log Field Check</Button>
+    </div>
+  </div>
+
+  <p class="cw-profile-bio">{bio}</p>
+
+  <div class="cw-profile-metrics">
+    <div class="cw-profile-bars">
+      <ProgressBar value={verifiedCount} max={97} label="97-Topic Verification Coverage" valueLabel={`${verifiedCount} / 97`} tone="seal" />
+      <ProgressBar value={92} max={100} label="2026 Source Freshness Score" valueLabel="92%" tone="verified" />
+    </div>
+    <ProgressCircle value={94} label="Audit SLA" tone="gold" size={84} />
+  </div>
+
+  <div class="cw-profile-foot">
+    <AvatarGroup
+      caption="Collaborating desk editors (2026 cycle)"
+      items={[
+        { name: 'Lin Wei', tone: 'palace' },
+        { name: 'Hannah Reid', tone: 'gold' },
+        { name: 'Chen Tao', tone: 'ink' },
+        { name: 'Maya Sato', tone: 'sage' },
+        { name: 'David Park', tone: 'palace' },
+        { name: 'Zhou Qi', tone: 'ink' },
+      ]}
+    />
+  </div>
+</article>

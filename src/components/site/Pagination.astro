@@ -1,0 +1,43 @@
+---
+import Icon from '@site/Icon.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+interface Props {
+  basePath: string;
+  hasCursor: boolean;
+  nextCursor?: string | null;
+  query?: Record<string, string>;
+}
+
+const { basePath, hasCursor, nextCursor, query = {} } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const localizedBase = localePath(basePath, locale);
+
+function buildUrl(cursor?: string): string {
+  const params = new URLSearchParams(query);
+  if (cursor) params.set('cursor', cursor);
+  const qs = params.toString();
+  return qs ? `${localizedBase}?${qs}` : localizedBase;
+}
+---
+{(hasCursor || nextCursor) && (
+  <nav class="pagination" aria-label={isZh ? '分页导航' : 'Archive pages'}>
+    <div>
+      {hasCursor && (
+        <a href={buildUrl()} class="btn">
+          <Icon name="arrow-left" size={16} />
+          <span>{isZh ? '返回首页' : 'First page'}</span>
+        </a>
+      )}
+    </div>
+    <div>
+      {nextCursor && (
+        <a href={buildUrl(nextCursor)} class="btn">
+          <span>{isZh ? '下一页' : 'Next page'}</span>
+          <Icon name="arrow" size={16} />
+        </a>
+      )}
+    </div>
+  </nav>
+)}

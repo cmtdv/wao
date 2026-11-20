@@ -1,0 +1,37 @@
+---
+/**
+ * FaqBlock — Two-column editorial FAQ section composed from Accordion primitive
+ */
+import Accordion from '@ui/navigation/Accordion.astro';
+import type { AccordionItem } from '@ui/navigation/Accordion.astro';
+import LinkButton from '@ui/actions/LinkButton.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  supportHref?: string;
+  items: AccordionItem[];
+  exclusiveName?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'Frequently Asked Questions',
+  title,
+  subtitle,
+  supportHref = '/pages/corrections-updates/',
+  items,
+  exclusiveName,
+  class: className = '',
+} = Astro.props;
+---
+<section class:list={['cw-block-faq', className]}>
+  <div class="cw-block-faq-intro">
+    <span class="kicker">{eyebrow}</span>
+    <h3 class="cw-block-title">{title}</h3>
+    {subtitle && <p class="cw-block-sub">{subtitle}</p>}
+    <LinkButton href={supportHref} size="sm">Inspect verification policy</LinkButton>
+  </div>
+  <Accordion items={items} name={exclusiveName} />
+</section>

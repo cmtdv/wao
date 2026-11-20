@@ -1,0 +1,47 @@
+---
+/**
+ * Tag — Interactive / removable filter chip (distinct from static status Badge)
+ */
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  label: string;
+  value?: string;
+  tone?: 'neutral' | 'editorial' | 'verified';
+  removable?: boolean;
+  count?: number;
+  href?: string;
+  class?: string;
+}
+
+const {
+  label,
+  value,
+  tone = 'neutral',
+  removable = false,
+  count,
+  href,
+  class: className = '',
+} = Astro.props;
+---
+{href ? (
+  <a href={href} class:list={['cw-tag', `cw-tag--${tone}`, className]}>
+    <span>{label}</span>
+    {count !== undefined && <span class="cw-tag-count">{count}</span>}
+  </a>
+) : (
+  <span class:list={['cw-tag', `cw-tag--${tone}`, className]} data-cw-tag data-tag-value={value ?? label}>
+    <span>{label}</span>
+    {count !== undefined && <span class="cw-tag-count">{count}</span>}
+    {removable && (
+      <button
+        type="button"
+        class="cw-tag-remove"
+        data-cw-tag-remove
+        aria-label={`Remove filter ${label}`}
+      >
+        <Icon name="close" size={11} />
+      </button>
+    )}
+  </span>
+)}

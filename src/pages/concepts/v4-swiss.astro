@@ -1,0 +1,614 @@
+---
+import ConceptLayout from '@layouts/ConceptLayout.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const pillars = isZh
+  ? [
+      { num: '01', name: '地理版图', group: 'culture', count: 9, portal: '国家地理信息公共服务平台（天地图）', status: '直连在线', phrase: '请问去阳朔西街怎么走？', topics: ['1.1 国家概览', '1.3 省级政区', '1.7 古镇古村', '1.8 山河奇观'] },
+      { num: '02', name: '历史文脉', group: 'culture', count: 10, portal: '故宫博物院官方预约系统', status: '直连在线', phrase: '请问语音导览器在哪里租借？', topics: ['2.1 五千年史', '2.3 世界遗产', '2.4 博物国宝', '2.7 古建园林'] },
+      { num: '03', name: '制度社会', group: 'biz', count: 10, portal: '中国政府网公共服务门户', status: '直连在线', phrase: '我需要办理临时住宿登记。', topics: ['3.1 国家机构', '3.3 法律体系', '3.6 教育高校', '3.7 医疗社保'] },
+      { num: '04', name: '经济基建', group: 'biz', count: 8, portal: '国家统计局公开数据平台', status: '直连在线', phrase: '请问义乌国际商贸城一区怎么走？', topics: ['4.1 宏观经济', '4.2 百大产业', '4.3 外贸大港', '4.5 超级基建'] },
+      { num: '05', name: '科技数字', group: 'biz', count: 7, portal: '全国标准信息公共服务平台', status: '反爬备用', phrase: '请问这里可以用支付宝或微信扫码吗？', topics: ['5.2 人工智能', '5.3 智能电车', '5.4 医药国标', '5.5 超级应用'] },
+      { num: '06', name: '饮食茶酒', group: 'culture', count: 7, portal: '国家级非遗与中华老字号名录', status: '直连在线', phrase: '微辣，不要香菜，我对花生过敏。', topics: ['6.1 八大菜系', '6.2 火锅粉面', '6.4 六大茶类', '6.7 过敏忌口'] },
+      { num: '07', name: '语言艺术', group: 'culture', count: 7, portal: '中外语言交流合作中心官网', status: '直连在线', phrase: '请问这个字怎么读？', topics: ['7.1 汉字方言', '7.2 学中文指南', '7.4 书法水墨', '7.7 瓷绸非遗'] },
+      { num: '08', name: '当代生活', group: 'travel', count: 7, portal: '文旅部公共文化服务门户', status: '直连在线', phrase: '请问最近的 24 小时药店在哪里？', topics: ['8.1 市井日常', '8.4 演出夜生活', '8.5 中医养生', '8.6 汤泉头疗'] },
+      { num: '09', name: '来华旅行', group: 'travel', count: 11, portal: '国家移民管理局 / 铁路 12306', status: '直连在线', phrase: '你好，我用护照办理 240 小时过境免签。', topics: ['9.1 签证免签', '9.2 移动支付', '9.4 高铁出行', '9.8 购物退税'] },
+      { num: '10', name: '留学长居', group: 'travel', count: 6, portal: '留学中国网官方服务平台', status: '直连在线', phrase: '请问外国人工作许可办理窗口在几楼？', topics: ['10.1 来华留学', '10.2 工作许可', '10.3 租房购房', '10.4 银行个税'] },
+      { num: '11', name: '商务采购', group: 'biz', count: 6, portal: '中国进出口商品交易会（广交会）', status: '直连在线', phrase: '请提供贵司统一社会信用代码与质检报告。', topics: ['11.2 广交会验厂', '11.3 源头采购', '11.4 供应商尽调', '11.5 国标管制'] },
+      { num: '12', name: '实用工具', group: 'travel', count: 9, portal: 'ChinaWao 核验开放数据台账', status: '直连在线', phrase: '紧急求助：请帮我拨打 120 急救电话。', topics: ['12.1 免签判定器', '12.2 车站字卡', '12.5 预算退税算', '12.8 公开数据库'] },
+    ]
+  : [
+      { num: '01', name: 'Geography', group: 'culture', count: 9, portal: 'National Geomatics Center (Tianditu)', status: 'LIVE', phrase: 'How do I get to West Street in Yangshuo?', topics: ['1.1 China at a Glance', '1.3 34 Provinces', '1.7 Ancient Towns', '1.8 Natural Wonders'] },
+      { num: '02', name: 'History', group: 'culture', count: 10, portal: 'The Palace Museum Official Ticketing', status: 'LIVE', phrase: 'Where can I rent an English audio guide?', topics: ['2.1 Imperial Dynasties', '2.3 World Heritage', '2.4 National Museums', '2.7 Ancient Architecture'] },
+      { num: '03', name: 'Society & Law', group: 'biz', count: 10, portal: 'State Council English Portal (english.gov.cn)', status: 'LIVE', phrase: 'I need to register my temporary residence.', topics: ['3.1 State Governance', '3.3 Legal System', '3.6 Education & Gaokao', '3.7 Public Healthcare'] },
+      { num: '04', name: 'Economy', group: 'biz', count: 8, portal: 'National Bureau of Statistics Open Data', status: 'LIVE', phrase: 'How do I get to Yiwu International Trade City?', topics: ['4.1 Macroeconomy', '4.2 Industrial Belts', '4.3 Trade & Mega-Ports', '4.5 Mega-Infrastructure'] },
+      { num: '05', name: 'Tech & Digital', group: 'biz', count: 7, portal: 'National Public Service Platform for Standards', status: 'STANDBY', phrase: 'Can I pay here by scanning Alipay or WeChat?', topics: ['5.2 AI & Robotics', '5.3 Smart EVs', '5.4 Biotech & GB Standards', '5.5 Super-Apps'] },
+      { num: '06', name: 'Food & Tea', group: 'culture', count: 7, portal: 'National Intangible Heritage & Time-Honored Registry', status: 'LIVE', phrase: 'Mild spice, no cilantro, peanut allergy please.', topics: ['6.1 8 Great Cuisines', '6.2 Street Food & Hotpot', '6.4 Chinese Tea', '6.7 Dietary Needs'] },
+      { num: '07', name: 'Language & Arts', group: 'culture', count: 7, portal: 'Center for Language Education & Cooperation (HSK)', status: 'LIVE', phrase: 'How do you pronounce this character?', topics: ['7.1 Chinese Language', '7.2 Learn Mandarin', '7.4 Calligraphy & Ink', '7.7 Heritage Crafts'] },
+      { num: '08', name: 'Lifestyle', group: 'travel', count: 7, portal: 'Ministry of Culture & Tourism Public Portal', status: 'LIVE', phrase: 'Where is the nearest 24-hour pharmacy?', topics: ['8.1 Everyday Life', '8.4 Youth & Nightlife', '8.5 TCM Wellness', '8.6 Bathhouses & Spas'] },
+      { num: '09', name: 'Visit China', group: 'travel', count: 11, portal: 'National Immigration Administration / Railway 12306', status: 'LIVE', phrase: 'Hello, I am applying for 240-hour visa-free transit.', topics: ['9.1 Visas & Entry', '9.2 Mobile Payments', '9.4 High-Speed Rail', '9.8 Shopping & Tax-Free'] },
+      { num: '10', name: 'Live & Study', group: 'travel', count: 6, portal: 'Study in China (China Scholarship Council)', status: 'LIVE', phrase: 'Which floor handles foreign work permits?', topics: ['10.1 Study in China', '10.2 Work Permits', '10.3 Housing & Renting', '10.4 Banking & Tax'] },
+      { num: '11', name: 'Business', group: 'biz', count: 6, portal: 'China Import and Export Fair (Canton Fair)', status: 'LIVE', phrase: 'Please share your USCC code and inspection report.', topics: ['11.2 Trade Fairs', '11.3 Factory Sourcing', '11.4 Due Diligence', '11.5 Product Compliance'] },
+      { num: '12', name: 'Tools & Data', group: 'travel', count: 9, portal: 'ChinaWao Verified Open-Data Ledger', status: 'LIVE', phrase: 'Emergency: please help me dial 120 ambulance.', topics: ['12.1 Visa Checker', '12.2 Station & Taxi Cards', '12.5 Budget Calculator', '12.8 Gov Open Data'] },
+    ];
+
+const ui = isZh
+  ? {
+      title: '方向 04 · 极简瑞士网格系统',
+      desc: '纯白画布、裸露 1px 建筑结构网格与多语通用数字编号系统，零中英混排噪点。',
+      edition: '版本 2026.11',
+      nav: [
+        { label: '01 图谱', href: lp('/atlas/') },
+        { label: '02 行程', href: lp('/journeys/') },
+        { label: '03 名录', href: lp('/directory/') },
+        { label: '04 工具', href: lp('/tools/') },
+        { label: '05 志刊', href: lp('/posts/') },
+      ],
+      kicker: '版本 04 · 极简瑞士网格系统',
+      h1Line1: '零装饰噪点。',
+      h1Line2: '精密读懂中国。',
+      lead: '纯白画布、裸露 1px 建筑网格、全球通用的等宽数字索引（01–12）与单色朱红。简中版纯净简中，英文版纯净英文，在任何语种下都保持同样的结构秩序与锋利度。',
+      metrics: [
+        { val: '34', label: '省级行政区' },
+        { val: '18', label: '核验官方门户' },
+        { val: '240h', label: '过境免签政策' },
+      ],
+      specimenTag: '当前检视栏目',
+      specimenBadgeSuffix: '项子专题',
+      filters: [
+        { id: 'all', label: '全部 12 支柱' },
+        { id: 'travel', label: '出行与生活' },
+        { id: 'culture', label: '文化与地理' },
+        { id: 'biz', label: '经济与商务' },
+      ],
+      searchPlaceholder: '实时检索支柱或关键词（如：高铁、免签、茶、广交会）...',
+      countSuffix: '项支柱',
+      topicCountSuffix: '项',
+      pillarPrefix: '第',
+      pillarSuffix: '支柱',
+      sourceLabel: '核心官方来源',
+      phraseKicker: '随身实用短语',
+      copyLabel: '一键复制短语',
+      copiedLabel: '已复制到剪贴板 ✓',
+      copyFallback: '请手动选中上方短语复制',
+    }
+  : {
+      title: 'Direction 04 · Exposed Swiss Grid System',
+      desc: 'Stark white canvas, exposed 1px architectural grid, and language-agnostic tabular indexing across EN & ZH.',
+      edition: 'EDITION 2026.11',
+      nav: [
+        { label: '01 Atlas', href: lp('/atlas/') },
+        { label: '02 Journeys', href: lp('/journeys/') },
+        { label: '03 Directory', href: lp('/directory/') },
+        { label: '04 Tools', href: lp('/tools/') },
+        { label: '05 Journal', href: lp('/posts/') },
+      ],
+      kicker: 'DIRECTION 04 · INTERNATIONAL SWISS GRID',
+      h1Line1: 'Zero ornament.',
+      h1Line2: 'Navigate China with precision.',
+      lead: 'Stark white gallery canvas, exposed 1px structural grid, universal tabular numerals (01–12), and one surgical vermilion accent — engineered to feel razor-sharp in English, Chinese, or any future locale.',
+      metrics: [
+        { val: '34', label: 'PROVINCES' },
+        { val: '18', label: 'GOV PORTALS' },
+        { val: '240h', label: 'TRANSIT VISA' },
+      ],
+      specimenTag: 'ACTIVE SECTION',
+      specimenBadgeSuffix: 'GUIDES · CHINA ATLAS',
+      filters: [
+        { id: 'all', label: 'All 12 Pillars' },
+        { id: 'travel', label: 'Travel & Living' },
+        { id: 'culture', label: 'Culture & Places' },
+        { id: 'biz', label: 'Economy & Trade' },
+      ],
+      searchPlaceholder: 'Filter pillars or topics (e.g. rail, visa, tea, canton)...',
+      countSuffix: 'CELLS',
+      topicCountSuffix: 'topics',
+      pillarPrefix: 'PILLAR ',
+      pillarSuffix: '',
+      sourceLabel: 'PRIMARY OFFICIAL SOURCE',
+      phraseKicker: 'QUICK FIELD PHRASE',
+      copyLabel: 'Copy phrase',
+      copiedLabel: 'Copied to clipboard ✓',
+      copyFallback: 'Select text above to copy',
+    };
+---
+<ConceptLayout
+  title={ui.title}
+  description={ui.desc}
+  active="v4"
+  dockTone="dark"
+>
+  <Fragment slot="head">
+    <style>
+      :root {
+        --v4-bg: #ffffff;
+        --v4-ink: #0f0f0f;
+        --v4-muted: #666666;
+        --v4-grid: #111111;
+        --v4-grid-soft: #dfdfdf;
+        --v4-red: #e62e04;
+      }
+
+      body {
+        background: var(--v4-bg);
+        color: var(--v4-ink);
+      }
+
+      .v4-wrap {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 28px 136px;
+      }
+
+      .v4-header {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        border-bottom: 1px solid var(--v4-grid);
+        font-family: 'JetBrains Mono', 'PingFang SC', 'Microsoft YaHei', monospace;
+        font-size: 12px;
+      }
+
+      .v4-header > * {
+        padding: 16px 18px;
+        border-right: 1px solid var(--v4-grid);
+        display: flex;
+        align-items: center;
+      }
+
+      .v4-header > *:last-child { border-right: 0; }
+
+      .v4-logo {
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-decoration: none;
+        gap: 10px;
+      }
+
+      .v4-red-square {
+        width: 11px;
+        height: 11px;
+        background: var(--v4-red);
+        flex-shrink: 0;
+      }
+
+      .v4-nav { gap: 24px; }
+      .v4-nav a { text-decoration: none; color: var(--v4-muted); }
+      .v4-nav a:hover { color: var(--v4-red); }
+
+      .v4-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) 360px;
+        border-bottom: 1px solid var(--v4-grid);
+      }
+
+      .v4-hero-left {
+        padding: 48px 36px 44px 18px;
+        border-right: 1px solid var(--v4-grid);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .v4-kicker {
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11.5px;
+        letter-spacing: 0.1em;
+        color: var(--v4-red);
+        margin: 0 0 18px;
+      }
+
+      .v4-hero h1 {
+        margin: 0;
+        font-size: clamp(2.6rem, 5.2vw, 4.7rem);
+        font-weight: 700;
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+      }
+
+      .v4-hero-foot {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: end;
+      }
+
+      .v4-hero-desc {
+        margin: 0;
+        font-size: 15.5px;
+        line-height: 1.68;
+        color: var(--v4-muted);
+        max-width: 50ch;
+      }
+
+      .v4-metrics {
+        display: flex;
+        gap: 26px;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+      }
+
+      .v4-metrics strong {
+        display: block;
+        font-size: 26px;
+        line-height: 1;
+        color: var(--v4-ink);
+      }
+
+      .v4-metrics span {
+        font-size: 11px;
+        color: var(--v4-muted);
+      }
+
+      .v4-sculpture {
+        position: relative;
+        overflow: hidden;
+        background: #0f0f0f;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        min-height: 320px;
+      }
+
+      .v4-sculpture-top {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .v4-sculpture-glyph {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(6.5rem, 11vw, 9.5rem);
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: -0.06em;
+        color: #ffffff;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .v4-sculpture-glyph--accent {
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11.5px;
+        color: #ffffff;
+        background: var(--v4-red);
+        padding: 5px 10px;
+        font-weight: 600;
+        width: fit-content;
+      }
+
+      .v4-toolbar {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        border-bottom: 1px solid var(--v4-grid);
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 12px;
+      }
+
+      .v4-filters {
+        display: flex;
+        border-right: 1px solid var(--v4-grid);
+      }
+
+      .v4-filter-btn {
+        appearance: none;
+        border: 0;
+        border-right: 1px solid var(--v4-grid-soft);
+        background: #ffffff;
+        color: var(--v4-muted);
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: background-color 0.14s ease, color 0.14s ease;
+      }
+
+      .v4-filter-btn:last-child { border-right: 0; }
+      .v4-filter-btn:hover { background: #f5f5f5; color: var(--v4-ink); }
+      .v4-filter-btn[aria-pressed='true'] { background: var(--v4-ink); color: #ffffff; }
+
+      .v4-search {
+        border: 0;
+        padding: 14px 18px;
+        font-size: 13px;
+        outline: none;
+        background: #ffffff;
+      }
+
+      .v4-search:focus { background: #fafafa; }
+
+      .v4-count {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        color: var(--v4-red);
+        font-weight: 600;
+      }
+
+      .v4-workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) 380px;
+        border-bottom: 1px solid var(--v4-grid);
+      }
+
+      .v4-matrix {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-right: 1px solid var(--v4-grid);
+      }
+
+      .v4-cell {
+        appearance: none;
+        border: 0;
+        border-right: 1px solid var(--v4-grid-soft);
+        border-bottom: 1px solid var(--v4-grid-soft);
+        background: #ffffff;
+        color: var(--v4-ink);
+        text-align: left;
+        padding: 18px;
+        min-height: 148px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: background-color 0.15s ease, color 0.15s ease;
+      }
+
+      .v4-cell[hidden] { display: none; }
+      .v4-cell:hover { background: #f6f6f6; }
+      .v4-cell[aria-selected='true'] { background: var(--v4-ink); color: #ffffff; }
+
+      .v4-cell-top {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 11.5px;
+        opacity: 0.65;
+      }
+
+      .v4-cell[aria-selected='true'] .v4-cell-top { color: var(--v4-red); opacity: 1; }
+
+      .v4-cell-bar {
+        width: 24px;
+        height: 2px;
+        background: var(--v4-red);
+        margin-bottom: 10px;
+      }
+
+      .v4-cell[aria-selected='true'] .v4-cell-bar { background: #ffffff; }
+
+      .v4-cell-name strong {
+        display: block;
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .v4-spec {
+        padding: 26px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 22px;
+        background: #fafafa;
+      }
+
+      .v4-spec-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid var(--v4-grid);
+        padding-bottom: 16px;
+      }
+
+      .v4-spec-glyph {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--v4-red);
+      }
+
+      .v4-spec-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .v4-spec-list li {
+        padding: 9px 11px;
+        border: 1px solid var(--v4-grid-soft);
+        background: #ffffff;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 12.5px;
+      }
+
+      .v4-spec-phrase {
+        padding: 16px;
+        background: #0f0f0f;
+        color: #ffffff;
+      }
+
+      .v4-copy-btn {
+        appearance: none;
+        margin-top: 12px;
+        border: 1px solid var(--v4-red);
+        background: var(--v4-red);
+        color: #ffffff;
+        padding: 9px 12px;
+        font-family: 'JetBrains Mono', 'PingFang SC', monospace;
+        font-size: 12px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .v4-copy-btn:hover { background: #c22400; }
+
+      @media (max-width: 1040px) {
+        .v4-hero { grid-template-columns: 1fr; }
+        .v4-hero-left { border-right: 0; border-bottom: 1px solid var(--v4-grid); }
+        .v4-workspace { grid-template-columns: 1fr; }
+        .v4-matrix { border-right: 0; border-bottom: 1px solid var(--v4-grid); grid-template-columns: repeat(2, 1fr); }
+        .v4-toolbar { grid-template-columns: 1fr; }
+        .v4-filters { border-right: 0; border-bottom: 1px solid var(--v4-grid); overflow-x: auto; }
+        .v4-search { border-right: 0; border-bottom: 1px solid var(--v4-grid); }
+        .v4-header { grid-template-columns: 1fr; }
+        .v4-header > * { border-right: 0; border-bottom: 1px solid var(--v4-grid-soft); }
+      }
+    </style>
+  </Fragment>
+
+  <div class="v4-wrap">
+    <header class="v4-header">
+      <a href={lp('/concepts/v4-swiss/')} class="v4-logo">
+        <span class="v4-red-square" aria-hidden="true"></span>
+        <span>ChinaWao</span>
+      </a>
+      <nav class="v4-nav">
+        {ui.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
+    </header>
+
+    <section aria-label={ui.title}>
+      <div class="v4-toolbar">
+        <div class="v4-filters">
+          {ui.filters.map((f, i) => (
+            <button type="button" class="v4-filter-btn" aria-pressed={i === 0 ? 'true' : 'false'} data-v4-group={f.id}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <input type="search" class="v4-search" placeholder={ui.searchPlaceholder} data-v4-search />
+      </div>
+
+      <div class="v4-workspace">
+        <div class="v4-matrix" role="listbox" aria-label={ui.title}>
+          {pillars.map((p, idx) => (
+            <button
+              type="button"
+              class="v4-cell"
+              role="option"
+              aria-selected={idx === 8 ? 'true' : 'false'}
+              data-v4-cell={idx}
+              data-group={p.group}
+              data-hay={`${p.num} ${p.name} ${p.topics.join(' ')} ${p.portal}`.toLowerCase()}
+            >
+              <div class="v4-cell-top">
+                <span>{p.num}</span>
+                <span>{p.count} {ui.topicCountSuffix}</span>
+              </div>
+              <div class="v4-cell-name">
+                <div class="v4-cell-bar" aria-hidden="true"></div>
+                <strong>{p.name}</strong>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <aside class="v4-spec" aria-live="polite">
+          <div>
+            <div class="v4-spec-head">
+              <div>
+                <h2 style="margin:0;font-size:28px;font-weight:700;" data-v4-sp-name>{pillars[8].name}</h2>
+              </div>
+              <span class="v4-spec-glyph" data-v4-sp-glyph>09</span>
+            </div>
+
+            <div style="margin:18px 0 12px;font-family:'JetBrains Mono','PingFang SC',monospace;font-size:11.5px;color:var(--v4-muted);">
+              {ui.sourceLabel} · <strong style="color:var(--v4-ink);" data-v4-sp-status>{pillars[8].status}</strong>
+            </div>
+            <p style="margin:0 0 18px;font-size:14.5px;font-weight:600;" data-v4-sp-portal>
+              {pillars[8].portal}
+            </p>
+
+            <ul class="v4-spec-list" data-v4-sp-topics>
+              {pillars[8].topics.map((t) => <li>{t}</li>)}
+            </ul>
+          </div>
+
+          <div class="v4-spec-phrase">
+            <span style="font-family:'JetBrains Mono','PingFang SC',monospace;font-size:11px;color:#aaaaaa;">
+              {ui.phraseKicker}
+            </span>
+            <p style="margin:8px 0 0;font-size:16.5px;font-weight:600;line-height:1.45;" data-v4-sp-phrase>
+              {pillars[8].phrase}
+            </p>
+            <button type="button" class="v4-copy-btn" data-v4-copy>{ui.copyLabel}</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <script define:vars={{ pillars, ui }}>
+    const cells = Array.from(document.querySelectorAll('[data-v4-cell]'));
+    const filterBtns = Array.from(document.querySelectorAll('[data-v4-group]'));
+    const searchInput = document.querySelector('[data-v4-search]');
+
+    const spName = document.querySelector('[data-v4-sp-name]');
+    const spGlyph = document.querySelector('[data-v4-sp-glyph]');
+    const spStatus = document.querySelector('[data-v4-sp-status]');
+    const spPortal = document.querySelector('[data-v4-sp-portal]');
+    const spTopics = document.querySelector('[data-v4-sp-topics]');
+    const spPhrase = document.querySelector('[data-v4-sp-phrase]');
+    const copyBtn = document.querySelector('[data-v4-copy]');
+
+    let currentGroup = 'all';
+    let currentPhrase = pillars[8].phrase;
+
+    const inspect = (idx) => {
+      const p = pillars[idx];
+      if (!p) return;
+      currentPhrase = p.phrase;
+      cells.forEach((c) => c.setAttribute('aria-selected', String(Number(c.dataset.v4Cell) === idx)));
+      if (spName) spName.textContent = p.name;
+      if (spGlyph) spGlyph.textContent = p.num;
+      if (spStatus) spStatus.textContent = p.status;
+      if (spPortal) spPortal.textContent = p.portal;
+      if (spPhrase) spPhrase.textContent = p.phrase;
+      if (copyBtn) copyBtn.textContent = ui.copyLabel;
+      if (spTopics) {
+        spTopics.innerHTML = '';
+        p.topics.forEach((t) => {
+          const li = document.createElement('li');
+          li.textContent = t;
+          spTopics.appendChild(li);
+        });
+      }
+    };
+
+    const applyFilter = () => {
+      const q = (searchInput?.value ?? '').trim().toLowerCase();
+      cells.forEach((c) => {
+        const matchG = currentGroup === 'all' || c.dataset.group === currentGroup;
+        const matchQ = !q || (c.dataset.hay ?? '').includes(q);
+        c.hidden = !(matchG && matchQ);
+      });
+    };
+
+    cells.forEach((cell) => cell.addEventListener('click', () => inspect(Number(cell.dataset.v4Cell))));
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentGroup = btn.dataset.v4Group ?? 'all';
+        filterBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        applyFilter();
+      });
+    });
+    searchInput?.addEventListener('input', applyFilter);
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentPhrase);
+        copyBtn.textContent = ui.copiedLabel;
+      } catch {
+        copyBtn.textContent = ui.copyFallback;
+      }
+    });
+  </script>
+</ConceptLayout>

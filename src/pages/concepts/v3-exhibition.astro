@@ -1,0 +1,225 @@
+---
+import ConceptLayout from '@layouts/ConceptLayout.astro';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const slices = isZh
+  ? [
+      {
+        time: '06:30', city: '成都 · 人民公园', placeSub: '四川成都 · 早茶时分', coords: '30°39′N · 104°03′E', bearing: 28, accent: '#8cd4a5', image: '/images/tea.webp',
+        headline: '盖碗茶气升起时，城市才刚刚醒来',
+        story: '清晨六点半的中国街头有着最松弛的秩序：竹椅、明前花茶、太极与早市粉面，一切都可以直接扫码完成。',
+      },
+      {
+        time: '10:15', city: '景德镇 · 陶溪川老窑', placeSub: '江西景德镇 · 器物工坊', coords: '29°17′N · 117°10′E', bearing: 94, accent: '#e8a87c', image: '/images/craft.webp',
+        headline: '七十二道工序，依然在年轻匠人掌心流转',
+        story: '从千年官窑到当代独立陶艺工作室，景德镇、宣城古纸与苏绣织造并非博物馆标本，而是可以预约探访的活态美学。',
+      },
+      {
+        time: '14:00', city: '京沪廊道 · 复兴号 G1', placeSub: '京沪高铁 · 350 公里/时', coords: '34°16′N · 117°11′E', bearing: 162, accent: '#68b5ff', image: '/images/rail.webp',
+        headline: '四小时十八分钟，贴地飞行穿越半个中国',
+        story: '外籍护照在 12306 完成线上核验后，全国高铁站直接刷护照原件过闸机，车厢座位码还能点沿途城市的外卖送上座。',
+      },
+      {
+        time: '17:40', city: '桂林阳朔 · 漓江峰林', placeSub: '广西阳朔 · 喀斯特暮光', coords: '24°46′N · 110°29′E', bearing: 236, accent: '#f5c26b', image: '/images/hero.webp',
+        headline: '喀斯特群峰暮光，水墨长卷里的真实地理',
+        story: '从阳朔漓江到云南梯田、江南水乡古镇，把 34 个省级政区与 59 处世界遗产按季节、交通接驳与实地体验重新编织。',
+      },
+      {
+        time: '21:30', city: '上海 · 霓虹与深夜烟火', placeSub: '上海都市 · 夜生活', coords: '31°14′N · 121°29′E', bearing: 312, accent: '#ff5d47', image: '/images/shanghai.webp',
+        headline: '午夜电车穿行霓虹，巷口面馆依然灯火通明',
+        story: '高安全感的深夜城市、24 小时便利店、智能电车与一码通行的超级应用——这就是当代中国真实而松弛的夜晚。',
+      },
+    ]
+  : [
+      {
+        time: '06:30', city: 'Chengdu · People’s Park', placeSub: 'Sichuan · Morning Teahouse', coords: '30°39′N · 104°03′E', bearing: 28, accent: '#8cd4a5', image: '/images/tea.webp',
+        headline: 'As steam rises from covered cups, the city wakes unhurried',
+        story: 'At 6:30 AM, China’s parks run on effortless rhythm: bamboo chairs, jasmine tea, morning tai chi, and QR-code noodle bowls.',
+      },
+      {
+        time: '10:15', city: 'Jingdezhen · Living Kilns', placeSub: 'Jiangxi · Craft Studios', coords: '29°17′N · 117°10′E', bearing: 94, accent: '#e8a87c', image: '/images/craft.webp',
+        headline: 'Seventy-two porcelain steps still turning in young hands',
+        story: 'From imperial kilns to contemporary design studios, Jingdezhen ceramics and handmade paper are living studios you can visit today.',
+      },
+      {
+        time: '14:00', city: 'Beijing–Shanghai · Fuxing G1', placeSub: '350 km/h High-Speed Rail', coords: '34°16′N · 117°11′E', bearing: 162, accent: '#68b5ff', image: '/images/rail.webp',
+        headline: 'Four hours eighteen minutes across half a continent',
+        story: 'Verify your passport once in the English Railway 12306 app and tap directly through station e-gates without paper tickets.',
+      },
+      {
+        time: '17:40', city: 'Yangshuo · Li River Peaks', placeSub: 'Guangxi · Karst Dusk', coords: '24°46′N · 110°29′E', bearing: 236, accent: '#f5c26b', image: '/images/hero.webp',
+        headline: 'Karst limestone twilight straight out of an ink scroll',
+        story: 'Explore 34 provincial divisions and 59 UNESCO sites organized by season, rail access, and verified field logistics.',
+      },
+      {
+        time: '21:30', city: 'Shanghai · Neon & Nightlife', placeSub: 'Shanghai · After Dark', coords: '31°14′N · 121°29′E', bearing: 312, accent: '#ff5d47', image: '/images/shanghai.webp',
+        headline: 'Silent smart EVs glide past steaming midnight noodle shops',
+        story: 'Safe late-night streets, 24-hour convenience stores, electric mobility, and frictionless super-apps — modern China after dark.',
+      },
+    ];
+---
+<ConceptLayout
+  title={isZh ? '沉浸式数字展厅与 24 小时切片' : '24-Hour Spatial Exhibition'}
+  description={isZh ? '全屏光影画廊、24 小时时间轴拨盘与实时经纬度罗盘。' : 'Full-bleed luminous gallery, 24-hour chronoscope timeline, and live coordinate compass.'}
+  active="v3"
+  dockTone="light"
+>
+  <Fragment slot="head">
+    <style>
+      :root { --v3-bg: #07080a; --v3-ink: #f6f6f4; --v3-muted: rgba(246, 246, 244, 0.72); --v3-accent: #f5c26b; }
+      body { background: var(--v3-bg); color: var(--v3-ink); }
+      .v3-stage { position: relative; min-height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 24px 40px 92px; }
+      .v3-backdrops { position: absolute; inset: 0; z-index: 0; }
+      .v3-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.65s ease; }
+      .v3-bg-img[data-active='true'] { opacity: 1; }
+      .v3-stage::after {
+        content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+        background: radial-gradient(circle at 76% 30%, transparent 15%, rgba(7, 8, 10, 0.56) 82%),
+          linear-gradient(180deg, rgba(7, 8, 10, 0.52) 0%, rgba(7, 8, 10, 0.14) 36%, rgba(7, 8, 10, 0.88) 100%);
+      }
+      .v3-top, .v3-center, .v3-bottom { position: relative; z-index: 2; }
+      .v3-top { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+      .v3-brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 23px; }
+      .v3-brand-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--v3-accent); box-shadow: 0 0 14px var(--v3-accent); }
+      .v3-top-nav { display: flex; gap: 24px; font-size: 13px; color: var(--v3-muted); }
+      .v3-top-nav a { text-decoration: none; }
+      .v3-top-nav a:hover { color: #ffffff; }
+      .v3-center { display: grid; grid-template-columns: minmax(0, 1.3fr) auto; align-items: end; gap: 40px; padding: 40px 0 28px; }
+      .v3-headline { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', 'Songti SC', serif; font-size: clamp(2.3rem, 4.8vw, 4.4rem); font-weight: 400; line-height: 1.08; max-width: 19ch; text-shadow: 0 6px 32px rgba(0, 0, 0, 0.45); }
+      .v3-story { margin: 18px 0 0; max-width: 50ch; font-size: 16px; line-height: 1.72; color: rgba(246, 246, 244, 0.86); }
+      .v3-compass { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; font-family: 'JetBrains Mono', 'PingFang SC', monospace; }
+      .v3-compass-ring { width: 124px; height: 124px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.28); background: rgba(7, 8, 10, 0.38); backdrop-filter: blur(8px); position: relative; display: grid; place-items: center; }
+      .v3-compass-needle { width: 2px; height: 84px; background: linear-gradient(180deg, var(--v3-accent) 0%, rgba(255, 255, 255, 0.12) 100%); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+      .v3-compass-time { position: absolute; font-size: 18px; font-weight: 600; color: #ffffff; background: rgba(7, 8, 10, 0.72); padding: 3px 8px; }
+      .v3-compass-coords { font-size: 11.5px; color: var(--v3-muted); }
+      .v3-scrubber { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+      .v3-hour-btn {
+        appearance: none; border: 0; border-top: 2px solid transparent; background: transparent; color: rgba(255, 255, 255, 0.56);
+        text-align: left; padding: 12px 4px 6px; margin-top: -19px; cursor: pointer; display: flex; flex-direction: column; gap: 5px;
+      }
+      .v3-hour-btn:hover { color: rgba(255, 255, 255, 0.92); }
+      .v3-hour-btn[aria-selected='true'] { color: #ffffff; border-top-color: var(--v3-accent); }
+      .v3-hour-time { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; }
+      .v3-hour-btn[aria-selected='true'] .v3-hour-time { color: var(--v3-accent); }
+      .v3-hour-city { font-size: 13px; }
+      .v3-gallery { max-width: 1360px; margin: 0 auto; padding: 72px 40px 136px; }
+      .v3-gallery-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 34px; }
+      .v3-gallery-head h2 { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; }
+      .v3-plates { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 20px; }
+      .v3-plate { text-decoration: none; display: flex; flex-direction: column; gap: 12px; }
+      .v3-plate-img { aspect-ratio: 4 / 3; overflow: hidden; background: #14161a; }
+      .v3-plate-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s ease; }
+      @media (prefers-reduced-motion: no-preference) { .v3-plate:hover .v3-plate-img img { transform: scale(1.04); } }
+      .v3-plate span { font-size: 11.5px; color: var(--v3-accent); }
+      .v3-plate h3 { margin: 0; font-family: 'Newsreader', 'Noto Serif SC', serif; font-size: 22px; font-weight: 400; }
+      @media (max-width: 920px) {
+        .v3-stage { padding: 20px 20px 96px; }
+        .v3-center, .v3-plates { grid-template-columns: 1fr; }
+        .v3-compass { align-items: flex-start; flex-direction: row; }
+        .v3-scrubber { grid-template-columns: repeat(2, 1fr); }
+        .v3-gallery { padding: 48px 20px 120px; }
+      }
+    </style>
+  </Fragment>
+
+  <section class="v3-stage" data-v3-root>
+    <div class="v3-backdrops" aria-hidden="true">
+      {slices.map((s, idx) => (
+        <img src={s.image} alt="" class="v3-bg-img" data-v3-bg={idx} data-active={idx === 3 ? 'true' : 'false'} />
+      ))}
+    </div>
+
+    <header class="v3-top">
+      <a href={lp('/concepts/v3-exhibition/')} class="v3-brand">
+        <span class="v3-brand-dot" aria-hidden="true"></span>
+        <span>ChinaWao</span>
+      </a>
+      <nav class="v3-top-nav">
+        <a href={lp('/atlas/')}>{isZh ? '知识图谱' : 'China Atlas'}</a>
+        <a href={lp('/journeys/')}>{isZh ? '首访剧本' : 'Journeys'}</a>
+        <a href={lp('/tools/')}>{isZh ? '口袋工具' : 'Tools'}</a>
+        <a href={lp('/posts/')}>{isZh ? '田野志刊' : 'Journal'}</a>
+      </nav>
+    </header>
+
+    <div class="v3-center">
+      <div>
+        <h1 class="v3-headline" data-v3-headline>{slices[3].headline}</h1>
+        <p class="v3-story" data-v3-story>{slices[3].story}</p>
+      </div>
+
+      <div class="v3-compass">
+        <div class="v3-compass-ring">
+          <div class="v3-compass-needle" data-v3-needle style={`transform: rotate(${slices[3].bearing}deg);`}></div>
+          <span class="v3-compass-time" data-v3-time>{slices[3].time}</span>
+        </div>
+        <span class="v3-compass-coords" data-v3-coords>{slices[3].coords}</span>
+        <span class="v3-compass-coords" data-v3-sub>{slices[3].placeSub}</span>
+      </div>
+    </div>
+
+    <div class="v3-bottom">
+      <div class="v3-scrubber" role="tablist" aria-label={isZh ? '24 小时中国切片时间轴' : '24-hour China timeline'}>
+        {slices.map((s, idx) => (
+          <button type="button" class="v3-hour-btn" role="tab" aria-selected={idx === 3 ? 'true' : 'false'} data-v3-pick={idx}>
+            <span class="v3-hour-time">{s.time}</span>
+            <span class="v3-hour-city">{s.city}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="v3-gallery">
+    <div class="v3-gallery-head">
+      <h2>{isZh ? '精选专题' : 'Featured Rooms'}</h2>
+    </div>
+
+    <div class="v3-plates">
+      <a href={lp('/atlas/')} class="v3-plate">
+        <div class="v3-plate-img"><img src="/images/town.webp" alt={isZh ? '江南水乡古镇' : 'Jiangnan water town'} /></div>
+        <h3>{isZh ? '34 省山河地理与江南古镇图谱' : '34 Provinces & Canal Water Towns'}</h3>
+      </a>
+      <a href={lp('/posts/')} class="v3-plate">
+        <div class="v3-plate-img"><img src="/images/beijing.webp" alt={isZh ? '北京故宫屋脊' : 'Beijing historic palace roofs'} /></div>
+        <h3>{isZh ? '五千年古建园林与 59 处世界遗产' : 'Ancient Architecture & 59 UNESCO Sites'}</h3>
+      </a>
+      <a href={lp('/tools/')} class="v3-plate">
+        <div class="v3-plate-img"><img src="/images/technology.webp" alt={isZh ? '智能电车与当代城市' : 'Smart EVs and modern urban transit'} /></div>
+        <h3>{isZh ? '超级应用、智能电车与随身工具箱' : 'Super-Apps, Smart EVs & Pocket Tools'}</h3>
+      </a>
+    </div>
+  </section>
+
+  <script define:vars={{ slices }}>
+    const root = document.querySelector('[data-v3-root]');
+    const bgs = Array.from(document.querySelectorAll('[data-v3-bg]'));
+    const btns = Array.from(document.querySelectorAll('[data-v3-pick]'));
+    const headlineEl = document.querySelector('[data-v3-headline]');
+    const storyEl = document.querySelector('[data-v3-story]');
+    const needleEl = document.querySelector('[data-v3-needle]');
+    const timeEl = document.querySelector('[data-v3-time]');
+    const coordsEl = document.querySelector('[data-v3-coords]');
+    const subEl = document.querySelector('[data-v3-sub]');
+
+    const selectSlice = (idx) => {
+      const s = slices[idx];
+      if (!s) return;
+      if (root) root.style.setProperty('--v3-accent', s.accent);
+      bgs.forEach((img, i) => { img.dataset.active = String(i === idx); });
+      btns.forEach((b, i) => b.setAttribute('aria-selected', String(i === idx)));
+      if (headlineEl) headlineEl.textContent = s.headline;
+      if (storyEl) storyEl.textContent = s.story;
+      if (needleEl) needleEl.style.transform = `rotate(${s.bearing}deg)`;
+      if (timeEl) timeEl.textContent = s.time;
+      if (coordsEl) coordsEl.textContent = s.coords;
+      if (subEl) subEl.textContent = s.placeSub;
+    };
+
+    btns.forEach((btn) => btn.addEventListener('click', () => selectSlice(Number(btn.dataset.v3Pick))));
+  </script>
+</ConceptLayout>

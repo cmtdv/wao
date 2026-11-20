@@ -1,0 +1,38 @@
+---
+/**
+ * FancyButton — Palace Lacquer / Imperial Gold beveled tactile CTA
+ * Restrained architectural sheen & recessed inner highlight (no plastic bubble gloss)
+ */
+interface Props {
+  href?: string;
+  tone?: 'seal' | 'palace' | 'ink';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  id?: string;
+  disabled?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  tone = 'seal',
+  size = 'md',
+  type = 'button',
+  id,
+  disabled = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const classes = ['cw-fancy-btn', `cw-fancy-btn--${tone}`, size !== 'md' && `cw-fancy-btn--${size}`, className];
+---
+{href ? (
+  <a href={href} id={id} class:list={classes} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} id={id} disabled={disabled} class:list={classes} {...rest}>
+    <slot />
+  </button>
+)}

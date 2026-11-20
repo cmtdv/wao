@@ -1,0 +1,99 @@
+---
+import { decodeSlug, getTaxonomyTermsWithCacheHint } from 'emdash';
+import Layout from '@layouts/Layout.astro';
+import PostCard from '@site/PostCard.astro';
+import Pagination from '@site/Pagination.astro';
+import { getPublicPosts, publicContext, queryPage } from '@lib/cms';
+import { tagPath } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/topic.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return new Response(null, { status: 404 });
+
+const terms = await publicContext(() =>
+  getTaxonomyTermsWithCacheHint('tag', { includeCounts: true, locale }),
+).catch(() => null);
+if (!terms) {
+  return new Response('Tags are temporarily unavailable.', { status: 503 });
+}
+
+const term = terms.data.find((item) => item.slug === slug);
+if (!term) return new Response(null, { status: 404 });
+
+const cursor = Astro.url.searchParams.get('cursor') || undefined;
+const path = tagPath(term.slug);
+const { result, invalidCursor } = await queryPage(() =>
+  getPublicPosts({ limit: 12, cursor, locale, where: { tag: term.slug } }),
+);
+
+if (invalidCursor) {
+  return Astro.redirect(lp(path), 302);
+}
+
+if (!result || result.error) {
+  return new Response('The article archive is temporarily unavailable.', { status: 503 });
+}
+
+if (Astro.cache?.enabled) {
+  Astro.cache.set(terms.cacheHint);
+  Astro.cache.set(result.cacheHint);
+}
+
+const totalCount =
+  'count' in term && typeof term.count === 'number'
+    ? term.count
+    : result.entries.length;
+---
+<Layout
+  title={`#${term.label}`}
+  description={term.description || (isZh ? `带有 #${term.label} 标签的全部实录` : `Articles tagged ${term.label}`)}
+>
+  <div class="container dossier-shell">
+    <div class="dossier-header">
+      <div class="dossier-header-main">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <a href={lp('/tags/')}>{isZh ? '标签' : 'Tags'}</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <span aria-current="page">#{term.label}</span>
+        </nav>
+        <p class="eyebrow eyebrow--accent">{isZh ? '标签索引' : 'Tag Index'}</p>
+        <h1>#{term.label}</h1>
+        {term.description && <p class="archive-lead">{term.description}</p>}
+      </div>
+
+      <div class="dossier-stats">
+        <span class="meta-line">
+          {isZh ? `${totalCount} 篇实录` : `${totalCount} ${totalCount === 1 ? 'dispatch' : 'dispatches'}`}
+        </span>
+      </div>
+    </div>
+
+    {result.entries.length > 0 ? (
+      <div class="post-grid">
+        {result.entries.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-panel">
+        <h2>{isZh ? '该标签下暂无已发布文章。' : 'No published posts with this tag yet.'}</h2>
+        <div class="empty-actions">
+          <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+        </div>
+      </div>
+    )}
+
+    <Pagination
+      basePath={path}
+      hasCursor={Boolean(cursor)}
+      nextCursor={result.nextCursor}
+    />
+  </div>
+</Layout>
