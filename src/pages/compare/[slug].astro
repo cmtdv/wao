@@ -1,0 +1,107 @@
+---
+/**
+ * Mother Template 5: /compare/[slug]/ — Side-by-Side Decision Comparison
+ * - First-screen Verdict Cards ("Choose A if..." / "Choose B if...")
+ * - Responsive sticky-header comparison matrix (DataTable auto-stacks on narrow screens)
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import DataTable from '@ui/data-display/DataTable.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { COMPARISONS } from '@data/paradigm-e/collections';
+import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const slug = Astro.params.slug || '';
+const item = COMPARISONS.find((c) => c.slug === slug);
+if (!item) return new Response('Comparison Not Found', { status: 404 });
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = PILLAR_BY_ID[item.pillar];
+---
+<BaseShell
+  title={isZh ? item.titleZh : item.title}
+  description={`Choose ${item.optionA} vs ${item.optionB}: verified verdict & specs.`}
+  activePillar={item.pillar}
+  persona="analyst"
+>
+  <div class="container" style="padding-bottom:var(--space-8);max-width:64rem;">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
+        { label: isZh ? '决策横评' : 'Compare', href: lp('/explore/#kind=Compare') },
+        { label: item.title },
+      ]}
+      mobileBackHref={lp(`/${pillar.id}/`)}
+      mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
+    >
+      <Badge slot="meta" tone="verified">Verified {item.lastVerified}</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header>
+      <span class="eyebrow eyebrow--accent">Mother Template 5 · Verdict Comparison</span>
+      <h1 style="margin-top:0.3rem;">{isZh ? item.titleZh : item.title}</h1>
+    </header>
+
+    {/* First-Screen Verdict Cards */}
+    <section class="pe-verdict-grid" aria-label="Direct Verdict">
+      <article class="pe-side-card" style="border-top-color: var(--secondary-solid);">
+        <Badge tone="editorial">{isZh ? '选 A 如果你…' : 'Choose Option A If…'}</Badge>
+        <h2 style="font-size:1.25rem;margin-block:0.45rem 0.35rem;">{item.optionA}</h2>
+        <p style="font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">{item.chooseAIf}</p>
+      </article>
+      <article class="pe-side-card" style="border-top-color: var(--accent-seal);">
+        <Badge tone="verified">{isZh ? '选 B 如果你…' : 'Choose Option B If…'}</Badge>
+        <h2 style="font-size:1.25rem;margin-block:0.45rem 0.35rem;">{item.optionB}</h2>
+        <p style="font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">{item.chooseBIf}</p>
+      </article>
+    </section>
+
+    {/* Responsive Sticky Comparison Matrix */}
+    <section style="margin-top:var(--space-5);">
+      <DataTable
+        id={`compare-${item.slug}`}
+        caption={`${item.optionA} vs ${item.optionB} Comparison Matrix`}
+        columns={[
+          { key: 'dimension', label: isZh ? '维度' : 'Dimension', rowHeader: true, sortable: false },
+          { key: 'valueA', label: item.optionA, sortable: false },
+          { key: 'valueB', label: item.optionB, sortable: false },
+          { key: 'winner', label: isZh ? '胜出' : 'Edge', sortable: false },
+        ]}
+        rows={item.rows.map((r) => ({
+          dimension: r.dimension,
+          valueA: r.valueA,
+          valueB: r.valueB,
+          winner: {
+            text: r.winner === 'A' ? item.optionA : r.winner === 'B' ? item.optionB : 'Tie',
+            badgeTone: r.winner === 'tie' ? 'neutral' : 'verified',
+          },
+        }))}
+      />
+    </section>
+
+    {/* Action CTA */}
+    <section class="pe-trust-strip" style="margin-top:var(--space-6);">
+      <p style="font-size:var(--text-sm);max-width:44ch;">{item.ctaNote}</p>
+      <Button href={lp(item.ctaHref)} variant="primary" size="sm">
+        {item.ctaLabel}
+      </Button>
+    </section>
+
+    {/* Sibling Comparisons */}
+    <section style="margin-top:var(--space-6);">
+      <span class="eyebrow">{isZh ? '其他热门对比' : 'More Verified Comparisons'}</span>
+      <div class="pe-mega-chips" style="margin-top:var(--space-3);">
+        {COMPARISONS.filter((c) => c.slug !== item.slug).map((other) => (
+          <a href={lp(`/compare/${other.slug}/`)} class="pe-mega-chip">
+            {isZh ? other.titleZh : other.title}
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseShell>

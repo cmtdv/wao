@@ -1,0 +1,61 @@
+---
+/**
+ * Layer 5: Ground Pulse Field Verification Stream (12.9)
+ * Displays Worked / Partial / Failed ratios, timestamped field reports, and 10-second submit link.
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import type { GuidePulseItem } from '@data/paradigm-e/guides';
+import { localePath, type Locale } from '@i18n/ui';
+
+interface Props {
+  stats?: { worked: number; partial: number; failed: number };
+  items: GuidePulseItem[];
+  locale?: Locale;
+}
+
+const { stats, items, locale = 'en' } = Astro.props;
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+const total = stats ? stats.worked + stats.partial + stats.failed : 0;
+const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
+---
+<section class="pe-pulse-box" aria-labelledby="ground-pulse-heading" style="margin-top: var(--space-6);">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
+    <div>
+      <span class="eyebrow eyebrow--accent">Ground Pulse · 12.9</span>
+      <h2 id="ground-pulse-heading" style="margin-top:0.2rem;font-size:1.25rem;">
+        {isZh ? '近期现场实测回报流' : 'Live Ground Pulse Reports'}
+      </h2>
+    </div>
+    <Button href={lp('/pulse/#submit-pulse')} variant="secondary" size="sm">
+      {isZh ? '+ 10 秒提交你的实测' : '+ Submit 10s Field Report'}
+    </Button>
+  </div>
+
+  {stats && total > 0 && (
+    <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3);">
+      <Badge tone="verified">{pct(stats.worked)}% Worked ({stats.worked})</Badge>
+      <Badge tone="standby">{pct(stats.partial)}% Partial ({stats.partial})</Badge>
+      <Badge tone="danger">{pct(stats.failed)}% Failed ({stats.failed})</Badge>
+    </div>
+  )}
+
+  <ul class="pe-pulse-list">
+    {items.map((item) => (
+      <li class="pe-pulse-row">
+        <Badge tone={item.status === 'worked' ? 'verified' : item.status === 'partial' ? 'standby' : 'danger'}>
+          {item.status === 'worked' ? 'Worked' : item.status === 'partial' ? 'Partial' : 'Failed'}
+        </Badge>
+        <div style="min-width:0;flex:1;">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.35rem;font-size:var(--text-xs);color:var(--ink-secondary);font-family:var(--font-mono);">
+            <strong>{item.context}</strong>
+            <span>{item.ago}</span>
+          </div>
+          <p style="margin-top:0.2rem;color:var(--ink-primary);">{item.detail}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>

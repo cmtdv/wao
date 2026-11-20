@@ -1,0 +1,101 @@
+---
+/**
+ * Mother Template 6: /pulse/ — Live Ground Pulse Field Reports & Weekly eSIM Top 5
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import GroundPulseForm from '@blocks/application/GroundPulseForm.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import DataTable from '@ui/data-display/DataTable.astro';
+import { LIVE_PULSE_REPORTS, WEEKLY_ESIM_TOP5 } from '@data/paradigm-e/collections';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+---
+<BaseShell
+  title={isZh ? '全站现场实测流（Ground Pulse）' : 'Live Ground Pulse & Field Benchmarks'}
+  description={isZh ? '全球访客实测的 240h 口岸、外卡刷卡、eSIM 稳定性与 12306 现场回报流。' : 'Real-time traveler field reports on 240h visa ports, foreign card payments, eSIM rankings & rail e-gates.'}
+  persona="safety"
+>
+  <div class="container" style="padding-bottom:var(--space-8);max-width:64rem;">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '现场实测流 Ground Pulse' : 'Live Ground Pulse' },
+      ]}
+      mobileBackHref={lp('/')}
+      mobileBackLabel={isZh ? '首页' : 'Home'}
+    >
+      <Badge slot="meta" tone="verified">Live Field Stream · Tool 12.9</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="margin-bottom:var(--space-6);">
+      <span class="eyebrow eyebrow--accent">Utility Dock · Ground Pulse 12.9</span>
+      <h1 style="margin-top:0.35rem;">{isZh ? '全站现场实测流与动态榜单' : 'Live Ground Pulse & Field Status'}</h1>
+      <p class="archive-lead" style="margin-top:0.4rem;">
+        {isZh
+          ? '官方规则之外，真实落地体验每小时都在变化。查看近期护照口岸、外卡支付与 eSIM 实测结果，或 10 秒贡献你的现场反馈。'
+          : 'Rules tell you what should work; Ground Pulse shows what actually worked two hours ago at Shanghai PVG, Chengdu Metro, and Railway 12306.'}
+      </p>
+    </header>
+
+    {/* Live Stream Cards */}
+    <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-7);" aria-label="Recent field reports">
+      {LIVE_PULSE_REPORTS.map((r) => (
+        <article class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
+          <div style="flex:1;min-width:16rem;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;margin-bottom:0.35rem;">
+              <Badge tone={r.status === 'worked' ? 'verified' : r.status === 'partial' ? 'standby' : 'danger'}>
+                {r.status.toUpperCase()}
+              </Badge>
+              <Badge tone="editorial">{r.category}</Badge>
+              <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);">
+                {r.passportOrCard} @ {r.location}
+              </span>
+            </div>
+            <p style="font-size:var(--text-base);color:var(--ink-primary);">{r.summary}</p>
+          </div>
+          <div style="text-align:end;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
+            <div>{r.timestamp}</div>
+            <a href={lp(r.relatedHref)} class="text-link" style="display:inline-block;margin-top:0.35rem;">
+              {isZh ? '对应攻略 →' : 'Related Guide →'}
+            </a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    {/* Weekly Most Stable China eSIM Top 5 */}
+    <section id="esim-top5" style="margin-bottom:var(--space-7);" aria-labelledby="esim-top5-h">
+      <span class="eyebrow eyebrow--accent">Weekly Field Leaderboard</span>
+      <h2 id="esim-top5-h" style="margin-top:0.25rem;margin-bottom:var(--space-3);">
+        {isZh ? '本周实测最稳中国 eSIM Top 5' : 'This Week’s Most Stable China eSIM Top 5'}
+      </h2>
+      <DataTable
+        id="pulse-esim-top5"
+        caption="Weekly China eSIM Field Stability Ranking"
+        columns={[
+          { key: 'rank', label: '#', rowHeader: true, sortable: false },
+          { key: 'provider', label: isZh ? 'eSIM 方案' : 'Provider', sortable: false },
+          { key: 'breakout', label: isZh ? '出口路由' : 'Breakout', sortable: false },
+          { key: 'priceRef', label: isZh ? '参考价格' : 'Ref Price', sortable: false },
+          { key: 'stability', label: isZh ? '本周实测可用率' : 'Field Stability', sortable: false },
+        ]}
+        rows={WEEKLY_ESIM_TOP5.map((row) => ({
+          rank: row.rank,
+          provider: row.provider,
+          breakout: row.breakout,
+          priceRef: row.priceRef,
+          stability: { text: row.stability, badgeTone: 'verified' },
+        }))}
+      />
+    </section>
+
+    {/* Reuse Route A GroundPulseForm */}
+    <section id="submit-pulse">
+      <GroundPulseForm idPrefix="live-pulse" />
+    </section>
+  </div>
+</BaseShell>

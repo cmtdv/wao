@@ -1,0 +1,333 @@
+---
+/**
+ * Mother Template 6: /tools/[tool]/ — 11 Interactive Tools App Workbench
+ * - Left narrow rail (248px): 7 Deterministic Rule Tools + 4 Evergreen Micro-Tools
+ * - Right adaptive panel: Zero-refresh browser logic + Declarative WebMCP semantic form attrs
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import AutoDisclaimer from '../../components/compliance/AutoDisclaimer.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import Select from '@ui/forms/Select.astro';
+import Input from '@ui/forms/Input.astro';
+import Checkbox from '@ui/forms/Checkbox.astro';
+import Slider from '@ui/forms/Slider.astro';
+import DateInput from '@ui/forms/DateInput.astro';
+import { UTILITY_TOOLS } from '@data/paradigm-e/pillars';
+import { getEntitiesByCollection } from '@data/paradigm-e/entities';
+import { getVisaProfiles } from '@data/mock-portal-zh';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const toolSlug = Astro.params.tool || '';
+const activeTool = UTILITY_TOOLS.find((t) => t.slug === toolSlug);
+if (!activeTool) return new Response('Tool Not Found', { status: 404 });
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+const detTools = UTILITY_TOOLS.filter((t) => t.group === 'deterministic');
+const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
+const visaProfiles = getVisaProfiles(locale);
+const showCards = getEntitiesByCollection('cards');
+
+const countryOptions = visaProfiles.map((p) => ({
+  value: p.code,
+  label: p.country,
+  data: {
+    unilateral: p.unilateralDays,
+    mutual: p.mutualDays,
+    transit: p.transit240h,
+    note: p.note,
+  },
+}));
+
+const disclaimers = activeTool.slug === 'visa-checker'
+  ? (['visa'] as const)
+  : activeTool.slug === 'medical-sos-cards'
+    ? (['allergy', 'medical'] as const)
+    : activeTool.slug === 'tax-points-calc' || activeTool.slug === 'budget-calculator'
+      ? (['tax'] as const)
+      : activeTool.slug === 'uscc-gb-matcher'
+        ? (['legal'] as const)
+        : ([] as const);
+
+const webMcpAttrs = {
+  'data-webmcp-tool': `chinawao_${activeTool.slug.replace(/-/g, '_')}`,
+  'data-webmcp-readonly': 'true',
+};
+---
+<BaseShell
+  title={`${activeTool.code} ${isZh ? activeTool.nameZh : activeTool.name}`}
+  description={isZh ? activeTool.shortDescZh : activeTool.shortDesc}
+  persona={activeTool.slug === 'uscc-gb-matcher' ? 'legal' : 'safety'}
+>
+  <div class="container" style="padding-bottom:var(--space-8);">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '实用工具工作台' : 'Tools Workbench', href: lp('/tools/') },
+        { label: isZh ? activeTool.nameZh : activeTool.name },
+      ]}
+      mobileBackHref={lp('/tools/')}
+      mobileBackLabel={isZh ? '全部 11 工具' : 'All Tools'}
+    >
+      <Badge slot="meta" tone="verified">WebMCP Declarative Ready · Offline JS</Badge>
+    </ResponsiveBreadcrumb>
+
+    <div class="pe-workbench">
+      {/* Left Narrow Rail (248px): Switch across all 11 Tools */}
+      <nav class="pe-tool-rail" aria-label={isZh ? '切换 11 个工具' : 'Switch between 11 tools'}>
+        <span class="pe-mega-col-title" style="padding-inline:0.5rem;margin-bottom:0.2rem;">
+          {isZh ? '7 个确定性规则工具' : '7 Deterministic Tools'}
+        </span>
+        {detTools.map((t) => (
+          <a href={lp(t.href)} aria-current={t.slug === activeTool.slug ? 'page' : undefined}>
+            <span style="font-family:var(--font-mono);color:var(--accent-seal-text);">{t.code}</span>
+            <span>{isZh ? t.nameZh : t.name}</span>
+          </a>
+        ))}
+        <span class="pe-mega-col-title" style="padding-inline:0.5rem;margin:var(--space-3) 0 0.2rem;">
+          {isZh ? '4 个常青文化微工具' : '4 Evergreen Micro-Tools'}
+        </span>
+        {microTools.map((t) => (
+          <a href={lp(t.href)} aria-current={t.slug === activeTool.slug ? 'page' : undefined}>
+            <span style="font-family:var(--font-mono);color:var(--ink-tertiary);">{t.code}</span>
+            <span>{isZh ? t.nameZh : t.name}</span>
+          </a>
+        ))}
+      </nav>
+
+      {/* Right Adaptive Calculation Panel */}
+      <section class="pe-step-card" style="margin:0;">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-3);">
+          <Badge tone="editorial">Tool {activeTool.code}</Badge>
+          <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);">
+            Zero-Refresh Deterministic Browser Engine
+          </span>
+        </div>
+
+        <h1 style="font-size:clamp(1.55rem, 1.2rem + 1.2vw, 2.2rem);">
+          {isZh ? activeTool.nameZh : activeTool.name}
+        </h1>
+        <p style="color:var(--ink-secondary);margin-block:0.4rem var(--space-5);font-size:var(--text-sm);">
+          {isZh ? activeTool.shortDescZh : activeTool.shortDesc}
+        </p>
+
+        {/* TOOL 12.1: 240h VISA CHECKER */}
+        {activeTool.slug === 'visa-checker' && (
+          <div class="visa-workbench" data-visa-checker {...webMcpAttrs}>
+            <form class="visa-form-card" novalidate>
+              <Select
+                id="visa-country"
+                name="country"
+                label={isZh ? '所持普通护照国籍' : 'Ordinary Passport Nationality'}
+                options={countryOptions}
+                data-visa-country
+              />
+              <Input
+                id="visa-days"
+                name="days"
+                type="number"
+                label={isZh ? '计划在中国内地停留天数' : 'Planned Mainland Stay (Days)'}
+                min={1}
+                max={180}
+                value={10}
+                data-visa-days
+              />
+              <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
+                {isZh ? '持有第三国/港澳台联程确定客票 (A → 中国 → C)' : 'Confirmed third-country/region onward ticket (A → China → C)'}
+              </Checkbox>
+            </form>
+            <div class="visa-result-card" aria-live="polite" data-visa-result>
+              <span class="eyebrow eyebrow--accent">Deterministic Verdict</span>
+              <h2 data-visa-verdict style="margin-top:0.35rem;font-size:1.35rem;">Evaluating…</h2>
+              <p data-visa-summary style="margin-top:0.5rem;font-size:var(--text-sm);color:var(--ink-secondary);"></p>
+              <p data-visa-note style="margin-top:0.5rem;font-family:var(--font-mono);font-size:var(--text-xs);"></p>
+            </div>
+          </div>
+        )}
+
+        {/* TOOL 12.2 / 12.4: SHOW-TO-LOCAL CARDS */}
+        {(activeTool.slug === 'station-taxi-cards' || activeTool.slug === 'medical-sos-cards') && (
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:var(--space-4);" {...webMcpAttrs}>
+            {showCards.map((c) => (
+              <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
+                <div>
+                  <Badge tone={c.collection === 'cards' && c.slug.includes('allergy') ? 'danger' : 'verified'}>
+                    {c.cardData?.scenario ?? 'SHOW CARD'}
+                  </Badge>
+                  <h2 style="font-size:1.15rem;margin-top:0.45rem;">{c.title}</h2>
+                  <p style="font-size:1.1rem;font-weight:600;margin-top:0.35rem;color:var(--accent-seal-text);">
+                    {c.chineseName}
+                  </p>
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">{c.tagline}</p>
+                </div>
+                <Button href={lp(`/cards/${c.slug}/`)} variant="primary" size="sm">
+                  {isZh ? '打开全屏高对比亮屏模式 →' : 'Launch Fullscreen Show Card →'}
+                </Button>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* TOOL 12.3: TICKET RELEASE TIMEZONE CONVERTER */}
+        {activeTool.slug === 'ticket-calendar' && (
+          <div style="display:grid;gap:var(--space-4);" {...webMcpAttrs}>
+            <div class="pe-hard-facts">
+              <div class="pe-fact-slot">
+                <span class="pe-fact-slot-label">Forbidden City (7d · 20:00 BJT)</span>
+                <strong class="pe-fact-slot-val" data-pe-bjt-hour="20" data-pe-bjt-minute="0">Calculating…</strong>
+                <span class="pe-fact-slot-src">Converted to your browser local timezone</span>
+              </div>
+              <div class="pe-fact-slot">
+                <span class="pe-fact-slot-label">Railway 12306 (15d · 08:00–18:00 BJT)</span>
+                <strong class="pe-fact-slot-val" data-pe-bjt-hour="8" data-pe-bjt-minute="0">Calculating…</strong>
+                <span class="pe-fact-slot-src">Earliest major hub station release</span>
+              </div>
+            </div>
+            <div data-ticket-calendar style="max-width:28rem;">
+              <DateInput id="ticket-travel-date" name="travel_date" label={isZh ? '选择计划出行/入园日期' : 'Target Travel / Visit Date'} value="2026-12-20" data-ticket-date />
+              <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);" data-ticket-output>
+                Select a date to compute exact 15-day 12306 &amp; 7-day Palace Museum booking dates.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TOOL 12.5: BUDGET & TAX REFUND 2.0 CALCULATOR */}
+        {activeTool.slug === 'budget-calculator' && (
+          <div data-tax-calc style="max-width:34rem;display:grid;gap:var(--space-4);" {...webMcpAttrs}>
+            <Slider
+              id="tax-spend-slider"
+              name="spend_rmb"
+              label={isZh ? '同店同日消费金额（人民币 ¥）' : 'Same-Day Same-Store Spend (RMB ¥)'}
+              min={200}
+              max={20000}
+              step={100}
+              value={3200}
+              unitPrefix="¥"
+              unitSuffix=" RMB"
+              data-tax-slider
+            />
+            <div class="pe-side-card" style="background:var(--surface-canvas);" data-tax-output>
+              Estimated 9% Net Refund (11% VAT − 2% agency fee): <strong>¥288 RMB</strong>
+            </div>
+          </div>
+        )}
+
+        {/* TOOL 12.6: WORK PERMIT POINTS & IIT TAX CALC */}
+        {activeTool.slug === 'tax-points-calc' && (
+          <form data-pe-tax-points style="display:grid;gap:var(--space-4);max-width:38rem;" novalidate {...webMcpAttrs}>
+            <div class="pe-dual-desk" style="margin:0;">
+              <Input id="tp-salary" name="salary" type="number" label="Monthly Gross Salary (RMB ¥)" value={28000} min={5000} max={200000} data-tp-salary />
+              <Select
+                id="tp-degree"
+                name="degree"
+                label="Highest Degree"
+                options={[
+                  { value: '20', label: 'PhD / Doctorate (20 pts)' },
+                  { value: '15', label: 'Master’s Degree (15 pts)', selected: true },
+                  { value: '10', label: 'Bachelor’s Degree (10 pts)' },
+                ]}
+                data-tp-degree
+              />
+              <Input id="tp-exp" name="exp" type="number" label="Relevant Work Years" value={5} min={0} max={30} data-tp-exp />
+              <Input id="tp-age" name="age" type="number" label="Applicant Age" value={31} min={18} max={65} data-tp-age />
+            </div>
+            <Select
+              id="tp-hsk"
+              name="hsk"
+              label="Chinese Proficiency (HSK)"
+              options={[
+                { value: '0', label: 'No HSK yet (0 pts)', selected: true },
+                { value: '2', label: 'HSK 2–3 (2 pts)' },
+                { value: '4', label: 'HSK 4 (4 pts)' },
+                { value: '5', label: 'HSK 5+ (5 pts)' },
+              ]}
+              data-tp-hsk
+            />
+            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-tp-output aria-live="polite"></div>
+          </form>
+        )}
+
+        {/* TOOL 12.7: USCC & GB MATCHER */}
+        {activeTool.slug === 'uscc-gb-matcher' && (
+          <div data-pe-uscc-root style="display:grid;gap:var(--space-4);max-width:40rem;" {...webMcpAttrs}>
+            <Input
+              id="tool-uscc-input"
+              name="uscc"
+              type="text"
+              label="18-Digit Unified Social Credit Code (GB 32100-2015)"
+              value="914403001922038216"
+              maxlength={18}
+              hint="Paste any Chinese supplier’s 18-character code from their Business License (营业执照)."
+              data-pe-uscc-input
+            />
+            <div class="pe-side-card" style="background:var(--surface-canvas);" data-pe-uscc-output aria-live="polite"></div>
+            <Button href={lp('/compliance/uscc-gsxt-lookup/')} variant="secondary" size="sm">
+              {isZh ? '前往 GSXT 官方双栏核验引导台 →' : 'Open Dual-Column GSXT WAF Desk →'}
+            </Button>
+          </div>
+        )}
+
+        {/* MICRO TOOL M1: JIN / LIANG & SIZE CONVERTER */}
+        {activeTool.slug === 'jin-size-converter' && (
+          <form data-pe-jin-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
+            <Input id="jin-val" name="jin" type="number" label="Market Weight in 斤 (Jin)" value={2} min={0} step={0.5} data-jin-input />
+            <Input id="shoe-val" name="eu_shoe" type="number" label="EU Shoe Size (35–48)" value={42} min={35} max={48} data-shoe-input />
+            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-jin-output aria-live="polite"></div>
+          </form>
+        )}
+
+        {/* MICRO TOOL M2: WAN / YI CONVERTER */}
+        {activeTool.slug === 'wan-yi-converter' && (
+          <form data-pe-wanyi-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
+            <Input id="wanyi-num" name="amount" type="number" label="Number Before Unit" value={50} min={0} data-wanyi-input />
+            <Select
+              id="wanyi-unit"
+              name="unit"
+              label="Chinese Unit"
+              options={[
+                { value: '10000', label: '万 (Wàn = 10,000)', selected: true },
+                { value: '100000000', label: '亿 (Yì = 100,000,000)' },
+              ]}
+              data-wanyi-unit
+            />
+            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-wanyi-output aria-live="polite"></div>
+          </form>
+        )}
+
+        {/* MICRO TOOL M3: HANZI TATTOO CHECK */}
+        {activeTool.slug === 'hanzi-tattoo-check' && (
+          <form data-pe-tattoo-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
+            <Input id="tattoo-in" name="hanzi" type="text" label="Chinese Phrase to Audit" value="免费" placeholder="Try 免费, 自由, 勇敢, 水…" data-tattoo-input />
+            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-tattoo-output aria-live="polite"></div>
+          </form>
+        )}
+
+        {/* MICRO TOOL M4: CHINESE NAME STUDIO */}
+        {activeTool.slug === 'chinese-name' && (
+          <form data-pe-name-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
+            <Input id="name-in" name="name" type="text" label="Your English First Name" value="Alex" data-name-input />
+            <Select
+              id="name-vibe"
+              name="vibe"
+              label="Cultural Cadence"
+              options={[
+                { value: 'literary', label: 'Literary & Classical (书卷清雅)', selected: true },
+                { value: 'modern', label: 'Crisp Modern (现代明朗)' },
+                { value: 'warm', label: 'Grounded & Philosophical (知行温润)' },
+              ]}
+              data-name-vibe
+            />
+            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-name-output aria-live="polite"></div>
+          </form>
+        )}
+
+        <AutoDisclaimer kinds={[...disclaimers]} locale={locale} />
+      </section>
+    </div>
+  </div>
+</BaseShell>

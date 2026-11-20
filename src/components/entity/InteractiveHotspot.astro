@@ -1,0 +1,92 @@
+---
+/**
+ * Interactive Red-Box Hotspot Screen (/errors/ /documents/ /how-to-use/)
+ * Structured Chinese UI rows with non-overlapping high-contrast numbered red-box callouts.
+ */
+import Badge from '@ui/data-display/Badge.astro';
+import type { HotspotAnnotation } from '@data/paradigm-e/entities';
+
+interface Props {
+  canvasTitle: string;
+  screenHeaderChinese: string;
+  screenLines: string[];
+  hotspots: HotspotAnnotation[];
+  locale?: 'en' | 'zh';
+}
+
+const { canvasTitle, screenHeaderChinese, screenLines, hotspots, locale = 'en' } = Astro.props;
+const isZh = locale === 'zh';
+---
+<section class="pe-hotspot-stage" data-pe-hotspot-root aria-label={canvasTitle}>
+  <div>
+    <div class="pe-hotspot-screen" style="gap: var(--space-4);">
+      <div>
+        <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:#e6be72;letter-spacing:0.08em;text-transform:uppercase;">
+          {canvasTitle}
+        </span>
+        <h3 style="margin-top:0.35rem;font-size:1.15rem;color:#fbf6ee;border-bottom:1px solid rgb(251 246 238 / 0.2);padding-bottom:0.65rem;">
+          {screenHeaderChinese}
+        </h3>
+        <div style="margin-top:var(--space-3);display:grid;gap:0.55rem;">
+          {screenLines.map((line) => (
+            <p style="font-size:var(--text-sm);color:#e6d5c8;line-height:1.55;">{line}</p>
+          ))}
+        </div>
+      </div>
+
+      {/* Non-overlapping Red-Box Highlighted Action Zones */}
+      <div style="display:grid;gap:0.65rem;">
+        {hotspots.map((spot, idx) => (
+          <button
+            type="button"
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+            aria-label={`Hotspot ${spot.id}: ${spot.chineseText}`}
+            data-pe-hotspot-btn={spot.id}
+            style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;width:100%;padding:0.65rem 0.85rem;border:2px solid var(--accent-seal);border-radius:var(--control-radius);background:rgb(201 59 43 / 0.14);color:#fbf6ee;text-align:start;cursor:pointer;"
+          >
+            <span style="font-size:var(--text-sm);font-weight:600;">{spot.chineseText}</span>
+            <span
+              style="display:inline-flex;align-items:center;justify-content:center;width:1.75rem;height:1.75rem;border-radius:50%;background:var(--accent-seal);color:#fff;font-family:var(--font-mono);font-size:var(--text-xs);font-weight:700;flex-shrink:0;"
+            >
+              {spot.id}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+    <p style="margin-top:var(--space-2);font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);">
+      {isZh ? '点击上方中文屏幕中的任意红框区域高亮对应英文救火指令' : 'Tap any red-boxed Chinese zone above to highlight its English action card'}
+    </p>
+  </div>
+
+  <div style="display:grid;gap:var(--space-3);">
+    {hotspots.map((spot, idx) => (
+      <article
+        class="pe-side-card"
+        data-pe-hotspot-card={spot.id}
+        style={idx === 0 ? 'border-color: var(--accent-seal);' : undefined}
+      >
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:0.4rem;">
+          <Badge tone={idx === 0 ? 'danger' : 'editorial'}>#{spot.id} · {spot.chineseText}</Badge>
+          <button
+            type="button"
+            class="pe-mega-chip"
+            style="padding:0.15rem 0.45rem;font-size:var(--text-2xs);"
+            data-pe-copy={spot.chineseText}
+            data-pe-copy-toast={`Copied: ${spot.chineseText}`}
+          >
+            {isZh ? '复制中文' : 'Copy'}
+          </button>
+        </div>
+        <p style="font-size:var(--text-sm);color:var(--ink-primary);line-height:1.55;">
+          {spot.englishInstruction}
+        </p>
+        {spot.warning && (
+          <p style="margin-top:0.4rem;font-size:var(--text-xs);font-weight:600;color:var(--status-error-ink);">
+            ⚠ {spot.warning}
+          </p>
+        )}
+      </article>
+    ))}
+  </div>
+</section>

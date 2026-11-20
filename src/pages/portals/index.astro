@@ -1,0 +1,171 @@
+---
+/**
+ * Mother Template 6: /portals/ — 848 Government Open Data Portals & ChinaWao MCP Center
+ * - Top pinned One-Click Copy MCP JSON Config Card (Claude Desktop / ChatGPT / Cursor)
+ * - Filterable Ministry/Provincial/Municipal registry separating HTTP 200 Direct vs WAF Standby
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { GOV_PORTALS } from '@data/paradigm-e/collections';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+const mcpUrl = `${Astro.url.origin}/mcp`;
+const mcpConfigJson = JSON.stringify(
+  {
+    mcpServers: {
+      chinawao: {
+        url: mcpUrl,
+        transport: 'streamable-http',
+        readOnly: true,
+      },
+    },
+  },
+  null,
+  2,
+);
+---
+<BaseShell
+  title={isZh ? '848 政务公开数据源与 MCP 中心' : '848 Government Open Data Portals & MCP Center'}
+  description={isZh ? '直达中国国家部委与省市公开数据门户，一键复制 Claude / Cursor 只读 MCP 配置。' : 'Verified Chinese government open-data registry and stateless read-only ChinaWao MCP Server configuration.'}
+  persona="legal"
+>
+  <div class="container" style="padding-bottom:var(--space-8);" data-pe-portals-root>
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '848 政务数据源与 MCP' : '848 Gov Portals & MCP' },
+      ]}
+      mobileBackHref={lp('/')}
+      mobileBackLabel={isZh ? '首页' : 'Home'}
+    >
+      <Badge slot="meta" tone="verified">Read-Only MCP Active · Zero Write Paths</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="max-width:54rem;margin-bottom:var(--space-5);">
+      <span class="eyebrow eyebrow--accent">Utility Dock · Data & AI Machine Layer</span>
+      <h1 style="margin-top:0.35rem;">
+        {isZh ? '848 政务公开数据源与 ChinaWao MCP 中心' : '848 Gov Open Data Portals & ChinaWao MCP Center'}
+      </h1>
+      <p class="archive-lead" style="margin-top:0.4rem;">
+        {isZh
+          ? '严格执行公开数据过滤红线：剔除商业付费与新闻空壳，透明标注 HTTP 200 直连平台与瑞数/创宇 WAF 官方备用源。'
+          : 'Zero commercial fluff or dead wrappers: every portal is audited for real open data access, transparently separating HTTP 200 direct feeds from WAF-protected official standby registries.'}
+      </p>
+    </header>
+
+    {/* Top Pinned MCP One-Click Configuration Card */}
+    <section id="mcp-setup" class="pe-mcp-card" aria-labelledby="mcp-card-h">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-4);">
+        <div>
+          <span class="eyebrow eyebrow--accent">Model Context Protocol · Stateless Read-Only</span>
+          <h2 id="mcp-card-h" style="font-size:1.35rem;margin-top:0.2rem;">
+            {isZh ? 'ChinaWao MCP Server 一键接入配置（Claude Desktop / Cursor / ChatGPT）' : 'Connect ChinaWao MCP Server (Claude Desktop / Cursor / ChatGPT)'}
+          </h2>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+          <Button variant="primary" size="sm" data-pe-copy={mcpConfigJson} data-pe-copy-toast="Copied MCP JSON config!">
+            {isZh ? '复制 MCP JSON 配置' : 'Copy MCP JSON Config'}
+          </Button>
+          <Button href="/.well-known/mcp/server-card.json" variant="secondary" size="sm">
+            server-card.json
+          </Button>
+          <Button href="/llms.txt" variant="ghost" size="sm">
+            llms.txt
+          </Button>
+        </div>
+      </div>
+
+      <div class="pe-dual-desk" style="margin:0;">
+        <pre class="pe-code-pre"><code>{mcpConfigJson}</code></pre>
+        <div style="display:grid;gap:0.5rem;align-content:start;">
+          <span class="pe-mega-col-title">{isZh ? '只读工具能力清单（零写路径）' : 'Read-Only MCP Tool Capabilities'}</span>
+          <ul style="list-style:none;padding:0;margin:0;display:grid;gap:0.45rem;font-size:var(--text-xs);">
+            <li><code>search_chinawao</code> — {isZh ? '跨 32 主题页与 8 类实体检索核验事实与规范 URL' : 'Search 32 guides & entities with canonical URLs'}</li>
+            <li><code>get_guide</code> — {isZh ? '按 slug 返回纯净 Markdown 与硬事实插槽' : 'Return clean Markdown & hard-fact JSON slots'}</li>
+            <li><code>check_visa_240h</code> — {isZh ? '确定性判定 30 天免签与 240h 过境规则' : 'Deterministic 30d & 240h transit evaluation'}</li>
+            <li><code>list_gov_portals</code> — {isZh ? '按直连/WAF 状态检索官方政务数据源' : 'Filter audited ministry & municipal data portals'}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* Filterable Portal Directory Table */}
+    <section aria-labelledby="portals-table-h">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-4);">
+        <h2 id="portals-table-h" style="font-size:1.3rem;">
+          {isZh ? '核心部委与省市实测数据源名录（848 库精选直显）' : 'Audited Core Ministry & Municipal Portals (Featured Sample of 848)'}
+        </h2>
+        <Badge tone="editorial" data-pe-portal-count>{GOV_PORTALS.length} / {GOV_PORTALS.length}</Badge>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-4);">
+        <input
+          type="search"
+          class="cw-input"
+          placeholder={isZh ? '搜部委、省市或领域（如 GSXT、NIA、Shanghai）…' : 'Filter by ministry, region, or domain…'}
+          style="min-width:16rem;flex:1;"
+          data-pe-portal-search
+        />
+        <select class="cw-select" aria-label="Filter by level" data-pe-portal-level>
+          <option value="all">{isZh ? '全部层级' : 'All Levels'}</option>
+          <option value="Ministry">Ministry (国家部委)</option>
+          <option value="Provincial">Provincial (省级)</option>
+          <option value="Municipal">Municipal (城市)</option>
+        </select>
+        <select class="cw-select" aria-label="Filter by access status" data-pe-portal-access>
+          <option value="all">{isZh ? '全部连通状态' : 'All Access Modes'}</option>
+          <option value="direct-200">HTTP 200 Direct</option>
+          <option value="waf-standby">WAF Standby Guided</option>
+        </select>
+      </div>
+
+      <div class="cw-table-wrap" tabindex="0" role="region" aria-labelledby="portals-table-h">
+        <table class="cw-table">
+          <thead>
+            <tr>
+              <th scope="col">{isZh ? '官方平台' : 'Official Portal'}</th>
+              <th scope="col">{isZh ? '层级 / 地域' : 'Level / Region'}</th>
+              <th scope="col">{isZh ? '数据领域' : 'Domain'}</th>
+              <th scope="col">{isZh ? '连通状态' : 'Access Mode'}</th>
+              <th scope="col">{isZh ? '核验入口' : 'Action'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GOV_PORTALS.map((p) => (
+              <tr
+                data-pe-portal-row
+                data-level={p.level}
+                data-access={p.access}
+                data-search={`${p.name} ${p.chineseName} ${p.region} ${p.domain} ${p.accessDetail}`.toLowerCase()}
+              >
+                <th scope="row">
+                  <strong>{p.name}</strong>
+                  <div style="font-size:var(--text-xs);color:var(--ink-secondary);font-weight:400;">{p.chineseName}</div>
+                </th>
+                <td>{p.level} · {p.region}</td>
+                <td>{p.domain}</td>
+                <td>
+                  <Badge tone={p.access === 'direct-200' ? 'verified' : 'standby'}>
+                    {p.accessDetail}
+                  </Badge>
+                </td>
+                <td>
+                  <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="text-link">Official ↗</a>
+                    {p.guideHref && <a href={lp(p.guideHref)} class="text-link">Guide →</a>}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</BaseShell>

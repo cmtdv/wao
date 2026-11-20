@@ -1,0 +1,174 @@
+---
+/**
+ * Mother Template 7: /explore/ — Multi-Facet Dynamic Explorer (Paradigm C Engine)
+ * - 5 Orthogonal Facet Chip Groups: Space / Season / Kind / Audience & Constraints / Trust
+ * - SEO Crawl-Budget Hygiene: Dynamic chip state writes strictly to URL #fragment (#space=310000&constraints=foreign-card)
+ *   while <link rel="canonical"> stays pinned to /explore/
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { EXPLORER_FACETS, EXPLORER_ITEMS } from '@data/paradigm-e/collections';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
+---
+<BaseShell
+  title={isZh ? '多维分面探索器（10 大集合动态聚合）' : 'Multi-Facet Explorer — All ChinaWao Collections'}
+  description={isZh ? '按空间、时令、集合类型、外卡/免+86/无障碍/过敏约束与可信度实时筛选全站核验资产。' : 'Filter all ChinaWao guides, cities, attractions, rescue screens, and stacks across 5 orthogonal facet dimensions.'}
+  canonical={canonicalUrl}
+  persona="analyst"
+>
+  <div class="container" style="padding-bottom:var(--space-8);" data-pe-explorer>
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '多维分面探索器' : 'Multi-Facet Explorer' },
+      ]}
+      mobileBackHref={lp('/')}
+      mobileBackLabel={isZh ? '首页' : 'Home'}
+    >
+      <Badge slot="meta" tone="editorial" data-pe-explorer-hash>#all</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);">
+      <div style="max-width:46rem;">
+        <span class="eyebrow eyebrow--accent">Mother Template 7 · Orthogonal Facet Engine</span>
+        <h1 style="margin-top:0.35rem;">{isZh ? '全站多维分面探索器' : 'Multi-Facet China Explorer'}</h1>
+        <p class="archive-lead" style="margin-top:0.35rem;">
+          {isZh
+            ? '组合 5 组正交筛选芯片即时过滤全站多态集合。动态组合写入 URL #fragment 避免爬虫预算浪费，静态高意图落地页请见 /for/。'
+            : 'Combine 5 orthogonal facet chip groups across all structured collections. Dynamic filter states stay in URL #fragments for clean SEO hygiene.'}
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--space-2);">
+        <Badge tone="verified" data-pe-explorer-count>{EXPLORER_ITEMS.length} / {EXPLORER_ITEMS.length}</Badge>
+        <Button variant="secondary" size="sm" data-pe-explorer-reset>
+          {isZh ? '重置筛选' : 'Reset'}
+        </Button>
+      </div>
+    </header>
+
+    {/* 5 Orthogonal Facet Chip Groups */}
+    <section class="pe-side-card" style="margin-bottom:var(--space-6);display:grid;gap:var(--space-2);" aria-label="Facet filters">
+      <div>
+        <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
+          01 · {isZh ? '空间与口岸 (Space / 240h)' : 'Space & 240h Zone'}
+        </span>
+        <div class="pe-facet-group">
+          {EXPLORER_FACETS.space.map((f) => (
+            <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="space" data-pe-facet-value={f.value}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
+          02 · {isZh ? '时令窗口 (Season)' : 'Season & Timing'}
+        </span>
+        <div class="pe-facet-group">
+          {EXPLORER_FACETS.season.map((f) => (
+            <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="season" data-pe-facet-value={f.value}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
+          03 · {isZh ? '集合类型 (Collection Kind)' : 'Collection Type'}
+        </span>
+        <div class="pe-facet-group">
+          {EXPLORER_FACETS.kind.map((f) => (
+            <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="kind" data-pe-facet-value={f.value}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
+          04 · {isZh ? '人群与硬约束 (Constraints)' : 'Audience & Hard Constraints'}
+        </span>
+        <div class="pe-facet-group">
+          {EXPLORER_FACETS.constraints.map((f) => (
+            <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="constraints" data-pe-facet-value={f.value}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
+          05 · {isZh ? '核验可信度 (Trust Level)' : 'Trust & Verification'}
+        </span>
+        <div class="pe-facet-group">
+          {EXPLORER_FACETS.trust.map((f) => (
+            <button type="button" class="pe-facet-chip" aria-pressed="false" data-pe-facet-group="trust" data-pe-facet-value={f.value}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Dynamic Filtered Result Grid */}
+    <section style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);" aria-live="polite">
+      {EXPLORER_ITEMS.map((item) => (
+        <article
+          class="pe-side-card"
+          data-pe-explorer-card
+          data-space={item.space.join(',')}
+          data-season={item.season.join(',')}
+          data-kind={item.kind}
+          data-constraints={item.constraints.join(',')}
+          data-trust={item.trust}
+          style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);"
+        >
+          <div>
+            <div style="display:flex;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
+              <Badge tone="editorial">{item.kind}</Badge>
+              <Badge tone={item.trust === 'tier-a' ? 'verified' : 'standby'}>
+                {item.trust === 'tier-a' ? 'Tier-A' : 'Pulse Verified'}
+              </Badge>
+            </div>
+            <h2 style="font-family:var(--font-display);font-size:1.15rem;line-height:1.3;">
+              <a href={lp(item.href)} class="text-link">
+                {isZh ? item.titleZh : item.title}
+              </a>
+            </h2>
+            <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
+              {item.summary}
+            </p>
+          </div>
+          <div class="pe-mega-chips">
+            {item.constraints.slice(0, 3).map((c) => (
+              <span class="pe-mega-chip" style="padding:0.15rem 0.45rem;font-size:var(--text-2xs);">{c}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <div class="pe-side-card" data-pe-explorer-empty hidden style="text-align:center;padding:var(--space-7);">
+      <h2>{isZh ? '当前组合暂无精确匹配条目' : 'No exact matches for this facet combination'}</h2>
+      <p style="color:var(--ink-secondary);margin-block:0.4rem var(--space-4);font-size:var(--text-sm);">
+        {isZh ? '尝试移除部分约束芯片，或浏览高意图静态专题页。' : 'Try clearing one constraint chip or jump into a curated static hub below.'}
+      </p>
+      <div class="pe-mega-chips" style="justify-content:center;">
+        <a href={lp('/for/solo-female/')} class="pe-mega-chip">/for/solo-female/</a>
+        <a href={lp('/for/peanut-allergy/')} class="pe-mega-chip">/for/peanut-allergy/</a>
+        <a href={lp('/for/remote-sourcing/')} class="pe-mega-chip">/for/remote-sourcing/</a>
+      </div>
+    </div>
+  </div>
+</BaseShell>

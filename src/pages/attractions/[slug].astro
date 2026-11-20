@@ -1,0 +1,8 @@
+---
+import EntityProfileLayout from '@layouts/EntityProfileLayout.astro';
+import { getEntity } from '@data/paradigm-e/entities';
+
+const entity = getEntity('attractions', Astro.params.slug || '');
+if (!entity) return new Response('Attraction Not Found', { status: 404 });
+---
+<EntityProfileLayout entity={entity} />

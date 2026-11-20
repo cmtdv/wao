@@ -1,351 +1,94 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import Icon from '@site/Icon.astro';
-import Select from '@ui/forms/Select.astro';
-import Input from '@ui/forms/Input.astro';
-import Checkbox from '@ui/forms/Checkbox.astro';
+/**
+ * Mother Template 6: /tools/ — Utility Dock Hub (All 11 Tools + Fullscreen Show Cards)
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
 import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
-import Slider from '@ui/forms/Slider.astro';
-import DateInput from '@ui/forms/DateInput.astro';
-import DataTable from '@ui/data-display/DataTable.astro';
-import GroundPulseForm from '@blocks/application/GroundPulseForm.astro';
-import { getFlashcards, getVisaMatrixTable, getVisaProfiles } from '@data/mock-portal-zh';
-import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
-import '@styles/specialty.css';
+import { UTILITY_TOOLS } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
-const strings = getStrings(locale);
-const lp = (path: string) => localePath(path, locale);
+const lp = (p: string) => localePath(p, locale);
 
-const visaProfiles = getVisaProfiles(locale);
-const flashcards = getFlashcards(locale);
-const visaMatrix = getVisaMatrixTable(locale);
-
-const flashcardCategories = [
-  { key: 'All', label: isZh ? '全部场景' : 'All' },
-  { key: 'Taxi & Station', label: isZh ? '打车与车站' : 'Taxi & Station' },
-  { key: 'Medical & Allergy', label: isZh ? '医疗与过敏' : 'Medical & Allergy' },
-  { key: 'Hotel & Daily', label: isZh ? '酒店与退税' : 'Hotel & Daily' },
-] as const;
-
-const catLabelMap: Record<string, string> = {
-  'Taxi & Station': isZh ? '打车与车站' : 'Taxi & Station',
-  'Medical & Allergy': isZh ? '医疗与过敏' : 'Medical & Allergy',
-  'Hotel & Daily': isZh ? '酒店与退税' : 'Hotel & Daily',
-};
-
-const countryOptions = visaProfiles.map((p) => ({
-  value: p.code,
-  label: p.country,
-  data: {
-    unilateral: p.unilateralDays,
-    mutual: p.mutualDays,
-    transit: p.transit240h,
-    note: p.note,
-  },
-}));
+const detTools = UTILITY_TOOLS.filter((t) => t.group === 'deterministic');
+const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
 ---
-<Layout
-  title={strings.tools.title}
-  description={strings.tools.lead}
+<BaseShell
+  title={isZh ? '实用工具工作台（11 工具与亮屏字卡）' : 'Practical Tools Workbench (11 Tools & Show Cards)'}
+  description={isZh ? '7 个确定性规则计算与字卡工具 + 4 个常青文化微工具，纯浏览器零刷新运算并预埋声明式 WebMCP。' : '7 deterministic rule calculators & fullscreen cards + 4 evergreen China micro-tools.'}
+  persona="safety"
 >
-  <div class="container portal-shell">
-    <div class="archive-header">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
-        <span class="breadcrumb-sep" aria-hidden="true">/</span>
-        <span aria-current="page">{strings.tools.crumb}</span>
-      </nav>
-      <span class="eyebrow eyebrow--accent">{strings.tools.kicker}</span>
-      <h1>{strings.tools.title}</h1>
-      <p class="archive-lead">{strings.tools.lead}</p>
-      <div class="portal-meta-strip">
-        <span><strong>12.1</strong> {isZh ? '免签与过境速查' : 'Visa-Free Quick Checker'}</span>
-        <span><strong>12.2 / 12.4</strong> {isZh ? '全屏打车与急救字卡' : 'Fullscreen Driver & SOS Cards'}</span>
-        <span><strong>{isZh ? '离线友好' : 'Offline-Friendly'}</strong> {isZh ? '纯浏览器本地运算' : 'Pure Browser Logic'}</span>
-      </div>
-    </div>
+  <div class="container" style="padding-bottom:var(--space-8);">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '实用工具工作台' : 'Tools Workbench' },
+      ]}
+      mobileBackHref={lp('/')}
+      mobileBackLabel={isZh ? '首页' : 'Home'}
+    >
+      <Badge slot="meta" tone="verified">11 Offline-Ready Tools · WebMCP Ready</Badge>
+    </ResponsiveBreadcrumb>
 
-    <nav class="pipe-bar" aria-label={isZh ? '快速跳转工具' : 'Jump to tool'}>
-      <a href="#visa-checker" class="pipe-link">{isZh ? '12.1 免签判定器' : '12.1 Visa-Free Checker'}</a>
-      <a href="#flashcards" class="pipe-link">{isZh ? '12.2 / 12.4 双语大字卡' : '12.2 / 12.4 Bilingual Cards'}</a>
-      <a href="#calculators" class="pipe-link">{isZh ? '12.3 / 12.5 放票日历与退税估算' : '12.3 / 12.5 Release & Tax Refund'}</a>
-      <a href="#ground-pulse" class="pipe-link">{isZh ? '12.9 现场实测流' : '12.9 Ground Pulse'}</a>
-      <a href={lp('/journeys/')} class="pipe-link">{isZh ? '首访 7 步清单 ↗' : '7-Step Journey ↗'}</a>
-    </nav>
+    <header style="max-width:52rem;margin-bottom:var(--space-6);">
+      <span class="eyebrow eyebrow--accent">Utility Dock · Mother Template 6</span>
+      <h1 style="margin-top:0.35rem;">{isZh ? 'ChinaWao 11 大实用工具与亮屏字卡库' : 'ChinaWao 11-Tool Workbench & Show Cards'}</h1>
+      <p class="archive-lead" style="margin-top:0.4rem;">
+        {isZh
+          ? '剥离自原 Domain 12 并常驻顶栏右侧：所有判定与换算均在浏览器本地确定性运行，附公式与官方规则溯源。'
+          : 'Dedicated application workbench for deterministic visa, timezone, tax, USCC, and fullscreen show-to-local field tools.'}
+      </p>
+    </header>
 
-    {/* Tool 12.1: Visa-Free Quick Checker */}
-    <section id="visa-checker" class="tool-section" aria-labelledby="visa-checker-heading">
-      <div class="section-header">
-        <div>
-          <span class="rail-heading">{isZh ? '工具 12.1 · 即时判定' : 'Tool 12.1 · Interactive Mock'}</span>
-          <h2 id="visa-checker-heading">{isZh ? '免签与 240 小时过境免签快速判定器' : 'Visa-Free & 240-Hour Transit Quick Checker'}</h2>
-        </div>
-        <a href={lp('/posts/240-hour-visa-free-transit-playbook-mock/')} class="editorial-link">
-          <span>{isZh ? '阅读 240 小时过境免签全攻略' : 'Read 240h Transit Playbook'}</span>
-          <Icon name="arrow" size={15} />
-        </a>
-      </div>
-
-      <div class="visa-workbench" data-visa-checker>
-        <form class="visa-form-card" novalidate>
-          <Select
-            id="visa-country"
-            name="country"
-            label={isZh ? '所持普通护照国籍' : 'Ordinary Passport Nationality'}
-            options={countryOptions}
-            hint={isZh ? '选择护照国家即可实时查看 30 天免签或 240 小时过境免签资格。' : 'Select your passport country to inspect visa-free or 240-hour transit rules.'}
-            data-visa-country
-          />
-
-          <Input
-            id="visa-days"
-            name="days"
-            type="number"
-            label={isZh ? '计划在中国内地停留天数' : 'Planned Stay in Mainland China (Days)'}
-            min={1}
-            max={180}
-            value={10}
-            inputmode="numeric"
-            hint={isZh ? '240 小时过境免签自入境次日 00:00 起算。' : 'Counted from 00:00 the day after arrival for 240-hour transit.'}
-            data-visa-days
-          />
-
-          <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
-            {isZh ? (
-              <>
-                持有前往<strong>第三国或港澳台地区</strong>的联程确定日期客票（国家 A → 中国内地 → 第三国/地区 C）。
-              </>
-            ) : (
-              <>
-                I hold a confirmed onward ticket to a <strong>third country or region</strong> (e.g., Hong Kong, Macao, Japan, Singapore — Country A → China → Country C).
-              </>
-            )}
-          </Checkbox>
-        </form>
-
-        <div class="visa-result-card" data-visa-result data-status="eligible" aria-live="polite">
-          <span class="visa-verdict-badge" data-visa-badge>{isZh ? '模拟判定结果' : 'Mock Eligibility Result'}</span>
-          <h3 data-visa-headline>
-            {isZh ? '符合 30 天单方面免签入境条件' : 'Eligible for 30-Day Unilateral Visa-Free Entry'}
-          </h3>
-          <p class="visa-result-detail" data-visa-detail>
-            {visaProfiles[0]?.note}
-          </p>
-          <p class="visa-result-caveat">
-            {isZh ? (
-              <>
-                提示：免签名单与口岸细则以官方最新公告为准，购买不可退机票前请通过{' '}
-                <a href="https://s.nia.gov.cn" target="_blank" rel="noopener noreferrer">
-                  国家移民管理局 12367 官方平台 ↗
-                </a>{' '}
-                二次确认。
-              </>
-            ) : (
-              <>
-                Mock prototype notice: Visa exemptions and port rules are subject to official updates. Always confirm active windows via{' '}
-                <a href="https://s.nia.gov.cn" target="_blank" rel="noopener noreferrer">
-                  NIA 12367 Official Portal ↗
-                </a>{' '}
-                before purchasing non-refundable flights.
-              </>
-            )}
-          </p>
-        </div>
-      </div>
-
-      <div style="margin-top: var(--space-5);">
-        <DataTable
-          id="tools-visa-matrix"
-          caption={isZh ? '9.1 速查表 — 主要国家免签与 240 小时过境政策对照（点击表头可排序）' : '9.1 Quick Reference — Visa-Free & 240-Hour Transit Comparison (Sortable)'}
-          columns={visaMatrix.columns}
-          rows={visaMatrix.rows}
-          compact
-        />
-      </div>
-    </section>
-
-    {/* Tool 12.2 & 12.4: Bilingual Show-to-Driver & Medical SOS Flashcards */}
-    <section id="flashcards" class="tool-section" aria-labelledby="flashcards-heading">
-      <div class="section-header">
-        <div>
-          <span class="rail-heading">{isZh ? '工具 12.2 & 12.4 · 全屏高对比展示' : 'Tools 12.2 & 12.4 · Fullscreen Display'}</span>
-          <h2 id="flashcards-heading">{isZh ? '双语打车、车站与医疗过敏急救大字卡' : 'Bilingual Show-to-Driver & Medical SOS Cards'}</h2>
-        </div>
-        <span class="eyebrow">{isZh ? '点击任意字卡全屏高对比展示给司机或店员' : 'Tap any card for high-contrast fullscreen view'}</span>
-      </div>
-
-      <div class="flashcard-filters">
-        <div class="cw-segmented" role="group" aria-label={isZh ? '按场景筛选双语字卡' : 'Filter flashcards by scenario'}>
-          {flashcardCategories.map((cat, idx) => (
-            <button
-              type="button"
-              class="cw-segmented-item"
-              data-flashcard-filter={cat.key}
-              aria-pressed={idx === 0 ? 'true' : 'false'}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div class="flashcard-grid">
-        {flashcards.map((card) => (
-          <button
-            type="button"
-            class="flashcard-item"
-            data-flashcard-open
-            data-category={card.category}
-            data-category-label={catLabelMap[card.category] ?? card.category}
-            data-title={card.title}
-            data-hanzi={card.hanzi}
-            data-pinyin={card.pinyin}
-            data-english={card.english}
-            data-tip={card.tip}
-          >
-            <div class="portal-card-top">
-              <span class="portal-domain-tag">{catLabelMap[card.category] ?? card.category}</span>
-              <Badge tone="editorial">{isZh ? '点击放大 ↗' : 'Tap to enlarge ↗'}</Badge>
+    <section style="margin-bottom:var(--space-7);">
+      <h2 style="font-size:1.3rem;margin-bottom:var(--space-4);">
+        {isZh ? '7 个确定性规则与现场工具（12.1 – 12.7）' : '7 Deterministic Rule & Field Tools (12.1 – 12.7)'}
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);">
+        {detTools.map((tool) => (
+          <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
+            <div>
+              <Badge tone="editorial">{tool.code}</Badge>
+              <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-top:0.45rem;">
+                {isZh ? tool.nameZh : tool.name}
+              </h3>
+              <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
+                {isZh ? tool.shortDescZh : tool.shortDesc}
+              </p>
             </div>
-            <span class="flashcard-hanzi-preview">{card.hanzi}</span>
-            <span class="flashcard-pinyin-preview">{card.pinyin}</span>
-            <span class="flashcard-en-preview">{card.english}</span>
-          </button>
+            <Button href={lp(tool.href)} variant="secondary" size="sm">
+              {isZh ? '打开工作台 →' : 'Launch Tool →'}
+            </Button>
+          </article>
         ))}
       </div>
     </section>
 
-    {/* Tools 12.3 & 12.5: Ticket Release Date Picker + Departure Tax Refund Estimator */}
-    <section id="calculators" class="tool-section" aria-labelledby="calculators-heading">
-      <div class="section-header">
-        <div>
-          <span class="rail-heading">{isZh ? '工具 12.3 & 12.5 · 原生日期与滑块计算' : 'Tools 12.3 & 12.5 · Native Date & Slider'}</span>
-          <h2 id="calculators-heading">{isZh ? '高铁 / 故宫放票日历与离境退税 2.0 估算器' : 'Ticket Release Dates & Tax Refund Estimator'}</h2>
-        </div>
-        <a href={lp('/posts/china-departure-tax-refund-instant-guide-mock/')} class="editorial-link">
-          <span>{isZh ? '阅读离境退税 2.0 全指南' : 'Read Tax Refund 2.0 Guide'}</span>
-          <Icon name="arrow" size={15} />
-        </a>
+    <section>
+      <h2 style="font-size:1.3rem;margin-bottom:var(--space-4);">
+        {isZh ? '4 个常青文化与生活微工具（M1 – M4）' : '4 Evergreen Cultural Micro-Tools (M1 – M4)'}
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);">
+        {microTools.map((tool) => (
+          <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
+            <div>
+              <Badge tone="neutral">{tool.code}</Badge>
+              <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-top:0.45rem;">
+                {isZh ? tool.nameZh : tool.name}
+              </h3>
+              <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
+                {isZh ? tool.shortDescZh : tool.shortDesc}
+              </p>
+            </div>
+            <Button href={lp(tool.href)} variant="secondary" size="sm">
+              {isZh ? '打开微工具 →' : 'Open Micro-Tool →'}
+            </Button>
+          </article>
+        ))}
       </div>
-
-      <div class="visa-workbench">
-        <div class="visa-form-card" data-ticket-calendar>
-          <span class="eyebrow eyebrow--accent">{isZh ? '12.3 · 提前预约放票窗口' : '12.3 · Advance Booking Windows'}</span>
-          <DateInput
-            id="tool-travel-date"
-            name="travel_date"
-            label={isZh ? '计划乘车或参观日期（北京时间 UTC+8）' : 'Planned Train or Museum Visit Date (China UTC+8)'}
-            value="2026-12-15"
-            hint={isZh ? '基于无时区偏移日历运算（优先调用原生 Temporal.PlainDate）。' : 'Computed with timezone-safe calendar date arithmetic (Temporal.PlainDate when available).'}
-          />
-          <div style="display:grid;gap:var(--space-3);padding-top:var(--space-2);border-top:1px solid var(--rule-subtle);">
-            <div>
-              <span class="cw-label">{isZh ? '铁路 12306 开售日（提前 15 天）' : 'Railway 12306 Opens (15 Days Prior)'}</span>
-              <p class="t-title" style="font-size:var(--text-xl);" data-ticket-rail>2026-11-30</p>
-            </div>
-            <div>
-              <span class="cw-label">{isZh ? '故宫博物院放票日（提前 7 天晚 20:00）' : 'Palace Museum Opens (7 Days Prior at 20:00 CST)'}</span>
-              <p class="t-title" style="font-size:var(--text-xl);" data-ticket-museum>2026-12-08</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="visa-form-card" data-tax-refund-calc>
-          <span class="eyebrow eyebrow--accent">{isZh ? '12.5 · 离境退税 2.0 估算' : '12.5 · Departure Tax Refund 2.0'}</span>
-          <Slider
-            id="tool-spend-rmb"
-            name="spend_rmb"
-            label={isZh ? '同日单店消费金额（人民币）' : 'Same-Day Single-Store Spend (RMB)'}
-            min={200}
-            max={10000}
-            step={100}
-            value={2000}
-            unitPrefix="¥"
-            unitSuffix={isZh ? ' 元' : ' RMB'}
-            hint={isZh ? '离境退税 2.0 起退门槛降至 200 元（11% 增值税退税率，扣除约 2% 代理手续费）。' : 'Minimum threshold lowered to 200 RMB per store under Tax Refund 2.0 (11% VAT minus ~2% agency fee).'}
-          />
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4);padding-top:var(--space-2);border-top:1px solid var(--rule-subtle);">
-            <div>
-              <span class="cw-label">{isZh ? '应退增值税额（11%）' : 'Gross VAT Refund (11%)'}</span>
-              <p class="t-title" style="font-size:var(--text-xl);" data-tax-gross>{isZh ? '¥220 元' : '¥220 RMB'}</p>
-            </div>
-            <div>
-              <span class="cw-label">{isZh ? '预估实得退税（约 9%）' : 'Est. Net Payout (~9%)'}</span>
-              <p class="t-title" style="font-size:var(--text-xl);color:var(--accent-seal-text);" data-tax-net>{isZh ? '¥180 元' : '¥180 RMB'}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    {/* Tool 12.9: Ground Pulse Field Report */}
-    <section id="ground-pulse" class="tool-section" aria-labelledby="pulse-heading">
-      <div class="section-header">
-        <div>
-          <span class="rail-heading">{isZh ? '工具 12.9 · 实时现场回报' : 'Tool 12.9 · Live Field Stream'}</span>
-          <h2 id="pulse-heading">{isZh ? '现场实测流：提交最新口岸与支付体验' : 'Ground Pulse: Report On-the-Ground Conditions'}</h2>
-        </div>
-        <a href={lp('/pages/corrections-updates/')} class="editorial-link">
-          <span>{isZh ? '查看勘误与政策核验日志' : 'Corrections & Policy Log'}</span>
-          <Icon name="arrow" size={15} />
-        </a>
-      </div>
-
-      <GroundPulseForm idPrefix="tools-pulse" />
     </section>
   </div>
-
-  <dialog
-    id="flashcard-dialog"
-    closedby="any"
-    class="flashcard-dialog"
-    aria-labelledby="flashcard-dialog-title"
-  >
-    <div class="dialog-head">
-      <div>
-        <span class="eyebrow eyebrow--accent" data-flashcard-modal-cat>{isZh ? '打车与车站' : 'Taxi & Station'}</span>
-        <h2 id="flashcard-dialog-title" data-flashcard-modal-title>{isZh ? '向司机展示' : 'Show to Driver'}</h2>
-      </div>
-      <button
-        type="button"
-        class="icon-btn"
-        commandfor="flashcard-dialog"
-        command="close"
-        aria-label={isZh ? '关闭全屏字卡' : 'Close fullscreen card'}
-        autofocus
-      >
-        <Icon name="close" size={20} />
-      </button>
-    </div>
-
-    <div class="flashcard-modal-hanzi" lang="zh-Hans" data-flashcard-modal-hanzi>
-      请带我去北京南站（高铁出发层）
-    </div>
-    <p class="flashcard-modal-pinyin" data-flashcard-modal-pinyin>
-      Qǐng dài wǒ qù Běijīng Nánzhàn
-    </p>
-    <p class="flashcard-modal-en" data-flashcard-modal-en>
-      Please take me to Beijing South Railway Station.
-    </p>
-    <p class="flashcard-modal-tip" data-flashcard-modal-tip>
-      {isZh ? '提示内容将在此显示。' : 'Tip appears here.'}
-    </p>
-
-    <div class="dialog-foot">
-      <span data-flashcard-copy-status aria-live="polite">
-        {isZh ? '直接向司机、车站工作人员或医院前台展示此屏幕' : 'Show screen directly to driver, staff, or hospital desk'}
-      </span>
-      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
-        <Button variant="secondary" size="sm" data-flashcard-copy>
-          {isZh ? '复制中文' : 'Copy Hanzi'}
-        </Button>
-        <Button variant="primary" size="sm" commandfor="flashcard-dialog" command="close">
-          {isZh ? '关闭字卡' : 'Close card'}
-        </Button>
-      </div>
-    </div>
-  </dialog>
-</Layout>
+</BaseShell>

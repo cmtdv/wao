@@ -1,0 +1,18 @@
+---
+/**
+ * Mother Template 2: Remaining 5 Pillar Hub Landing Pages
+ * Routes: /places/ /culture/ /visit/ /live/ /business/
+ */
+import PillarHubLayout from '@layouts/PillarHubLayout.astro';
+import { PILLAR_BY_ID, type PillarId } from '@data/paradigm-e/pillars';
+
+const rawPillar = (Astro.params.pillar || '').toLowerCase() as PillarId;
+const validDynamicPillars: PillarId[] = ['places', 'culture', 'visit', 'live', 'business'];
+
+if (!validDynamicPillars.includes(rawPillar)) {
+  return new Response('Not Found', { status: 404 });
+}
+
+const pillar = PILLAR_BY_ID[rawPillar];
+---
+<PillarHubLayout pillar={pillar} />

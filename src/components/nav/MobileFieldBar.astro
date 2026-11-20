@@ -1,0 +1,32 @@
+---
+/**
+ * Mobile Floating Field Shortcut Bar (< 768px ONLY on field-action pages)
+ * - [Copy Amap Chinese Name] [Fullscreen Show Card] [Report Field Status]
+ */
+interface Props {
+  amapChineseName?: string;
+  cardHref?: string;
+  pulseHref?: string;
+  locale?: 'en' | 'zh';
+}
+
+const {
+  amapChineseName = '故宫博物院',
+  cardHref = '/cards/taxi-beijing-qinghe/',
+  pulseHref = '/pulse/#submit-pulse',
+  locale = 'en',
+} = Astro.props;
+
+const isZh = locale === 'zh';
+---
+<aside class="pe-mobile-field-bar" aria-label={isZh ? '现场实操快捷条' : 'Field action shortcuts'}>
+  <button type="button" data-pe-copy={amapChineseName} data-pe-copy-toast={isZh ? `已复制高德中文名：${amapChineseName}` : `Copied Amap name: ${amapChineseName}`}>
+    {isZh ? '复制高德中文名' : 'Copy Amap Name'}
+  </button>
+  <a href={cardHref} class="is-primary">
+    {isZh ? '全屏出示字卡' : 'Fullscreen Card'}
+  </a>
+  <a href={pulseHref}>
+    {isZh ? '反馈实测状态' : 'Report Pulse'}
+  </a>
+</aside>

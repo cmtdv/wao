@@ -1,0 +1,421 @@
+---
+/**
+ * Mother Template 4: 5-Layer Programmatic Entity Profile Layout (Product Hunt Inspired)
+ * Layer 1: Hero Identity Card (EN + Hanzi + Pinyin Audio + Status Traffic-Light Badges + Primary CTAs)
+ * Layer 2: Deterministic Quick Specs Bar (Read-only JSON hard parameters)
+ * Layer 3: 30% Human Field Notes ("What Nobody Tells You" + Checklist + Collection-Specific Slot)
+ * Layer 4: Horizontal Alternatives & Cross-Domain Mesh (+ 1-3km Zero-Maintenance Mesh for Attractions)
+ * Layer 5: Ground Pulse Live Reports (12.9) + Auto-Triggered Statutory Disclaimer
+ */
+import BaseShell from './BaseShell.astro';
+import ResponsiveBreadcrumb from '../components/nav/ResponsiveBreadcrumb.astro';
+import VerifyMetaBar from '../components/compliance/VerifyMetaBar.astro';
+import AutoDisclaimer from '../components/compliance/AutoDisclaimer.astro';
+import GroundPulsePanel from '../components/entity/GroundPulsePanel.astro';
+import InteractiveHotspot from '../components/entity/InteractiveHotspot.astro';
+import NearbyMesh from '../components/entity/NearbyMesh.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import Alert from '@ui/feedback/Alert.astro';
+import type { EntityProfile } from '@data/paradigm-e/entities';
+import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+interface Props {
+  entity: EntityProfile;
+}
+
+const { entity } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = PILLAR_BY_ID[entity.pillar];
+
+const mdHref = entity.collection === 'cities'
+  ? `/cities/${entity.slug}.md`
+  : `/entities/${entity.collection}/${entity.slug}.md`;
+
+const showMobileBar = ['attractions', 'errors', 'documents', 'how-to-use', 'cards', 'cities'].includes(entity.collection);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': entity.collection === 'cities' ? 'City' : entity.collection === 'attractions' ? 'TouristAttraction' : 'WebPage',
+  name: `${entity.title} (${entity.chineseName})`,
+  description: entity.tagline,
+  dateModified: entity.lastVerified,
+};
+---
+<BaseShell
+  title={`${entity.title} (${entity.chineseName})`}
+  description={isZh ? entity.taglineZh : entity.tagline}
+  activePillar={entity.pillar}
+  persona={entity.persona}
+  alternateMd={mdHref}
+  jsonLd={jsonLd}
+  mobileFieldBar={showMobileBar ? {
+    amapChineseName: entity.primaryAmapTerm ?? entity.chineseName,
+    cardHref: lp(entity.cardSlug ? `/cards/${entity.cardSlug}/` : '/cards/taxi-beijing-qinghe/'),
+    pulseHref: lp('/pulse/#submit-pulse'),
+  } : undefined}
+>
+  <div class="container" style="padding-bottom: var(--space-8); max-width: 68rem;">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
+        { label: `/${entity.collection}/`, href: lp('/explore/') },
+        { label: entity.title },
+      ]}
+      mobileBackHref={lp(`/${pillar.id}/`)}
+      mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
+    >
+      <VerifyMetaBar
+        slot="meta"
+        lastVerified={entity.lastVerified}
+        tier={entity.tier}
+        mdHref={mdHref}
+        locale={locale}
+      />
+    </ResponsiveBreadcrumb>
+
+    {/* LAYER 1: Hero Identity Card */}
+    <header class="pe-entity-hero">
+      <div class="pe-entity-name-row">
+        <h1>{entity.title}</h1>
+        <span class="pe-entity-hanzi">{entity.chineseName}</span>
+        <button
+          type="button"
+          class="pe-mega-chip"
+          data-pe-speak={entity.chineseName}
+          aria-label={`Play pronunciation for ${entity.chineseName}`}
+        >
+          🔊 {entity.pinyin}
+        </button>
+      </div>
+
+      <p class="archive-lead" style="margin-top:var(--space-3);">
+        {isZh ? entity.taglineZh : entity.tagline}
+      </p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:0.45rem;margin-top:var(--space-4);">
+        {entity.statusBadges.map((b) => (
+          <Badge tone={b.tone}>{b.label}</Badge>
+        ))}
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4);">
+        {entity.primaryAmapTerm && (
+          <Button
+            variant="primary"
+            size="sm"
+            data-pe-copy={entity.primaryAmapTerm}
+            data-pe-copy-toast={`Copied Amap name: ${entity.primaryAmapTerm}`}
+          >
+            {isZh ? `复制高德中文名 (${entity.primaryAmapTerm})` : `Copy Amap Name (${entity.primaryAmapTerm})`}
+          </Button>
+        )}
+        {entity.cardSlug && (
+          <Button href={lp(`/cards/${entity.cardSlug}/`)} variant="secondary" size="sm">
+            {isZh ? '全屏出示司机/字卡' : 'Fullscreen Show Card'}
+          </Button>
+        )}
+        {entity.officialUrl && (
+          <Button href={entity.officialUrl} target="_blank" rel="noopener noreferrer" variant="ghost" size="sm">
+            {entity.officialLabel ?? (isZh ? '前往官方核验页 ↗' : 'Official Portal ↗')}
+          </Button>
+        )}
+      </div>
+    </header>
+
+    {/* FIRST-EYE VISUAL ENHANCEMENT FOR /cards/ */}
+    {entity.cardData && (
+      <section class={`pe-showcard-preview pe-showcard-preview--${entity.cardData.theme}`} aria-label="Show-to-local card">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
+          <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.08em;">
+            {entity.cardData.scenario}
+          </span>
+          <div style="display:flex;gap:0.45rem;">
+            <Button variant="secondary" size="sm" data-pe-speak={entity.cardData.largeHanzi}>
+              🔊 {isZh ? '语音播报' : 'Speak Mandarin'}
+            </Button>
+            <Button variant="primary" size="sm" commandfor="pe-fullscreen-card-dialog" command="show-modal">
+              {isZh ? '一键全屏亮屏出示' : 'Fullscreen Show-to-Local Mode'}
+            </Button>
+          </div>
+        </div>
+        <p class="pe-showcard-hanzi">{entity.cardData.largeHanzi}</p>
+        <p style="font-family:var(--font-mono);font-size:var(--text-sm);opacity:0.9;">{entity.cardData.pinyinLine}</p>
+        <p style="margin-top:var(--space-3);font-size:var(--text-sm);opacity:0.95;border-top:1px solid rgb(255 255 255 / 0.2);padding-top:var(--space-3);">
+          <strong>GB/T 30240 EN:</strong> {entity.cardData.gb30240En}
+        </p>
+        <p style="margin-top:0.35rem;font-size:var(--text-xs);opacity:0.85;">
+          {entity.cardData.subNoteChinese} · {entity.cardData.subNoteEn}
+        </p>
+
+        <dialog
+          id="pe-fullscreen-card-dialog"
+          closedby="any"
+          class={`pe-showcard-fullscreen-dialog pe-showcard-preview--${entity.cardData.theme}`}
+          aria-label="Fullscreen Show-to-Local Card"
+        >
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+            <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.1em;">
+              CHINAWAO · {entity.cardData.scenario}
+            </span>
+            <button
+              type="button"
+              class="btn btn--sm"
+              commandfor="pe-fullscreen-card-dialog"
+              command="close"
+              autofocus
+            >
+              {isZh ? '退出全屏 (Esc)' : 'Exit Fullscreen (Esc)'}
+            </button>
+          </div>
+          <div>
+            <p style="font-size:clamp(2.1rem, 4.5vw, 4.2rem);line-height:1.3;font-weight:800;">
+              {entity.cardData.largeHanzi}
+            </p>
+            <p style="margin-top:var(--space-4);font-family:var(--font-mono);font-size:clamp(1rem, 1.8vw, 1.35rem);">
+              {entity.cardData.pinyinLine}
+            </p>
+            <p style="margin-top:var(--space-3);font-size:var(--text-base);opacity:0.9;">
+              {entity.cardData.subNoteChinese}
+            </p>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid rgb(255 255 255 / 0.25);padding-top:var(--space-3);">
+            <span style="font-size:var(--text-sm);">{entity.cardData.gb30240En}</span>
+            <button type="button" class="btn btn--primary btn--sm" data-pe-speak={entity.cardData.largeHanzi}>
+              🔊 {isZh ? '朗读中文' : 'Play Audio'}
+            </button>
+          </div>
+        </dialog>
+      </section>
+    )}
+
+    {/* FIRST-EYE INTERACTIVE RED-BOX HOTSPOT SCREEN FOR /errors/ /documents/ /how-to-use/ */}
+    {entity.hotspotData && (
+      <InteractiveHotspot
+        canvasTitle={entity.hotspotData.canvasTitle}
+        screenHeaderChinese={entity.hotspotData.screenHeaderChinese}
+        screenLines={entity.hotspotData.screenLines}
+        hotspots={entity.hotspotData.hotspots}
+        locale={locale}
+      />
+    )}
+
+    {/* LAYER 2: Deterministic Quick Specs Bar (JSON Read-Only) */}
+    <section class="pe-specs-bar" aria-label={isZh ? '确定性硬参数速览' : 'Deterministic Quick Specs'}>
+      {entity.quickSpecs.map((spec) => (
+        <div class="pe-fact-slot">
+          <span class="pe-fact-slot-label">{spec.label}</span>
+          <strong class="pe-fact-slot-val" style={spec.mono ? 'font-family:var(--font-mono);' : undefined}>
+            {spec.value}
+          </strong>
+        </div>
+      ))}
+    </section>
+
+    {/* ATTRACTION ENHANCEMENT: Timezone Ticket Drop Capsule + Wrong-Station Alert */}
+    {entity.attractionData && (
+      <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-5);">
+        <div class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
+          <div>
+            <span class="eyebrow eyebrow--accent">Tool 12.3 · Timezone Drop Converter</span>
+            <p style="margin-top:0.25rem;font-size:var(--text-sm);">
+              Tickets release <strong>{entity.attractionData.releaseDaysAhead} days ahead at {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} Beijing Time</strong> → Your local time:{' '}
+              <Badge tone="verified" data-pe-bjt-hour={entity.attractionData.releaseBjtHour} data-pe-bjt-minute={entity.attractionData.releaseBjtMinute}>
+                Calculating…
+              </Badge>
+            </p>
+            <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.25rem;">
+              Stamina: {entity.attractionData.staminaRating} · {entity.attractionData.mondayClosed ? 'CLOSED MONDAYS' : 'Open Mondays'}
+            </p>
+          </div>
+          <Button href={lp('/tools/ticket-calendar/')} variant="secondary" size="sm">
+            {isZh ? '打开完整放票日历' : 'Open Full Calendar'}
+          </Button>
+        </div>
+
+        <Alert tone="danger" title={isZh ? '同名防走错车站/落客警示' : 'Station & Drop-Off Trap Alert'}>
+          {entity.attractionData.wrongStationAlert}
+        </Alert>
+      </section>
+    )}
+
+    {/* COMPLIANCE DUAL-COLUMN WAF VERIFICATION DESK */}
+    {entity.complianceData && (
+      <section class="pe-dual-desk" aria-label={isZh ? '双栏官方核验引导台' : 'Dual-Column Official WAF Verification Desk'}>
+        <div class="pe-side-card" data-pe-uscc-root>
+          <span class="eyebrow eyebrow--accent">Left Column · Offline Validator & Chinese Term Mapper</span>
+          <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
+            {isZh ? '18 位 USCC 校验与中文监管检索词生成' : '18-Digit USCC Checksum & Chinese Regulatory Queries'}
+          </h2>
+          {entity.complianceData.sampleUscc && (
+            <div style="margin-bottom:var(--space-4);">
+              <label for="compliance-uscc" class="t-label" style="display:block;margin-bottom:0.35rem;">
+                Test 18-Digit USCC (GB 32100-2015)
+              </label>
+              <input
+                id="compliance-uscc"
+                type="text"
+                class="cw-input"
+                maxlength="18"
+                value={entity.complianceData.sampleUscc}
+                style="font-family:var(--font-mono);width:100%;"
+                data-pe-uscc-input
+              />
+              <div data-pe-uscc-output style="margin-top:0.5rem;padding:0.65rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);"></div>
+            </div>
+          )}
+          <span class="pe-mega-col-title">{isZh ? '一键复制标准中文监管词' : 'Standard Chinese Regulatory Terms'}</span>
+          <div style="display:grid;gap:0.45rem;">
+            {entity.complianceData.termPresets.map((t) => (
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.45rem 0.6rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-xs);">
+                <div>
+                  <strong>{t.en}</strong> → <code>{t.zhQuery}</code> <span style="color:var(--ink-tertiary);">({t.gbCode})</span>
+                </div>
+                <button type="button" class="pe-mega-chip" style="padding:0.15rem 0.45rem;" data-pe-copy={t.zhQuery}>
+                  Copy
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="pe-side-card">
+          <span class="eyebrow eyebrow--accent">Right Column · Official Portal Walkthrough</span>
+          <h2 style="font-size:1.2rem;margin-top:0.25rem;">{entity.complianceData.portalName}</h2>
+          <p style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--status-standby-ink);margin-block:0.3rem var(--space-3);">
+            Status: {entity.complianceData.wafStatus}
+          </p>
+          <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
+            {entity.complianceData.walkthroughSteps.map((s) => (
+              <li style="padding:0.6rem 0.75rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);">
+                <strong style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--accent-seal-text);">
+                  STEP {s.step} · {s.title}
+                </strong>
+                <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.2rem;">{s.detail}</p>
+              </li>
+            ))}
+          </ol>
+          <div style="margin-top:var(--space-4);">
+            <Button href={entity.complianceData.portalUrl} target="_blank" rel="noopener noreferrer" variant="primary" size="sm">
+              {isZh ? '直达官方网站核验 ↗' : 'Launch Official Verification Portal ↗'}
+            </Button>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* LAYER 3: 30% Human Field Notes ("What Nobody Tells You") + Checklist */}
+    <section class="pe-what-nobody" aria-labelledby="nobody-tells-h">
+      <h2 id="nobody-tells-h" class="pe-what-nobody-title">
+        💡 What Nobody Tells You ({isZh ? '真人实测避坑' : 'Field Reality'})
+      </h2>
+      <p style="font-size:var(--text-base);line-height:1.7;color:var(--ink-primary);">
+        {entity.whatNobodyTellsYou}
+      </p>
+      <ul style="margin-top:var(--space-3);padding-inline-start:1.25rem;display:grid;gap:0.4rem;font-size:var(--text-sm);color:var(--ink-secondary);">
+        {entity.checklist.map((c) => (
+          <li>{c}</li>
+        ))}
+      </ul>
+    </section>
+
+    {/* CITY HUB MULTI-PILLAR MASHUP (Universities & International Hospitals Explicitly Decoupled) */}
+    {entity.cityData && (
+      <section style="display:grid;gap:var(--space-5);margin-bottom:var(--space-6);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:var(--space-4);">
+          {entity.cityData.mashup.map((sec) => (
+            <div class="pe-side-card">
+              <span class="pe-mega-col-title">{sec.pillar.toUpperCase()} · {sec.categoryLabel}</span>
+              <ul class="pe-mega-links">
+                {sec.items.map((item) => (
+                  <li style="padding-block:0.45rem;border-bottom:1px solid var(--rule-subtle);">
+                    {item.href ? (
+                      <a href={lp(item.href)} style="padding:0;">
+                        <strong>{item.name}</strong>
+                        <span>→</span>
+                      </a>
+                    ) : (
+                      <strong>{item.name}</strong>
+                    )}
+                    <div style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
+                      {item.chineseName} · {item.meta}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Explicitly Decoupled Cards: Universities vs International Hospitals */}
+        <div class="pe-dual-desk">
+          <div id="universities" class="pe-side-card">
+            <span class="eyebrow eyebrow--accent">Live & Study · Decoupled Module</span>
+            <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
+              {isZh ? `${entity.chineseName} 留学名校卡片` : `${entity.title} Top Universities`}
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
+              {entity.cityData.universities.map((u) => (
+                <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
+                  <strong>{u.name}</strong> <span style="color:var(--ink-secondary);">({u.chineseName})</span>
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">{u.focus}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div id="hospitals" class="pe-side-card">
+            <span class="eyebrow eyebrow--accent">Medical Tourism & Care · Decoupled Module</span>
+            <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
+              {isZh ? `${entity.chineseName} 涉外国际医院卡片` : `${entity.title} International Hospitals`}
+            </h2>
+            <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
+              {entity.cityData.intlHospitals.map((h) => (
+                <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
+                  <strong>{h.name}</strong> <span style="color:var(--ink-secondary);">({h.chineseName})</span>
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
+                    {h.dept} · <code>{h.phone}</code>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* ATTRACTION ZERO-MAINTENANCE 1-3KM MESH */}
+    {entity.attractionData && (
+      <NearbyMesh
+        nearbyMesh={entity.attractionData.nearbyMesh}
+        amapSearchChips={entity.attractionData.amapSearchChips}
+        locale={locale}
+      />
+    )}
+
+    {/* LAYER 4: Alternatives & Cross-Domain Mesh */}
+    {entity.alternatives.length > 0 && (
+      <section style="margin-top:var(--space-6);">
+        <span class="eyebrow">{isZh ? '同类替代与跨柱织网' : 'Alternatives & Cross-Domain Mesh'}</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-3);margin-top:var(--space-3);">
+          {entity.alternatives.map((alt) => (
+            <div class="pe-side-card">
+              <strong style="font-size:var(--text-base);">
+                {alt.href ? <a href={lp(alt.href)} class="text-link">{alt.name} →</a> : alt.name}
+              </strong>
+              <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.25rem;">{alt.verdict}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* LAYER 5: Ground Pulse + Conditional Statutory Disclaimers */}
+    <GroundPulsePanel stats={entity.pulseStats} items={entity.pulseFeed} locale={locale} />
+    <AutoDisclaimer kinds={entity.disclaimers} locale={locale} />
+  </div>
+</BaseShell>

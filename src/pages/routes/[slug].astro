@@ -1,0 +1,99 @@
+---
+/**
+ * Mother Template 5: /routes/[slug]/ — Door-to-Door Intercity Transport Comparison
+ * - Visual horizontal door-to-door total time bars (HSR vs Flight vs Sleeper)
+ * - Highlighted wrong-station trap Alert + booking/tool links
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import Alert from '@ui/feedback/Alert.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { ROUTES } from '@data/paradigm-e/collections';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const slug = Astro.params.slug || '';
+const route = ROUTES.find((r) => r.slug === slug);
+if (!route) return new Response('Route Not Found', { status: 404 });
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+const maxMins = Math.max(...route.modes.map((m) => m.doorToDoorMinutes), 1);
+---
+<BaseShell
+  title={isZh ? route.titleZh : route.title}
+  description={route.verdict}
+  activePillar={route.pillar}
+  persona="safety"
+>
+  <div class="container" style="padding-bottom:var(--space-8);max-width:62rem;">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '山河城市' : 'Places', href: lp('/places/') },
+        { label: `${route.from} → ${route.to}` },
+      ]}
+      mobileBackHref={lp('/places/')}
+      mobileBackLabel={isZh ? '山河城市' : 'Places'}
+    >
+      <Badge slot="meta" tone="verified">{route.distanceKm.toLocaleString()} km · Verified {route.lastVerified}</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="margin-bottom:var(--space-5);">
+      <span class="eyebrow eyebrow--accent">Mother Template 5 · Door-to-Door Intercity Route</span>
+      <h1 style="margin-top:0.3rem;">{isZh ? route.titleZh : route.title}</h1>
+      <p class="archive-lead" style="margin-top:var(--space-2);">{route.verdict}</p>
+    </header>
+
+    {/* Wrong-Station Red Alert */}
+    <Alert tone="danger" title={isZh ? '同名防走错车站红警' : 'Wrong-Station Trap Warning'}>
+      {route.wrongStationWarning}
+    </Alert>
+
+    {/* Door-to-Door Horizontal Time Bars */}
+    <section style="display:grid;gap:var(--space-4);margin-top:var(--space-5);" aria-label="Door-to-door transport comparison">
+      {route.modes.map((m) => {
+        const pct = Math.max(18, Math.round((m.doorToDoorMinutes / maxMins) * 100));
+        return (
+          <article class="pe-side-card" style={m.recommended ? 'border-color: var(--accent-seal);' : undefined}>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2);">
+              <strong style="font-size:1.1rem;">{m.mode}</strong>
+              <div style="display:flex;gap:0.4rem;">
+                {m.recommended && <Badge tone="verified">{isZh ? '首选推荐' : 'Recommended'}</Badge>}
+                <Badge tone="neutral">{m.costRange}</Badge>
+              </div>
+            </div>
+            <div class="pe-route-bar-track" role="img" aria-label={`${m.mode}: ${m.displayTime}`}>
+              <div class:list={['pe-route-bar-fill', m.recommended && 'pe-route-bar-fill--best']} style={`width:${pct}%;`}></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.4rem;font-size:var(--text-sm);">
+              <strong>{m.displayTime}</strong>
+              <span style="color:var(--ink-secondary);">{m.highlight}</span>
+            </div>
+          </article>
+        );
+      })}
+    </section>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-5);">
+      {route.bookingLinks.map((b, idx) => (
+        <Button href={lp(b.href)} variant={idx === 0 ? 'primary' : 'secondary'} size="sm">
+          {b.label} →
+        </Button>
+      ))}
+    </div>
+
+    <section style="margin-top:var(--space-6);">
+      <span class="eyebrow">{isZh ? '其他热门双城路线' : 'More Intercity Routes'}</span>
+      <div class="pe-mega-chips" style="margin-top:var(--space-3);">
+        {ROUTES.filter((r) => r.slug !== route.slug).map((other) => (
+          <a href={lp(`/routes/${other.slug}/`)} class="pe-mega-chip">
+            {other.from} → {other.to}
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseShell>

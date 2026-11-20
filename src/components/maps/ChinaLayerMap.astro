@@ -1,0 +1,133 @@
+---
+/**
+ * Mother Template 1 (Section 4): Interactive 5-Layer China Panoramic Map
+ * - 5 Toggleable Thematic Layers (Terrain / 45,000km HSR & 240h / 8 Cuisines / 100 Industry Belts / 59 UNESCO)
+ * - Clicking any city pin updates the right-hand 12-dimension quick card linking to /cities/[slug]/
+ */
+import Button from '@ui/actions/Button.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import { getEntitiesByCollection } from '@data/paradigm-e/entities';
+import { localePath, type Locale } from '@i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const cities = getEntitiesByCollection('cities');
+const defaultCity = cities[0];
+
+const layers = [
+  { id: 'all', label: isZh ? '全览 5 大图层' : 'All Layers' },
+  { id: 'terrain', label: isZh ? '地形与34省' : 'Terrain & 34 Provinces' },
+  { id: 'rail', label: isZh ? '4.5万km高铁与240h口岸' : '45,000km HSR & 240h Ports' },
+  { id: 'food', label: isZh ? '八大菜系与1,422老字号' : '8 Cuisines & 1,422 Brands' },
+  { id: 'industry', label: isZh ? '百大产业带' : '100 Industrial Belts' },
+  { id: 'heritage', label: isZh ? '59世遗与古建' : '59 UNESCO & Heritage' },
+];
+---
+<div data-pe-china-map>
+  <div class="pe-facet-group" role="group" aria-label={isZh ? '切换地图主题图层' : 'Toggle China map layers'}>
+    {layers.map((layer, idx) => (
+      <button
+        type="button"
+        class="pe-facet-chip"
+        aria-pressed={idx === 0 ? 'true' : 'false'}
+        data-pe-map-layer={layer.id}
+      >
+        {layer.label}
+      </button>
+    ))}
+  </div>
+
+  <div class="pe-map-shell">
+    <div class="pe-map-canvas" role="region" aria-label={isZh ? '中国城市中枢交互地图' : 'Interactive China city hub map'}>
+      {/* Architectural stylized China outline + HSR spine SVG */}
+      <svg class="pe-map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path
+          d="M14,36 L25,22 L42,24 L56,16 L74,14 L86,25 L79,38 L83,56 L77,74 L67,84 L55,81 L43,75 L32,68 L20,58 Z"
+          fill="var(--secondary-tint)"
+          stroke="var(--rule-strong)"
+          stroke-width="0.6"
+        />
+        {/* Stylized HSR arterial corridors */}
+        <path
+          d="M69,34 L79,57 M69,34 L54,49 L46,60 M79,57 L69,79 M46,60 L69,79"
+          fill="none"
+          stroke="var(--accent-seal)"
+          stroke-width="0.65"
+          stroke-dasharray="1.8 1.2"
+          opacity="0.7"
+        />
+      </svg>
+
+      {cities.map((city, idx) => {
+        const cd = city.cityData!;
+        return (
+          <button
+            type="button"
+            class="pe-map-pin"
+            style={`left:${cd.mapX}%;top:${cd.mapY}%;`}
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+            data-pe-map-pin={city.slug}
+            data-layers={cd.layers.join(',')}
+            data-city-payload={JSON.stringify({
+              slug: city.slug,
+              title: city.title,
+              chineseName: city.chineseName,
+              mcaCode: cd.mcaCode,
+              cluster: cd.cluster,
+              ports240h: cd.ports240h,
+              tagline: isZh ? city.taglineZh : city.tagline,
+              quick: cd.quick12Summary,
+              href: lp(`/cities/${city.slug}/`),
+            })}
+          >
+            <span>{city.chineseName}</span>
+            <span>{city.title}</span>
+          </button>
+        );
+      })}
+    </div>
+
+    {/* Right-hand 12-Dimension City Quick Drawer */}
+    {defaultCity && defaultCity.cityData && (
+      <aside class="pe-map-drawer" aria-live="polite" data-pe-map-drawer>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:var(--space-2);">
+            <Badge tone="editorial" data-pe-map-mca>MCA {defaultCity.cityData.mcaCode}</Badge>
+            <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-cluster>
+              {defaultCity.cityData.cluster}
+            </span>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:1.65rem;line-height:1.2;" data-pe-map-title>
+            {defaultCity.title} · {defaultCity.chineseName}
+          </h3>
+          <p style="margin-top:0.45rem;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.55;" data-pe-map-tagline>
+            {isZh ? defaultCity.taglineZh : defaultCity.tagline}
+          </p>
+
+          <div class="pe-map-kv-grid" style="margin-top:var(--space-4);" data-pe-map-kv-grid>
+            {defaultCity.cityData.quick12Summary.map((kv) => (
+              <div class="pe-map-kv">
+                <span>{kv.label}</span>
+                <strong>{kv.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
+          <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-ports>
+            240h: {defaultCity.cityData.ports240h}
+          </span>
+          <Button href={lp(`/cities/${defaultCity.slug}/`)} variant="primary" size="sm" data-pe-map-cta>
+            {isZh ? '进入城市全维中枢 →' : 'Open City Hub →'}
+          </Button>
+        </div>
+      </aside>
+    )}
+  </div>
+</div>

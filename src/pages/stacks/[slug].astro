@@ -1,0 +1,110 @@
+---
+/**
+ * Mother Template 5: /stacks/[slug]/ — Product Hunt Style Interactive Scenario Checklist Stack
+ * - Tickable checklist persisted to localStorage
+ * - [Copy Share Link] & [Export Offline Checklist (.txt)]
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { STACKS } from '@data/paradigm-e/collections';
+import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const slug = Astro.params.slug || '';
+const stack = STACKS.find((s) => s.slug === slug);
+if (!stack) return new Response('Stack Not Found', { status: 404 });
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = PILLAR_BY_ID[stack.pillar];
+const shareUrl = Astro.url.href;
+---
+<BaseShell
+  title={isZh ? stack.titleZh : stack.title}
+  description={stack.tagline}
+  activePillar={stack.pillar}
+  persona="safety"
+>
+  <div class="container" style="padding-bottom:var(--space-8);max-width:60rem;" data-pe-stack-root={stack.slug}>
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
+        { label: isZh ? '场景清单包' : 'Stacks', href: lp('/explore/#kind=Stack') },
+        { label: stack.title },
+      ]}
+      mobileBackHref={lp(`/${pillar.id}/`)}
+      mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
+    >
+      <Badge slot="meta" tone="verified" data-pe-stack-progress>0 / {stack.items.length} ready</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);">
+      <div style="max-width:40rem;">
+        <span class="eyebrow eyebrow--accent">Mother Template 5 · Shareable Scenario Stack</span>
+        <h1 style="margin-top:0.3rem;">{isZh ? stack.titleZh : stack.title}</h1>
+        <p class="archive-lead" style="margin-top:0.4rem;">{stack.tagline}</p>
+        <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">
+          Audience: {stack.audience} · Verified {stack.lastVerified}
+        </p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
+        <Button
+          variant="secondary"
+          size="sm"
+          data-pe-copy={shareUrl}
+          data-pe-copy-toast="Copied stack share URL!"
+        >
+          {isZh ? '复制分享短链' : 'Copy Share Link'}
+        </Button>
+        <Button variant="primary" size="sm" data-pe-stack-export>
+          {isZh ? '导出离线行前清单 (.txt)' : 'Export Offline Checklist'}
+        </Button>
+      </div>
+    </header>
+
+    <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
+      {stack.items.map((item, idx) => (
+        <li class="pe-side-card" style="display:flex;align-items:flex-start;gap:var(--space-3);">
+          <input
+            type="checkbox"
+            id={`stack-item-${item.id}`}
+            class="cw-checkbox"
+            value={item.id}
+            data-title={item.title}
+            data-pe-stack-check
+            style="margin-top:0.2rem;"
+          />
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.4rem;">
+              <label for={`stack-item-${item.id}`} style="font-weight:600;font-size:1rem;cursor:pointer;">
+                {String(idx + 1).padStart(2, '0')}. {item.title}
+              </label>
+              <Badge tone="editorial">{item.category}</Badge>
+            </div>
+            <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.25rem;">
+              {item.summary}
+            </p>
+            <a href={lp(item.href)} class="editorial-link" style="margin-top:0.45rem;display:inline-flex;font-size:var(--text-xs);">
+              {isZh ? '打开对应详情页 →' : 'Open Verified Resource →'}
+            </a>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <section style="margin-top:var(--space-6);">
+      <span class="eyebrow">{isZh ? '更多场景抄作业清单包' : 'More Scenario Stacks'}</span>
+      <div class="pe-mega-chips" style="margin-top:var(--space-3);">
+        {STACKS.filter((s) => s.slug !== stack.slug).map((other) => (
+          <a href={lp(`/stacks/${other.slug}/`)} class="pe-mega-chip">
+            {isZh ? other.titleZh : other.title}
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseShell>

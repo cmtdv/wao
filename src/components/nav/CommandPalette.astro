@@ -1,0 +1,85 @@
+---
+/**
+ * Paradigm E — Global Intent Command Palette (⌘K / Ctrl+K)
+ * Native modal <dialog closedby="any"> supporting instant natural-language/entity jump
+ * (e.g., "Adderall", "清河站", "USCC", "Google Maps", "240h", "WeChat") + full archive search
+ */
+import Icon from '@site/Icon.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import { COMMAND_PALETTE_INDEX } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+---
+<dialog
+  id="pe-cmd-dialog"
+  class="pe-cmd-dialog"
+  closedby="any"
+  aria-labelledby="pe-cmd-title"
+  data-pe-cmd-dialog
+>
+  <div class="pe-cmd-top">
+    <Icon name="search" size={18} />
+    <label id="pe-cmd-title" for="pe-cmd-input" class="visually-hidden">
+      {isZh ? '输入自然语言或实体词即时跳转' : 'Search ChinaWao guides, tools, cards & entities'}
+    </label>
+    <input
+      id="pe-cmd-input"
+      type="search"
+      class="pe-cmd-input"
+      placeholder={isZh ? '试搜："Adderall"、"清河站"、"USCC"、"WeChat"、"240h"…' : 'Try "Adderall", "清河站", "USCC", "Google Maps", "240h"…'}
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="none"
+      spellcheck="false"
+      autofocus
+      data-pe-cmd-input
+    />
+    <button
+      type="button"
+      class="icon-btn"
+      commandfor="pe-cmd-dialog"
+      command="close"
+      aria-label={isZh ? '关闭命令面板' : 'Close command palette'}
+    >
+      <Icon name="close" size={18} />
+    </button>
+  </div>
+
+  <div class="pe-cmd-results" role="region" aria-label={isZh ? '即时匹配结果' : 'Instant matches'} data-pe-cmd-results>
+    {COMMAND_PALETTE_INDEX.map((item) => (
+      <a
+        href={lp(item.href)}
+        class="pe-cmd-row"
+        data-pe-cmd-item
+        data-search={`${item.title} ${item.titleZh} ${item.subtitle} ${item.subtitleZh} ${item.keywords}`.toLowerCase()}
+      >
+        <div>
+          <span class="pe-cmd-row-title">{isZh ? item.titleZh : item.title}</span>
+          <span class="pe-cmd-row-sub">{isZh ? item.subtitleZh : item.subtitle}</span>
+        </div>
+        <Badge tone={item.kind === 'Rescue' || item.kind === 'Card' ? 'danger' : item.kind === 'Tool' ? 'verified' : 'editorial'}>
+          {item.kind}
+        </Badge>
+      </a>
+    ))}
+    <p class="cw-hint" data-pe-cmd-empty hidden style="padding: var(--space-4); text-align: center;">
+      {isZh ? '未找到直接实体匹配，按回车执行全站全文检索。' : 'No direct entity match—press Enter to search all published dispatches.'}
+    </p>
+  </div>
+
+  <form action={lp('/search/')} method="get" class="pe-cmd-foot" data-pe-cmd-fallback-form>
+    <input type="hidden" name="q" value="" data-pe-cmd-hidden-q />
+    <span>
+      {isZh ? '即时直达 32 专题 · 11 工具 · 亮屏字卡 · 848 数据源' : 'Instant jump to 32 guides · 11 tools · show cards · 848 portals'}
+    </span>
+    <div style="display:flex;align-items:center;gap:var(--space-3);">
+      <button type="submit" class="btn btn--sm">
+        {isZh ? '全文检索' : 'Full Search'}
+      </button>
+      <span><kbd class="cw-kbd">Esc</kbd> {isZh ? '关闭' : 'Close'}</span>
+    </div>
+  </form>
+</dialog>

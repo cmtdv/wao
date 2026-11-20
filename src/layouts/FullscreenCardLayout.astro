@@ -1,0 +1,28 @@
+---
+/**
+ * FullscreenCardLayout — Distraction-free high-contrast shell for show-to-local field cards
+ */
+import '@fontsource/dm-sans/latin-400.css';
+import '@fontsource/dm-sans/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '../styles/index.css';
+
+interface Props {
+  title: string;
+  theme?: 'yellow-black' | 'white-black';
+}
+
+const { title, theme = 'yellow-black' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — ChinaWao Card</title>
+  </head>
+  <body class={`pe-showcard-preview--${theme}`} style="min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(1.25rem,4vw,3rem);">
+    <slot />
+    <script src="../scripts/paradigm-e.ts"></script>
+  </body>
+</html>

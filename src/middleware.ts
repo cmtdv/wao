@@ -9,11 +9,16 @@ import { getRequestContext, runWithContext } from 'emdash';
 export const onRequest = defineMiddleware((context, next) => {
   const { pathname, search } = context.url;
 
-  // Never intercept EmDash internal/admin/API routes or static assets
+  // Never intercept EmDash internal/admin/API routes, static assets, or machine-readable endpoints
   if (
     pathname.startsWith('/_emdash') ||
     pathname.startsWith('/_astro') ||
     pathname.startsWith('/api/') ||
+    pathname.startsWith('/.well-known/') ||
+    pathname === '/mcp' ||
+    pathname === '/mcp/' ||
+    pathname === '/llms.txt' ||
+    pathname.endsWith('.md') ||
     pathname === '/rss.xml' ||
     pathname === '/favicon.svg'
   ) {

@@ -1,0 +1,190 @@
+---
+/**
+ * Mother Template 2: 6 Pillar Hub Landing Layout (GOV.UK List Architecture)
+ * - Breadcrumb + H1 + 3-line persona lead
+ * - Pinned Top 3-6 "Most Viewed" strip
+ * - 8:4 Main Split: Left structured topic groups / Right embedded tool + Stacks + Live Pulse
+ * - Bottom Structured Databases chip strip (shallow click depth)
+ */
+import BaseShell from './BaseShell.astro';
+import ResponsiveBreadcrumb from '../components/nav/ResponsiveBreadcrumb.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import type { PillarConfig } from '@data/paradigm-e/pillars';
+import { LIVE_PULSE_REPORTS } from '@data/paradigm-e/collections';
+import { getGuidesByPillar } from '@data/paradigm-e/guides';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+interface Props {
+  pillar: PillarConfig;
+}
+
+const { pillar } = Astro.props;
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+const pillarGuides = getGuidesByPillar(pillar.id);
+const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
+---
+<BaseShell
+  title={isZh ? pillar.nameZh : pillar.name}
+  description={isZh ? pillar.leadZh : pillar.lead}
+  activePillar={pillar.id}
+  persona={pillar.persona}
+>
+  <div class="container" style="padding-bottom: var(--space-8);">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? pillar.nameZh : pillar.name },
+      ]}
+      mobileBackHref={lp('/')}
+      mobileBackLabel={isZh ? '返回首页' : 'Home'}
+    >
+      <Badge slot="meta" tone="editorial">
+        {isZh ? pillar.personaLabelZh : pillar.personaLabel}
+      </Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="max-width: 56rem;">
+      <span class="eyebrow eyebrow--accent">
+        {isZh ? `六大主柱 · ${pillar.name}` : `Core Pillar · ${pillar.name}`}
+      </span>
+      <h1 style="margin-top:0.35rem;">{isZh ? pillar.h1Zh : pillar.h1}</h1>
+      <p class="archive-lead" style="margin-top:var(--space-3);">
+        {isZh ? pillar.leadZh : pillar.lead}
+      </p>
+    </header>
+
+    {/* Pinned Top: Most Viewed in Pillar (GOV.UK List Pattern) */}
+    <section class="pe-most-viewed-box" aria-labelledby="pillar-most-viewed-h">
+      <span id="pillar-most-viewed-h" class="eyebrow eyebrow--accent">
+        {isZh ? `本柱最常查看 · Most Viewed in ${pillar.name}` : `Most Viewed in ${pillar.name}`}
+      </span>
+      <ol class="pe-most-viewed-grid">
+        {pillar.mostViewedTop.map((item, idx) => (
+          <li>
+            <a href={lp(item.href)}>
+              <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);margin-right:0.35rem;">
+                {idx + 1}.
+              </span>
+              {isZh ? item.labelZh : item.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* Main Body: 8:4 Split */}
+    <div class="pe-pillar-body">
+      <div>
+        {pillar.topicGroups.map((group) => (
+          <section class="pe-topic-group">
+            <span class="pe-topic-group-num">{group.number}</span>
+            <h2 style="font-size:1.35rem;margin-top:0.2rem;">
+              {isZh ? group.titleZh : group.title}
+            </h2>
+            <p style="margin-top:0.35rem;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
+              {isZh ? group.summaryZh : group.summary}
+            </p>
+            <ul class="pe-topic-sublinks">
+              {group.links.map((link) => (
+                <li>
+                  <a href={lp(link.href)}>› {isZh ? link.labelZh : link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+
+        {/* Pillar Feature Guides List */}
+        {pillarGuides.length > 0 && (
+          <section class="pe-topic-group" aria-labelledby="pillar-guides-h">
+            <span class="pe-topic-group-num">{isZh ? '深度主题页' : 'FEATURE GUIDES'}</span>
+            <h2 id="pillar-guides-h" style="font-size:1.35rem;margin-top:0.2rem;">
+              {isZh ? `${pillar.nameZh} 下属深度主题页 (${pillarGuides.length})` : `${pillar.name} Deep Guides (${pillarGuides.length})`}
+            </h2>
+            <ul class="pe-gov-list">
+              {pillarGuides.map((g) => (
+                <li>
+                  <a href={lp(`/guides/${g.slug}/`)}>
+                    <span>{isZh ? g.titleZh : g.title}</span>
+                    <Badge tone="neutral">{g.archetype}</Badge>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Slot for pillar-specific extras (e.g., 12×97 Master Taxonomy on /atlas/) */}
+        <slot />
+      </div>
+
+      {/* Right Rail: Pillar-Exclusive Tool + Stacks + 7-Day Ground Pulse */}
+      <aside class="pe-sidebar-stack" aria-label={isZh ? '本柱专属工具与清单包' : 'Pillar Tools & Stacks'}>
+        <div class="pe-side-card">
+          <span class="eyebrow eyebrow--accent">
+            {isZh ? pillar.sidebarTool.kickerZh : pillar.sidebarTool.kicker}
+          </span>
+          <h3 style="margin-top:0.35rem;font-size:1.1rem;">
+            {isZh ? pillar.sidebarTool.titleZh : pillar.sidebarTool.title}
+          </h3>
+          <p style="margin-block:0.5rem var(--space-4);font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.55;">
+            {isZh ? pillar.sidebarTool.descZh : pillar.sidebarTool.desc}
+          </p>
+          <Button href={lp(pillar.sidebarTool.href)} variant="primary" size="sm">
+            {isZh ? pillar.sidebarTool.ctaLabelZh : pillar.sidebarTool.ctaLabel}
+          </Button>
+        </div>
+
+        <div class="pe-side-card">
+          <span class="pe-mega-col-title">{isZh ? '热门场景清单包 (Stacks)' : 'Popular Scenario Stacks'}</span>
+          <ul class="pe-mega-links">
+            {pillar.sidebarStacks.map((st) => (
+              <li>
+                <a href={lp(st.href)}>
+                  <span>{isZh ? st.labelZh : st.label}</span>
+                  <span>→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="pe-side-card">
+          <span class="pe-mega-col-title">{isZh ? '近 7 天现场实测流' : '7-Day Ground Pulse'}</span>
+          <ul class="pe-pulse-list">
+            {recentPulse.map((p) => (
+              <li class="pe-pulse-row">
+                <Badge tone={p.status === 'worked' ? 'verified' : p.status === 'partial' ? 'standby' : 'danger'}>
+                  {p.status}
+                </Badge>
+                <div style="font-size:var(--text-xs);">
+                  <strong>{p.location}</strong>
+                  <p style="color:var(--ink-secondary);margin-top:0.15rem;">{p.summary}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <a href={lp('/pulse/')} class="editorial-link" style="margin-top:var(--space-3);display:inline-flex;font-size:var(--text-xs);">
+            {isZh ? '查看全部实测动态 →' : 'All Ground Pulse →'}
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    {/* Bottom Structured Databases Chip Bar */}
+    <section style="margin-top:var(--space-7);padding-top:var(--space-5);border-top:1.5px solid var(--rule-strong);">
+      <span class="eyebrow">{isZh ? '直达本柱结构化程序数据库' : 'Browse Structured Databases'}</span>
+      <div class="pe-mega-chips" style="margin-top:var(--space-3);">
+        {pillar.databases.map((db) => (
+          <a href={lp(db.href)} class="pe-mega-chip">
+            {isZh ? db.labelZh : db.label}
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseShell>

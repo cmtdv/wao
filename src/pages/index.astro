@@ -1,188 +1,300 @@
 ---
-import { getSiteSettings, getTaxonomyTermsWithCacheHint } from 'emdash';
-import Layout from '@layouts/Layout.astro';
-import HeroShowcase from '@site/HeroShowcase.astro';
-import PostCard from '@site/PostCard.astro';
+/**
+ * Mother Template 1: Paradigm E Portal Home (/)
+ * 6-Section Vertical Narrative Flow:
+ *   1. Hero + Intent Search Box (⌘K) + 4 Single-Row Intent Shortcut Chips
+ *   2. 72-Hour Pre-Flight Strip (4-Step Funnel above/at fold)
+ *   3. 7:5 Split: GOV.UK Most Viewed (6 links) + Live Ground Pulse & Policy Log & eSIM Top 5
+ *   4. Interactive 5-Layer China Panoramic Map + City 12-Dimension Quick Drawer
+ *   5. Featured Deep Guides Strip (4 Flagship Cards across 4 Business Lines)
+ *   6. Trust Bar + AI Developer MCP Strip + Live EmDash Dispatches Link
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ChinaLayerMap from '../components/maps/ChinaLayerMap.astro';
 import Icon from '@site/Icon.astro';
-import { getPublicPosts, publicContext } from '@lib/cms';
-import { categoryPath, topicIconName, topicPreviewMedia } from '@lib/format';
-import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
-import '../styles/home.css';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { FEATURED_HOME_GUIDES } from '@data/paradigm-e/guides';
+import { LIVE_PULSE_REPORTS } from '@data/paradigm-e/collections';
+import { getPublicPosts } from '@lib/cms';
+import { postPath } from '@lib/format';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
-const strings = getStrings(locale);
-const lp = (path: string) => localePath(path, locale);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
 
-const [settings, postsResult, taxonomyPrimary] = await Promise.all([
-  getSiteSettings(),
-  getPublicPosts({ limit: 10, locale }),
-  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })),
-]);
+const cmsPosts = await getPublicPosts({ limit: 3, locale }).catch(() => ({ entries: [] as never[] }));
+const latestDispatches = cmsPosts.entries ?? [];
 
-const taxonomy =
-  taxonomyPrimary.data.length > 0 || locale === 'en'
-    ? taxonomyPrimary
-    : await publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale: 'en' }));
+const mostViewedWeek = [
+  { label: isZh ? '240 小时过境免签判定器与 60 开放口岸' : '240h Visa-Free Transit Checker & 60 Open Ports', href: '/tools/visa-checker/' },
+  { label: isZh ? '支付宝 / 微信支付支持 Chase / Wise 外卡吗？' : 'Does Alipay / WeChat Pay take Chase & Wise cards?', href: '/compare/alipay-vs-wechat-pay/' },
+  { label: isZh ? '微信账号受限/封号？红框全图解分步救火' : 'WeChat Restricted? Red-Box Step-by-Step Rescue', href: '/errors/wechat-restricted/' },
+  { label: isZh ? '来华体检、看牙与国际医疗旅游实操指南' : 'China Medical & Dental Checkup Tourism Guide', href: '/guides/medical-dental-checkup/' },
+  { label: isZh ? 'Google Maps 在华实测偏移与高德替代方案' : 'Does Google Maps Work in China? (GCJ-02 Explained)', href: '/in-china/google-maps/' },
+  { label: isZh ? '18 位 USCC 校验器与 GSXT 供应商尽调引导台' : '18-Digit USCC Validator & GSXT Supplier Verification', href: '/compliance/uscc-gsxt-lookup/' },
+];
 
-if (postsResult.error) {
-  return new Response('Unable to load posts', { status: 503 });
-}
-
-if (Astro.cache?.enabled) {
-  Astro.cache.set(postsResult.cacheHint);
-  Astro.cache.set(taxonomy.cacheHint);
-}
-
-const photoPosts = postsResult.entries.filter((entry) => Boolean(entry.data.featured_image));
-const heroSlides = (photoPosts.length >= 3 ? photoPosts : postsResult.entries).slice(0, 3);
-const heroIds = new Set(heroSlides.map((entry) => entry.id));
-const remainingPosts = postsResult.entries.filter((entry) => !heroIds.has(entry.id));
-const gridPosts = remainingPosts.slice(0, 6);
-const fallbackGrid = gridPosts.length > 0 ? gridPosts : postsResult.entries.slice(1);
-const rootCategories = taxonomy.data.filter((term) => !term.parentId);
-const chapterCategories = rootCategories.slice(0, 6);
-const initialPreview = chapterCategories[0]
-  ? topicPreviewMedia(chapterCategories[0].slug, locale)
-  : topicPreviewMedia('journal', locale);
-
-const specialtyPortals = strings.home.desks.map((d, i) => ({
-  code: `${String(i + 1).padStart(2, '0')} · ${d.kicker}`,
-  title: d.title,
-  desc: d.desc,
-  href: lp(d.href),
-  cta: locale === 'zh' ? '进入工作台' : 'Open desk',
-}));
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'ChinaWao',
+  url: Astro.url.origin,
+  description: 'Everything About China, Decoded & Verified.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${Astro.url.origin}/search/?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
 ---
-<Layout>
-  {heroSlides.length > 0 && <HeroShowcase slides={heroSlides} />}
+<BaseShell
+  title={isZh ? '全景解码与核验中国' : 'Everything About China, Decoded & Verified'}
+  description={isZh ? '面向全球用户的权威中国知识门户与实操引擎：240h 免签、无现金支付、32 深度主题页、848 政务数据源与只读 MCP 接口。' : 'Everything about China, decoded & verified: 240h visa rules, cashless payments, 32 deep guides, 848 government open-data portals & read-only MCP.'}
+  jsonLd={jsonLd}
+>
+  {/* SECTION 1: HERO + INTENT SEARCH + 4 SHORTCUT CHIPS */}
+  <section class="pe-home-hero" aria-labelledby="home-hero-h">
+    <div class="container pe-hero-center">
+      <span class="eyebrow eyebrow--accent">
+        {isZh ? '新范式 E · 四层解耦 · 848 实测政务源 × 现场实测流' : 'Paradigm E · Verified Knowledge & Deterministic Tools'}
+      </span>
+      <h1 id="home-hero-h" class="pe-hero-title">
+        {isZh ? '读懂中国，确定性核验直达。' : 'Everything About China, Decoded & Verified.'}
+      </h1>
 
-  <div id="front-edition" class="container home-shell">
-    <div class="edition-bar">
-      <p class="eyebrow eyebrow--accent">{strings.home.editionBadge}</p>
-      <p class="edition-tagline">{locale === 'zh' ? strings.home.editionTagline : (settings.tagline || strings.home.editionTagline)}</p>
-      <a href={lp('/posts/')} class="editorial-link">
-        <span>{strings.home.recentMore}</span>
-      </a>
-    </div>
+      <button
+        type="button"
+        class="pe-hero-search-btn"
+        commandfor="pe-cmd-dialog"
+        command="show-modal"
+        aria-label={isZh ? '打开全局意图搜索面板' : 'Search ChinaWao guides, tools & entities'}
+      >
+        <Icon name="search" size={18} />
+        <span>
+          {isZh
+            ? '搜索："Google Maps能用吗？" / "240h免签" / "清河站" / "USCC"…'
+            : 'Search: "Does Google Maps work?" / "240h visa" / "Shanghai" / "USCC"…'}
+        </span>
+        <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
+      </button>
 
-    {heroSlides.length > 0 ? (
-      <>
-        {fallbackGrid.length > 0 && (
-          <section class="section-block section-block--flush-top" aria-labelledby="latest-heading">
-            <div class="section-header">
-              <div>
-                <p class="rail-heading">{strings.home.recentEyebrow}</p>
-                <h2 id="latest-heading">{strings.home.recentTitle}</h2>
-              </div>
-              <a href={lp('/posts/')} class="editorial-link">
-                <span>{strings.home.browseAll}</span>
-                <Icon name="arrow" size={15} />
-              </a>
-            </div>
-            <div class="post-grid">
-              {fallbackGrid.map((post) => (
-                <PostCard post={post} headingLevel="h3" />
-              ))}
-            </div>
-          </section>
-        )}
-      </>
-    ) : (
-      <section class="empty-panel">
-        <p class="eyebrow eyebrow--accent">Editorial Desk</p>
-        <h2>{locale === 'zh' ? '暂未发布志刊。' : 'No dispatches published yet.'}</h2>
-      </section>
-    )}
-
-    <section class="section-block" aria-labelledby="portals-heading">
-      <div class="section-header">
-        <div>
-          <p class="rail-heading">{strings.home.desksEyebrow}</p>
-          <h2 id="portals-heading">{strings.home.desksTitle}</h2>
-        </div>
-        <a href={lp('/atlas/')} class="editorial-link">
-          <span>{strings.home.desksLink}</span>
-          <Icon name="arrow" size={15} />
+      <div class="pe-intent-row" role="navigation" aria-label={isZh ? '场景快速分流' : 'Quick Intent Routing'}>
+        <a href={lp('/guides/72h-pre-departure/')} class="pe-intent-chip">
+          <strong>{isZh ? '即将赴华：72h 行前通关' : 'Flying Soon: 72h Pre-Flight'}</strong>
+          <span>{isZh ? '免签 · 绑外卡 · eSIM · 12306' : 'Visa · Cards · eSIM · 12306'}</span>
+        </a>
+        <a href={lp('/guides/official-forms-app-errors/')} class="pe-intent-chip">
+          <strong>{isZh ? '已在现场：报错与字卡救火' : 'On the Ground: Error Rescue'}</strong>
+          <span>{isZh ? '微信解封 · 红框表格 · 亮屏字卡' : 'WeChat Fix · Forms · Show Cards'}</span>
+        </a>
+        <a href={lp('/guides/factory-sourcing-due-diligence/')} class="pe-intent-chip">
+          <strong>{isZh ? '商务采购：验厂与国标' : 'Business: Sourcing & USCC'}</strong>
+          <span>{isZh ? '18位信用码 · 广交会 · 3C认证' : '18-Digit USCC · Canton Fair · 3C'}</span>
+        </a>
+        <a href={lp('/atlas/')} class="pe-intent-chip">
+          <strong>{isZh ? '全景探索：读懂中国' : 'Explore: China Atlas'}</strong>
+          <span>{isZh ? '34省 · 12×97 图谱 · 848 数据源' : '34 Provinces · 12×97 · 848 Data'}</span>
         </a>
       </div>
-      <div class="portal-desk">
-        {specialtyPortals.map((item) => (
-          <a href={item.href} class="portal-desk-card">
-            <span class="eyebrow">{item.code}</span>
-            <h3 class="portal-desk-title">{item.title}</h3>
-            <p class="portal-desk-desc">{item.desc}</p>
-            <span class="portal-desk-cta">
-              <span>{item.cta}</span>
-              <Icon name="arrow" size={14} />
-            </span>
+    </div>
+  </section>
+
+  {/* SECTION 2: 72-HOUR PRE-FLIGHT STRIP (4-STEP FUNNEL) */}
+  <section class="pe-preflight-band" aria-label={isZh ? '72 小时行前总控条' : '72-Hour Pre-Flight Strip'}>
+    <div class="container">
+      <div class="pe-preflight-head">
+        <strong>{isZh ? '72 小时行前总控条 · 4-Step Pre-Flight Strip' : '72-Hour Pre-Flight Control Strip'}</strong>
+        <a href={lp('/guides/72h-pre-departure/')} style="color:var(--secondary-ink);font-size:var(--text-xs);text-decoration:underline;">
+          {isZh ? '打开完整 72h 通关剧本 →' : 'Open full 72h playbook →'}
+        </a>
+      </div>
+      <div class="pe-preflight-steps">
+        <a href={lp('/tools/visa-checker/')} class="pe-preflight-step">
+          <span class="pe-preflight-num">01</span>
+          <span>{isZh ? '测 240h 免签与口岸 →' : 'Check 240h Visa-Free →'}</span>
+        </a>
+        <a href={lp('/guides/cashless-super-apps/')} class="pe-preflight-step">
+          <span class="pe-preflight-num">02</span>
+          <span>{isZh ? '绑外卡 / 备漫游 eSIM →' : 'Bind Foreign Card & eSIM →'}</span>
+        </a>
+        <a href={lp('/routes/beijing-to-shanghai/')} class="pe-preflight-step">
+          <span class="pe-preflight-num">03</span>
+          <span>{isZh ? '12306 核验 / 防走错站 →' : '12306 & Station Traps →'}</span>
+        </a>
+        <a href={lp('/cards/peanut-allergy-sos/')} class="pe-preflight-step">
+          <span class="pe-preflight-num">04</span>
+          <span>{isZh ? '领过敏 / 打车亮屏卡 →' : 'Save Allergy & Taxi Cards →'}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* SECTION 3: 7:5 SPLIT — MOST VIEWED (GOV.UK LIST) + LIVE GROUND PULSE */}
+  <section class="pe-section" aria-labelledby="home-most-viewed-h">
+    <div class="container pe-split-7-5">
+      <div>
+        <span class="eyebrow eyebrow--accent">{isZh ? '本周高频直达 · GOV.UK 列表样式' : 'Most Viewed This Week'}</span>
+        <h2 id="home-most-viewed-h" style="margin-top:0.25rem;">
+          {isZh ? '高确定性实操与救火入口' : 'High-Certainty Answers & Rescue Desks'}
+        </h2>
+        <ul class="pe-gov-list">
+          {mostViewedWeek.map((item) => (
+            <li>
+              <a href={lp(item.href)}>
+                <span>{item.label}</span>
+                <Icon name="arrow" size={15} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <aside class="pe-pulse-box" aria-labelledby="home-pulse-h">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);">
+          <div>
+            <span class="eyebrow eyebrow--accent">Ground Pulse · Live</span>
+            <h2 id="home-pulse-h" style="font-size:1.2rem;margin-top:0.15rem;">
+              {isZh ? '实时实测动态与政策日志' : 'Live Ground Pulse & Policy Log'}
+            </h2>
+          </div>
+          <a href={lp('/pulse/')} class="editorial-link" style="font-size:var(--text-xs);">
+            {isZh ? '全部 →' : 'All →'}
+          </a>
+        </div>
+
+        <ul class="pe-pulse-list">
+          {LIVE_PULSE_REPORTS.slice(0, 2).map((rep) => (
+            <li class="pe-pulse-row">
+              <Badge tone={rep.status === 'worked' ? 'verified' : rep.status === 'partial' ? 'standby' : 'danger'}>
+                {rep.status === 'worked' ? 'Worked' : rep.status === 'partial' ? 'Partial' : 'Failed'}
+              </Badge>
+              <div>
+                <a href={lp(rep.relatedHref)} class="text-link" style="font-weight:600;">
+                  {rep.passportOrCard} @ {rep.location}
+                </a>
+                <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);margin-left:0.4rem;">
+                  ({rep.timestamp})
+                </span>
+                <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">{rep.summary}</p>
+              </div>
+            </li>
+          ))}
+          <li class="pe-pulse-row">
+            <Badge tone="editorial">Policy</Badge>
+            <div>
+              <a href={lp('/guides/policy-changelog/')} class="text-link" style="font-weight:600;">
+                {isZh ? '2026-11 月度入境与商旅政策变更日志 →' : '2026-11 Monthly Policy Changelog →'}
+              </a>
+            </div>
+          </li>
+          <li class="pe-pulse-row">
+            <Badge tone="verified">{isZh ? '榜单' : 'Top 5'}</Badge>
+            <div>
+              <a href={lp('/pulse/#esim-top5')} class="text-link" style="font-weight:600;">
+                {isZh ? '本周实测最稳中国 eSIM Top 5 排行榜 →' : 'This Week’s Most Reliable China eSIM Top 5 →'}
+              </a>
+            </div>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  {/* SECTION 4: INTERACTIVE 5-LAYER CHINA PANORAMIC MAP */}
+  <section class="pe-section" aria-labelledby="home-map-h">
+    <div class="container">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-3);">
+        <div>
+          <span class="eyebrow eyebrow--accent">{isZh ? '新范式 D · 沉浸式空间画布' : 'Interactive Spatial Canvas'}</span>
+          <h2 id="home-map-h" style="margin-top:0.25rem;">
+            {isZh ? '中国全景图层地图与城市 12 维速览' : 'Interactive China Panoramic Layer Map'}
+          </h2>
+        </div>
+        <a href={lp('/explore/')} class="editorial-link">
+          {isZh ? '打开多维分面探索器 →' : 'Open Multi-Facet Explorer →'}
+        </a>
+      </div>
+
+      <ChinaLayerMap locale={locale} />
+    </div>
+  </section>
+
+  {/* SECTION 5: FEATURED DEEP GUIDES STRIP (4 CARDS ACROSS 4 LINES) */}
+  <section class="pe-section" aria-labelledby="home-featured-h">
+    <div class="container">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-3);">
+        <div>
+          <span class="eyebrow eyebrow--accent">{isZh ? '精选深度主题策展带 · 32 专题' : 'Featured Deep Guides · 32 Playbooks & Galleries'}</span>
+          <h2 id="home-featured-h" style="margin-top:0.25rem;">
+            {isZh ? '四大业务线旗舰专题' : 'Flagship Guides Across Every Pillar'}
+          </h2>
+        </div>
+        <a href={lp('/guides/')} class="editorial-link">
+          {isZh ? '浏览全部 32 个深度主题页 →' : 'Browse All 32 Feature Guides →'}
+        </a>
+      </div>
+
+      <div class="pe-featured-4">
+        {FEATURED_HOME_GUIDES.map((g) => (
+          <a href={lp(`/guides/${g.slug}/`)} class="pe-feature-card">
+            <div class="pe-feature-media">
+              <img src={g.heroImage ?? '/images/hero.webp'} alt={g.title} loading="lazy" />
+            </div>
+            <div class="pe-feature-body">
+              <span class="eyebrow eyebrow--accent">{g.homeLineTag ?? g.pillar}</span>
+              <h3>{isZh ? g.titleZh : g.title}</h3>
+              <p>{isZh ? g.leadHookZh : g.leadHook}</p>
+            </div>
           </a>
         ))}
       </div>
-    </section>
 
-    {chapterCategories.length > 0 && (
-      <section class="palace-chapter" aria-labelledby="topics-heading">
-        <div class="palace-chapter-head">
-          <div>
-            <p class="eyebrow eyebrow--accent">{strings.home.palaceEyebrow}</p>
-            <h2 id="topics-heading">{strings.home.palaceTitle}</h2>
+      {/* Live EmDash CMS Dispatches Link Strip (Preserving Live Collections integration) */}
+      {latestDispatches.length > 0 && (
+        <div style="margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px solid var(--rule-subtle);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <span class="eyebrow">{isZh ? 'EmDash 实时志刊更新' : 'Live EmDash CMS Dispatches'}</span>
+            <a href={lp('/posts/')} class="text-link" style="font-size:var(--text-xs);">
+              {isZh ? '全部志刊 →' : 'All Dispatches →'}
+            </a>
           </div>
-          <a href={lp('/atlas/')} class="editorial-link">
-            <span>{strings.home.palaceCta}</span>
-            <Icon name="arrow" size={15} />
-          </a>
-        </div>
-
-        <div class="palace-chapter-grid">
-          <div class="palace-visual">
-            <div class="palace-visual-frame">
-              <img
-                src={initialPreview.src}
-                alt={initialPreview.alt}
-                data-palace-preview-img
-                width="960"
-                height="720"
-                loading="eager"
-              />
-            </div>
-            <div class="palace-visual-caption">
-              <span data-palace-preview-caption>{initialPreview.caption}</span>
-              <span>{locale === 'zh' ? '悬停栏目预览实景' : 'Hover section to preview'}</span>
-            </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:var(--space-3);">
+            {latestDispatches.map((entry) => (
+              <a href={lp(postPath(entry.data.slug || entry.id))} class="pe-side-card" style="text-decoration:none;color:inherit;">
+                <strong style="font-family:var(--font-display);font-size:1.05rem;">{entry.data.title}</strong>
+                {entry.data.excerpt && (
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.5;">
+                    {entry.data.excerpt.slice(0, 110)}…
+                  </p>
+                )}
+              </a>
+            ))}
           </div>
-
-          <ul class="palace-rows">
-            {chapterCategories.map((term, index) => {
-              const preview = topicPreviewMedia(term.slug, locale);
-              return (
-                <li>
-                  <a
-                    href={lp(categoryPath(term.slug))}
-                    class="palace-row-link"
-                    data-palace-row
-                    data-active={index === 0 ? 'true' : 'false'}
-                    data-preview-src={preview.src}
-                    data-preview-alt={preview.alt}
-                    data-preview-caption={preview.caption}
-                  >
-                    <span class="palace-row-badge">
-                      <Icon name={topicIconName(term.slug)} size={20} />
-                      <span>{String(index + 1).padStart(2, '0')}</span>
-                    </span>
-                    <span class="palace-row-copy">
-                      <span class="palace-row-title">{term.label}</span>
-                      {term.description && <span class="palace-row-desc">{term.description}</span>}
-                    </span>
-                    <span class="palace-row-arrow" aria-hidden="true">
-                      <Icon name="arrow" size={16} />
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
         </div>
-      </section>
-    )}
-  </div>
-</Layout>
+      )}
+
+      {/* SECTION 6: TRUST BAR + AI DEVELOPER MCP STRIP */}
+      <div class="pe-trust-strip" role="region" aria-label={isZh ? '权威数据底座与 AI 开发者条' : 'Authoritative Data Base & AI MCP Bar'}>
+        <div class="pe-trust-metrics">
+          <span><strong>848</strong> {isZh ? '实测政务源' : 'Verified Gov Portals'}</span>
+          <span>·</span>
+          <span><strong>2,913</strong> {isZh ? '外文国标' : 'English GB Standards'}</span>
+          <span>·</span>
+          <span><strong>1,422</strong> {isZh ? '中华老字号' : 'Heritage Brands'}</span>
+          <span>·</span>
+          <span><strong>GCJ-02 / WGS-84</strong> {isZh ? '双标校对' : 'Dual Coordinates'}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
+          <Button href={lp('/portals/#mcp-setup')} variant="primary" size="sm">
+            {isZh ? '接入 chinawao.com/mcp' : 'Connect chinawao.com/mcp'}
+          </Button>
+          <Button href="/llms.txt" variant="secondary" size="sm">
+            llms.txt
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseShell>

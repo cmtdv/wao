@@ -1,0 +1,75 @@
+---
+/**
+ * AutoDisclaimer — Conditionally locked statutory disclaimer bar
+ * Mandatory whenever collection/tags touch visa, medical, allergy, prescription, legal, or tax.
+ */
+import Alert from '@ui/feedback/Alert.astro';
+import type { DisclaimerKind } from '@data/paradigm-e/guides';
+
+interface Props {
+  kinds: DisclaimerKind[];
+  locale?: 'en' | 'zh';
+}
+
+const { kinds, locale = 'en' } = Astro.props;
+const isZh = locale === 'zh';
+
+const COPY: Record<DisclaimerKind, { title: string; titleZh: string; body: string; bodyZh: string; tone: 'warning' | 'danger' | 'info' }> = {
+  visa: {
+    title: 'Immigration & Border Notice',
+    titleZh: '签证与边检免责声明',
+    body: 'Entry eligibility and 240-hour transit rules are enforced solely by China’s National Immigration Administration (NIA) and airline check-in agents. Always verify directly via NIA 12367 before departure.',
+    bodyZh: '免签与 240 小时过境最终准入由国家移民管理局（NIA 12367）及承运航司现场核定，行前请务必二次复核最新公告。',
+    tone: 'warning',
+  },
+  medical: {
+    title: 'Medical & Healthcare Disclaimer',
+    titleZh: '医疗与体检免责声明',
+    body: 'Hospital pricing and clinical descriptions are field-verified references, not medical advice. Consult licensed physicians and confirm international insurance pre-authorization directly.',
+    bodyZh: '本页所列三甲国际部、私立医院及齿科价格均为实测参考，不构成医疗诊断建议，请直接向持牌医疗机构与保险方核实。',
+    tone: 'warning',
+  },
+  allergy: {
+    title: 'Severe Allergy Safety Warning',
+    titleZh: '重度食物过敏安全警示',
+    body: 'Translation cards reduce miscommunication but cannot eliminate cross-contamination in commercial kitchens. Always confirm cooking oils directly with the chef and carry emergency medication.',
+    bodyZh: '双语字卡旨在降低沟通误差，无法完全消除餐饮后厨交叉污染风险。重度过敏人群请务必当面与厨师确认用油并随身携带急救药物。',
+    tone: 'danger',
+  },
+  prescription: {
+    title: 'Controlled Medication & Customs Warning',
+    titleZh: '处方药与海关管制警示',
+    body: 'China enforces strict narcotics and psychotropic laws. Never transport amphetamine stimulants (e.g., Adderall) or controlled opioids without official written customs/NMPA verification.',
+    bodyZh: '中国对精神类与麻醉类药品实行严格海关管制，切勿未经官方书面核实直接携带含苯丙胺等受控成分药物入境。',
+    tone: 'danger',
+  },
+  legal: {
+    title: 'Legal & Compliance Notice',
+    titleZh: '法律与合规免责声明',
+    body: 'Due diligence workflows, USCC checks, and contract chop notes are informational operational guides—not formal PRC legal representation. Engage qualified PRC counsel for binding transactions.',
+    bodyZh: '本页尽调步骤、USCC 核验与公章合同指引仅供实务参考，不构成正式中国执业律师法律意见，重大交易请委托持牌律所审阅。',
+    tone: 'info',
+  },
+  tax: {
+    title: 'Tax & Social Security Disclaimer',
+    titleZh: '税务与社保政策声明',
+    body: 'IIT withholding estimates, VAT departure refunds, and pension withdrawals depend on local municipal tax bureau rules and bilateral treaties. Confirm figures with STA or a certified tax advisor.',
+    bodyZh: '个税测算、离境退税及社保/公积金提取细则因城市税务局与双边税收协定而异，请以主管税务机关最终核算为准。',
+    tone: 'info',
+  },
+};
+
+const uniqueKinds = Array.from(new Set(kinds));
+---
+{uniqueKinds.length > 0 && (
+  <section class="pe-disclaimer-stack" aria-label={isZh ? '法定免责声明' : 'Mandatory Disclaimers'} style="display:grid;gap:var(--space-3);margin-top:var(--space-6);">
+    {uniqueKinds.map((kind) => {
+      const item = COPY[kind];
+      return (
+        <Alert tone={item.tone} title={isZh ? item.titleZh : item.title}>
+          {isZh ? item.bodyZh : item.body}
+        </Alert>
+      );
+    })}
+  </section>
+)}

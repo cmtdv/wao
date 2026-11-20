@@ -2,7 +2,8 @@
 import type { getEmDashCollection, getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
 import ThemeToggle from '@site/ThemeToggle.astro';
-import { categoryPath, pagePath } from '@lib/format';
+import { PILLARS } from '@data/paradigm-e/pillars';
+import { pagePath } from '@lib/format';
 import { getStrings, localePath, switchLocaleHref, type Locale } from '@i18n/ui';
 
 type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
@@ -17,8 +18,9 @@ interface Props {
   originalPathname?: string;
 }
 
-const { siteTitle, tagline, roots, pages, locale = 'en', originalPathname } = Astro.props;
+const { siteTitle, tagline, pages, locale = 'en', originalPathname } = Astro.props;
 const strings = getStrings(locale);
+const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
 const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
 const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
@@ -39,57 +41,45 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-col">
-      <h2>{strings.footer.explore}</h2>
+      <h2>{isZh ? '六大主柱' : '6 Core Pillars'}</h2>
       <ul class="footer-links">
-        <li><a href={lp('/posts/')}>{strings.footer.links.posts}</a></li>
-        <li><a href={lp('/atlas/')}>{strings.footer.links.atlas}</a></li>
-        <li><a href={lp('/journeys/')}>{strings.footer.links.journeys}</a></li>
-        <li><a href={lp('/directory/')}>{strings.footer.links.directory}</a></li>
-        <li><a href={lp('/tools/')}>{strings.footer.links.tools}</a></li>
-        <li><a href={lp('/design-system/')}>{strings.footer.links.dsKit}</a></li>
-        <li><a href={lp('/design-system/blocks/')}>{strings.footer.links.dsBlocks}</a></li>
-        <li><a href={lp('/topics/')}>{strings.footer.links.topics}</a></li>
-        <li><a href={lp('/tags/')}>{strings.footer.links.tags}</a></li>
-        <li><a href={lp('/search/')}>{strings.footer.links.search}</a></li>
-        <li><a href="/rss.xml">{strings.footer.links.rss}</a></li>
+        {PILLARS.map((p) => (
+          <li><a href={lp(`/${p.id}/`)}>{isZh ? `${p.nameZh} (${p.name})` : p.name}</a></li>
+        ))}
+        <li><a href={lp('/guides/')}>{isZh ? '32 个深度主题页' : 'All 32 Feature Guides'}</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{strings.footer.topics}</h2>
-      {roots.length > 0 ? (
-        <ul class="footer-links">
-          {roots.map((term) => (
-            <li><a href={lp(categoryPath(term.slug))}>{term.label}</a></li>
-          ))}
-        </ul>
-      ) : (
-        <ul class="footer-links">
-          <li><a href={lp('/posts/')}>{strings.footer.links.posts}</a></li>
-        </ul>
-      )}
+      <h2>{isZh ? '工具 · 数据 · AI' : 'Tools, Data & AI'}</h2>
+      <ul class="footer-links">
+        <li><a href={lp('/tools/')}>{isZh ? '11 个交互工具工作台' : 'Tools Workbench (11)'}</a></li>
+        <li><a href={lp('/portals/')}>{isZh ? '848 政务数据源与 MCP' : '848 Gov Portals & MCP'}</a></li>
+        <li><a href={lp('/pulse/')}>{isZh ? '现场实测流 Ground Pulse' : 'Live Ground Pulse'}</a></li>
+        <li><a href={lp('/explore/')}>{isZh ? '多维分面探索器' : 'Multi-Facet Explorer'}</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+        <li><a href="/.well-known/mcp/server-card.json">MCP Server Card</a></li>
+      </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{strings.footer.pages}</h2>
-      {pages.length > 0 ? (
-        <ul class="footer-links">
-          {pages.map((entry) => (
-            <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
-          ))}
-        </ul>
-      ) : (
-        <ul class="footer-links">
-          <li><a href={lp('/search/')}>{strings.footer.links.search}</a></li>
-        </ul>
-      )}
+      <h2>{isZh ? '志刊与系统' : 'Journal & System'}</h2>
+      <ul class="footer-links">
+        <li><a href={lp('/posts/')}>{isZh ? 'EmDash 志刊归档' : 'CMS Dispatches'}</a></li>
+        <li><a href={lp('/design-system/')}>{strings.footer.links.dsKit}</a></li>
+        <li><a href={lp('/design-system/blocks/')}>{strings.footer.links.dsBlocks}</a></li>
+        {pages.slice(0, 3).map((entry) => (
+          <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
+        ))}
+        <li><a href="/rss.xml">{strings.footer.links.rss}</a></li>
+      </ul>
     </div>
   </div>
 
   <div class="container footer-bottom">
     <div class="footer-colophon">
       <span>© {year} {siteTitle}</span>
-      <span>{strings.footer.powered}</span>
+      <span>Paradigm E · Astro + EmDash Live Collections + Route A</span>
     </div>
     <ThemeToggle variant="segmented" />
   </div>

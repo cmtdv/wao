@@ -1,0 +1,16 @@
+---
+/**
+ * Mother Template 3 Dynamic Route: /guides/[slug]/
+ * Renders any of the 32 Deep Feature Guides via GuideHubLayout (4 Archetype Variants)
+ */
+import GuideHubLayout from '@layouts/GuideHubLayout.astro';
+import { GUIDE_BY_SLUG } from '@data/paradigm-e/guides';
+
+const slug = Astro.params.slug || '';
+const guide = GUIDE_BY_SLUG[slug];
+
+if (!guide) {
+  return new Response('Guide Not Found', { status: 404 });
+}
+---
+<GuideHubLayout guide={guide} />

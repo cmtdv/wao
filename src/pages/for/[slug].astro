@@ -1,0 +1,97 @@
+---
+/**
+ * Mother Template 5: /for/[slug]/ — High-Intent Curated Persona Landing Pages
+ * Static indexable URLs (distinct from dynamic /explore/#fragment)
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import AutoDisclaimer from '../../components/compliance/AutoDisclaimer.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { PERSONA_LANDINGS } from '@data/paradigm-e/collections';
+import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const slug = Astro.params.slug || '';
+const landing = PERSONA_LANDINGS.find((p) => p.slug === slug);
+if (!landing) return new Response('Persona Page Not Found', { status: 404 });
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = PILLAR_BY_ID[landing.pillar];
+---
+<BaseShell
+  title={isZh ? landing.titleZh : landing.title}
+  description={landing.lead}
+  activePillar={landing.pillar}
+  persona={pillar.persona}
+>
+  <div class="container" style="padding-bottom:var(--space-8);max-width:62rem;">
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
+        { label: `/for/${landing.slug}/` },
+      ]}
+      mobileBackHref={lp(`/${pillar.id}/`)}
+      mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
+    />
+
+    <header style="margin-bottom:var(--space-5);">
+      <span class="eyebrow eyebrow--accent">Static High-Intent Persona Hub · /for/{landing.slug}/</span>
+      <h1 style="margin-top:0.3rem;">{isZh ? landing.titleZh : landing.title}</h1>
+      <p class="archive-lead" style="margin-top:0.4rem;">{landing.lead}</p>
+    </header>
+
+    <div class="pe-hard-facts">
+      {landing.highlights.map((h) => (
+        <div class="pe-fact-slot">
+          <span class="pe-fact-slot-label">{h.label}</span>
+          <strong class="pe-fact-slot-val">{h.value}</strong>
+        </div>
+      ))}
+    </div>
+
+    <div class="pe-dual-desk" style="margin-top:var(--space-5);">
+      <div class="pe-side-card">
+        <span class="pe-mega-col-title">{isZh ? '核心深度主题' : 'Essential Guides'}</span>
+        <ul class="pe-mega-links">
+          {landing.recommendedGuides.map((g) => (
+            <li>
+              <a href={lp(g.href)}>
+                <div>
+                  <strong>{g.title}</strong>
+                  <span style="display:block;font-size:var(--text-xs);color:var(--ink-secondary);">{g.note}</span>
+                </div>
+                <span>→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="pe-side-card">
+        <span class="pe-mega-col-title">{isZh ? '直达实体与工具卡' : 'Direct Entities & Cards'}</span>
+        <ul class="pe-mega-links">
+          {landing.recommendedEntities.map((e) => (
+            <li>
+              <a href={lp(e.href)}>
+                <span>{e.title}</span>
+                <Badge tone="editorial">{e.tag}</Badge>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-5);">
+      <Button href={lp(landing.stackHref)} variant="primary">
+        {landing.stackLabel}
+      </Button>
+    </div>
+
+    <AutoDisclaimer kinds={landing.disclaimers} locale={locale} />
+  </div>
+</BaseShell>

@@ -1,0 +1,30 @@
+---
+/**
+ * Responsive Breadcrumb Iron Rule:
+ * - Desktop: Full canonical hierarchy trail + Schema.org BreadcrumbList JSON-LD
+ * - Mobile (< 768px): Single-line parent return link (‹ Visit China), never wraps
+ */
+import Breadcrumb, { type BreadcrumbItem } from '@ui/navigation/Breadcrumb.astro';
+import Icon from '@site/Icon.astro';
+
+interface Props {
+  items: BreadcrumbItem[];
+  mobileBackHref?: string;
+  mobileBackLabel?: string;
+}
+
+const { items, mobileBackHref, mobileBackLabel } = Astro.props;
+const parentItem = items.length >= 2 ? items[items.length - 2] : items[0];
+const backHref = mobileBackHref ?? parentItem?.href ?? '/';
+const backLabel = mobileBackLabel ?? parentItem?.label ?? 'Home';
+---
+<div class="pe-crumb-bar">
+  <div class="pe-crumb-desktop">
+    <Breadcrumb items={items} jsonLd={true} />
+  </div>
+  <a href={backHref} class="pe-crumb-mobile">
+    <Icon name="arrow-left" size={14} />
+    <span>{backLabel}</span>
+  </a>
+  <slot name="meta" />
+</div>
