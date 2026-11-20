@@ -20,7 +20,8 @@ export const onRequest = defineMiddleware((context, next) => {
     pathname === '/llms.txt' ||
     pathname.endsWith('.md') ||
     pathname === '/rss.xml' ||
-    pathname === '/favicon.svg'
+    pathname === '/favicon.svg' ||
+    pathname === '/manifest.webmanifest'
   ) {
     return next();
   }

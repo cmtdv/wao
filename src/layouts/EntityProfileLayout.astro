@@ -35,6 +35,22 @@ const mdHref = entity.collection === 'cities'
   ? `/cities/${entity.slug}.md`
   : `/entities/${entity.collection}/${entity.slug}.md`;
 
+const cardExportPayload = entity.cardData
+  ? JSON.stringify({
+      slug: entity.slug,
+      title: entity.title,
+      titleZh: entity.cardData.titleZh,
+      scenario: entity.cardData.scenario,
+      largeHanzi: entity.cardData.largeHanzi,
+      pinyinLine: entity.cardData.pinyinLine,
+      gb30240En: entity.cardData.gb30240En,
+      subNoteChinese: entity.cardData.subNoteChinese,
+      subNoteEn: entity.cardData.subNoteEn,
+      theme: entity.cardData.theme,
+      href: lp(`/cards/${entity.slug}/`),
+    })
+  : undefined;
+
 const showMobileBar = ['attractions', 'errors', 'documents', 'how-to-use', 'cards', 'cities'].includes(entity.collection);
 
 const jsonLd = {
@@ -63,11 +79,14 @@ const jsonLd = {
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
-        { label: `/${entity.collection}/`, href: lp('/explore/') },
-        { label: entity.title },
+        {
+          label: entity.collection === 'cards' ? (isZh ? '亮屏字卡大厅' : 'Cards Wall') : `/${entity.collection}/`,
+          href: lp(entity.collection === 'cards' ? '/cards/' : '/explore/'),
+        },
+        { label: isZh && entity.cardData ? entity.cardData.titleZh : entity.title },
       ]}
-      mobileBackHref={lp(`/${pillar.id}/`)}
-      mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
+      mobileBackHref={lp(entity.collection === 'cards' ? '/cards/' : `/${pillar.id}/`)}
+      mobileBackLabel={entity.collection === 'cards' ? (isZh ? '亮屏字卡大厅' : 'All Cards') : (isZh ? pillar.nameZh : pillar.name)}
     >
       <VerifyMetaBar
         slot="meta"
@@ -129,14 +148,21 @@ const jsonLd = {
 
     {/* FIRST-EYE VISUAL ENHANCEMENT FOR /cards/ */}
     {entity.cardData && (
-      <section class={`pe-showcard-preview pe-showcard-preview--${entity.cardData.theme}`} aria-label="Show-to-local card">
+      <section
+        class={`pe-showcard-preview pe-showcard-preview--${entity.cardData.theme}`}
+        aria-label="Show-to-local card"
+        data-pe-track-card={cardExportPayload}
+      >
         <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
           <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.08em;">
             {entity.cardData.scenario}
           </span>
-          <div style="display:flex;gap:0.45rem;">
+          <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
             <Button variant="secondary" size="sm" data-pe-speak={entity.cardData.largeHanzi}>
               🔊 {isZh ? '语音播报' : 'Speak Mandarin'}
+            </Button>
+            <Button variant="secondary" size="sm" data-pe-card-save-png={cardExportPayload}>
+              {isZh ? '📷 保存高清图到相册' : '📷 Save PNG to Photos'}
             </Button>
             <Button variant="primary" size="sm" commandfor="pe-fullscreen-card-dialog" command="show-modal">
               {isZh ? '一键全屏亮屏出示' : 'Fullscreen Show-to-Local Mode'}
@@ -185,9 +211,14 @@ const jsonLd = {
           </div>
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid rgb(255 255 255 / 0.25);padding-top:var(--space-3);">
             <span style="font-size:var(--text-sm);">{entity.cardData.gb30240En}</span>
-            <button type="button" class="btn btn--primary btn--sm" data-pe-speak={entity.cardData.largeHanzi}>
-              🔊 {isZh ? '朗读中文' : 'Play Audio'}
-            </button>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+              <button type="button" class="btn btn--secondary btn--sm" data-pe-card-save-png={cardExportPayload}>
+                {isZh ? '📷 存高清图' : '📷 Save PNG'}
+              </button>
+              <button type="button" class="btn btn--primary btn--sm" data-pe-speak={entity.cardData.largeHanzi}>
+                🔊 {isZh ? '朗读中文' : 'Play Audio'}
+              </button>
+            </div>
           </div>
         </dialog>
       </section>

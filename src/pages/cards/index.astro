@@ -1,0 +1,209 @@
+---
+/**
+ * /cards/ — Pocket Show-to-Local Fullscreen Card Wall (Zero-Bookmark Instant Access)
+ * - Auto-pins recently used cards from localStorage at the top
+ * - 4 scenario filters (All / Allergy & Food / Taxi & Station / Hotel & Tax / Emergency 120)
+ * - Every card supports 1-tap instant fullscreen dialog right from the wall + 1-tap Save HD PNG to Photos
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
+import Badge from '@ui/data-display/Badge.astro';
+import Button from '@ui/actions/Button.astro';
+import { getEntitiesByCollection } from '@data/paradigm-e/entities';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const cards = getEntitiesByCollection('cards');
+
+const categories = [
+  { id: 'all', label: isZh ? '全部字卡 (6)' : 'All Cards (6)' },
+  { id: 'allergy', label: isZh ? '过敏与忌口' : 'Allergy & Food' },
+  { id: 'taxi', label: isZh ? '打车与防走错站' : 'Taxi & Stations' },
+  { id: 'hotel', label: isZh ? '酒店与离境退税' : 'Hotel & Tax Refund' },
+  { id: 'emergency', label: isZh ? '110 / 120 急救' : '120 Emergency SOS' },
+];
+
+const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 'verified' | 'editorial' | 'standby' }> = {
+  allergy: { en: 'Allergy & Food', zh: '过敏与忌口', tone: 'danger' },
+  taxi: { en: 'Taxi & Station', zh: '打车与车站', tone: 'standby' },
+  hotel: { en: 'Hotel & Tax', zh: '酒店与退税', tone: 'editorial' },
+  emergency: { en: 'Emergency 120', zh: '120 急救', tone: 'danger' },
+};
+---
+<BaseShell
+  title={isZh ? '全屏亮屏出示字卡大厅（零收藏 3 秒直达）' : 'Show-to-Local Fullscreen Card Wall'}
+  description={isZh ? '打车防走错车站、防花生油过敏、护照入住、120 急救与离境退税高对比超大字亮屏卡，支持一键全屏与保存高清图片到手机相册。' : 'Instant high-contrast fullscreen bilingual cards for taxis, severe allergies, hotels, tax refund & 120 emergencies—save directly to Photos for offline use.'}
+  activePillar="visit"
+  persona="safety"
+>
+  <div class="container" style="padding-bottom:var(--space-8);" data-pe-card-wall>
+    <ResponsiveBreadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? '来华旅行' : 'Visit China', href: lp('/visit/') },
+        { label: isZh ? '亮屏字卡大厅' : 'Show-to-Local Cards' },
+      ]}
+      mobileBackHref={lp('/visit/')}
+      mobileBackLabel={isZh ? '来华旅行' : 'Visit China'}
+    >
+      <Badge slot="meta" tone="verified">{isZh ? '支持保存高清图到相册 · 断网可用' : 'Save HD PNG to Photos · Offline Ready'}</Badge>
+    </ResponsiveBreadcrumb>
+
+    <header style="max-width:54rem;margin-bottom:var(--space-5);">
+      <span class="eyebrow eyebrow--accent">
+        {isZh ? '零收藏现场救火 · Pocket Card Deck' : 'Zero-Bookmark Field Deck · Tools 12.2 & 12.4'}
+      </span>
+      <h1 style="margin-top:0.3rem;">
+        {isZh ? '全屏高对比亮屏出示字卡大厅' : 'Show-to-Local Fullscreen Card Wall'}
+      </h1>
+      <p class="archive-lead" style="margin-top:0.4rem;">
+        {isZh
+          ? '不用提前收藏网址：在任意页面点顶栏搜索框即可零打字直达急用卡；点击下方任意卡片直接全屏亮屏，或一键保存 1080×1920 高清图片到手机相册（没网也能 2 秒滑出），也可把本页「添加到手机主屏幕」。'
+          : 'No bookmarking needed: tap any card below to flash fullscreen immediately, save an HD 1080×1920 image straight to your phone Photos for zero-signal restaurants/subways, or Add to Home Screen.'}
+      </p>
+    </header>
+
+    {/* Auto-Pinned Recently Used Cards (Populated from localStorage) */}
+    <section
+      class="pe-side-card"
+      style="margin-bottom:var(--space-5);border-top:3px solid var(--accent-seal);"
+      data-pe-recent-cards-box
+      hidden
+      aria-label={isZh ? '最近出示过的字卡' : 'Recently used cards'}
+    >
+      <span class="eyebrow eyebrow--accent">{isZh ? '⚡ 你最近用过的字卡（自动置顶）' : '⚡ Recently Used Cards (Auto-Pinned)'}</span>
+      <div class="pe-mega-chips" style="margin-top:var(--space-3);" data-pe-recent-cards-list></div>
+    </section>
+
+    {/* 4 Scenario Filter Chips */}
+    <div class="pe-facet-group" role="group" aria-label={isZh ? '按现场场景筛选字卡' : 'Filter cards by scenario'} style="margin-bottom:var(--space-5);">
+      {categories.map((cat, idx) => (
+        <button
+          type="button"
+          class="pe-facet-chip"
+          aria-pressed={idx === 0 ? 'true' : 'false'}
+          data-pe-card-filter={cat.id}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    {/* Card Deck Grid */}
+    <section style="display:grid;grid-template-columns:repeat(auto-fill,minmax(20rem,1fr));gap:var(--space-4);">
+      {cards.map((card) => {
+        const cd = card.cardData!;
+        const meta = catBadgeMap[cd.category] ?? catBadgeMap.allergy;
+        const payload = JSON.stringify({
+          slug: card.slug,
+          title: card.title,
+          titleZh: cd.titleZh,
+          scenario: cd.scenario,
+          largeHanzi: cd.largeHanzi,
+          pinyinLine: cd.pinyinLine,
+          gb30240En: cd.gb30240En,
+          subNoteChinese: cd.subNoteChinese,
+          subNoteEn: cd.subNoteEn,
+          theme: cd.theme,
+          href: lp(`/cards/${card.slug}/`),
+        });
+        return (
+          <article
+            class="pe-side-card"
+            data-pe-card-item={cd.category}
+            style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-4);"
+          >
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.5rem;">
+                <Badge tone={meta.tone}>{isZh ? meta.zh : meta.en}</Badge>
+                <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">
+                  {cd.theme === 'yellow-black' ? (isZh ? '黑底亮黄警示' : 'Yellow/Black SOS') : (isZh ? '黑底纯白高对比' : 'High-Contrast')}
+                </span>
+              </div>
+
+              <h2 style="font-family:var(--font-display);font-size:1.2rem;line-height:1.3;">
+                <a href={lp(`/cards/${card.slug}/`)} class="text-link">
+                  {isZh ? cd.titleZh : card.title}
+                </a>
+              </h2>
+
+              <div
+                class={`pe-showcard-preview pe-showcard-preview--${cd.theme}`}
+                style="margin-block:var(--space-3) var(--space-2);padding:var(--space-3) var(--space-4);"
+              >
+                <p style="font-size:1.05rem;font-weight:700;line-height:1.45;">
+                  {cd.largeHanzi}
+                </p>
+              </div>
+              <p style="font-size:var(--text-xs);color:var(--ink-secondary);line-height:1.5;">
+                {isZh ? card.taglineZh : card.tagline}
+              </p>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.45rem;padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
+              <Button
+                variant="primary"
+                size="sm"
+                data-pe-wall-launch={payload}
+              >
+                {isZh ? '⚡ 立即全屏亮屏' : '⚡ Flash Fullscreen'}
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                data-pe-card-save-png={payload}
+              >
+                {isZh ? '📷 存高清图到相册' : '📷 Save PNG'}
+              </Button>
+              <Button href={lp(`/cards/${card.slug}/`)} variant="ghost" size="sm">
+                {isZh ? '详情 →' : 'Guide →'}
+              </Button>
+            </div>
+          </article>
+        );
+      })}
+    </section>
+
+    {/* Shared Instant Fullscreen Modal on /cards/ Wall */}
+    <dialog
+      id="pe-wall-fullscreen-dialog"
+      closedby="any"
+      class="pe-showcard-fullscreen-dialog pe-showcard-preview--yellow-black"
+      aria-label="Fullscreen Show-to-Local Card"
+      data-pe-wall-dialog
+    >
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+        <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.1em;" data-wall-scenario>
+          CHINAWAO · SHOW CARD
+        </span>
+        <button
+          type="button"
+          class="btn btn--sm"
+          commandfor="pe-wall-fullscreen-dialog"
+          command="close"
+          autofocus
+        >
+          {isZh ? '退出全屏 (Esc)' : 'Exit Fullscreen (Esc)'}
+        </button>
+      </div>
+      <div>
+        <p style="font-size:clamp(2rem, 4.5vw, 4rem);line-height:1.3;font-weight:800;" data-wall-hanzi></p>
+        <p style="margin-top:var(--space-4);font-family:var(--font-mono);font-size:clamp(1rem, 1.8vw, 1.35rem);" data-wall-pinyin></p>
+        <p style="margin-top:var(--space-3);font-size:var(--text-base);opacity:0.9;" data-wall-subzh></p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid rgb(255 255 255 / 0.25);padding-top:var(--space-3);">
+        <span style="font-size:var(--text-sm);max-width:46ch;" data-wall-en></span>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          <button type="button" class="btn btn--secondary btn--sm" data-wall-save-png>
+            {isZh ? '📷 保存高清图到相册' : '📷 Save PNG to Photos'}
+          </button>
+          <button type="button" class="btn btn--primary btn--sm" data-wall-speak>
+            🔊 {isZh ? '语音播报' : 'Play Audio'}
+          </button>
+        </div>
+      </div>
+    </dialog>
+  </div>
+</BaseShell>

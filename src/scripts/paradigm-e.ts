@@ -123,6 +123,7 @@ function initCommandPalette(): void {
   const input = dialog.querySelector<HTMLInputElement>('[data-pe-cmd-input]');
   const rows = Array.from(dialog.querySelectorAll<HTMLAnchorElement>('[data-pe-cmd-item]'));
   const emptyMsg = dialog.querySelector<HTMLElement>('[data-pe-cmd-empty]');
+  const quickCardsBar = dialog.querySelector<HTMLElement>('[data-pe-cmd-quick-cards]');
   const hiddenQ = dialog.querySelector<HTMLInputElement>('[data-pe-cmd-hidden-q]');
   const fallbackForm = dialog.querySelector<HTMLFormElement>('[data-pe-cmd-fallback-form]');
 
@@ -141,6 +142,7 @@ function initCommandPalette(): void {
   const filter = () => {
     const q = (input?.value ?? '').trim().toLowerCase();
     if (hiddenQ) hiddenQ.value = input?.value ?? '';
+    if (quickCardsBar) quickCardsBar.hidden = q.length > 0;
     let visible = 0;
     rows.forEach((row) => {
       const hay = row.dataset.search ?? '';
@@ -654,3 +656,250 @@ initTimezoneCapsules();
 initStackChecklist();
 initMultiFacetExplorer();
 initParadigmETools();
+
+/* 12. Zero-Bookmark Card Deck: Canvas HD PNG Export + Recent Cards Auto-Pin + Instant Wall Fullscreen */
+interface CardExportPayload {
+  slug: string;
+  title: string;
+  titleZh: string;
+  scenario: string;
+  largeHanzi: string;
+  pinyinLine: string;
+  gb30240En: string;
+  subNoteChinese: string;
+  subNoteEn: string;
+  theme: 'yellow-black' | 'white-black';
+  href: string;
+}
+
+const RECENT_CARDS_KEY = 'cw-recent-cards';
+
+function readRecentCards(): CardExportPayload[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(RECENT_CARDS_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function recordRecentCard(card: CardExportPayload): void {
+  try {
+    const existing = readRecentCards().filter((c) => c.slug !== card.slug);
+    existing.unshift(card);
+    localStorage.setItem(RECENT_CARDS_KEY, JSON.stringify(existing.slice(0, 4)));
+  } catch {}
+}
+
+function wrapCanvasText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  isCjk: boolean,
+): string[] {
+  const tokens = isCjk ? Array.from(text) : text.split(/\s+/);
+  const lines: string[] = [];
+  let current = '';
+  for (const token of tokens) {
+    const sep = isCjk || !current ? '' : ' ';
+    const candidate = `${current}${sep}${token}`;
+    if (ctx.measureText(candidate).width > maxWidth && current) {
+      lines.push(current);
+      current = token;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+function exportCardAsPng(card: CardExportPayload): void {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const isYellow = card.theme === 'yellow-black';
+  const bg = isYellow ? '#0E0E0E' : '#111111';
+  const fg = isYellow ? '#FFE135' : '#FFFFFF';
+  const subFg = isYellow ? '#F6E79A' : '#D6D0C8';
+  const accent = isYellow ? '#FFE135' : '#C93B2B';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Top architectural accent bar
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, canvas.width, 22);
+
+  // Header brand + scenario
+  ctx.fillStyle = subFg;
+  ctx.font = '600 32px monospace';
+  ctx.fillText(`CHINAWAO · ${card.scenario}`, 80, 120);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(80, 162);
+  ctx.lineTo(1000, 162);
+  ctx.stroke();
+
+  // Giant High-Contrast Chinese Headline
+  ctx.fillStyle = fg;
+  ctx.font = '700 88px sans-serif';
+  const hanziLines = wrapCanvasText(ctx, card.largeHanzi, 920, true);
+  let y = 320;
+  for (const line of hanziLines.slice(0, 8)) {
+    ctx.fillText(line, 80, y);
+    y += 126;
+  }
+
+  // Pinyin
+  y += 40;
+  ctx.fillStyle = subFg;
+  ctx.font = '500 36px monospace';
+  const pinyinLines = wrapCanvasText(ctx, card.pinyinLine, 920, false);
+  for (const line of pinyinLines.slice(0, 4)) {
+    ctx.fillText(line, 80, y);
+    y += 52;
+  }
+
+  // Bottom safe/guidance panel
+  const footY = 1480;
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(80, footY, 920, 320);
+
+  ctx.fillStyle = fg;
+  ctx.font = '700 36px sans-serif';
+  ctx.fillText(card.subNoteChinese, 116, footY + 74);
+
+  ctx.fillStyle = subFg;
+  ctx.font = '400 30px sans-serif';
+  const enLines = wrapCanvasText(ctx, card.gb30240En, 848, false);
+  let ey = footY + 140;
+  for (const line of enLines.slice(0, 4)) {
+    ctx.fillText(line, 116, ey);
+    ey += 44;
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '500 24px monospace';
+  ctx.fillText('chinawao.com/cards/ · Offline Ready Photo Card', 80, 1865);
+
+  recordRecentCard(card);
+  const link = document.createElement('a');
+  link.download = `chinawao-card-${card.slug}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast(isZh() ? '已生成高清亮屏字卡 PNG（可直接存相册离线出示）' : 'Saved HD Show Card PNG — ready offline in Photos!');
+}
+
+function initCardDeck(): void {
+  // Track visits on single /cards/[slug]/ pages automatically
+  const trackedEl = document.querySelector<HTMLElement>('[data-pe-track-card]');
+  if (trackedEl?.dataset.peTrackCard) {
+    try {
+      recordRecentCard(JSON.parse(trackedEl.dataset.peTrackCard));
+    } catch {}
+  }
+
+  // Render auto-pinned recently used cards on /cards/ wall & Command Palette
+  const recent = readRecentCards();
+  const recentBox = document.querySelector<HTMLElement>('[data-pe-recent-cards-box]');
+  const recentList = document.querySelector<HTMLElement>('[data-pe-recent-cards-list]');
+  if (recent.length > 0 && recentBox && recentList) {
+    recentBox.hidden = false;
+    recentList.innerHTML = recent
+      .map(
+        (c) =>
+          `<a href="${c.href}" class="pe-mega-chip" style="border-color:var(--accent-seal);font-weight:600;">⚡ ${
+            isZh() ? c.titleZh : c.title
+          }</a>`,
+      )
+      .join('');
+  }
+
+  const cmdQuickList = document.querySelector<HTMLElement>('[data-pe-cmd-quick-list]');
+  if (recent.length > 0 && cmdQuickList) {
+    const latest = recent[0];
+    if (!cmdQuickList.querySelector(`[data-recent-slug="${latest.slug}"]`)) {
+      const a = document.createElement('a');
+      a.href = latest.href;
+      a.className = 'pe-mega-chip';
+      a.dataset.recentSlug = latest.slug;
+      a.style.borderColor = 'var(--accent-seal)';
+      a.style.fontWeight = '700';
+      a.textContent = `${isZh() ? '最近用过：' : 'Recent: '}${isZh() ? latest.titleZh : latest.title}`;
+      cmdQuickList.prepend(a);
+    }
+  }
+
+  // Global PNG export button handler
+  document.addEventListener('click', (event) => {
+    const btn = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-pe-card-save-png]');
+    if (!btn?.dataset.peCardSavePng) return;
+    try {
+      exportCardAsPng(JSON.parse(btn.dataset.peCardSavePng));
+    } catch {}
+  });
+
+  // /cards/ Wall Filter & Shared Fullscreen Modal
+  const wall = document.querySelector<HTMLElement>('[data-pe-card-wall]');
+  if (!wall) return;
+
+  const filterBtns = Array.from(wall.querySelectorAll<HTMLButtonElement>('[data-pe-card-filter]'));
+  const cardItems = Array.from(wall.querySelectorAll<HTMLElement>('[data-pe-card-item]'));
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.peCardFilter ?? 'all';
+      filterBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cardItems.forEach((item) => {
+        item.hidden = cat !== 'all' && item.dataset.peCardItem !== cat;
+      });
+    });
+  });
+
+  const modal = wall.querySelector<HTMLDialogElement>('[data-pe-wall-dialog]');
+  if (!modal) return;
+  let activeCard: CardExportPayload | null = null;
+
+  wall.addEventListener('click', (event) => {
+    const launchBtn = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-pe-wall-launch]');
+    if (!launchBtn?.dataset.peWallLaunch) return;
+    try {
+      const data: CardExportPayload = JSON.parse(launchBtn.dataset.peWallLaunch);
+      activeCard = data;
+      recordRecentCard(data);
+      modal.classList.remove('pe-showcard-preview--yellow-black', 'pe-showcard-preview--white-black');
+      modal.classList.add(`pe-showcard-preview--${data.theme}`);
+      const set = (sel: string, txt: string) => {
+        const el = modal.querySelector<HTMLElement>(sel);
+        if (el) el.textContent = txt;
+      };
+      set('[data-wall-scenario]', `CHINAWAO · ${data.scenario}`);
+      set('[data-wall-hanzi]', data.largeHanzi);
+      set('[data-wall-pinyin]', data.pinyinLine);
+      set('[data-wall-subzh]', data.subNoteChinese);
+      set('[data-wall-en]', data.gb30240En);
+      modal.showModal();
+    } catch {}
+  });
+
+  modal.querySelector<HTMLButtonElement>('[data-wall-speak]')?.addEventListener('click', () => {
+    if (!activeCard || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(activeCard.largeHanzi);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.88;
+    window.speechSynthesis.speak(utter);
+  });
+
+  modal.querySelector<HTMLButtonElement>('[data-wall-save-png]')?.addEventListener('click', () => {
+    if (activeCard) exportCardAsPng(activeCard);
+  });
+}
+
+initCardDeck();

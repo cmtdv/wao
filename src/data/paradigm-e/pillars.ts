@@ -432,7 +432,7 @@ export const PILLARS: PillarConfig[] = [
         { label: '/errors/ App Rescue', labelZh: '/errors/ 报错救火', href: '/errors/wechat-restricted/' },
         { label: '/documents/ Forms', labelZh: '/documents/ 表格图解', href: '/documents/arrival-card/' },
         { label: '/how-to-use/ Devices', labelZh: '/how-to-use/ 设备图解', href: '/how-to-use/hotel-washing-machine/' },
-        { label: '/cards/ Show-to-Local', labelZh: '/cards/ 亮屏字卡', href: '/cards/taxi-beijing-qinghe/' },
+        { label: '/cards/ Show-to-Local', labelZh: '/cards/ 亮屏字卡大厅', href: '/cards/' },
         { label: '/compare/ Verdicts', labelZh: '/compare/ 决策横评', href: '/compare/amap-vs-apple-maps/' },
         { label: '/stacks/ Trip Kits', labelZh: '/stacks/ 抄作业包', href: '/stacks/first-time-china-10-day/' },
       ],
