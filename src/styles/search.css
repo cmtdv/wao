@@ -82,28 +82,28 @@
   }
 
   .error-banner {
-    padding: clamp(2rem, 5vw, 4rem);
-    background: var(--secondary-solid);
-    color: var(--secondary-ink);
-    border-bottom: 3px solid var(--accent-gold);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem) 0;
+    background: transparent;
+    color: var(--ink-primary);
+    border-bottom: 1px solid var(--rule-strong);
   }
 
   .error-banner .eyebrow {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   .error-banner .eyebrow--accent::before {
-    background: var(--accent-seal-on-dark);
+    background: var(--accent-seal);
   }
 
   .error-banner h1 {
-    margin-top: var(--space-4);
-    color: var(--secondary-ink);
+    margin-top: var(--space-2);
+    color: var(--ink-primary);
     max-width: 18ch;
   }
 
   .error-banner .archive-lead {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-secondary);
   }
 
   .error-actions {
@@ -115,13 +115,13 @@
   }
 
   .error-banner .editorial-link {
-    color: var(--secondary-ink);
-    border-bottom-color: var(--secondary-rule-strong);
+    color: var(--ink-primary);
+    border-bottom-color: var(--rule-strong);
   }
 
   .error-banner .editorial-link:hover {
-    color: var(--accent-seal-on-dark);
-    border-bottom-color: var(--accent-seal-on-dark);
+    color: var(--accent-seal);
+    border-bottom-color: var(--accent-seal);
   }
 
   @media (max-width: 560px) {

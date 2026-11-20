@@ -252,11 +252,11 @@ function initChinaLayerMap(): void {
       pins.forEach((p) => p.setAttribute('aria-pressed', String(p === pin)));
       try {
         const data = JSON.parse(pin.dataset.cityPayload || '{}');
-        if (mcaEl) mcaEl.textContent = `MCA ${data.mcaCode}`;
+        if (mcaEl) mcaEl.textContent = data.mcaCode;
         if (clusterEl) clusterEl.textContent = data.cluster;
-        if (titleEl) titleEl.textContent = `${data.title} · ${data.chineseName}`;
+        if (titleEl) titleEl.textContent = data.title;
         if (taglineEl) taglineEl.textContent = data.tagline;
-        if (portsEl) portsEl.textContent = `240h: ${data.ports240h}`;
+        if (portsEl) portsEl.textContent = isZh() ? `口岸：${data.ports240h}` : `240h: ${data.ports240h}`;
         if (ctaEl) ctaEl.href = data.href;
         if (kvGrid && Array.isArray(data.quick)) {
           kvGrid.innerHTML = data.quick
@@ -342,7 +342,7 @@ function initStackChecklist(): void {
     a.download = `chinawao-${slug}.txt`;
     a.click();
     URL.revokeObjectURL(a.href);
-    showToast('Exported offline checklist (.txt)');
+    showToast(isZh() ? '已导出离线清单' : 'Exported offline checklist (.txt)');
   });
 }
 
@@ -431,9 +431,14 @@ function initMultiFacetExplorer(): void {
 
 /* 11. Deterministic & Micro Tool Calculators (GB 32100-2015 USCC, Points/IIT, Jin/Size, Wan/Yi, Tattoo, Name) */
 function validateUSCC(raw: string): { valid: boolean; reason: string; authority: string } {
+  const zh = isZh();
   const code = raw.trim().toUpperCase();
   if (code.length !== 18) {
-    return { valid: false, reason: `Length is ${code.length} (must be exactly 18 characters).`, authority: '—' };
+    return {
+      valid: false,
+      reason: zh ? `当前长度为 ${code.length} 位（须为 18 位）。` : `Length is ${code.length} (must be exactly 18 characters).`,
+      authority: '—',
+    };
   }
   const charset = '0123456789ABCDEFGHJKLMNPQRTUWXY';
   const weights = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];
@@ -441,22 +446,46 @@ function validateUSCC(raw: string): { valid: boolean; reason: string; authority:
   for (let i = 0; i < 17; i++) {
     const idx = charset.indexOf(code[i]);
     if (idx === -1) {
-      return { valid: false, reason: `Invalid character "${code[i]}" at position ${i + 1} (I, O, Z, S, V are forbidden).`, authority: '—' };
+      return {
+        valid: false,
+        reason: zh
+          ? `第 ${i + 1} 位字符「${code[i]}」无效（不含 I、O、Z、S、V）。`
+          : `Invalid character "${code[i]}" at position ${i + 1} (I, O, Z, S, V are forbidden).`,
+        authority: '—',
+      };
     }
     sum += idx * weights[i];
   }
   const expectedIdx = (31 - (sum % 31)) % 31;
   const expectedChar = charset[expectedIdx];
-  const authorities: Record<string, string> = {
-    '9': 'SAMR Market Regulation (Enterprise / Factory)',
-    '1': 'Institutional Organization (Public Body)',
-    '5': 'Civil Affairs (NGO / Association)',
-  };
-  const authority = authorities[code[0]] || `Registration Dept Code "${code[0]}"`;
+  const authorities: Record<string, string> = zh
+    ? {
+        '9': '市场监督管理部门（企业 / 工厂）',
+        '1': '机构编制部门（事业单位）',
+        '5': '民政部门（社会组织）',
+      }
+    : {
+        '9': 'SAMR Market Regulation (Enterprise / Factory)',
+        '1': 'Institutional Organization (Public Body)',
+        '5': 'Civil Affairs (NGO / Association)',
+      };
+  const authority = authorities[code[0]] || (zh ? `登记管理部门代码「${code[0]}」` : `Registration Dept Code "${code[0]}"`);
   if (code[17] !== expectedChar) {
-    return { valid: false, reason: `Checksum mismatch: expected final char "${expectedChar}", got "${code[17]}".`, authority };
+    return {
+      valid: false,
+      reason: zh
+        ? `校验码不匹配：末位应为「${expectedChar}」，当前为「${code[17]}」。`
+        : `Checksum mismatch: expected final char "${expectedChar}", got "${code[17]}".`,
+      authority,
+    };
   }
-  return { valid: true, reason: `Valid GB 32100-2015 USCC checksum (Region Prefix ${code.slice(2, 8)}).`, authority };
+  return {
+    valid: true,
+    reason: zh
+      ? `符合 GB 32100-2015 校验规则（登记区划前 6 位 ${code.slice(2, 8)}）。`
+      : `Valid GB 32100-2015 USCC checksum (Region Prefix ${code.slice(2, 8)}).`,
+    authority,
+  };
 }
 
 function initParadigmETools(): void {
@@ -563,52 +592,68 @@ function initParadigmETools(): void {
     calc();
   });
 
-  // Hanzi Tattoo Red-Flag Checker (M3)
+  // Hanzi Tattoo Red-Flag Checker
   document.querySelectorAll<HTMLElement>('[data-pe-tattoo-calc]').forEach((root) => {
     const input = root.querySelector<HTMLInputElement>('[data-tattoo-input]');
     const out = root.querySelector<HTMLElement>('[data-tattoo-output]');
-    const traps: Record<string, string> = {
+    const trapsEn: Record<string, string> = {
       '免费': 'RED FLAG: 免费 means "Free of charge" (not freedom)! Use 自由 (zìyóu) for Freedom.',
       '自由': 'SAFE & NATURAL: 自由 (zìyóu) authentically means Freedom/Liberty.',
       '勇敢': 'SAFE & NATURAL: 勇敢 (yǒnggǎn) means Brave/Courageous.',
       '水': 'CAUTION: Standalone 水 (water) can read as slang for "watered-down/flaky." Consider 若水 (like water, from Laozi).',
       '爱': 'SAFE: 爱 (Simplified) / 愛 (Traditional) means Love—pair with calligraphy brushwork rather than default computer Songti font.',
     };
+    const trapsZh: Record<string, string> = {
+      '免费': '雷区提醒：「免费」是不要钱的意思，并非「自由」。表达自由应使用「自由」。',
+      '自由': '自然得体：「自由」词义准确，适合纹身或印章使用。',
+      '勇敢': '自然得体：「勇敢」词义准确，表达清晰。',
+      '水': '谨慎使用：单字「水」在口语中有「水平不高、敷衍」之意，建议改用「若水」（出自《道德经》上善若水）。',
+      '爱': '词义准确：建议使用手写书法字体，避免直接照搬电脑默认宋体字。',
+    };
     const check = () => {
       if (!input || !out) return;
+      const zh = isZh();
       const v = input.value.trim();
       if (!v) {
-        out.textContent = 'Enter a Hanzi phrase (e.g. 免费, 自由, 勇敢, 水) to check cultural meaning.';
+        out.textContent = zh
+          ? '请输入待检测的汉字词组（例如：免费、自由、勇敢、水）。'
+          : 'Enter a Hanzi phrase (e.g. 免费, 自由, 勇敢, 水) to check cultural meaning.';
         return;
       }
-      if (traps[v]) {
-        out.innerHTML = `<strong>${traps[v]}</strong>`;
+      const dict = zh ? trapsZh : trapsEn;
+      if (dict[v]) {
+        out.innerHTML = `<strong>${dict[v]}</strong>`;
       } else {
-        out.innerHTML = `<strong>Audit Tip for “${v.replace(/</g, '&lt;')}”:</strong> Verify with a native speaker that it is an idiomatic 2- or 4-character expression rather than a word-for-word English lookup, and never ink default system print fonts (SimSun/MingLiU).`;
+        out.innerHTML = zh
+          ? `<strong>「${v.replace(/</g, '&lt;')}」核对建议：</strong>请向中文母语者确认是否为自然成语或常用双字/四字词，避免逐字机翻，并选用书法字体而非系统默认宋体。`
+          : `<strong>Audit Tip for “${v.replace(/</g, '&lt;')}”:</strong> Verify with a native speaker that it is an idiomatic 2- or 4-character expression rather than a word-for-word English lookup, and never ink default system print fonts.`;
       }
     };
     input?.addEventListener('input', check);
     check();
   });
 
-  // Chinese Name Studio (M4)
+  // Chinese Name Studio
   document.querySelectorAll<HTMLElement>('[data-pe-name-calc]').forEach((root) => {
     const input = root.querySelector<HTMLInputElement>('[data-name-input]');
     const vibeIn = root.querySelector<HTMLSelectElement>('[data-name-vibe]');
     const out = root.querySelector<HTMLElement>('[data-name-output]');
     const surnames = ['林 (Lín)', '陆 (Lù)', '苏 (Sū)', '安 (Ān)', '沈 (Shěn)', '顾 (Gù)'];
-    const givenByVibe: Record<string, [string, string, string]> = {
-      literary: ['清远 (Qīngyuǎn)', 'Clear & far-reaching vision', 'Classical poetry cadence'],
-      modern: ['星辰 (Xīngchén)', 'Stars & open horizon', 'Crisp modern tone'],
-      warm: ['知行 (Zhīxíng)', 'Unity of knowledge and action', 'Grounded Neo-Confucian ideal'],
+    const givenByVibe: Record<string, [string, string, string, string]> = {
+      literary: ['清远 (Qīngyuǎn)', 'Clear & far-reaching vision', '清雅致远，取古典诗词意境', 'Classical poetry cadence'],
+      modern: ['星辰 (Xīngchén)', 'Stars & open horizon', '星辰辽阔，朗朗上口', 'Crisp modern tone'],
+      warm: ['知行 (Zhīxíng)', 'Unity of knowledge and action', '知行合一，温润沉稳', 'Grounded philosophy'],
     };
     const render = () => {
       if (!out) return;
+      const zh = isZh();
       const raw = (input?.value || 'Alex').trim();
       const idx = raw.length % surnames.length;
       const vibe = vibeIn?.value || 'literary';
-      const [given, meaning, style] = givenByVibe[vibe] || givenByVibe.literary;
-      out.innerHTML = `<strong style="font-size:1.35rem;">${surnames[idx].split(' ')[0]}${given.split(' ')[0]}</strong> · ${surnames[idx]} ${given}<br/><span style="color:var(--ink-secondary);font-size:var(--text-sm);">${meaning} (${style})</span>`;
+      const [given, meaningEn, meaningZh, styleEn] = givenByVibe[vibe] || givenByVibe.literary;
+      out.innerHTML = zh
+        ? `<strong style="font-size:1.35rem;">${surnames[idx].split(' ')[0]}${given.split(' ')[0]}</strong><br/><span style="color:var(--ink-secondary);font-size:var(--text-sm);">${meaningZh}</span>`
+        : `<strong style="font-size:1.35rem;">${surnames[idx].split(' ')[0]}${given.split(' ')[0]}</strong> · ${surnames[idx]} ${given}<br/><span style="color:var(--ink-secondary);font-size:var(--text-sm);">${meaningEn} (${styleEn})</span>`;
     };
     root.addEventListener('input', render);
     root.addEventListener('change', render);
@@ -815,7 +860,7 @@ function initCardDeck(): void {
     recentList.innerHTML = recent
       .map(
         (c) =>
-          `<a href="${c.href}" class="pe-mega-chip" style="border-color:var(--accent-seal);font-weight:600;">⚡ ${
+          `<a href="${c.href}" class="pe-mega-chip" style="border-color:var(--accent-seal);font-weight:600;">${
             isZh() ? c.titleZh : c.title
           }</a>`,
       )

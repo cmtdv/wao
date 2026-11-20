@@ -63,9 +63,8 @@ const accessOptions = isZh
       <h1>{strings.directory.title}</h1>
       <p class="archive-lead">{strings.directory.lead}</p>
       <div class="portal-meta-strip">
-        <span><strong>{entries.length}</strong> {isZh ? '个精选官方门户' : 'Featured Official Portals'}</span>
-        <span><strong>48</strong> {isZh ? '项仓库已核验 OKF 条目' : 'Total Verified OKF Entries in Repo'}</span>
-        <span><strong>{isZh ? '严格过滤' : 'Strict Filter'}</strong> {isZh ? '零商业中介与引流软文' : 'Zero Commercial Middlemen'}</span>
+        <span><strong>{entries.length}</strong> {isZh ? '个官方门户入口' : 'Official Portals'}</span>
+        <span>{isZh ? '仅收录政府与公共服务官方源' : 'Government & Public Service Portals Only'}</span>
       </div>
     </div>
 
@@ -133,7 +132,7 @@ const accessOptions = isZh
         {isZh ? `共展示 ${entries.length} 个官方门户` : `Showing ${entries.length} official portals`}
       </span>
       <span style="display:inline-flex;align-items:center;gap:0.45rem;">
-        <span>{isZh ? '均核验自 ChinaWao OKF 官方台账' : 'Verified against ChinaWao OKF Registry'}</span>
+        <span>{isZh ? '全部条目经人工核验' : 'Manually verified official links'}</span>
         <Tooltip id="tip-waf-standby" label={isZh ? '什么是 WAF 官方备用源？' : 'About WAF-Protected Standby portals'}>
           {isZh ? (
             <>

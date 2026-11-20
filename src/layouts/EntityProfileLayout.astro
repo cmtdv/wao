@@ -51,6 +51,21 @@ const cardExportPayload = entity.cardData
     })
   : undefined;
 
+const COLLECTION_LABELS: Record<string, { en: string; zh: string }> = {
+  cities: { en: 'Cities', zh: '城市指南' },
+  attractions: { en: 'Attractions', zh: '热门景点' },
+  'in-china': { en: 'Apps in China', zh: '西方应用替代' },
+  errors: { en: 'Error Rescue', zh: '应用报错救火' },
+  documents: { en: 'Official Forms', zh: '官方表格图解' },
+  'how-to-use': { en: 'Device Guides', zh: '设备操作图解' },
+  cards: { en: 'Show Cards', zh: '亮屏字卡库' },
+  compliance: { en: 'Compliance', zh: '合规核验' },
+};
+
+const collectionLabel = COLLECTION_LABELS[entity.collection]
+  ? (isZh ? COLLECTION_LABELS[entity.collection].zh : COLLECTION_LABELS[entity.collection].en)
+  : entity.collection;
+
 const showMobileBar = ['attractions', 'errors', 'documents', 'how-to-use', 'cards', 'cities'].includes(entity.collection);
 
 const jsonLd = {
@@ -80,13 +95,13 @@ const jsonLd = {
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
         {
-          label: entity.collection === 'cards' ? (isZh ? '亮屏字卡大厅' : 'Cards Wall') : `/${entity.collection}/`,
+          label: collectionLabel,
           href: lp(entity.collection === 'cards' ? '/cards/' : '/explore/'),
         },
-        { label: isZh && entity.cardData ? entity.cardData.titleZh : entity.title },
+        { label: isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title) },
       ]}
       mobileBackHref={lp(entity.collection === 'cards' ? '/cards/' : `/${pillar.id}/`)}
-      mobileBackLabel={entity.collection === 'cards' ? (isZh ? '亮屏字卡大厅' : 'All Cards') : (isZh ? pillar.nameZh : pillar.name)}
+      mobileBackLabel={entity.collection === 'cards' ? (isZh ? '亮屏字卡库' : 'All Cards') : (isZh ? pillar.nameZh : pillar.name)}
     >
       <VerifyMetaBar
         slot="meta"
@@ -100,15 +115,15 @@ const jsonLd = {
     {/* LAYER 1: Hero Identity Card */}
     <header class="pe-entity-hero">
       <div class="pe-entity-name-row">
-        <h1>{entity.title}</h1>
-        <span class="pe-entity-hanzi">{entity.chineseName}</span>
+        <h1>{isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title)}</h1>
+        {!isZh && <span class="pe-entity-hanzi">{entity.chineseName}</span>}
         <button
           type="button"
           class="pe-mega-chip"
           data-pe-speak={entity.chineseName}
-          aria-label={`Play pronunciation for ${entity.chineseName}`}
+          aria-label={isZh ? `朗读 ${entity.chineseName}` : `Play pronunciation for ${entity.chineseName}`}
         >
-          🔊 {entity.pinyin}
+          {isZh ? '朗读发音' : entity.pinyin}
         </button>
       </div>
 
@@ -236,7 +251,7 @@ const jsonLd = {
     )}
 
     {/* LAYER 2: Deterministic Quick Specs Bar (JSON Read-Only) */}
-    <section class="pe-specs-bar" aria-label={isZh ? '确定性硬参数速览' : 'Deterministic Quick Specs'}>
+    <section class="pe-specs-bar" aria-label={isZh ? '核心参数速览' : 'Quick Specs'}>
       {entity.quickSpecs.map((spec) => (
         <div class="pe-fact-slot">
           <span class="pe-fact-slot-label">{spec.label}</span>
@@ -252,40 +267,48 @@ const jsonLd = {
       <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-5);">
         <div class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
           <div>
-            <span class="eyebrow eyebrow--accent">Tool 12.3 · Timezone Drop Converter</span>
-            <p style="margin-top:0.25rem;font-size:var(--text-sm);">
-              Tickets release <strong>{entity.attractionData.releaseDaysAhead} days ahead at {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} Beijing Time</strong> → Your local time:{' '}
+            <p style="font-size:var(--text-sm);">
+              {isZh ? (
+                <>
+                  提前 <strong>{entity.attractionData.releaseDaysAhead} 天 北京时间 {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')}</strong> 放票 → 您所在地时间：{' '}
+                </>
+              ) : (
+                <>
+                  Tickets release <strong>{entity.attractionData.releaseDaysAhead} days ahead at {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} Beijing Time</strong> → Your local time:{' '}
+                </>
+              )}
               <Badge tone="verified" data-pe-bjt-hour={entity.attractionData.releaseBjtHour} data-pe-bjt-minute={entity.attractionData.releaseBjtMinute}>
-                Calculating…
+                {isZh ? '换算中…' : 'Calculating…'}
               </Badge>
             </p>
             <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.25rem;">
-              Stamina: {entity.attractionData.staminaRating} · {entity.attractionData.mondayClosed ? 'CLOSED MONDAYS' : 'Open Mondays'}
+              {isZh
+                ? `体力强度：${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? '周一闭馆' : '周一正常开放'}`
+                : `Stamina: ${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? 'Closed Mondays' : 'Open Mondays'}`}
             </p>
           </div>
           <Button href={lp('/tools/ticket-calendar/')} variant="secondary" size="sm">
-            {isZh ? '打开完整放票日历' : 'Open Full Calendar'}
+            {isZh ? '放票日历' : 'Ticket Calendar'}
           </Button>
         </div>
 
-        <Alert tone="danger" title={isZh ? '同名防走错车站/落客警示' : 'Station & Drop-Off Trap Alert'}>
+        <Alert tone="danger" title={isZh ? '车站与落客提醒' : 'Station & Drop-Off Alert'}>
           {entity.attractionData.wrongStationAlert}
         </Alert>
       </section>
     )}
 
-    {/* COMPLIANCE DUAL-COLUMN WAF VERIFICATION DESK */}
+    {/* COMPLIANCE DUAL-COLUMN VERIFICATION DESK */}
     {entity.complianceData && (
-      <section class="pe-dual-desk" aria-label={isZh ? '双栏官方核验引导台' : 'Dual-Column Official WAF Verification Desk'}>
+      <section class="pe-dual-desk" aria-label={isZh ? '官方核验台' : 'Official Verification Desk'}>
         <div class="pe-side-card" data-pe-uscc-root>
-          <span class="eyebrow eyebrow--accent">Left Column · Offline Validator & Chinese Term Mapper</span>
-          <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
-            {isZh ? '18 位 USCC 校验与中文监管检索词生成' : '18-Digit USCC Checksum & Chinese Regulatory Queries'}
+          <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
+            {isZh ? '18 位 USCC 校验与中文检索词' : '18-Digit USCC Checksum & Chinese Regulatory Queries'}
           </h2>
           {entity.complianceData.sampleUscc && (
             <div style="margin-bottom:var(--space-4);">
               <label for="compliance-uscc" class="t-label" style="display:block;margin-bottom:0.35rem;">
-                Test 18-Digit USCC (GB 32100-2015)
+                {isZh ? '输入 18 位统一社会信用代码（GB 32100-2015）' : '18-Digit USCC (GB 32100-2015)'}
               </label>
               <input
                 id="compliance-uscc"
@@ -299,15 +322,15 @@ const jsonLd = {
               <div data-pe-uscc-output style="margin-top:0.5rem;padding:0.65rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);"></div>
             </div>
           )}
-          <span class="pe-mega-col-title">{isZh ? '一键复制标准中文监管词' : 'Standard Chinese Regulatory Terms'}</span>
+          <span class="pe-mega-col-title">{isZh ? '标准中文监管检索词' : 'Standard Chinese Regulatory Terms'}</span>
           <div style="display:grid;gap:0.45rem;">
             {entity.complianceData.termPresets.map((t) => (
               <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.45rem 0.6rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-xs);">
                 <div>
-                  <strong>{t.en}</strong> → <code>{t.zhQuery}</code> <span style="color:var(--ink-tertiary);">({t.gbCode})</span>
+                  <strong>{isZh ? t.zhQuery : t.en}</strong> {!isZh && <>→ <code>{t.zhQuery}</code></>} <span style="color:var(--ink-tertiary);">({t.gbCode})</span>
                 </div>
                 <button type="button" class="pe-mega-chip" style="padding:0.15rem 0.45rem;" data-pe-copy={t.zhQuery}>
-                  Copy
+                  {isZh ? '复制' : 'Copy'}
                 </button>
               </div>
             ))}
@@ -315,16 +338,12 @@ const jsonLd = {
         </div>
 
         <div class="pe-side-card">
-          <span class="eyebrow eyebrow--accent">Right Column · Official Portal Walkthrough</span>
-          <h2 style="font-size:1.2rem;margin-top:0.25rem;">{entity.complianceData.portalName}</h2>
-          <p style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--status-standby-ink);margin-block:0.3rem var(--space-3);">
-            Status: {entity.complianceData.wafStatus}
-          </p>
+          <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">{entity.complianceData.portalName}</h2>
           <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
             {entity.complianceData.walkthroughSteps.map((s) => (
               <li style="padding:0.6rem 0.75rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);">
-                <strong style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--accent-seal-text);">
-                  STEP {s.step} · {s.title}
+                <strong style="font-size:var(--text-xs);color:var(--accent-seal-text);">
+                  {s.title}
                 </strong>
                 <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.2rem;">{s.detail}</p>
               </li>
@@ -332,17 +351,17 @@ const jsonLd = {
           </ol>
           <div style="margin-top:var(--space-4);">
             <Button href={entity.complianceData.portalUrl} target="_blank" rel="noopener noreferrer" variant="primary" size="sm">
-              {isZh ? '直达官方网站核验 ↗' : 'Launch Official Verification Portal ↗'}
+              {isZh ? '前往官方网站查询 ↗' : 'Open Official Portal ↗'}
             </Button>
           </div>
         </div>
       </section>
     )}
 
-    {/* LAYER 3: 30% Human Field Notes ("What Nobody Tells You") + Checklist */}
+    {/* LAYER 3: Field Notes + Checklist */}
     <section class="pe-what-nobody" aria-labelledby="nobody-tells-h">
       <h2 id="nobody-tells-h" class="pe-what-nobody-title">
-        💡 What Nobody Tells You ({isZh ? '真人实测避坑' : 'Field Reality'})
+        {isZh ? '实测避坑提醒' : 'What Nobody Tells You'}
       </h2>
       <p style="font-size:var(--text-base);line-height:1.7;color:var(--ink-primary);">
         {entity.whatNobodyTellsYou}
@@ -354,26 +373,26 @@ const jsonLd = {
       </ul>
     </section>
 
-    {/* CITY HUB MULTI-PILLAR MASHUP (Universities & International Hospitals Explicitly Decoupled) */}
+    {/* CITY HUB MULTI-SECTION MASHUP */}
     {entity.cityData && (
       <section style="display:grid;gap:var(--space-5);margin-bottom:var(--space-6);">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:var(--space-4);">
           {entity.cityData.mashup.map((sec) => (
             <div class="pe-side-card">
-              <span class="pe-mega-col-title">{sec.pillar.toUpperCase()} · {sec.categoryLabel}</span>
+              <span class="pe-mega-col-title">{sec.categoryLabel}</span>
               <ul class="pe-mega-links">
                 {sec.items.map((item) => (
                   <li style="padding-block:0.45rem;border-bottom:1px solid var(--rule-subtle);">
                     {item.href ? (
                       <a href={lp(item.href)} style="padding:0;">
-                        <strong>{item.name}</strong>
+                        <strong>{isZh ? item.chineseName : item.name}</strong>
                         <span>→</span>
                       </a>
                     ) : (
-                      <strong>{item.name}</strong>
+                      <strong>{isZh ? item.chineseName : item.name}</strong>
                     )}
                     <div style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
-                      {item.chineseName} · {item.meta}
+                      {isZh ? item.meta : `${item.chineseName} · ${item.meta}`}
                     </div>
                   </li>
                 ))}
@@ -382,17 +401,15 @@ const jsonLd = {
           ))}
         </div>
 
-        {/* Explicitly Decoupled Cards: Universities vs International Hospitals */}
         <div class="pe-dual-desk">
           <div id="universities" class="pe-side-card">
-            <span class="eyebrow eyebrow--accent">Live & Study · Decoupled Module</span>
-            <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
-              {isZh ? `${entity.chineseName} 留学名校卡片` : `${entity.title} Top Universities`}
+            <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
+              {isZh ? `${entity.chineseName}留学高校` : `${entity.title} Top Universities`}
             </h2>
             <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
               {entity.cityData.universities.map((u) => (
                 <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
-                  <strong>{u.name}</strong> <span style="color:var(--ink-secondary);">({u.chineseName})</span>
+                  <strong>{isZh ? u.chineseName : u.name}</strong> {!isZh && <span style="color:var(--ink-secondary);">({u.chineseName})</span>}
                   <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">{u.focus}</p>
                 </li>
               ))}
@@ -400,14 +417,13 @@ const jsonLd = {
           </div>
 
           <div id="hospitals" class="pe-side-card">
-            <span class="eyebrow eyebrow--accent">Medical Tourism & Care · Decoupled Module</span>
-            <h2 style="font-size:1.2rem;margin-top:0.25rem;margin-bottom:var(--space-3);">
-              {isZh ? `${entity.chineseName} 涉外国际医院卡片` : `${entity.title} International Hospitals`}
+            <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
+              {isZh ? `${entity.chineseName}涉外国际医院` : `${entity.title} International Hospitals`}
             </h2>
             <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
               {entity.cityData.intlHospitals.map((h) => (
                 <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
-                  <strong>{h.name}</strong> <span style="color:var(--ink-secondary);">({h.chineseName})</span>
+                  <strong>{isZh ? h.chineseName : h.name}</strong> {!isZh && <span style="color:var(--ink-secondary);">({h.chineseName})</span>}
                   <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
                     {h.dept} · <code>{h.phone}</code>
                   </p>
@@ -419,7 +435,7 @@ const jsonLd = {
       </section>
     )}
 
-    {/* ATTRACTION ZERO-MAINTENANCE 1-3KM MESH */}
+    {/* ATTRACTION NEARBY MESH */}
     {entity.attractionData && (
       <NearbyMesh
         nearbyMesh={entity.attractionData.nearbyMesh}
@@ -428,10 +444,12 @@ const jsonLd = {
       />
     )}
 
-    {/* LAYER 4: Alternatives & Cross-Domain Mesh */}
+    {/* LAYER 4: Alternatives & Related */}
     {entity.alternatives.length > 0 && (
       <section style="margin-top:var(--space-6);">
-        <span class="eyebrow">{isZh ? '同类替代与跨柱织网' : 'Alternatives & Cross-Domain Mesh'}</span>
+        <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
+          {isZh ? '替代与相关推荐' : 'Alternatives & Related'}
+        </h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-3);margin-top:var(--space-3);">
           {entity.alternatives.map((alt) => (
             <div class="pe-side-card">

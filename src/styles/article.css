@@ -39,41 +39,41 @@
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* 30% Palace Wall Editorial Folio Masthead + Glazed Gold Trim */
+  /* Editorial Folio Masthead on Paper Canvas */
   .article-header {
-    padding: clamp(1.75rem, 4vw, 3.25rem);
-    margin-bottom: var(--space-7);
-    background: var(--secondary-solid);
-    color: var(--secondary-ink);
-    border-bottom: 3px solid var(--accent-gold);
+    padding: 0 0 var(--space-5);
+    margin-bottom: var(--space-6);
+    background: transparent;
+    color: var(--ink-primary);
+    border-bottom: 1px solid var(--rule-strong);
   }
 
   .article-header .breadcrumb {
     margin-bottom: var(--space-4);
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   .article-header .breadcrumb a {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-secondary);
   }
 
   .article-header .breadcrumb a:hover {
-    color: var(--accent-seal-on-dark);
+    color: var(--accent-seal);
   }
 
   .article-header .eyebrow {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   .article-header .eyebrow--accent::before {
-    background: var(--accent-seal-on-dark);
+    background: var(--accent-seal);
   }
 
   .article-header h1 {
-    margin-top: var(--space-3);
+    margin-top: var(--space-2);
     font-size: var(--text-3xl);
     line-height: 1.08;
-    color: var(--secondary-ink);
+    color: var(--ink-primary);
     max-width: 24ch;
   }
 
@@ -81,14 +81,14 @@
     margin-top: var(--space-4);
     font-size: var(--text-lg);
     line-height: 1.65;
-    color: var(--secondary-ink-muted);
+    color: var(--ink-secondary);
     max-width: 60ch;
   }
 
   .article-meta-bar {
     margin-top: var(--space-5);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--secondary-rule);
+    border-top: 1px solid var(--rule-subtle);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -97,18 +97,18 @@
   }
 
   .article-header .meta-line {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   .article-header .term-pill {
-    background: var(--secondary-solid-elevated);
-    border-color: var(--secondary-rule);
-    color: var(--secondary-ink);
+    background: var(--surface-raised);
+    border-color: var(--rule-subtle);
+    color: var(--ink-secondary);
   }
 
   .article-header .term-pill:hover {
-    border-color: var(--accent-seal-on-dark);
-    color: var(--accent-seal-on-dark);
+    border-color: var(--accent-seal);
+    color: var(--accent-seal);
   }
 
   /* Wayfare-Inspired 4-Column Unboxed Key-Facts Strip */

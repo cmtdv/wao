@@ -15,25 +15,25 @@ const isZh = getLocaleFromContext(Astro) === 'zh';
 
 const topicOptions = isZh
   ? [
-      { value: '铁路 12306', label: '9.4 · 铁路 12306 护照刷闸机', selected: true },
-      { value: '支付宝 / 微信支付', label: '9.2 · 支付宝 / 微信绑定外卡' },
-      { value: '240h 过境免签', label: '9.1 · 240 小时跨省过境免签' },
-      { value: '离境退税', label: '9.8 · 市内即买即退 / 机场退税' },
-      { value: '故宫/博物馆预约', label: '9.6 · 博物馆护照实名预约' },
+      { value: '铁路 12306', label: '铁路 12306 护照刷闸机', selected: true },
+      { value: '支付宝 / 微信支付', label: '支付宝 / 微信绑定外卡' },
+      { value: '240h 过境免签', label: '240 小时跨省过境免签' },
+      { value: '离境退税', label: '市内即买即退 / 机场退税' },
+      { value: '故宫/博物馆预约', label: '博物馆护照实名预约' },
     ]
   : [
-      { value: 'Railway 12306', label: '9.4 · Railway 12306 Passport Gate', selected: true },
-      { value: 'Alipay / WeChat Pay', label: '9.2 · Alipay / WeChat Foreign Card' },
-      { value: '240h Transit Entry', label: '9.1 · 240-Hour Visa-Free Transit' },
-      { value: 'Departure Tax Refund', label: '9.8 · Instant Departure Tax Refund' },
-      { value: 'Palace Museum Booking', label: '9.6 · Museum Real-Name Booking' },
+      { value: 'Railway 12306', label: 'Railway 12306 Passport Gate', selected: true },
+      { value: 'Alipay / WeChat Pay', label: 'Alipay / WeChat Foreign Card' },
+      { value: '240h Transit Entry', label: '240-Hour Visa-Free Transit' },
+      { value: 'Departure Tax Refund', label: 'Instant Departure Tax Refund' },
+      { value: 'Palace Museum Booking', label: 'Museum Real-Name Booking' },
     ];
 
 const outcomeOptions = isZh
   ? [
-      { value: 'Worked', label: '顺畅通过（Worked）', checked: true },
-      { value: 'Partial', label: '部分可用（Partial）' },
-      { value: 'Failed', label: '受阻/规则变动（Failed）' },
+      { value: 'Worked', label: '顺畅通过', checked: true },
+      { value: 'Partial', label: '部分可用' },
+      { value: 'Failed', label: '受阻或规则变动' },
     ]
   : [
       { value: 'Worked', label: 'Worked smoothly', checked: true },
@@ -132,7 +132,7 @@ const initialReports = isZh
   </form>
 
   <div class="cw-pulse-feed" data-cw-pulse-feed aria-live="polite">
-    <span class="rail-heading">{isZh ? '最新现场实测流（本地演示）' : 'Recent Ground Pulse Reports (Mock Stream)'}</span>
+    <span class="rail-heading">{isZh ? '近期现场实测' : 'Recent Field Reports'}</span>
     {initialReports.map((item) => (
       <article class="cw-pulse-item">
         <div class="cw-pulse-item-head">

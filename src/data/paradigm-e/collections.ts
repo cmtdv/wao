@@ -106,7 +106,7 @@ export const COMPARISONS: ComparisonPage[] = [
       { dimension: 'Setup Friction', valueA: 'Scan QR at home in 2 mins', valueB: 'Airport passport counter (20–40 mins)', winner: 'A' },
       { dimension: 'Cost (15–30 Days)', valueA: '$14–$28 USD (10–20GB)', valueB: '¥100–¥150 RMB (~$14–$21)', winner: 'tie' },
     ],
-    ctaNote: 'Check this week’s user-tested China eSIM stability rankings in Ground Pulse.',
+    ctaNote: 'Check this week’s user-tested China eSIM stability rankings in Field Reports.',
     ctaHref: '/pulse/',
     ctaLabel: 'View Weekly eSIM Top 5 →',
   },
@@ -275,7 +275,7 @@ export const STACKS: ScenarioStack[] = [
     items: [
       { id: 'cf1', category: 'Compliance', title: '18-Digit USCC Validator & GSXT Dual-Column Desk', summary: 'Confirm active legal entity & real manufacturing scope.', href: '/compliance/uscc-gsxt-lookup/' },
       { id: 'cf2', category: 'Compliance', title: 'CCC (3C) Compulsory Certification Lookup', summary: 'Verify certificate validity on CNCA before shipping electronics.', href: '/compliance/ccc-3c-certification/' },
-      { id: 'cf3', category: 'Tool', title: 'Wan / Yi Quote Converter (M2)', summary: 'Avoid 10× translation mistakes when negotiating ¥ quotes in 万/亿.', href: '/tools/wan-yi-converter/' },
+      { id: 'cf3', category: 'Tool', title: 'Wan / Yi Quote Converter', summary: 'Avoid 10× translation mistakes when negotiating ¥ quotes in 万/亿.', href: '/tools/wan-yi-converter/' },
       { id: 'cf4', category: 'City Hub', title: 'Shenzhen (440300) + HK West Kowloon HSR', summary: '14-min link between HK, Huaqiangbei & Guangzhou Pazhou.', href: '/routes/hong-kong-to-guangzhou/' },
     ],
   },
@@ -496,15 +496,15 @@ export const EXPLORER_FACETS = {
     { value: 'winter', label: 'Winter (Dec–Feb)' },
   ],
   kind: [
-    { value: 'Guide', label: '32 Guides' },
+    { value: 'Guide', label: 'Guides' },
     { value: 'City', label: 'Cities' },
     { value: 'Attraction', label: 'Attractions' },
     { value: 'In-China', label: 'Western App Map' },
     { value: 'Error', label: 'App Rescue' },
     { value: 'Card', label: 'Show Cards' },
-    { value: 'Compliance', label: 'Compliance / WAF' },
+    { value: 'Compliance', label: 'Compliance Lookup' },
     { value: 'Compare', label: 'Comparisons' },
-    { value: 'Stack', label: 'Stacks' },
+    { value: 'Stack', label: 'Trip Kits' },
   ],
   constraints: [
     { value: 'foreign-card', label: 'Foreign Card OK' },
@@ -514,7 +514,7 @@ export const EXPLORER_FACETS = {
     { value: 'remote-ok', label: 'Remote / Pre-Arrival OK' },
   ],
   trust: [
-    { value: 'tier-a', label: 'Tier-A Official Source' },
+    { value: 'tier-a', label: 'Official Source' },
     { value: 'pulse-verified', label: 'Verified This Week' },
   ],
 };

@@ -123,7 +123,7 @@ function getTermCount(term: Term): number | null {
     ) : (
       <div class="empty-panel">
         <h2>{isZh ? '暂未创建栏目。' : 'No topics created yet.'}</h2>
-        <p>{isZh ? '在 EmDash 后台添加分类即可生成栏目索引。' : 'Create categories in the EmDash admin to populate the topics directory.'}</p>
+        <p>{isZh ? '暂无已发布的栏目分类。' : 'No published topic categories yet.'}</p>
         <div class="empty-actions">
           <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
         </div>

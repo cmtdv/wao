@@ -7,24 +7,24 @@
     padding-block: var(--space-7) var(--space-8);
   }
 
-  /* 30% Palace Wall Topic Dossier Masthead + Glazed Gold Trim */
+  /* Topic Dossier Masthead on Paper Canvas */
   .dossier-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
     gap: var(--space-4) var(--space-6);
-    padding: clamp(1.75rem, 3.8vw, 3rem);
+    padding: 0 0 var(--space-5);
     margin-bottom: var(--space-6);
-    background: var(--secondary-solid);
-    color: var(--secondary-ink);
-    border-bottom: 3px solid var(--accent-gold);
+    background: transparent;
+    color: var(--ink-primary);
+    border-bottom: 1px solid var(--rule-strong);
   }
 
   .dossier-kicker-row {
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
-    color: var(--accent-gold-on-dark);
+    color: var(--accent-seal);
   }
 
   .dossier-header-main {
@@ -32,20 +32,20 @@
   }
 
   .dossier-header .eyebrow {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   .dossier-header .eyebrow--accent::before {
-    background: var(--accent-seal-on-dark);
+    background: var(--accent-seal);
   }
 
   .dossier-header-main h1 {
-    margin-top: var(--space-3);
-    color: var(--secondary-ink);
+    margin-top: var(--space-2);
+    color: var(--ink-primary);
   }
 
   .dossier-header .archive-lead {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-secondary);
   }
 
   .dossier-stats {
@@ -56,7 +56,7 @@
   }
 
   .dossier-header .meta-line {
-    color: var(--secondary-ink-muted);
+    color: var(--ink-muted);
   }
 
   /* 2nd-Level Subtopic Cards Strip on 1st-Level Dossier */

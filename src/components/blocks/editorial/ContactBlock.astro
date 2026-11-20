@@ -19,7 +19,7 @@ const {
   id = 'cw-contact-block',
   eyebrow = 'Editorial Desk',
   title = 'Submit a correction, source link, or field inquiry',
-  subtitle = 'Every submission is routed to the matching editorial desk. Mock UI preview logs locally without sending external mail.',
+  subtitle = 'Every submission is routed to the matching editorial desk.',
   class: className = '',
 } = Astro.props;
 ---
@@ -31,20 +31,16 @@ const {
     <dl class="cw-contact-meta">
       <div>
         <dt>Corrections SLA</dt>
-        <dd>48 hours with source diff</dd>
-      </div>
-      <div>
-        <dt>Coverage Scope</dt>
-        <dd>12 Pillars · 97 Authoritative Topics</dd>
+        <dd>48 hours with source check</dd>
       </div>
       <div>
         <dt>Data Policy</dt>
-        <dd>Public official sources & verified field logs only</dd>
+        <dd>Public official sources &amp; verified field logs only</dd>
       </div>
     </dl>
   </div>
 
-  <form id={id} class="cw-block-contact-form" novalidate data-cw-demo-form data-toast-msg="Inquiry logged to editorial desk (mock preview).">
+  <form id={id} class="cw-block-contact-form" novalidate data-cw-demo-form data-toast-msg="Inquiry received by the editorial desk.">
     <div class="cw-form-row-2">
       <Input id={`${id}-name`} name="name" label="Your name" placeholder="Lin Wei" required />
       <Input id={`${id}-email`} name="email" type="email" label="Email address" placeholder="reader@example.com" required />
@@ -54,10 +50,10 @@ const {
       name="desk"
       label="Target Desk"
       options={[
-        { value: 'visit', label: '9. Visit China (Visas, Rail, Payments)' },
-        { value: 'live', label: '10. Live & Study (Work Permits, Tax)' },
-        { value: 'business', label: '11. Business (Canton Fair, GB Standards)' },
-        { value: 'open-data', label: '12.8 Gov Open Data & OKF Sources' },
+        { value: 'visit', label: 'Visit China (Visas, Rail, Payments)' },
+        { value: 'live', label: 'Live & Study (Work Permits, Tax)' },
+        { value: 'business', label: 'Business (Canton Fair, GB Standards)' },
+        { value: 'open-data', label: 'Gov Open Data & Official Sources' },
       ]}
     />
     <Textarea

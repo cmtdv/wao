@@ -38,12 +38,11 @@ const maxMins = Math.max(...route.modes.map((m) => m.doorToDoorMinutes), 1);
       mobileBackHref={lp('/places/')}
       mobileBackLabel={isZh ? '山河城市' : 'Places'}
     >
-      <Badge slot="meta" tone="verified">{route.distanceKm.toLocaleString()} km · Verified {route.lastVerified}</Badge>
+      <Badge slot="meta" tone="verified">{route.distanceKm.toLocaleString()} km · {isZh ? `更新于 ${route.lastVerified}` : `Updated ${route.lastVerified}`}</Badge>
     </ResponsiveBreadcrumb>
 
     <header style="margin-bottom:var(--space-5);">
-      <span class="eyebrow eyebrow--accent">Mother Template 5 · Door-to-Door Intercity Route</span>
-      <h1 style="margin-top:0.3rem;">{isZh ? route.titleZh : route.title}</h1>
+      <h1>{isZh ? route.titleZh : route.title}</h1>
       <p class="archive-lead" style="margin-top:var(--space-2);">{route.verdict}</p>
     </header>
 

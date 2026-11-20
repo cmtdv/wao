@@ -14,11 +14,11 @@ const isZh = getLocaleFromContext(Astro) === 'zh';
 
 const {
   id = 'newsletter-email',
-  kicker = isZh ? '每周简报 · 交互原型' : 'Weekly Dispatch · Mock Preview',
+  kicker = isZh ? '每周简报' : 'Weekly Dispatch',
   heading = isZh ? '订阅 ChinaWao 周报' : 'The ChinaWao Brief',
   description = isZh
-    ? '每周日一封精选邮件，汇总最新核验的中国免签与出行政策变动、新发实录与季节性旅行提示，零垃圾广告。'
-    : 'One concise Sunday letter covering verified policy shifts, new field guides, and seasonal travel notes across China. Zero spam.',
+    ? '每周日一封精选邮件，汇总最新核验的中国免签与出行政策变动、新发文章与季节性旅行提示。'
+    : 'One concise Sunday letter covering verified policy shifts, new field guides, and seasonal travel notes across China.',
   class: className = '',
 } = Astro.props;
 ---
@@ -46,10 +46,6 @@ const {
       />
       <Button type="submit" variant="primary">{isZh ? '订阅周报' : 'Subscribe'}</Button>
     </div>
-    <span class="cw-hint" data-cw-newsletter-hint>
-      {isZh
-        ? '本地交互原型：校验邮箱格式并通过全站持久 Toast 反馈，不发送外部邮件。'
-        : 'Mock interactive preview: validates email format and confirms via persistent toast.'}
-    </span>
+    <span class="cw-hint" data-cw-newsletter-hint></span>
   </form>
 </section>

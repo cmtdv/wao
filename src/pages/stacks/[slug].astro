@@ -34,24 +34,23 @@ const shareUrl = Astro.url.href;
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
-        { label: isZh ? '场景清单包' : 'Stacks', href: lp('/explore/#kind=Stack') },
-        { label: stack.title },
+        { label: isZh ? '场景清单' : 'Trip Kits', href: lp('/explore/#kind=Stack') },
+        { label: isZh ? stack.titleZh : stack.title },
       ]}
       mobileBackHref={lp(`/${pillar.id}/`)}
       mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
     >
       <Badge slot="meta" tone="verified" data-pe-stack-progress>
-        {isZh ? `已就绪 0 / ${stack.items.length}` : `0 / ${stack.items.length} ready`}
+        {isZh ? `已完成 0 / ${stack.items.length}` : `0 / ${stack.items.length} done`}
       </Badge>
     </ResponsiveBreadcrumb>
 
     <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);">
       <div style="max-width:40rem;">
-        <span class="eyebrow eyebrow--accent">Mother Template 5 · Shareable Scenario Stack</span>
-        <h1 style="margin-top:0.3rem;">{isZh ? stack.titleZh : stack.title}</h1>
+        <h1>{isZh ? stack.titleZh : stack.title}</h1>
         <p class="archive-lead" style="margin-top:0.4rem;">{stack.tagline}</p>
         <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">
-          Audience: {stack.audience} · Verified {stack.lastVerified}
+          {isZh ? `适用人群：${stack.audience} · 更新于 ${stack.lastVerified}` : `Audience: ${stack.audience} · Updated ${stack.lastVerified}`}
         </p>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
@@ -59,18 +58,18 @@ const shareUrl = Astro.url.href;
           variant="secondary"
           size="sm"
           data-pe-copy={shareUrl}
-          data-pe-copy-toast="Copied stack share URL!"
+          data-pe-copy-toast={isZh ? '已复制分享链接' : 'Copied share link'}
         >
-          {isZh ? '复制分享短链' : 'Copy Share Link'}
+          {isZh ? '复制分享链接' : 'Copy Share Link'}
         </Button>
         <Button variant="primary" size="sm" data-pe-stack-export>
-          {isZh ? '导出离线行前清单 (.txt)' : 'Export Offline Checklist'}
+          {isZh ? '导出离线清单' : 'Export Offline Checklist'}
         </Button>
       </div>
     </header>
 
     <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
-      {stack.items.map((item, idx) => (
+      {stack.items.map((item) => (
         <li class="pe-side-card" style="display:flex;align-items:flex-start;gap:var(--space-3);">
           <input
             type="checkbox"
@@ -84,7 +83,7 @@ const shareUrl = Astro.url.href;
           <div style="flex:1;min-width:0;">
             <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.4rem;">
               <label for={`stack-item-${item.id}`} style="font-weight:600;font-size:1rem;cursor:pointer;">
-                {String(idx + 1).padStart(2, '0')}. {item.title}
+                {item.title}
               </label>
               <Badge tone="editorial">{isZh ? (STACK_CAT_ZH[item.category] ?? item.category) : item.category}</Badge>
             </div>
@@ -92,7 +91,7 @@ const shareUrl = Astro.url.href;
               {item.summary}
             </p>
             <a href={lp(item.href)} class="editorial-link" style="margin-top:0.45rem;display:inline-flex;font-size:var(--text-xs);">
-              {isZh ? '打开对应详情页 →' : 'Open Verified Resource →'}
+              {isZh ? '查看详情 →' : 'Open Guide →'}
             </a>
           </div>
         </li>
@@ -100,7 +99,9 @@ const shareUrl = Astro.url.href;
     </ol>
 
     <section style="margin-top:var(--space-6);">
-      <span class="eyebrow">{isZh ? '更多场景抄作业清单包' : 'More Scenario Stacks'}</span>
+      <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
+        {isZh ? '更多场景清单' : 'More Trip Kits'}
+      </h2>
       <div class="pe-mega-chips" style="margin-top:var(--space-3);">
         {STACKS.filter((s) => s.slug !== stack.slug).map((other) => (
           <a href={lp(`/stacks/${other.slug}/`)} class="pe-mega-chip">

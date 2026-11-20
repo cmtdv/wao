@@ -33,18 +33,17 @@ const pillar = PILLAR_BY_ID[item.pillar];
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
-        { label: isZh ? '决策横评' : 'Compare', href: lp('/explore/#kind=Compare') },
-        { label: item.title },
+        { label: isZh ? '方案对比' : 'Compare', href: lp('/explore/#kind=Compare') },
+        { label: isZh ? item.titleZh : item.title },
       ]}
       mobileBackHref={lp(`/${pillar.id}/`)}
       mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
     >
-      <Badge slot="meta" tone="verified">Verified {item.lastVerified}</Badge>
+      <Badge slot="meta" tone="verified">{isZh ? `更新于 ${item.lastVerified}` : `Updated ${item.lastVerified}`}</Badge>
     </ResponsiveBreadcrumb>
 
     <header>
-      <span class="eyebrow eyebrow--accent">Mother Template 5 · Verdict Comparison</span>
-      <h1 style="margin-top:0.3rem;">{isZh ? item.titleZh : item.title}</h1>
+      <h1>{isZh ? item.titleZh : item.title}</h1>
     </header>
 
     {/* First-Screen Verdict Cards */}

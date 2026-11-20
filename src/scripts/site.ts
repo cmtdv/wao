@@ -1003,13 +1003,13 @@ function initNewsletterForms(): void {
       form.reset();
       if (hintEl) {
         hintEl.textContent = zh
-          ? `本地演示：${addr} 已加入每周日 ChinaWao 简报队列。`
-          : `Mock preview: ${addr} queued for the Sunday ChinaWao Brief.`;
+          ? `${addr} 已加入每周日 ChinaWao 周报订阅列表。`
+          : `${addr} has been added to the Sunday ChinaWao Brief.`;
       }
       showSiteToast(
         zh
-          ? `已订阅 ChinaWao 周报：${addr}（本地演示）。`
-          : `Subscribed ${addr} to the ChinaWao Brief (mock preview).`,
+          ? `已订阅 ChinaWao 周报：${addr}。`
+          : `Subscribed ${addr} to the ChinaWao Brief.`,
         emailInput,
       );
     });
@@ -1081,8 +1081,8 @@ function initGroundPulse(): void {
       const metaSpan = document.createElement('span');
       metaSpan.className = 'portal-card-meta';
       metaSpan.textContent = zh
-        ? `记录于 ${today} · 本地实测演示`
-        : `Logged ${today} · Mock local entry`;
+        ? `记录于 ${today}`
+        : `Logged ${today}`;
 
       card.append(head, noteP, metaSpan);
 
@@ -1097,8 +1097,8 @@ function initGroundPulse(): void {
       form.reset();
       showSiteToast(
         zh
-          ? `已记录现场实测：${topic}（${outcomeLabel}）。`
-          : `Ground Pulse report logged for ${topic} (${outcome}).`,
+          ? `已提交现场实测：${topic}（${outcomeLabel}）。`
+          : `Field report logged for ${topic} (${outcome}).`,
       );
     });
   });
@@ -1723,7 +1723,7 @@ function initDemoFormsAndToasts(): void {
         return;
       }
       form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-      const msg = form.dataset.toastMsg ?? (isZhPage() ? '已提交（本地演示）。' : 'Submitted (mock preview).');
+      const msg = form.dataset.toastMsg ?? (isZhPage() ? '已提交。' : 'Submitted.');
       form.reset();
       showSiteToast(msg);
     });

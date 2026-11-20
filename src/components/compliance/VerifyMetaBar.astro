@@ -12,19 +12,18 @@ interface Props {
   locale?: Locale;
 }
 
-const { lastVerified, tier, mdHref, locale = 'en' } = Astro.props;
+const { lastVerified, mdHref, locale = 'en' } = Astro.props;
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 ---
 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;font-size:var(--text-xs);">
-  <Badge tone="verified">{isZh ? `最后核验 ${lastVerified}` : `Last Verified: ${lastVerified}`}</Badge>
-  <Badge tone="editorial">{tier}</Badge>
+  <Badge tone="verified">{isZh ? `更新于 ${lastVerified}` : `Updated ${lastVerified}`}</Badge>
   {mdHref && (
     <a href={mdHref} class="pe-mega-chip" style="padding:0.2rem 0.5rem;">
       .md
     </a>
   )}
   <a href={lp('/pulse/#submit-pulse')} class="text-link" style="font-size:var(--text-xs);">
-    {isZh ? '一键纠错' : 'Report Rule Change'}
+    {isZh ? '纠错反馈' : 'Report change'}
   </a>
 </div>

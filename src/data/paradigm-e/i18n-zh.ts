@@ -84,23 +84,23 @@ export const EXPLORER_FACET_ZH: Record<string, string> = {
   autumn: '秋季 (9–11月)',
   winter: '冬季 (12–2月)',
   // Kind
-  Guide: '32 深度主题页',
-  City: '城市空间中枢',
-  Attraction: '顶流景点',
-  'In-China': '西方 App 映射',
-  Error: 'App 报错救火',
+  Guide: '深度指南',
+  City: '城市指南',
+  Attraction: '热门景点',
+  'In-China': '西方应用替代',
+  Error: '应用报错救火',
   Card: '全屏亮屏字卡',
-  Compliance: '合规 / WAF 引导',
-  Compare: '红黑决策横评',
-  Stack: '场景抄作业包',
+  Compliance: '官方合规核验',
+  Compare: '方案对比',
+  Stack: '场景清单',
   // Constraints
   'foreign-card': '外卡友好',
   'no-plus86': '免 +86 手机号',
-  wheelchair: '无障碍 / 推车友好',
+  wheelchair: '无障碍与推车友好',
   'nut-allergy': '防花生油过敏',
   'remote-ok': '无需来华 / 行前可用',
   // Trust
-  'tier-a': 'Tier-A 官方信源',
+  'tier-a': '官方信源',
   'pulse-verified': '本周实测可用',
 };
 
@@ -138,11 +138,13 @@ export const PORTAL_DOMAIN_ZH: Record<string, string> = {
 };
 
 export const PORTAL_ACCESS_ZH: Record<string, string> = {
-  'HTTP 200 Direct': 'HTTP 200 官方直连',
-  'WAF 412 / Ruishu Guided': '瑞数 412 · 官方备用引导',
-  'WAF 521 / Interactive Guided': 'WAF 521 · 交互官网引导',
-  'WAF Captcha Guided': '验证码防护 · 官网引导',
-  'WAF 202 Token Guided': '动态令牌 202 · 官网引导',
+  'Direct Access': '官网直连',
+  'Official Site Interactive Check': '需官网交互验证',
+  'HTTP 200 Direct': '官网直连',
+  'WAF 412 / Ruishu Guided': '需官网交互验证',
+  'WAF 521 / Interactive Guided': '需官网交互验证',
+  'WAF Captcha Guided': '需官网验证码核验',
+  'WAF 202 Token Guided': '需官网交互验证',
 };
 
 export const PORTAL_LEVEL_ZH: Record<string, string> = {

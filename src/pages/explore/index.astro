@@ -20,8 +20,8 @@ const canonicalUrl = `${Astro.url.origin}${lp('/explore/')}`;
 const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[value] ?? fallback) : fallback);
 ---
 <BaseShell
-  title={isZh ? '多维分面探索器（10 大集合动态聚合）' : 'Multi-Facet Explorer — All ChinaWao Collections'}
-  description={isZh ? '按空间、时令、集合类型、外卡/免+86/无障碍/过敏约束与可信度实时筛选全站核验资产。' : 'Filter all ChinaWao guides, cities, attractions, rescue screens, and stacks across 5 orthogonal facet dimensions.'}
+  title={isZh ? '多维内容筛选' : 'Explore China by Filter'}
+  description={isZh ? '按城市、季节、类型和出行条件筛选指南、字卡与实用工具。' : 'Filter ChinaWao guides, cities, attractions, rescue pages, and kits by location, season, and travel constraints.'}
   canonical={canonicalUrl}
   persona="analyst"
 >
@@ -29,37 +29,31 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
     <ResponsiveBreadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '多维分面探索器' : 'Multi-Facet Explorer' },
+        { label: isZh ? '多维筛选' : 'Explore' },
       ]}
       mobileBackHref={lp('/')}
       mobileBackLabel={isZh ? '首页' : 'Home'}
-    >
-      <Badge slot="meta" tone="editorial" data-pe-explorer-hash>#all</Badge>
-    </ResponsiveBreadcrumb>
+    />
 
     <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5);">
       <div style="max-width:46rem;">
-        <span class="eyebrow eyebrow--accent">Mother Template 7 · Orthogonal Facet Engine</span>
-        <h1 style="margin-top:0.35rem;">{isZh ? '全站多维分面探索器' : 'Multi-Facet China Explorer'}</h1>
+        <h1>{isZh ? '多维内容筛选' : 'Explore China'}</h1>
         <p class="archive-lead" style="margin-top:0.35rem;">
           {isZh
-            ? '组合 5 组正交筛选芯片即时过滤全站多态集合。动态组合写入 URL #fragment 避免爬虫预算浪费，静态高意图落地页请见 /for/。'
-            : 'Combine 5 orthogonal facet chip groups across all structured collections. Dynamic filter states stay in URL #fragments for clean SEO hygiene.'}
+            ? '按城市、季节和出行条件组合筛选指南、城市、景点与实用工具。'
+            : 'Filter guides, cities, attractions, and tools by location, season, and travel needs.'}
         </p>
       </div>
-      <div style="display:flex;align-items:center;gap:var(--space-2);">
-        <Badge tone="verified" data-pe-explorer-count>{EXPLORER_ITEMS.length} / {EXPLORER_ITEMS.length}</Badge>
-        <Button variant="secondary" size="sm" data-pe-explorer-reset>
-          {isZh ? '重置筛选' : 'Reset'}
-        </Button>
-      </div>
+      <Button variant="secondary" size="sm" data-pe-explorer-reset>
+        {isZh ? '重置筛选' : 'Reset'}
+      </Button>
     </header>
 
-    {/* 5 Orthogonal Facet Chip Groups */}
-    <section class="pe-side-card" style="margin-bottom:var(--space-6);display:grid;gap:var(--space-2);" aria-label="Facet filters">
+    {/* Facet Chip Groups */}
+    <section class="pe-side-card" style="margin-bottom:var(--space-6);display:grid;gap:var(--space-2);" aria-label={isZh ? '筛选条件' : 'Filters'}>
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
-          01 · {isZh ? '空间与口岸 (Space / 240h)' : 'Space & 240h Zone'}
+          {isZh ? '地区与口岸' : 'Location & 240h Zone'}
         </span>
         <div class="pe-facet-group">
           {EXPLORER_FACETS.space.map((f) => (
@@ -72,7 +66,7 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
 
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
-          02 · {isZh ? '时令窗口 (Season)' : 'Season & Timing'}
+          {isZh ? '出行季节' : 'Season'}
         </span>
         <div class="pe-facet-group">
           {EXPLORER_FACETS.season.map((f) => (
@@ -85,7 +79,7 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
 
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
-          03 · {isZh ? '集合类型 (Collection Kind)' : 'Collection Type'}
+          {isZh ? '内容类型' : 'Content Type'}
         </span>
         <div class="pe-facet-group">
           {EXPLORER_FACETS.kind.map((f) => (
@@ -98,7 +92,7 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
 
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
-          04 · {isZh ? '人群与硬约束 (Constraints)' : 'Audience & Hard Constraints'}
+          {isZh ? '适用条件' : 'Travel Needs'}
         </span>
         <div class="pe-facet-group">
           {EXPLORER_FACETS.constraints.map((f) => (
@@ -111,7 +105,7 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
 
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
-          05 · {isZh ? '核验可信度 (Trust Level)' : 'Trust & Verification'}
+          {isZh ? '核验方式' : 'Verification'}
         </span>
         <div class="pe-facet-group">
           {EXPLORER_FACETS.trust.map((f) => (
@@ -140,7 +134,7 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
             <div style="display:flex;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
               <Badge tone="editorial">{fLabel(item.kind, item.kind)}</Badge>
               <Badge tone={item.trust === 'tier-a' ? 'verified' : 'standby'}>
-                {item.trust === 'tier-a' ? (isZh ? 'Tier-A 官方' : 'Tier-A') : (isZh ? '本周实测' : 'Pulse Verified')}
+                {item.trust === 'tier-a' ? (isZh ? '官方信源' : 'Official Source') : (isZh ? '本周实测' : 'Field Verified')}
               </Badge>
             </div>
             <h2 style="font-family:var(--font-display);font-size:1.15rem;line-height:1.3;">
@@ -162,14 +156,14 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
     </section>
 
     <div class="pe-side-card" data-pe-explorer-empty hidden style="text-align:center;padding:var(--space-7);">
-      <h2>{isZh ? '当前组合暂无精确匹配条目' : 'No exact matches for this facet combination'}</h2>
+      <h2>{isZh ? '当前条件暂无匹配内容' : 'No matching items for these filters'}</h2>
       <p style="color:var(--ink-secondary);margin-block:0.4rem var(--space-4);font-size:var(--text-sm);">
-        {isZh ? '尝试移除部分约束芯片，或浏览高意图静态专题页。' : 'Try clearing one constraint chip or jump into a curated static hub below.'}
+        {isZh ? '可减少筛选条件，或直接查看常见人群专题。' : 'Try clearing a filter, or browse popular scenario guides below.'}
       </p>
       <div class="pe-mega-chips" style="justify-content:center;">
-        <a href={lp('/for/solo-female/')} class="pe-mega-chip">/for/solo-female/</a>
-        <a href={lp('/for/peanut-allergy/')} class="pe-mega-chip">/for/peanut-allergy/</a>
-        <a href={lp('/for/remote-sourcing/')} class="pe-mega-chip">/for/remote-sourcing/</a>
+        <a href={lp('/for/solo-female/')} class="pe-mega-chip">{isZh ? '女性独行中国' : 'Solo Female Travelers'}</a>
+        <a href={lp('/for/peanut-allergy/')} class="pe-mega-chip">{isZh ? '花生与坚果过敏' : 'Peanut & Nut Allergies'}</a>
+        <a href={lp('/for/remote-sourcing/')} class="pe-mega-chip">{isZh ? '远程验厂采购' : 'Remote China Sourcing'}</a>
       </div>
     </div>
   </div>

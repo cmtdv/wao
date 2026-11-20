@@ -44,39 +44,29 @@ const cmsEntries = cmsFeed.entries ?? [];
       ]}
       mobileBackHref={lp('/')}
       mobileBackLabel={isZh ? '返回首页' : 'Home'}
-    >
-      <Badge slot="meta" tone="editorial">
-        {isZh ? pillar.personaLabelZh : pillar.personaLabel}
-      </Badge>
-    </ResponsiveBreadcrumb>
+    />
 
     <header style="max-width: 56rem;">
-      <span class="eyebrow eyebrow--accent">
-        {isZh ? `六大主柱 · ${pillar.nameZh}` : `Core Pillar · ${pillar.name}`}
-      </span>
-      <h1 style="margin-top:0.35rem;">{isZh ? pillar.h1Zh : pillar.h1}</h1>
+      <h1>{isZh ? pillar.h1Zh : pillar.h1}</h1>
       <p class="archive-lead" style="margin-top:var(--space-3);">
         {isZh ? pillar.leadZh : pillar.lead}
       </p>
     </header>
 
-    {/* Pinned Top: Most Viewed in Pillar (GOV.UK List Pattern) */}
+    {/* Pinned Top: Most Viewed in Pillar */}
     <section class="pe-most-viewed-box" aria-labelledby="pillar-most-viewed-h">
-      <span id="pillar-most-viewed-h" class="eyebrow eyebrow--accent">
-        {isZh ? `${pillar.nameZh} · 本柱高频直达` : `Most Viewed in ${pillar.name}`}
-      </span>
-      <ol class="pe-most-viewed-grid">
-        {pillar.mostViewedTop.map((item, idx) => (
+      <h2 id="pillar-most-viewed-h" style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);margin-bottom:var(--space-3);">
+        {isZh ? '常看内容' : `Most Viewed in ${pillar.name}`}
+      </h2>
+      <ul class="pe-most-viewed-grid">
+        {pillar.mostViewedTop.map((item) => (
           <li>
             <a href={lp(item.href)}>
-              <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);margin-right:0.35rem;">
-                {idx + 1}.
-              </span>
               {isZh ? item.labelZh : item.label}
             </a>
           </li>
         ))}
-      </ol>
+      </ul>
     </section>
 
     {/* Main Body: 8:4 Split */}
@@ -84,8 +74,7 @@ const cmsEntries = cmsFeed.entries ?? [];
       <div>
         {pillar.topicGroups.map((group) => (
           <section class="pe-topic-group">
-            <span class="pe-topic-group-num">{group.number}</span>
-            <h2 style="font-size:1.35rem;margin-top:0.2rem;">
+            <h2 style="font-size:1.35rem;">
               {isZh ? group.titleZh : group.title}
             </h2>
             <p style="margin-top:0.35rem;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
@@ -104,9 +93,8 @@ const cmsEntries = cmsFeed.entries ?? [];
         {/* Pillar Feature Guides List */}
         {pillarGuides.length > 0 && (
           <section class="pe-topic-group" aria-labelledby="pillar-guides-h">
-            <span class="pe-topic-group-num">{isZh ? '深度主题页' : 'FEATURE GUIDES'}</span>
-            <h2 id="pillar-guides-h" style="font-size:1.35rem;margin-top:0.2rem;">
-              {isZh ? `${pillar.nameZh} 下属深度主题页（${pillarGuides.length} 篇）` : `${pillar.name} Deep Guides (${pillarGuides.length})`}
+            <h2 id="pillar-guides-h" style="font-size:1.35rem;">
+              {isZh ? `${pillar.nameZh}深度指南` : `${pillar.name} Guides`}
             </h2>
             <ul class="pe-gov-list">
               {pillarGuides.map((g) => (
@@ -121,19 +109,18 @@ const cmsEntries = cmsFeed.entries ?? [];
           </section>
         )}
 
-        {/* EmDash Native i18n Live Dispatches Feed */}
+        {/* Latest Dispatches Feed */}
         {cmsEntries.length > 0 && (
           <section class="pe-topic-group" aria-labelledby="pillar-cms-h">
-            <span class="pe-topic-group-num">{isZh ? 'EMDASH 多语言实时志刊' : 'EMDASH LIVE DISPATCHES'}</span>
-            <h2 id="pillar-cms-h" style="font-size:1.25rem;margin-top:0.2rem;">
-              {isZh ? '编辑部最新双语实录（来自 EmDash CMS）' : 'Latest Editorial Dispatches (EmDash CMS)'}
+            <h2 id="pillar-cms-h" style="font-size:1.25rem;">
+              {isZh ? '最新深度文章' : 'Latest Dispatches'}
             </h2>
             <ul class="pe-gov-list">
               {cmsEntries.map((entry) => (
                 <li>
                   <a href={lp(postPath(entry.data.slug || entry.id))}>
                     <span>{entry.data.title}</span>
-                    <Badge tone="editorial">{isZh ? '简中志刊' : 'EN Dispatch'}</Badge>
+                    <span>→</span>
                   </a>
                 </li>
               ))}
@@ -141,17 +128,14 @@ const cmsEntries = cmsFeed.entries ?? [];
           </section>
         )}
 
-        {/* Slot for pillar-specific extras (e.g., 12×97 Master Taxonomy on /atlas/) */}
+        {/* Slot for pillar-specific extras */}
         <slot />
       </div>
 
-      {/* Right Rail: Pillar-Exclusive Tool + Stacks + 7-Day Ground Pulse */}
-      <aside class="pe-sidebar-stack" aria-label={isZh ? '本柱专属工具与清单包' : 'Pillar Tools & Stacks'}>
+      {/* Right Rail: Pillar-Exclusive Tool + Kits + Recent Field Reports */}
+      <aside class="pe-sidebar-stack" aria-label={isZh ? '实用工具与清单' : 'Tools & Kits'}>
         <div class="pe-side-card">
-          <span class="eyebrow eyebrow--accent">
-            {isZh ? pillar.sidebarTool.kickerZh : pillar.sidebarTool.kicker}
-          </span>
-          <h3 style="margin-top:0.35rem;font-size:1.1rem;">
+          <h3 style="font-size:1.1rem;">
             {isZh ? pillar.sidebarTool.titleZh : pillar.sidebarTool.title}
           </h3>
           <p style="margin-block:0.5rem var(--space-4);font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.55;">
@@ -163,7 +147,7 @@ const cmsEntries = cmsFeed.entries ?? [];
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '热门场景清单包（Stacks）' : 'Popular Scenario Stacks'}</span>
+          <span class="pe-mega-col-title">{isZh ? '场景清单' : 'Recommended Kits'}</span>
           <ul class="pe-mega-links">
             {pillar.sidebarStacks.map((st) => (
               <li>
@@ -177,7 +161,7 @@ const cmsEntries = cmsFeed.entries ?? [];
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '近 7 天现场实测流' : '7-Day Ground Pulse'}</span>
+          <span class="pe-mega-col-title">{isZh ? '近期现场实测' : 'Recent Field Reports'}</span>
           <ul class="pe-pulse-list">
             {recentPulse.map((p) => {
               const zhP = PULSE_ZH_MAP[p.id];
@@ -197,15 +181,17 @@ const cmsEntries = cmsFeed.entries ?? [];
             })}
           </ul>
           <a href={lp('/pulse/')} class="editorial-link" style="margin-top:var(--space-3);display:inline-flex;font-size:var(--text-xs);">
-            {isZh ? '查看全部实测动态 →' : 'All Ground Pulse →'}
+            {isZh ? '查看全部实测 →' : 'All Field Reports →'}
           </a>
         </div>
       </aside>
     </div>
 
-    {/* Bottom Structured Databases Chip Bar */}
+    {/* Bottom Related Collections Bar */}
     <section style="margin-top:var(--space-7);padding-top:var(--space-5);border-top:1.5px solid var(--rule-strong);">
-      <span class="eyebrow">{isZh ? '直达本柱结构化程序数据库' : 'Browse Structured Databases'}</span>
+      <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
+        {isZh ? '相关入口' : 'Related Collections'}
+      </h2>
       <div class="pe-mega-chips" style="margin-top:var(--space-3);">
         {pillar.databases.map((db) => (
           <a href={lp(db.href)} class="pe-mega-chip">

@@ -4,7 +4,6 @@
  */
 import BaseShell from '@layouts/BaseShell.astro';
 import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
-import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { UTILITY_TOOLS } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
@@ -17,42 +16,38 @@ const detTools = UTILITY_TOOLS.filter((t) => t.group === 'deterministic');
 const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
 ---
 <BaseShell
-  title={isZh ? '实用工具工作台（11 工具与亮屏字卡）' : 'Practical Tools Workbench (11 Tools & Show Cards)'}
-  description={isZh ? '7 个确定性规则计算与字卡工具 + 4 个常青文化微工具，纯浏览器零刷新运算并预埋声明式 WebMCP。' : '7 deterministic rule calculators & fullscreen cards + 4 evergreen China micro-tools.'}
+  title={isZh ? '实用工具与亮屏字卡' : 'Practical Tools & Show Cards'}
+  description={isZh ? '免签测算、跨时区放票日历、离境退税、工签积分、企业信用码校验与日常换算工具。' : 'Visa checker, ticket release timezone calendar, tax refund, work permit points, USCC validator, and everyday converters.'}
   persona="safety"
 >
   <div class="container" style="padding-bottom:var(--space-8);">
     <ResponsiveBreadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '实用工具工作台' : 'Tools Workbench' },
+        { label: isZh ? '实用工具' : 'Tools' },
       ]}
       mobileBackHref={lp('/')}
       mobileBackLabel={isZh ? '首页' : 'Home'}
-    >
-      <Badge slot="meta" tone="verified">11 Offline-Ready Tools · WebMCP Ready</Badge>
-    </ResponsiveBreadcrumb>
+    />
 
     <header style="max-width:52rem;margin-bottom:var(--space-6);">
-      <span class="eyebrow eyebrow--accent">Utility Dock · Mother Template 6</span>
-      <h1 style="margin-top:0.35rem;">{isZh ? 'ChinaWao 11 大实用工具与亮屏字卡库' : 'ChinaWao 11-Tool Workbench & Show Cards'}</h1>
+      <h1>{isZh ? '实用工具与亮屏字卡' : 'Practical Tools & Show Cards'}</h1>
       <p class="archive-lead" style="margin-top:0.4rem;">
         {isZh
-          ? '剥离自原 Domain 12 并常驻顶栏右侧：所有判定与换算均在浏览器本地确定性运行，附公式与官方规则溯源。'
-          : 'Dedicated application workbench for deterministic visa, timezone, tax, USCC, and fullscreen show-to-local field tools.'}
+          ? '出行、长居与采购常用的在线测算、时区换算与亮屏出示字卡，全部在浏览器本地即时计算。'
+          : 'Instant browser-side calculators, timezone converters, validators, and fullscreen show-to-local cards.'}
       </p>
     </header>
 
     <section style="margin-bottom:var(--space-7);">
       <h2 style="font-size:1.3rem;margin-bottom:var(--space-4);">
-        {isZh ? '7 个确定性规则与现场工具（12.1 – 12.7）' : '7 Deterministic Rule & Field Tools (12.1 – 12.7)'}
+        {isZh ? '出行、政务与商务核验' : 'Travel, Permits & Verification'}
       </h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);">
         {detTools.map((tool) => (
           <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
             <div>
-              <Badge tone="editorial">{tool.code}</Badge>
-              <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-top:0.45rem;">
+              <h3 style="font-family:var(--font-display);font-size:1.2rem;">
                 {isZh ? tool.nameZh : tool.name}
               </h3>
               <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
@@ -60,7 +55,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
               </p>
             </div>
             <Button href={lp(tool.href)} variant="secondary" size="sm">
-              {isZh ? '打开工作台 →' : 'Launch Tool →'}
+              {isZh ? '打开工具 →' : 'Open Tool →'}
             </Button>
           </article>
         ))}
@@ -69,14 +64,13 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
 
     <section>
       <h2 style="font-size:1.3rem;margin-bottom:var(--space-4);">
-        {isZh ? '4 个常青文化与生活微工具（M1 – M4）' : '4 Evergreen Cultural Micro-Tools (M1 – M4)'}
+        {isZh ? '日常换算与汉字工具' : 'Everyday Converters & Hanzi'}
       </h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);">
         {microTools.map((tool) => (
           <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
             <div>
-              <Badge tone="neutral">{tool.code}</Badge>
-              <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-top:0.45rem;">
+              <h3 style="font-family:var(--font-display);font-size:1.2rem;">
                 {isZh ? tool.nameZh : tool.name}
               </h3>
               <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
@@ -84,7 +78,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
               </p>
             </div>
             <Button href={lp(tool.href)} variant="secondary" size="sm">
-              {isZh ? '打开微工具 →' : 'Open Micro-Tool →'}
+              {isZh ? '打开工具 →' : 'Open Tool →'}
             </Button>
           </article>
         ))}

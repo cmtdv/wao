@@ -120,9 +120,9 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
     directTools: [
-      { label: '240h Visa-Free Checker (12.1)', href: '/tools/visa-checker/' },
-      { label: 'Station & Taxi Show Cards (12.2)', href: '/tools/station-taxi-cards/' },
-      { label: 'Allergy & Medical SOS Cards (12.4)', href: '/tools/medical-sos-cards/' },
+      { label: '240h Visa-Free Checker', href: '/tools/visa-checker/' },
+      { label: 'Station & Taxi Show Cards', href: '/tools/station-taxi-cards/' },
+      { label: 'Allergy & Medical SOS Cards', href: '/tools/medical-sos-cards/' },
     ],
     relatedEntities: [
       { label: 'Does Google Maps Work?', href: '/in-china/google-maps/', tag: '/in-china/' },
@@ -218,7 +218,7 @@ export const GUIDES: GuideDefinition[] = [
         stopCheck: 'STOP & CHECK: Any nonstop leg immediately before China (A) and immediately after China (C) must be different countries/regions. Hong Kong, Macau, and Taiwan count as distinct regions.',
         summary: 'Example valid route: London → Shanghai → Hong Kong (or Tokyo → Beijing → Seoul). Invalid: Los Angeles → Shanghai → San Francisco.',
         checklist: ['Confirm no hidden technical stop in the same country.', 'Carry PDF + printed paper itinerary for departure check-in desk.'],
-        linkedRoute: { label: 'Test Your Route in 12.1 Checker →', href: '/tools/visa-checker/' },
+        linkedRoute: { label: 'Test Your Route in Visa Checker →', href: '/tools/visa-checker/' },
       },
       {
         number: '02',
@@ -258,13 +258,13 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'Canton Fair & Factory Audit Stack', href: '/stacks/canton-fair-buyer-kit/' },
     directTools: [
-      { label: '18-Digit USCC & GB Matcher (12.7)', href: '/tools/uscc-gb-matcher/' },
+      { label: '18-Digit USCC & GB Matcher', href: '/tools/uscc-gb-matcher/' },
       { label: 'Wan/Yi Quote Number Converter', href: '/tools/wan-yi-converter/' },
     ],
     relatedEntities: [
-      { label: 'USCC & GSXT WAF Desk', href: '/compliance/uscc-gsxt-lookup/', tag: '/compliance/' },
-      { label: 'CCC (3C) Certification Guide', href: '/compliance/ccc-3c-certification/', tag: '/compliance/' },
-      { label: 'Shenzhen Tech & Supply Hub', href: '/cities/shenzhen/', tag: '/cities/' },
+      { label: 'USCC & GSXT Verification Desk', href: '/compliance/uscc-gsxt-lookup/', tag: 'Compliance' },
+      { label: 'CCC (3C) Certification Guide', href: '/compliance/ccc-3c-certification/', tag: 'Compliance' },
+      { label: 'Shenzhen Tech & Supply Hub', href: '/cities/shenzhen/', tag: 'City' },
     ],
     pulse: [
       { status: 'worked', context: 'EU Hardware Buyer · Guangzhou Pazhou', detail: 'Pre-registered Canton Fair buyer badge picked up in 6 mins at Baiyun Airport counter.', ago: '1d ago' },
@@ -316,7 +316,7 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'Digital Nomad 30-Day Stack', href: '/stacks/digital-nomad-30-day/' },
     directTools: [
-      { label: 'Work Permit Points & IIT Calc (12.6)', href: '/tools/tax-points-calc/' },
+      { label: 'Work Permit Points & IIT Calc', href: '/tools/tax-points-calc/' },
       { label: '24h Police Registration Form', href: '/documents/temp-residence-reg/' },
     ],
     relatedEntities: [
@@ -331,7 +331,7 @@ export const GUIDES: GuideDefinition[] = [
         stopCheck: 'STOP & CHECK: Authenticate your degree and non-criminal record with Hague Apostille BEFORE leaving your home country—China joined the Apostille Convention in Nov 2023.',
         summary: 'Confirm bachelor’s degree + 2 years relevant work experience (or ≥ 60 points under the scoring table).',
         checklist: ['Obtain Apostille on diploma and police clearance.', 'Check whether your city supports online degree verification.'],
-        linkedRoute: { label: 'Score Yourself in Tool 12.6 →', href: '/tools/tax-points-calc/' },
+        linkedRoute: { label: 'Score Yourself in Points Calculator →', href: '/tools/tax-points-calc/' },
       },
       {
         number: '02',
@@ -369,8 +369,8 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'Work Permit Points & IIT Calc', href: '/tools/tax-points-calc/' },
     directTools: [
-      { label: 'IIT Tax & Points Calculator (12.6)', href: '/tools/tax-points-calc/' },
-      { label: '848 Gov Portals Directory', href: '/portals/' },
+      { label: 'IIT Tax & Points Calculator', href: '/tools/tax-points-calc/' },
+      { label: 'Gov Open Data Portals', href: '/portals/' },
     ],
     relatedEntities: [
       { label: 'Shanghai Hub (310000)', href: '/cities/shanghai/', tag: '/cities/' },
@@ -427,7 +427,7 @@ export const GUIDES: GuideDefinition[] = [
         title: 'Confirm Land Port Eligibility for Your Passport',
         stopCheck: 'STOP & CHECK: West Kowloon Rail Station is NOT a 240h visa-free entry port for all nationalities—unilateral 30-day visa-free passports enter smoothly; others need a visa or eligible air/ferry entry.',
         summary: 'Always double-check whether your specific land crossing is listed among the 60 approved 240h ports.',
-        checklist: ['Verify port eligibility in Tool 12.1.', 'Book cross-border tickets on official 12306 or Trip.com.'],
+        checklist: ['Verify port eligibility in the Visa Checker.', 'Book cross-border tickets on official 12306 or Trip.com.'],
         linkedRoute: { label: 'Check Port Eligibility →', href: '/tools/visa-checker/' },
       },
       {
@@ -459,7 +459,7 @@ export const GUIDES: GuideDefinition[] = [
       { label: 'Panda Activity Peak', value: '07:30–10:30 AM (sleeping by noon)', source: 'Chengdu Base', verifiedDate: '2026-11-15' },
     ],
     stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
-    directTools: [{ label: 'Ticket Release Timezone Calc (12.3)', href: '/tools/ticket-calendar/' }],
+    directTools: [{ label: 'Ticket Release Timezone Calc', href: '/tools/ticket-calendar/' }],
     relatedEntities: [
       { label: 'Badaling vs. Mutianyu', href: '/compare/badaling-vs-mutianyu/', tag: '/compare/' },
       { label: 'Forbidden City Rules', href: '/attractions/forbidden-city/', tag: '/attractions/' },
@@ -527,8 +527,8 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
     directTools: [
-      { label: 'Budget & Tax Refund Calc (12.5)', href: '/tools/budget-calculator/' },
-      { label: '12306 Release Calendar (12.3)', href: '/tools/ticket-calendar/' },
+      { label: 'Budget & Tax Refund Calc', href: '/tools/budget-calculator/' },
+      { label: '12306 Release Calendar', href: '/tools/ticket-calendar/' },
     ],
     relatedEntities: [
       { label: 'Beijing → Shanghai HSR', href: '/routes/beijing-to-shanghai/', tag: '/routes/' },
@@ -561,8 +561,8 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
     directTools: [
-      { label: 'Medical & SOS Cards (12.4)', href: '/tools/medical-sos-cards/' },
-      { label: 'Budget Estimator (12.5)', href: '/tools/budget-calculator/' },
+      { label: 'Medical & SOS Cards', href: '/tools/medical-sos-cards/' },
+      { label: 'Budget Estimator', href: '/tools/budget-calculator/' },
     ],
     relatedEntities: [
       { label: 'Shanghai Intl Hospitals', href: '/cities/shanghai/#hospitals', tag: '/cities/' },
@@ -650,7 +650,7 @@ export const GUIDES: GuideDefinition[] = [
       { label: 'Mainland iPhone', value: 'Dual physical SIM, NO eSIM; FaceTime Audio disabled', source: 'Hardware Spec', verifiedDate: '2026-11-15' },
     ],
     stackLink: { label: 'Canton Fair Buyer Stack', href: '/stacks/canton-fair-buyer-kit/' },
-    directTools: [{ label: 'Budget & Tax Refund Calc (12.5)', href: '/tools/budget-calculator/' }],
+    directTools: [{ label: 'Budget & Tax Refund Calc', href: '/tools/budget-calculator/' }],
     relatedEntities: [{ label: 'CCC (3C) Certification Desk', href: '/compliance/ccc-3c-certification/', tag: '/compliance/' }],
     pulse: DEFAULT_PULSE,
     matrixRows: [
@@ -704,7 +704,7 @@ export const GUIDES: GuideDefinition[] = [
     stackLink: { label: 'Solo Female 10-Day Stack', href: '/stacks/solo-female-10-day/' },
     directTools: [
       { label: 'Show-to-Local Driver Cards', href: '/cards/taxi-beijing-qinghe/' },
-      { label: 'Ground Pulse Live Feed', href: '/pulse/' },
+      { label: 'Live Field Reports', href: '/pulse/' },
     ],
     relatedEntities: [
       { label: 'WeChat Restricted Rescue', href: '/errors/wechat-restricted/', tag: '/errors/' },
@@ -741,7 +741,7 @@ export const GUIDES: GuideDefinition[] = [
     ],
     stackLink: { label: '848 Gov Data & MCP Center', href: '/portals/' },
     directTools: [{ label: '240h Visa Checker', href: '/tools/visa-checker/' }],
-    relatedEntities: [{ label: 'Ground Pulse Live Stream', href: '/pulse/', tag: '/pulse/' }],
+    relatedEntities: [{ label: 'Live Field Reports', href: '/pulse/', tag: 'Field' }],
     pulse: DEFAULT_PULSE,
     rescueFilters: ['All', 'Visa', 'Tax & Pay', 'Aviation', 'Business'],
     rescueItems: [
@@ -768,7 +768,7 @@ export const GUIDES: GuideDefinition[] = [
       { label: 'Peak Crowd Weeks', value: 'Spring Festival · May 1–5 · Oct 1–7', source: 'State Council', verifiedDate: '2026-11-15' },
     ],
     stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
-    directTools: [{ label: 'Ticket Release Calendar (12.3)', href: '/tools/ticket-calendar/' }],
+    directTools: [{ label: 'Ticket Release Calendar', href: '/tools/ticket-calendar/' }],
     relatedEntities: [{ label: 'Statutory Holidays & Crowds', href: '/guides/china-statutory-holidays/', tag: '/guides/' }],
     pulse: DEFAULT_PULSE,
     rescueFilters: ['All', 'Winter (Dec–Feb)', 'Spring (Mar–May)', 'Summer (Jun–Aug)', 'Autumn (Sep–Nov)'],
@@ -795,7 +795,7 @@ export const GUIDES: GuideDefinition[] = [
       { label: 'Extreme Crowd Alerts', value: 'Spring Festival (8d) · Labor Day (5d) · National Day (7d)', source: 'State Council Office', verifiedDate: '2026-11-15' },
       { label: 'HSR Sell-Out Speed', value: '< 2 minutes at 15-day release during Golden Weeks', source: '12306 Field Data', verifiedDate: '2026-11-15' },
     ],
-    stackLink: { label: 'Ticket Release Calendar (12.3)', href: '/tools/ticket-calendar/' },
+    stackLink: { label: 'Ticket Release Calendar', href: '/tools/ticket-calendar/' },
     directTools: [{ label: 'Ticket Release Calendar', href: '/tools/ticket-calendar/' }],
     relatedEntities: [{ label: 'Annual 12-Month Calendar', href: '/guides/annual-events-calendar/', tag: '/guides/' }],
     pulse: DEFAULT_PULSE,
@@ -954,7 +954,7 @@ export const GUIDES: GuideDefinition[] = [
       { label: 'Danyang Optical Speed', value: 'Custom prescription lenses cut in 30–60 mins', source: 'Field Verified', verifiedDate: '2026-11-15' },
     ],
     stackLink: { label: 'Canton Fair & Sourcing Stack', href: '/stacks/canton-fair-buyer-kit/' },
-    directTools: [{ label: 'USCC & GB Matcher (12.7)', href: '/tools/uscc-gb-matcher/' }],
+    directTools: [{ label: 'USCC & GB Matcher', href: '/tools/uscc-gb-matcher/' }],
     relatedEntities: [
       { label: 'USCC & GSXT Verification', href: '/compliance/uscc-gsxt-lookup/', tag: '/compliance/' },
       { label: 'Remote Sourcing Hub', href: '/for/remote-sourcing/', tag: '/for/' },
@@ -1268,17 +1268,17 @@ for (const item of ADDITIONAL_16_GUIDES) {
     heroImage: item.heroImage,
     disclaimers: item.disclaimers ?? [],
     hardFacts: [
-      { label: 'Verification Standard', value: 'Primary Official + Ground Pulse Cross-Checked', source: 'ChinaWao Editorial', verifiedDate: '2026-11-17' },
-      { label: 'Machine Delivery', value: 'Clean .md + Read-Only /mcp Endpoint Active', source: 'Paradigm E', verifiedDate: '2026-11-17' },
+      { label: 'Last Checked', value: '2026-11-17', source: 'Official Sources', verifiedDate: '2026-11-17' },
+      { label: 'Recommended Tools', value: 'Visa Checker · Show-to-Local Cards · City Guides', source: 'ChinaWao', verifiedDate: '2026-11-17' },
     ],
-    stackLink: { label: 'First-Time China 10-Day Stack', href: '/stacks/first-time-china-10-day/' },
+    stackLink: { label: 'First-Time China 10-Day Kit', href: '/stacks/first-time-china-10-day/' },
     directTools: [
-      { label: '240h Visa Checker (12.1)', href: '/tools/visa-checker/' },
-      { label: 'Multi-Facet Explorer', href: '/explore/' },
+      { label: '240h Visa Checker', href: '/tools/visa-checker/' },
+      { label: 'Topic Explorer', href: '/explore/' },
     ],
     relatedEntities: [
-      { label: 'Shanghai Hub (310000)', href: '/cities/shanghai/', tag: '/cities/' },
-      { label: '848 Gov Portals', href: '/portals/', tag: '/portals/' },
+      { label: 'Shanghai City Guide', href: '/cities/shanghai/', tag: 'City' },
+      { label: 'Gov Open Data Portals', href: '/portals/', tag: 'Data' },
     ],
     pulse: DEFAULT_PULSE,
     steps: item.archetype === 'playbook'
@@ -1296,7 +1296,7 @@ for (const item of ADDITIONAL_16_GUIDES) {
             title: 'Execute With Verified Local Tools & Backup Path',
             stopCheck: 'STOP & CHECK: Maintain a backup channel (e.g., second card, offline card, or verified official counter).',
             summary: 'Pair deterministic calculators and show-to-local cards with primary government portals.',
-            checklist: ['Test relevant tool in ChinaWao Utility Workbench.', 'Submit live feedback to Ground Pulse after completing.'],
+            checklist: ['Check the relevant calculator in Tools.', 'Submit your own field feedback after your trip.'],
             linkedRoute: { label: 'Open Utility Workbench →', href: '/tools/' },
           },
         ]

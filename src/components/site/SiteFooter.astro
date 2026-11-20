@@ -41,37 +41,35 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '六大主柱' : '6 Core Pillars'}</h2>
+      <h2>{isZh ? '栏目频道' : 'Sections'}</h2>
       <ul class="footer-links">
         {PILLARS.map((p) => (
-          <li><a href={lp(`/${p.id}/`)}>{isZh ? `${p.nameZh} (${p.name})` : p.name}</a></li>
+          <li><a href={lp(`/${p.id}/`)}>{isZh ? p.nameZh : p.name}</a></li>
         ))}
-        <li><a href={lp('/guides/')}>{isZh ? '32 个深度主题页' : 'All 32 Feature Guides'}</a></li>
+        <li><a href={lp('/guides/')}>{isZh ? '深度指南' : 'Guides'}</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '工具 · 数据 · AI' : 'Tools, Data & AI'}</h2>
+      <h2>{isZh ? '工具与数据' : 'Tools & Data'}</h2>
       <ul class="footer-links">
-        <li><a href={lp('/tools/')}>{isZh ? '11 个交互工具工作台' : 'Tools Workbench (11)'}</a></li>
-        <li><a href={lp('/portals/')}>{isZh ? '848 政务数据源与 MCP' : '848 Gov Portals & MCP'}</a></li>
-        <li><a href={lp('/pulse/')}>{isZh ? '现场实测流 Ground Pulse' : 'Live Ground Pulse'}</a></li>
-        <li><a href={lp('/explore/')}>{isZh ? '多维分面探索器' : 'Multi-Facet Explorer'}</a></li>
-        <li><a href="/llms.txt">llms.txt</a></li>
-        <li><a href="/.well-known/mcp/server-card.json">MCP Server Card</a></li>
+        <li><a href={lp('/tools/')}>{isZh ? '实用工具' : 'Tools'}</a></li>
+        <li><a href={lp('/cards/')}>{isZh ? '亮屏字卡' : 'Show Cards'}</a></li>
+        <li><a href={lp('/portals/')}>{isZh ? '政务公开数据' : 'Gov Data Portals'}</a></li>
+        <li><a href={lp('/pulse/')}>{isZh ? '现场实测' : 'Field Reports'}</a></li>
+        <li><a href={lp('/explore/')}>{isZh ? '条件筛选' : 'Explore'}</a></li>
+        <li><a href="/llms.txt">{isZh ? 'AI 索引文档' : 'llms.txt'}</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '志刊与系统' : 'Journal & System'}</h2>
+      <h2>{isZh ? '志刊与说明' : 'Journal & About'}</h2>
       <ul class="footer-links">
-        <li><a href={lp('/posts/')}>{isZh ? 'EmDash 志刊归档' : 'CMS Dispatches'}</a></li>
-        <li><a href={lp('/design-system/')}>{strings.footer.links.dsKit}</a></li>
-        <li><a href={lp('/design-system/blocks/')}>{strings.footer.links.dsBlocks}</a></li>
-        {pages.slice(0, 3).map((entry) => (
+        <li><a href={lp('/posts/')}>{isZh ? '深度志刊' : 'Dispatches'}</a></li>
+        {pages.slice(0, 4).map((entry) => (
           <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
         ))}
-        <li><a href="/rss.xml">{strings.footer.links.rss}</a></li>
+        <li><a href="/rss.xml">{isZh ? 'RSS 订阅' : 'RSS Feed'}</a></li>
       </ul>
     </div>
   </div>
@@ -79,12 +77,8 @@ const year = new Date().getFullYear();
   <div class="container footer-bottom">
     <div class="footer-colophon">
       <span>© {year} {siteTitle}</span>
-      <span>Paradigm E · Astro + EmDash Live Collections + Route A</span>
+      <span>{isZh ? '经核验的中国实用指南与开放数据门户' : 'Verified practical guides and open data on China'}</span>
     </div>
     <ThemeToggle variant="segmented" />
-  </div>
-
-  <div class="container footer-watermark" aria-hidden="true">
-    <span>{siteTitle}.</span>
   </div>
 </footer>

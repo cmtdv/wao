@@ -12,42 +12,32 @@ const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 const taxonomyPillars = getAtlasPillars(locale);
-const totalTopics = taxonomyPillars.reduce((sum, p) => sum + p.children.length, 0);
 ---
 <PillarHubLayout pillar={PILLAR_BY_ID.atlas}>
-  {/* Preserved Authoritative 12 × 97 Master Taxonomy Reference Matrix */}
+  {/* Full Topic Index */}
   <section id="taxonomy-12x97" class="pe-topic-group" style="margin-top:var(--space-6);" aria-labelledby="tax-12x97-h">
-    <span class="pe-topic-group-num">AUTHORITATIVE TAXONOMY · 12 × {totalTopics}</span>
-    <h2 id="tax-12x97-h" style="font-size:1.35rem;margin-top:0.2rem;">
-      {isZh ? 'ChinaWao 12 × 97 全量知识分类标准索引' : 'Authoritative 12 × 97 Master Taxonomy Index'}
+    <h2 id="tax-12x97-h" style="font-size:1.35rem;">
+      {isZh ? '全站主题索引' : 'Full Topic Index'}
     </h2>
-    <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-block:0.35rem var(--space-4);">
-      {isZh
-        ? '前台收敛为 6 大高互斥主柱，底层严格对齐 12 × 97 权威知识树。支持实时关键词检索。'
-        : 'Frontend simplifies into 6 core pillars while preserving full alignment with the authoritative 12 × 97 master taxonomy.'}
-    </p>
 
-    <search class="atlas-toolbar" style="margin-bottom:var(--space-4);">
-      <label class="atlas-search" aria-label="Filter 97 topics">
+    <search class="atlas-toolbar" style="margin-block:var(--space-4);">
+      <label class="atlas-search" aria-label={isZh ? '筛选主题' : 'Filter topics'}>
         <Icon name="search" size={16} />
         <input
           type="search"
           data-atlas-filter
-          placeholder={isZh ? '筛选全部 97 项主题（如 panda、visa、rail、tea）…' : 'Filter all 97 topics (e.g. panda, visa, rail, tea)…'}
+          placeholder={isZh ? '按关键词筛选主题（如 熊猫、签证、高铁、茶）…' : 'Filter topics (e.g. panda, visa, rail, tea)…'}
           autocomplete="off"
         />
       </label>
-      <span class="atlas-count" data-atlas-count>{totalTopics} / {totalTopics}</span>
     </search>
 
     <div style="display:grid;gap:var(--space-3);">
       {taxonomyPillars.map((tp) => (
         <details class="journey-step" data-atlas-pillar={tp.slug} open={tp.id === '1' || tp.id === '9'}>
           <summary>
-            <span class="journey-step-num">{tp.id.padStart(2, '0')}</span>
             <span class="journey-step-head">
-              <span class="journey-step-phase">{tp.children.length} {isZh ? '项主题' : 'Topics'}</span>
-              <span class="journey-step-title">{isZh ? `${tp.navZh} · ${tp.navEn}` : `${tp.navEn} · ${tp.navZh}`}</span>
+              <span class="journey-step-title">{isZh ? tp.navZh : tp.navEn}</span>
             </span>
           </summary>
           <div class="journey-step-body">
@@ -59,7 +49,7 @@ const totalTopics = taxonomyPillars.reduce((sum, p) => sum + p.children.length, 
                   data-atlas-topic
                   data-search={`${topic.id} ${topic.navEn} ${topic.navZh} ${topic.scopeZh} ${tp.navEn}`.toLowerCase()}
                 >
-                  {topic.id} {isZh ? topic.navZh : topic.navEn}
+                  {isZh ? topic.navZh : topic.navEn}
                 </a>
               ))}
             </div>

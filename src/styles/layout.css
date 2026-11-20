@@ -718,28 +718,6 @@ dialog::backdrop {
   gap: var(--space-2) var(--space-4);
 }
 
-/* Wayfare-inspired oversized cropped brand watermark at bottom edge of footer */
-.footer-watermark {
-  position: relative;
-  overflow: hidden;
-  padding-top: var(--space-3);
-  line-height: 0.76;
-  text-align: center;
-  user-select: none;
-  pointer-events: none;
-}
-
-.footer-watermark span {
-  display: block;
-  font-family: var(--font-display);
-  font-size: clamp(4.25rem, 15.5vw, 13.75rem);
-  font-weight: 500;
-  letter-spacing: -0.045em;
-  color: var(--secondary-ink);
-  opacity: 0.085;
-  transform: translateY(14%);
-}
-
 /* --------------------------------------------------------------------------
    Responsive Breakpoints (Zero 2-line wrap at 1024px)
    -------------------------------------------------------------------------- */

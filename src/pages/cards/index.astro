@@ -18,11 +18,11 @@ const lp = (p: string) => localePath(p, locale);
 const cards = getEntitiesByCollection('cards');
 
 const categories = [
-  { id: 'all', label: isZh ? '全部字卡 (6)' : 'All Cards (6)' },
+  { id: 'all', label: isZh ? '全部' : 'All' },
   { id: 'allergy', label: isZh ? '过敏与忌口' : 'Allergy & Food' },
-  { id: 'taxi', label: isZh ? '打车与防走错站' : 'Taxi & Stations' },
-  { id: 'hotel', label: isZh ? '酒店与离境退税' : 'Hotel & Tax Refund' },
-  { id: 'emergency', label: isZh ? '110 / 120 急救' : '120 Emergency SOS' },
+  { id: 'taxi', label: isZh ? '打车与车站' : 'Taxi & Stations' },
+  { id: 'hotel', label: isZh ? '酒店与退税' : 'Hotel & Tax Refund' },
+  { id: 'emergency', label: isZh ? '110 / 120 急救' : '120 Emergency' },
 ];
 
 const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 'verified' | 'editorial' | 'standby' }> = {
@@ -33,8 +33,8 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
 };
 ---
 <BaseShell
-  title={isZh ? '全屏亮屏出示字卡大厅（零收藏 3 秒直达）' : 'Show-to-Local Fullscreen Card Wall'}
-  description={isZh ? '打车防走错车站、防花生油过敏、护照入住、120 急救与离境退税高对比超大字亮屏卡，支持一键全屏与保存高清图片到手机相册。' : 'Instant high-contrast fullscreen bilingual cards for taxis, severe allergies, hotels, tax refund & 120 emergencies—save directly to Photos for offline use.'}
+  title={isZh ? '亮屏出示字卡库' : 'Show-to-Local Cards'}
+  description={isZh ? '打车防走错车站、防花生油过敏、护照入住、120 急救与离境退税高对比超大字亮屏卡，支持一键全屏与保存高清图片到手机相册。' : 'High-contrast fullscreen bilingual cards for taxis, severe allergies, hotels, tax refunds, and 120 emergencies—save directly to Photos for offline use.'}
   activePillar="visit"
   persona="safety"
 >
@@ -43,38 +43,33 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? '来华旅行' : 'Visit China', href: lp('/visit/') },
-        { label: isZh ? '亮屏字卡大厅' : 'Show-to-Local Cards' },
+        { label: isZh ? '亮屏字卡库' : 'Show-to-Local Cards' },
       ]}
       mobileBackHref={lp('/visit/')}
       mobileBackLabel={isZh ? '来华旅行' : 'Visit China'}
-    >
-      <Badge slot="meta" tone="verified">{isZh ? '支持保存高清图到相册 · 断网可用' : 'Save HD PNG to Photos · Offline Ready'}</Badge>
-    </ResponsiveBreadcrumb>
+    />
 
     <header style="max-width:54rem;margin-bottom:var(--space-5);">
-      <span class="eyebrow eyebrow--accent">
-        {isZh ? '零收藏现场救火 · Pocket Card Deck' : 'Zero-Bookmark Field Deck · Tools 12.2 & 12.4'}
-      </span>
-      <h1 style="margin-top:0.3rem;">
-        {isZh ? '全屏高对比亮屏出示字卡大厅' : 'Show-to-Local Fullscreen Card Wall'}
+      <h1>
+        {isZh ? '亮屏出示字卡库' : 'Show-to-Local Cards'}
       </h1>
       <p class="archive-lead" style="margin-top:0.4rem;">
         {isZh
-          ? '不用提前收藏网址：在任意页面点顶栏搜索框即可零打字直达急用卡；点击下方任意卡片直接全屏亮屏，或一键保存 1080×1920 高清图片到手机相册（没网也能 2 秒滑出），也可把本页「添加到手机主屏幕」。'
-          : 'No bookmarking needed: tap any card below to flash fullscreen immediately, save an HD 1080×1920 image straight to your phone Photos for zero-signal restaurants/subways, or Add to Home Screen.'}
+          ? '点开即可全屏高亮出示给司机、餐厅或酒店前台，也可直接保存 1080×1920 高清图到手机相册离线备用。'
+          : 'Tap any card to flash fullscreen to drivers, kitchens, or hotel desks—or save an HD image directly to your Photos for offline use.'}
       </p>
     </header>
 
-    {/* Auto-Pinned Recently Used Cards (Populated from localStorage) */}
+    {/* Auto-Pinned Recently Used Cards */}
     <section
       class="pe-side-card"
       style="margin-bottom:var(--space-5);border-top:3px solid var(--accent-seal);"
       data-pe-recent-cards-box
       hidden
-      aria-label={isZh ? '最近出示过的字卡' : 'Recently used cards'}
+      aria-label={isZh ? '最近使用过的字卡' : 'Recently used cards'}
     >
-      <span class="eyebrow eyebrow--accent">{isZh ? '⚡ 你最近用过的字卡（自动置顶）' : '⚡ Recently Used Cards (Auto-Pinned)'}</span>
-      <div class="pe-mega-chips" style="margin-top:var(--space-3);" data-pe-recent-cards-list></div>
+      <span class="pe-mega-col-title" style="border:0;padding:0;margin-bottom:var(--space-2);">{isZh ? '最近使用' : 'Recently Used'}</span>
+      <div class="pe-mega-chips" data-pe-recent-cards-list></div>
     </section>
 
     {/* 4 Scenario Filter Chips */}
@@ -148,14 +143,14 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
                 size="sm"
                 data-pe-wall-launch={payload}
               >
-                {isZh ? '⚡ 立即全屏亮屏' : '⚡ Flash Fullscreen'}
+                {isZh ? '全屏出示' : 'Flash Fullscreen'}
               </Button>
               <Button
                 variant="secondary"
                 size="sm"
                 data-pe-card-save-png={payload}
               >
-                {isZh ? '📷 存高清图到相册' : '📷 Save PNG'}
+                {isZh ? '保存图片' : 'Save PNG'}
               </Button>
               <Button href={lp(`/cards/${card.slug}/`)} variant="ghost" size="sm">
                 {isZh ? '详情 →' : 'Guide →'}

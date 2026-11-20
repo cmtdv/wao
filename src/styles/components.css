@@ -272,22 +272,7 @@
   opacity: 0.5;
 }
 
-/* Breadcrumbs inside Deep Pine headers across all templates */
-:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb {
-  color: var(--secondary-ink-muted);
-}
-
-:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb a {
-  color: var(--secondary-ink-muted);
-}
-
-:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb a:hover {
-  color: var(--accent-seal-on-dark);
-}
-
-:is(.article-header, .dossier-header, .directory-header, .archive-header, .error-banner) .breadcrumb [aria-current="page"] {
-  color: var(--secondary-ink);
-}
+/* Breadcrumbs use light-paper ink across all headers */
 
 /* Pills / Term Tags */
 .term-list {
@@ -686,32 +671,32 @@
 
 .archive-header {
   max-width: none;
-  padding: clamp(1.75rem, 3.5vw, 2.75rem);
-  margin-bottom: var(--space-7);
-  background: var(--secondary-solid);
-  color: var(--secondary-ink);
-  border-bottom: 3px solid var(--accent-gold);
+  padding: 0 0 var(--space-5);
+  margin-bottom: var(--space-6);
+  background: transparent;
+  color: var(--ink-primary);
+  border-bottom: 1px solid var(--rule-strong);
 }
 
 .archive-header .eyebrow {
-  color: var(--secondary-ink-muted);
+  color: var(--ink-muted);
 }
 
 .archive-header .eyebrow--accent::before {
-  background: var(--accent-seal-on-dark);
+  background: var(--accent-seal);
 }
 
 .archive-header h1 {
-  margin-top: var(--space-3);
-  color: var(--secondary-ink);
+  margin-top: var(--space-2);
+  color: var(--ink-primary);
 }
 
 .archive-lead {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   font-size: var(--text-lg);
   line-height: 1.65;
-  color: var(--secondary-ink-muted);
-  max-width: 56ch;
+  color: var(--ink-secondary);
+  max-width: 60ch;
 }
 
 .error-shell .archive-lead {

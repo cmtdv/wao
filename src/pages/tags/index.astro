@@ -80,7 +80,7 @@ const tags = taxonomy.data.toSorted((a, b) => a.label.localeCompare(b.label, isZ
     ) : (
       <div class="empty-panel">
         <h2>{isZh ? '暂无已发布标签。' : 'No tags published yet.'}</h2>
-        <p>{isZh ? '在 EmDash 后台为文章绑定标签即可自动生成主题索引。' : 'Assign tags to posts in EmDash to build a cross-referenced theme index.'}</p>
+        <p>{isZh ? '暂无已发布的主题标签。' : 'No published topic tags yet.'}</p>
         <div class="empty-actions">
           <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
           <a href={lp('/topics/')} class="editorial-link">{isZh ? '浏览栏目' : 'Explore topics'}</a>

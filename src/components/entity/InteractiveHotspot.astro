@@ -54,9 +54,6 @@ const isZh = locale === 'zh';
         ))}
       </div>
     </div>
-    <p style="margin-top:var(--space-2);font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);">
-      {isZh ? '点击上方中文屏幕中的任意红框区域高亮对应英文救火指令' : 'Tap any red-boxed Chinese zone above to highlight its English action card'}
-    </p>
   </div>
 
   <div style="display:grid;gap:var(--space-3);">
@@ -67,15 +64,15 @@ const isZh = locale === 'zh';
         style={idx === 0 ? 'border-color: var(--accent-seal);' : undefined}
       >
         <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:0.4rem;">
-          <Badge tone={idx === 0 ? 'danger' : 'editorial'}>#{spot.id} · {spot.chineseText}</Badge>
+          <Badge tone={idx === 0 ? 'danger' : 'editorial'}>{spot.chineseText}</Badge>
           <button
             type="button"
             class="pe-mega-chip"
             style="padding:0.15rem 0.45rem;font-size:var(--text-2xs);"
             data-pe-copy={spot.chineseText}
-            data-pe-copy-toast={`Copied: ${spot.chineseText}`}
+            data-pe-copy-toast={isZh ? `已复制：${spot.chineseText}` : `Copied: ${spot.chineseText}`}
           >
-            {isZh ? '复制中文' : 'Copy'}
+            {isZh ? '复制' : 'Copy'}
           </button>
         </div>
         <p style="font-size:var(--text-sm);color:var(--ink-primary);line-height:1.55;">

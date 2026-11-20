@@ -20,12 +20,12 @@ const cities = getEntitiesByCollection('cities');
 const defaultCity = cities[0];
 
 const layers = [
-  { id: 'all', label: isZh ? '全览 5 大图层' : 'All Layers' },
-  { id: 'terrain', label: isZh ? '地形与34省' : 'Terrain & 34 Provinces' },
-  { id: 'rail', label: isZh ? '4.5万km高铁与240h口岸' : '45,000km HSR & 240h Ports' },
-  { id: 'food', label: isZh ? '八大菜系与1,422老字号' : '8 Cuisines & 1,422 Brands' },
-  { id: 'industry', label: isZh ? '百大产业带' : '100 Industrial Belts' },
-  { id: 'heritage', label: isZh ? '59世遗与古建' : '59 UNESCO & Heritage' },
+  { id: 'all', label: isZh ? '全部图层' : 'All Layers' },
+  { id: 'terrain', label: isZh ? '地形与 34 省' : 'Terrain & 34 Provinces' },
+  { id: 'rail', label: isZh ? '高铁与 240h 口岸' : '45,000km HSR & 240h Ports' },
+  { id: 'food', label: isZh ? '八大菜系与老字号' : '8 Cuisines & Heritage Brands' },
+  { id: 'industry', label: isZh ? '产业带' : 'Industrial Belts' },
+  { id: 'heritage', label: isZh ? '世界遗产与古建' : 'UNESCO & Heritage' },
 ];
 ---
 <div data-pe-china-map>
@@ -75,7 +75,7 @@ const layers = [
             data-layers={cd.layers.join(',')}
             data-city-payload={JSON.stringify({
               slug: city.slug,
-              title: city.title,
+              title: isZh ? city.chineseName : city.title,
               chineseName: city.chineseName,
               mcaCode: cd.mcaCode,
               cluster: cd.cluster,
@@ -85,25 +85,24 @@ const layers = [
               href: lp(`/cities/${city.slug}/`),
             })}
           >
-            <span>{city.chineseName}</span>
-            <span>{city.title}</span>
+            <span>{isZh ? city.chineseName : city.title}</span>
           </button>
         );
       })}
     </div>
 
-    {/* Right-hand 12-Dimension City Quick Drawer */}
+    {/* Right-hand City Quick Drawer */}
     {defaultCity && defaultCity.cityData && (
       <aside class="pe-map-drawer" aria-live="polite" data-pe-map-drawer>
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:var(--space-2);">
-            <Badge tone="editorial" data-pe-map-mca>MCA {defaultCity.cityData.mcaCode}</Badge>
+            <Badge tone="editorial" data-pe-map-mca>{defaultCity.cityData.mcaCode}</Badge>
             <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-cluster>
               {defaultCity.cityData.cluster}
             </span>
           </div>
           <h3 style="font-family:var(--font-display);font-size:1.65rem;line-height:1.2;" data-pe-map-title>
-            {defaultCity.title} · {defaultCity.chineseName}
+            {isZh ? defaultCity.chineseName : defaultCity.title}
           </h3>
           <p style="margin-top:0.45rem;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.55;" data-pe-map-tagline>
             {isZh ? defaultCity.taglineZh : defaultCity.tagline}
@@ -121,10 +120,10 @@ const layers = [
 
         <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
           <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-ports>
-            240h: {defaultCity.cityData.ports240h}
+            {isZh ? `口岸：${defaultCity.cityData.ports240h}` : `240h: ${defaultCity.cityData.ports240h}`}
           </span>
           <Button href={lp(`/cities/${defaultCity.slug}/`)} variant="primary" size="sm" data-pe-map-cta>
-            {isZh ? '进入城市全维中枢 →' : 'Open City Hub →'}
+            {isZh ? '查看城市指南 →' : 'Open City Guide →'}
           </Button>
         </div>
       </aside>

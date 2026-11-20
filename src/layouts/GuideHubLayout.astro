@@ -33,20 +33,13 @@ const pillar = PILLAR_BY_ID[guide.pillar];
 const siblingGuides = getGuidesByPillar(guide.pillar);
 const mdHref = `/guides/${guide.slug}.md`;
 
-const variantBadgeMap = {
-  playbook: isZh ? '变体 A · 线性通关剧本' : 'Variant A · Playbook',
-  matrix: isZh ? '变体 B · 决策横评矩阵' : 'Variant B · Decision Matrix',
-  rescue: isZh ? '变体 C · 视觉救火与日志' : 'Variant C · Visual Rescue / Feed',
-  editorial: isZh ? '变体 D · 沉浸式人文画廊' : 'Variant D · Editorial Gallery',
-};
-
 const tocItems = guide.archetype === 'playbook' && guide.steps
-  ? guide.steps.map((s) => ({ id: `step-${s.number}`, label: `Step ${s.number}: ${s.title}` }))
+  ? guide.steps.map((s) => ({ id: `step-${s.number}`, label: s.title }))
   : [
-      { id: 'hard-facts', label: isZh ? '确定性硬参数' : 'Verified Hard Facts' },
-      { id: 'core-module', label: isZh ? '核心模块正文' : 'Core Playbook / Matrix' },
-      { id: 'related-mesh', label: isZh ? '关联实体织网' : 'Connected Entities' },
-      { id: 'ground-pulse', label: isZh ? '现场实测流' : 'Ground Pulse' },
+      { id: 'hard-facts', label: isZh ? '关键事实' : 'Key Facts' },
+      { id: 'core-module', label: isZh ? '核心内容' : 'Details' },
+      { id: 'related-mesh', label: isZh ? '相关页面' : 'Related Pages' },
+      { id: 'ground-pulse', label: isZh ? '现场实测' : 'Field Reports' },
     ];
 
 const jsonLd = {
@@ -81,9 +74,9 @@ const jsonLd = {
 
     <div class="pe-guide-grid">
       {/* Left Rail (Sticky 220px): Page TOC + Sibling Pillar Guides */}
-      <aside class="pe-local-nav" aria-label={isZh ? '局部导航与大纲' : 'Local Navigation'}>
+      <aside class="pe-local-nav" aria-label={isZh ? '本页目录与同栏目指南' : 'Page Navigation'}>
         <div>
-          <span class="pe-mega-col-title">{isZh ? '本页大纲 (TOC)' : 'On This Page'}</span>
+          <span class="pe-mega-col-title">{isZh ? '本页目录' : 'On This Page'}</span>
           <ul class="pe-local-nav-list">
             {tocItems.map((t) => (
               <li><a href={`#${t.id}`}>{t.label}</a></li>
@@ -93,7 +86,7 @@ const jsonLd = {
 
         <div>
           <span class="pe-mega-col-title">
-            {isZh ? `${pillar.nameZh} 同柱主题` : `More in ${pillar.name}`}
+            {isZh ? `${pillar.nameZh}更多指南` : `More in ${pillar.name}`}
           </span>
           <ul class="pe-local-nav-list">
             {siblingGuides.map((sib) => (
@@ -110,20 +103,15 @@ const jsonLd = {
         </div>
       </aside>
 
-      {/* Center Column (720-760px): Structured Guide Content + 4 Archetype Variants */}
+      {/* Center Column: Structured Guide Content */}
       <article class="pe-guide-main">
-        {/* Variant D Full-Width Editorial Visual Hero */}
         {guide.archetype === 'editorial' && guide.heroImage && (
           <div class="pe-editorial-hero">
-            <img src={guide.heroImage} alt={guide.title} loading="eager" />
+            <img src={guide.heroImage} alt={isZh ? guide.titleZh : guide.title} loading="eager" />
           </div>
         )}
 
         <header style="margin-bottom: var(--space-5);">
-          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:var(--space-2);">
-            <Badge tone="editorial">{variantBadgeMap[guide.archetype]}</Badge>
-            <Badge tone="neutral">{isZh ? pillar.personaLabelZh : pillar.personaLabel}</Badge>
-          </div>
           <h1>{isZh ? guide.titleZh : guide.title}</h1>
           {guide.archetype === 'editorial' ? (
             <blockquote class="pe-editorial-quote">
@@ -136,8 +124,8 @@ const jsonLd = {
           )}
         </header>
 
-        {/* Read-Only Hard Fact JSON Slots (Isolated from free-form prose) */}
-        <section id="hard-facts" aria-label={isZh ? '确定性硬事实参数' : 'Deterministic Hard Facts'}>
+        {/* Key Facts Strip */}
+        <section id="hard-facts" aria-label={isZh ? '关键事实参数' : 'Key Facts'}>
           <div class="pe-hard-facts">
             {guide.hardFacts.map((fact) => (
               <div class="pe-fact-slot">
@@ -149,16 +137,15 @@ const jsonLd = {
           </div>
         </section>
 
-        {/* ========== CORE BODY: 4 ARCHETYPE VARIANTS ========== */}
+        {/* Core Guide Body */}
         <section id="core-module" style="margin-top: var(--space-5);">
-          {/* VARIANT A: PLAYBOOK */}
           {guide.archetype === 'playbook' && guide.steps && (
             <div>
               <ol class="cw-stepper-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;list-style:none;padding:0;margin-bottom:var(--space-5);">
                 {guide.steps.map((s) => (
                   <li>
                     <a href={`#step-${s.number}`} class="pe-mega-chip">
-                      <strong>Step {s.number}</strong> · {s.title.slice(0, 26)}…
+                      {s.title.length > 28 ? `${s.title.slice(0, 28)}…` : s.title}
                     </a>
                   </li>
                 ))}
@@ -166,8 +153,7 @@ const jsonLd = {
 
               {guide.steps.map((step) => (
                 <section id={`step-${step.number}`} class="pe-step-card">
-                  <span class="pe-topic-group-num">STEP {step.number}</span>
-                  <h2 style="font-size:1.35rem;margin-top:0.2rem;">{step.title}</h2>
+                  <h2 style="font-size:1.35rem;">{step.title}</h2>
                   <div class="pe-stop-check" role="note">
                     {step.stopCheck}
                   </div>
@@ -191,21 +177,20 @@ const jsonLd = {
             </div>
           )}
 
-          {/* VARIANT B: DECISION MATRIX */}
           {guide.archetype === 'matrix' && guide.matrixRows && (
             <div>
               <h2 style="font-size:1.35rem;margin-bottom:var(--space-3);">
-                {isZh ? '拒绝端水：真实场景决策对比矩阵' : 'Honest Scenario Decision Matrix (Zero Hedging)'}
+                {isZh ? '方案对比' : 'Scenario Comparison'}
               </h2>
               <DataTable
                 id={`matrix-${guide.slug}`}
-                caption={`${guide.title} — Decision Comparison Matrix`}
+                caption={isZh ? `${guide.titleZh}对比表` : `${guide.title} Comparison`}
                 columns={[
                   { key: 'option', label: isZh ? '选项' : 'Option', rowHeader: true },
-                  { key: 'bestFor', label: isZh ? '最适合谁' : 'Best For' },
-                  { key: 'avoidIf', label: isZh ? '绝对劝退谁' : 'Skip / Avoid If' },
-                  { key: 'costRange', label: isZh ? '真实费用' : 'Real Cost' },
-                  { key: 'hiddenTrap', label: isZh ? '核心暗坑' : 'Hidden Trap' },
+                  { key: 'bestFor', label: isZh ? '适合情况' : 'Best For' },
+                  { key: 'avoidIf', label: isZh ? '不建议情况' : 'Skip / Avoid If' },
+                  { key: 'costRange', label: isZh ? '参考费用' : 'Typical Cost' },
+                  { key: 'hiddenTrap', label: isZh ? '注意事项' : 'Watch Out For' },
                 ]}
                 rows={guide.matrixRows.map((r) => ({
                   option: r.href ? { text: r.option, href: lp(r.href) } : r.option,
@@ -218,11 +203,10 @@ const jsonLd = {
             </div>
           )}
 
-          {/* VARIANT C: VISUAL RESCUE & DYNAMIC FEED */}
           {guide.archetype === 'rescue' && guide.rescueItems && (
             <div data-pe-rescue-root>
               {guide.rescueFilters && (
-                <div class="pe-facet-group" role="group" aria-label={isZh ? '按场景或 App 过滤' : 'Filter by app or period'}>
+                <div class="pe-facet-group" role="group" aria-label={isZh ? '按分类筛选' : 'Filter by category'}>
                   {guide.rescueFilters.map((f, idx) => (
                     <button
                       type="button"
@@ -240,7 +224,7 @@ const jsonLd = {
                 {guide.rescueItems.map((item) => (
                   <article class="pe-side-card" data-pe-rescue-card={item.appOrGroup}>
                     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
-                      <Badge tone="danger">{item.appOrGroup}</Badge>
+                      <Badge tone="danger">{isZh ? (RESCUE_FILTER_ZH[item.appOrGroup] ?? item.appOrGroup) : item.appOrGroup}</Badge>
                       {item.effectiveDate && (
                         <Badge tone="verified">{item.effectiveDate}</Badge>
                       )}
@@ -257,11 +241,11 @@ const jsonLd = {
                     <div style="margin-top:var(--space-3);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);">
                       {item.sourceAnchor ? (
                         <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">
-                          Source: {item.sourceAnchor}
+                          {isZh ? `来源：${item.sourceAnchor}` : `Source: ${item.sourceAnchor}`}
                         </span>
                       ) : <span />}
                       <a href={lp(item.href)} class="editorial-link" style="font-size:var(--text-xs);">
-                        {isZh ? '打开标注详情 →' : 'Open Annotated View →'}
+                        {isZh ? '查看详情 →' : 'View Details →'}
                       </a>
                     </div>
                   </article>
@@ -270,13 +254,11 @@ const jsonLd = {
             </div>
           )}
 
-          {/* VARIANT D: EDITORIAL GALLERY & SENSORY FIELD CARDS */}
           {guide.archetype === 'editorial' && guide.galleryItems && (
             <div style="display:grid;gap:var(--space-5);">
               {guide.galleryItems.map((card) => (
                 <article class="pe-step-card">
-                  <span class="eyebrow eyebrow--accent">{card.kicker}</span>
-                  <h2 style="font-size:1.35rem;margin-top:0.25rem;">{card.title}</h2>
+                  <h2 style="font-size:1.35rem;">{card.title}</h2>
                   <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.2rem;">
                     {card.chineseName}
                   </p>
@@ -288,13 +270,13 @@ const jsonLd = {
                       variant="secondary"
                       size="sm"
                       data-pe-copy={card.copyTerm}
-                      data-pe-copy-toast={`Copied Chinese name: ${card.copyTerm}`}
+                      data-pe-copy-toast={isZh ? `已复制中文名：${card.copyTerm}` : `Copied Chinese name: ${card.copyTerm}`}
                     >
                       {isZh ? `复制高德中文名：${card.copyTerm}` : `Copy Amap Name: ${card.copyTerm}`}
                     </Button>
                     {card.href && (
                       <Button href={lp(card.href)} variant="ghost" size="sm">
-                        {isZh ? '查看关联档案 →' : 'Open Entity Profile →'}
+                        {isZh ? '查看详情 →' : 'Open Details →'}
                       </Button>
                     )}
                   </div>
@@ -304,13 +286,15 @@ const jsonLd = {
           )}
         </section>
 
-        {/* Cross-Domain Entity Mesh */}
+        {/* Related Pages */}
         <section id="related-mesh" style="margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px solid var(--rule-subtle);">
-          <span class="eyebrow">{isZh ? '关联程序化实体内链' : 'Connected Programmatic Entities'}</span>
+          <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
+            {isZh ? '相关页面' : 'Related Pages'}
+          </h2>
           <div class="pe-mega-chips" style="margin-top:var(--space-3);">
             {guide.relatedEntities.map((ent) => (
               <a href={lp(ent.href)} class="pe-mega-chip">
-                {ent.label} · <strong>{ent.tag}</strong>
+                {ent.label}
               </a>
             ))}
           </div>
@@ -323,10 +307,10 @@ const jsonLd = {
         <AutoDisclaimer kinds={guide.disclaimers} locale={locale} />
       </article>
 
-      {/* Right Companion Rail (Sticky 280px): Verify Meta + Stack + Tools + Machine .md / MCP */}
-      <aside class="pe-guide-companion" aria-label={isZh ? '核验信息与快捷工具' : 'Verification & Companion Tools'}>
+      {/* Right Companion Rail */}
+      <aside class="pe-guide-companion" aria-label={isZh ? '核验信息与快捷工具' : 'Verification & Tools'}>
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '核验元数据' : 'Verification Ledger'}</span>
+          <span class="pe-mega-col-title">{isZh ? '更新记录' : 'Verification'}</span>
           <VerifyMetaBar
             lastVerified={guide.lastVerified}
             tier={guide.tier}
@@ -336,17 +320,14 @@ const jsonLd = {
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '本主题一键抄作业清单包' : 'Bundled Scenario Stack'}</span>
-          <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-bottom:var(--space-3);">
-            {isZh ? '包含可勾选行前项、离线导出与社区分享短链。' : 'Interactive tickable checklist with share link & offline export.'}
-          </p>
+          <span class="pe-mega-col-title">{isZh ? '配套清单' : 'Checklist Kit'}</span>
           <Button href={lp(guide.stackLink.href)} variant="primary" size="sm">
             {guide.stackLink.label} →
           </Button>
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '本主题直达工具' : 'Direct Tools'}</span>
+          <span class="pe-mega-col-title">{isZh ? '配套工具' : 'Related Tools'}</span>
           <ul class="pe-mega-links">
             {guide.directTools.map((tool) => (
               <li>
@@ -360,13 +341,10 @@ const jsonLd = {
         </div>
 
         <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? 'AI / 开发者机器视图' : 'AI & Markdown Delivery'}</span>
-          <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-bottom:var(--space-3);">
-            {isZh ? '零 HTML 噪音纯 Markdown 与只读 MCP 接口。' : 'Zero-HTML clean Markdown mirror & read-only MCP endpoint.'}
-          </p>
+          <span class="pe-mega-col-title">{isZh ? '数据与接口' : 'Markdown & API'}</span>
           <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
-            <a href={mdHref} class="pe-mega-chip">View .md</a>
-            <a href={lp('/portals/#mcp-setup')} class="pe-mega-chip">/mcp Setup</a>
+            <a href={mdHref} class="pe-mega-chip">{isZh ? '查看 Markdown' : 'View .md'}</a>
+            <a href={lp('/portals/#mcp-setup')} class="pe-mega-chip">{isZh ? 'MCP 接入' : 'MCP Setup'}</a>
           </div>
         </div>
       </aside>

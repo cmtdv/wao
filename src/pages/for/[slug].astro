@@ -6,7 +6,6 @@
 import BaseShell from '@layouts/BaseShell.astro';
 import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
 import AutoDisclaimer from '../../components/compliance/AutoDisclaimer.astro';
-import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { PERSONA_LANDINGS } from '@data/paradigm-e/collections';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
@@ -32,15 +31,14 @@ const pillar = PILLAR_BY_ID[landing.pillar];
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
         { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
-        { label: `/for/${landing.slug}/` },
+        { label: isZh ? landing.titleZh : landing.title },
       ]}
       mobileBackHref={lp(`/${pillar.id}/`)}
       mobileBackLabel={isZh ? pillar.nameZh : pillar.name}
     />
 
     <header style="margin-bottom:var(--space-5);">
-      <span class="eyebrow eyebrow--accent">Static High-Intent Persona Hub · /for/{landing.slug}/</span>
-      <h1 style="margin-top:0.3rem;">{isZh ? landing.titleZh : landing.title}</h1>
+      <h1>{isZh ? landing.titleZh : landing.title}</h1>
       <p class="archive-lead" style="margin-top:0.4rem;">{landing.lead}</p>
     </header>
 
@@ -72,13 +70,13 @@ const pillar = PILLAR_BY_ID[landing.pillar];
       </div>
 
       <div class="pe-side-card">
-        <span class="pe-mega-col-title">{isZh ? '直达实体与工具卡' : 'Direct Entities & Cards'}</span>
+        <span class="pe-mega-col-title">{isZh ? '相关页面与字卡' : 'Related Pages & Cards'}</span>
         <ul class="pe-mega-links">
           {landing.recommendedEntities.map((e) => (
             <li>
               <a href={lp(e.href)}>
                 <span>{e.title}</span>
-                <Badge tone="editorial">{e.tag}</Badge>
+                <span>→</span>
               </a>
             </li>
           ))}

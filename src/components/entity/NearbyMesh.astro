@@ -17,9 +17,8 @@ const { nearbyMesh, amapSearchChips, locale = 'en' } = Astro.props;
 const isZh = locale === 'zh';
 ---
 <section aria-labelledby="nearby-mesh-heading" style="margin-top:var(--space-6);">
-  <span class="eyebrow eyebrow--accent">{isZh ? '周边 1–3km 零维护推荐' : 'Zero-Maintenance 1–3km Nearby Mesh'}</span>
-  <h2 id="nearby-mesh-heading" style="margin-top:0.25rem;margin-bottom:var(--space-3);">
-    {isZh ? '80% 静态地标老字号 + 20% 高德/点评中文搜词' : 'Nearby Walks, Heritage Brands & Instant Amap Search Terms'}
+  <h2 id="nearby-mesh-heading" style="margin-bottom:var(--space-3);">
+    {isZh ? '周边步行与常用搜词' : 'Nearby Walks & Amap Search Terms'}
   </h2>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-3);">
@@ -31,13 +30,13 @@ const isZh = locale === 'zh';
             {item.distance}
           </span>
         </div>
-        <h3 style="font-size:1rem;margin-bottom:0.15rem;">{item.name}</h3>
-        <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-bottom:0.5rem;">{item.chineseName} · {item.note}</p>
+        <h3 style="font-size:1rem;margin-bottom:0.15rem;">{isZh ? item.chineseName : item.name}</h3>
+        <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-bottom:0.5rem;">{isZh ? item.note : `${item.chineseName} · ${item.note}`}</p>
         <button
           type="button"
           class="pe-mega-chip"
           data-pe-copy={item.amapQuery}
-          data-pe-copy-toast={isZh ? `已复制高德搜索词：${item.amapQuery}` : `Copied Amap query: ${item.amapQuery}`}
+          data-pe-copy-toast={isZh ? `已复制搜索词：${item.amapQuery}` : `Copied Amap query: ${item.amapQuery}`}
         >
           {isZh ? `复制：${item.amapQuery}` : `Copy Amap: ${item.amapQuery}`}
         </button>
@@ -48,7 +47,7 @@ const isZh = locale === 'zh';
   {amapSearchChips.length > 0 && (
     <div style="margin-top:var(--space-4);padding:var(--space-4);border:1px solid var(--rule-subtle);background:var(--surface-raised);border-radius:var(--control-radius);">
       <span class="pe-mega-col-title" style="margin-bottom:var(--space-2);">
-        {isZh ? '高德 / 大众点评标准中文搜索词一键复制块（杜绝小店关店死链）' : 'Amap / Dianping Chinese Search Chips (Zero Dead-Restaurant Links)'}
+        {isZh ? '高德 / 大众点评中文搜索词' : 'Amap / Dianping Chinese Search Terms'}
       </span>
       <div class="pe-mega-chips">
         {amapSearchChips.map((chip) => (
@@ -56,9 +55,9 @@ const isZh = locale === 'zh';
             type="button"
             class="pe-mega-chip"
             data-pe-copy={chip.chineseQuery}
-            data-pe-copy-toast={`Copied "${chip.chineseQuery}" — paste directly into Amap or Dianping`}
+            data-pe-copy-toast={isZh ? `已复制「${chip.chineseQuery}」，可直接粘贴到高德或大众点评` : `Copied "${chip.chineseQuery}" — paste directly into Amap or Dianping`}
           >
-            {chip.label} · <strong>{chip.chineseQuery}</strong>
+            {isZh ? chip.chineseQuery : `${chip.label} · ${chip.chineseQuery}`}
           </button>
         ))}
       </div>

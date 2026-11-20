@@ -13,34 +13,33 @@ const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 
-const archetypes: { key: GuideArchetype; title: string; titleZh: string; desc: string }[] = [
-  { key: 'playbook', title: 'Variant A · Linear Playbooks', titleZh: '变体 A · 线性通关剧本型', desc: 'Step progress bar, STOP & CHECK alerts & embedded calculators.' },
-  { key: 'matrix', title: 'Variant B · Decision Matrices', titleZh: '变体 B · 决策横评与矩阵型', desc: 'Zero-hedging side-by-side comparison tables with real cost & traps.' },
-  { key: 'rescue', title: 'Variant C · Visual Rescue & Live Feeds', titleZh: '变体 C · 视觉救火与动态日志型', desc: 'App/scene filter bars, red-box galleries & effective-date changelogs.' },
-  { key: 'editorial', title: 'Variant D · Editorial Galleries', titleZh: '变体 D · 沉浸式画廊与人文叙事型', desc: '16:9 visual hero, 10% sensory lead hook & 90% copyable field cards.' },
+const archetypes: { key: GuideArchetype; title: string; titleZh: string }[] = [
+  { key: 'playbook', title: 'Step-by-Step Playbooks', titleZh: '行前与实操指南' },
+  { key: 'matrix', title: 'Comparisons & Buying Guides', titleZh: '方案与场景对比' },
+  { key: 'rescue', title: 'Error Rescue & Policy Logs', titleZh: '报错救火与政策动态' },
+  { key: 'editorial', title: 'Food, Heritage & Living Culture', titleZh: '饮食、古建与人文' },
 ];
 ---
 <BaseShell
-  title={isZh ? '32 个深度主题页总览' : 'All 32 Deep Feature Guides'}
-  description={isZh ? '按 4 种母版变体与 6 大主柱组织的 32 篇核验深度专题。' : 'All 32 verified ChinaWao feature hubs organized across 4 layout archetypes.'}
+  title={isZh ? '深度指南总览' : 'All China Guides'}
+  description={isZh ? '涵盖行前准备、交通支付、留学工作、商务采购与文化饮食的实用深度指南。' : 'Practical guides covering pre-flight prep, payments, rail, living, sourcing, and Chinese culture.'}
 >
   <div class="container" style="padding-bottom: var(--space-8);">
     <ResponsiveBreadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '32 深度主题页' : '32 Feature Guides' },
+        { label: isZh ? '深度指南' : 'Guides' },
       ]}
       mobileBackHref={lp('/')}
       mobileBackLabel={isZh ? '首页' : 'Home'}
     />
 
     <header style="max-width:52rem;margin-bottom:var(--space-6);">
-      <span class="eyebrow eyebrow--accent">Mother Template 3 · 32 Feature Hubs</span>
-      <h1 style="margin-top:0.35rem;">{isZh ? `全部 ${GUIDES.length} 个深度主题页` : `All ${GUIDES.length} Deep Feature Guides`}</h1>
+      <h1>{isZh ? '深度指南' : 'China Guides'}</h1>
       <p class="archive-lead" style="margin-top:var(--space-2);">
         {isZh
-          ? '外框统一三栏骨架（左粘性局部导航 + 中栏正文 + 右核验伴随栏），内芯按内容人格自动路由 4 种内部布局变体，每页均附纯净 .md 机器端点。'
-          : 'Unified 3-column reading frame with 4 specialized internal archetype variants—each shipping a clean .md machine view and verified hard-fact slots.'}
+          ? '按使用场景整理的实用指南，覆盖赴华行前、日常支付交通、留学长居、商务采购与人文探索。'
+          : 'Practical guides organized by scenario—covering pre-flight prep, daily travel, long-term stay, sourcing, and culture.'}
       </p>
     </header>
 
@@ -49,8 +48,7 @@ const archetypes: { key: GuideArchetype; title: string; titleZh: string; desc: s
       return (
         <section style="margin-bottom:var(--space-7);">
           <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--space-2);padding-bottom:var(--space-2);border-bottom:1.5px solid var(--rule-strong);">
-            <h2 style="font-size:1.35rem;">{isZh ? arch.titleZh : arch.title} ({list.length})</h2>
-            <span style="font-size:var(--text-xs);color:var(--ink-secondary);">{arch.desc}</span>
+            <h2 style="font-size:1.35rem;">{isZh ? arch.titleZh : arch.title}</h2>
           </div>
 
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);margin-top:var(--space-4);">
@@ -58,7 +56,7 @@ const archetypes: { key: GuideArchetype; title: string; titleZh: string; desc: s
               <article class="pe-side-card" data-persona={g.persona} style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
                 <div>
                   <div style="display:flex;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
-                    <Badge tone="editorial">{PILLAR_BY_ID[g.pillar].name}</Badge>
+                    <Badge tone="editorial">{isZh ? PILLAR_BY_ID[g.pillar].nameZh : PILLAR_BY_ID[g.pillar].name}</Badge>
                     <a href={`/guides/${g.slug}.md`} class="pe-mega-chip" style="padding:0.1rem 0.4rem;font-size:var(--text-2xs);">.md</a>
                   </div>
                   <h3 style="font-family:var(--font-display);font-size:1.12rem;line-height:1.3;">
@@ -71,7 +69,7 @@ const archetypes: { key: GuideArchetype; title: string; titleZh: string; desc: s
                   </p>
                 </div>
                 <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">
-                  Verified {g.lastVerified} · {g.tier}
+                  {isZh ? `更新于 ${g.lastVerified}` : `Updated ${g.lastVerified}`}
                 </span>
               </article>
             ))}

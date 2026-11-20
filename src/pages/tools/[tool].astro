@@ -7,7 +7,6 @@
 import BaseShell from '@layouts/BaseShell.astro';
 import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
 import AutoDisclaimer from '../../components/compliance/AutoDisclaimer.astro';
-import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import Select from '@ui/forms/Select.astro';
 import Input from '@ui/forms/Input.astro';
@@ -59,7 +58,7 @@ const webMcpAttrs = {
 };
 ---
 <BaseShell
-  title={`${activeTool.code} ${isZh ? activeTool.nameZh : activeTool.name}`}
+  title={isZh ? activeTool.nameZh : activeTool.name}
   description={isZh ? activeTool.shortDescZh : activeTool.shortDesc}
   persona={activeTool.slug === 'uscc-gb-matcher' ? 'legal' : 'safety'}
 >
@@ -67,33 +66,29 @@ const webMcpAttrs = {
     <ResponsiveBreadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '实用工具工作台' : 'Tools Workbench', href: lp('/tools/') },
+        { label: isZh ? '实用工具' : 'Tools', href: lp('/tools/') },
         { label: isZh ? activeTool.nameZh : activeTool.name },
       ]}
       mobileBackHref={lp('/tools/')}
-      mobileBackLabel={isZh ? '全部 11 工具' : 'All Tools'}
-    >
-      <Badge slot="meta" tone="verified">WebMCP Declarative Ready · Offline JS</Badge>
-    </ResponsiveBreadcrumb>
+      mobileBackLabel={isZh ? '全部工具' : 'All Tools'}
+    />
 
     <div class="pe-workbench">
-      {/* Left Narrow Rail (248px): Switch across all 11 Tools */}
-      <nav class="pe-tool-rail" aria-label={isZh ? '切换 11 个工具' : 'Switch between 11 tools'}>
+      {/* Left Narrow Rail */}
+      <nav class="pe-tool-rail" aria-label={isZh ? '切换工具' : 'Switch tools'}>
         <span class="pe-mega-col-title" style="padding-inline:0.5rem;margin-bottom:0.2rem;">
-          {isZh ? '7 个确定性规则工具' : '7 Deterministic Tools'}
+          {isZh ? '出行与政务工具' : 'Travel & Official Tools'}
         </span>
         {detTools.map((t) => (
           <a href={lp(t.href)} aria-current={t.slug === activeTool.slug ? 'page' : undefined}>
-            <span style="font-family:var(--font-mono);color:var(--accent-seal-text);">{t.code}</span>
             <span>{isZh ? t.nameZh : t.name}</span>
           </a>
         ))}
         <span class="pe-mega-col-title" style="padding-inline:0.5rem;margin:var(--space-3) 0 0.2rem;">
-          {isZh ? '4 个常青文化微工具' : '4 Evergreen Micro-Tools'}
+          {isZh ? '日常换算与汉字' : 'Everyday Converters'}
         </span>
         {microTools.map((t) => (
           <a href={lp(t.href)} aria-current={t.slug === activeTool.slug ? 'page' : undefined}>
-            <span style="font-family:var(--font-mono);color:var(--ink-tertiary);">{t.code}</span>
             <span>{isZh ? t.nameZh : t.name}</span>
           </a>
         ))}
@@ -101,13 +96,6 @@ const webMcpAttrs = {
 
       {/* Right Adaptive Calculation Panel */}
       <section class="pe-step-card" style="margin:0;">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-3);">
-          <Badge tone="editorial">Tool {activeTool.code}</Badge>
-          <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);">
-            Zero-Refresh Deterministic Browser Engine
-          </span>
-        </div>
-
         <h1 style="font-size:clamp(1.55rem, 1.2rem + 1.2vw, 2.2rem);">
           {isZh ? activeTool.nameZh : activeTool.name}
         </h1>
@@ -115,7 +103,7 @@ const webMcpAttrs = {
           {isZh ? activeTool.shortDescZh : activeTool.shortDesc}
         </p>
 
-        {/* TOOL 12.1: 240h VISA CHECKER */}
+        {/* VISA CHECKER */}
         {activeTool.slug === 'visa-checker' && (
           <div class="visa-workbench" data-visa-checker {...webMcpAttrs}>
             <form class="visa-form-card" novalidate>
@@ -137,66 +125,63 @@ const webMcpAttrs = {
                 data-visa-days
               />
               <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
-                {isZh ? '持有第三国/港澳台联程确定客票 (A → 中国 → C)' : 'Confirmed third-country/region onward ticket (A → China → C)'}
+                {isZh ? '持有第三国或港澳台联程确定客票（A → 中国 → C）' : 'Confirmed third-country/region onward ticket (A → China → C)'}
               </Checkbox>
             </form>
             <div class="visa-result-card" aria-live="polite" data-visa-result>
-              <span class="eyebrow eyebrow--accent">Deterministic Verdict</span>
-              <h2 data-visa-verdict style="margin-top:0.35rem;font-size:1.35rem;">Evaluating…</h2>
+              <span class="eyebrow eyebrow--accent">{isZh ? '判定结果' : 'Result'}</span>
+              <h2 data-visa-verdict style="margin-top:0.35rem;font-size:1.35rem;">{isZh ? '测算中…' : 'Evaluating…'}</h2>
               <p data-visa-summary style="margin-top:0.5rem;font-size:var(--text-sm);color:var(--ink-secondary);"></p>
               <p data-visa-note style="margin-top:0.5rem;font-family:var(--font-mono);font-size:var(--text-xs);"></p>
             </div>
           </div>
         )}
 
-        {/* TOOL 12.2 / 12.4: SHOW-TO-LOCAL CARDS */}
+        {/* SHOW-TO-LOCAL CARDS */}
         {(activeTool.slug === 'station-taxi-cards' || activeTool.slug === 'medical-sos-cards') && (
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:var(--space-4);" {...webMcpAttrs}>
             {showCards.map((c) => (
               <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
                 <div>
-                  <Badge tone={c.collection === 'cards' && c.slug.includes('allergy') ? 'danger' : 'verified'}>
-                    {c.cardData?.scenario ?? 'SHOW CARD'}
-                  </Badge>
-                  <h2 style="font-size:1.15rem;margin-top:0.45rem;">{c.title}</h2>
-                  <p style="font-size:1.1rem;font-weight:600;margin-top:0.35rem;color:var(--accent-seal-text);">
+                  <h2 style="font-size:1.15rem;">{isZh && c.cardData ? c.cardData.titleZh : c.title}</h2>
+                  <p style="font-size:1.05rem;font-weight:600;margin-top:0.35rem;color:var(--accent-seal-text);">
                     {c.chineseName}
                   </p>
-                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">{c.tagline}</p>
+                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">{isZh ? c.taglineZh : c.tagline}</p>
                 </div>
                 <Button href={lp(`/cards/${c.slug}/`)} variant="primary" size="sm">
-                  {isZh ? '打开全屏高对比亮屏模式 →' : 'Launch Fullscreen Show Card →'}
+                  {isZh ? '全屏亮屏出示 →' : 'Open Fullscreen Card →'}
                 </Button>
               </article>
             ))}
           </div>
         )}
 
-        {/* TOOL 12.3: TICKET RELEASE TIMEZONE CONVERTER */}
+        {/* TICKET RELEASE TIMEZONE CONVERTER */}
         {activeTool.slug === 'ticket-calendar' && (
           <div style="display:grid;gap:var(--space-4);" {...webMcpAttrs}>
             <div class="pe-hard-facts">
               <div class="pe-fact-slot">
-                <span class="pe-fact-slot-label">Forbidden City (7d · 20:00 BJT)</span>
-                <strong class="pe-fact-slot-val" data-pe-bjt-hour="20" data-pe-bjt-minute="0">Calculating…</strong>
-                <span class="pe-fact-slot-src">Converted to your browser local timezone</span>
+                <span class="pe-fact-slot-label">{isZh ? '故宫博物院（提前 7 天 · 北京时间 20:00）' : 'Forbidden City (7d · 20:00 BJT)'}</span>
+                <strong class="pe-fact-slot-val" data-pe-bjt-hour="20" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
+                <span class="pe-fact-slot-src">{isZh ? '已按您当前设备时区换算' : 'Converted to your local timezone'}</span>
               </div>
               <div class="pe-fact-slot">
-                <span class="pe-fact-slot-label">Railway 12306 (15d · 08:00–18:00 BJT)</span>
-                <strong class="pe-fact-slot-val" data-pe-bjt-hour="8" data-pe-bjt-minute="0">Calculating…</strong>
-                <span class="pe-fact-slot-src">Earliest major hub station release</span>
+                <span class="pe-fact-slot-label">{isZh ? '铁路 12306（提前 15 天 · 08:00 起售）' : 'Railway 12306 (15d · 08:00 BJT)'}</span>
+                <strong class="pe-fact-slot-val" data-pe-bjt-hour="8" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
+                <span class="pe-fact-slot-src">{isZh ? '主要枢纽站最早起售时间' : 'Earliest major hub station release'}</span>
               </div>
             </div>
             <div data-ticket-calendar style="max-width:28rem;">
-              <DateInput id="ticket-travel-date" name="travel_date" label={isZh ? '选择计划出行/入园日期' : 'Target Travel / Visit Date'} value="2026-12-20" data-ticket-date />
+              <DateInput id="ticket-travel-date" name="travel_date" label={isZh ? '选择计划出行或入园日期' : 'Target Travel / Visit Date'} value="2026-12-20" data-ticket-date />
               <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);" data-ticket-output>
-                Select a date to compute exact 15-day 12306 &amp; 7-day Palace Museum booking dates.
+                {isZh ? '选择日期即可自动计算 12306（提前 15 天）与故宫（提前 7 天）开售日期。' : 'Select a date to compute exact 15-day 12306 and 7-day Palace Museum booking dates.'}
               </div>
             </div>
           </div>
         )}
 
-        {/* TOOL 12.5: BUDGET & TAX REFUND 2.0 CALCULATOR */}
+        {/* BUDGET & TAX REFUND CALCULATOR */}
         {activeTool.slug === 'budget-calculator' && (
           <div data-tax-calc style="max-width:34rem;display:grid;gap:var(--space-4);" {...webMcpAttrs}>
             <Slider
@@ -208,11 +193,11 @@ const webMcpAttrs = {
               step={100}
               value={3200}
               unitPrefix="¥"
-              unitSuffix=" RMB"
+              unitSuffix={isZh ? ' 元' : ' RMB'}
               data-tax-slider
             />
             <div class="pe-side-card" style="background:var(--surface-canvas);" data-tax-output>
-              Estimated 9% Net Refund (11% VAT − 2% agency fee): <strong>¥288 RMB</strong>
+              {isZh ? <>预计实得 9% 净退税额（11% 退税率扣除 2% 代理手续费）：<strong>¥288</strong></> : <>Estimated 9% Net Refund (11% VAT − 2% agency fee): <strong>¥288 RMB</strong></>}
             </div>
           </div>
         )}
@@ -267,7 +252,7 @@ const webMcpAttrs = {
             />
             <div class="pe-side-card" style="background:var(--surface-canvas);" data-pe-uscc-output aria-live="polite"></div>
             <Button href={lp('/compliance/uscc-gsxt-lookup/')} variant="secondary" size="sm">
-              {isZh ? '前往 GSXT 官方双栏核验引导台 →' : 'Open Dual-Column GSXT WAF Desk →'}
+              {isZh ? '前往国家企信网核验指引 →' : 'Open Official GSXT Lookup Guide →'}
             </Button>
           </div>
         )}
@@ -316,9 +301,9 @@ const webMcpAttrs = {
               name="vibe"
               label={isZh ? '起名气韵风格' : 'Cultural Cadence'}
               options={[
-                { value: 'literary', label: isZh ? '书卷清雅（古典诗词感）' : 'Literary & Classical (书卷清雅)', selected: true },
-                { value: 'modern', label: isZh ? '现代明朗（大气干练）' : 'Crisp Modern (现代明朗)' },
-                { value: 'warm', label: isZh ? '知行温润（东方哲思）' : 'Grounded & Philosophical (知行温润)' },
+                { value: 'literary', label: isZh ? '书卷清雅（古典诗词感）' : 'Literary & Classical', selected: true },
+                { value: 'modern', label: isZh ? '现代明朗（大气干练）' : 'Crisp Modern' },
+                { value: 'warm', label: isZh ? '知行温润（东方哲思）' : 'Grounded & Philosophical' },
               ]}
               data-name-vibe
             />

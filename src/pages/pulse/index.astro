@@ -17,34 +17,31 @@ const lp = (p: string) => localePath(p, locale);
 const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
 ---
 <BaseShell
-  title={isZh ? '全站现场实测流（Ground Pulse）' : 'Live Ground Pulse & Field Benchmarks'}
-  description={isZh ? '全球访客实测的 240h 口岸、外卡刷卡、eSIM 稳定性与 12306 现场回报流。' : 'Real-time traveler field reports on 240h visa ports, foreign card payments, eSIM rankings & rail e-gates.'}
+  title={isZh ? '现场实测动态' : 'Live Field Reports & Benchmarks'}
+  description={isZh ? '访客近期实测的 240h 口岸、外卡刷卡、eSIM 稳定性与 12306 现场反馈。' : 'Recent traveler field reports on 240h visa ports, foreign card payments, eSIM rankings, and rail e-gates.'}
   persona="safety"
 >
   <div class="container" style="padding-bottom:var(--space-8);max-width:64rem;">
     <ResponsiveBreadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '现场实测流 Ground Pulse' : 'Live Ground Pulse' },
+        { label: isZh ? '现场实测' : 'Field Reports' },
       ]}
       mobileBackHref={lp('/')}
       mobileBackLabel={isZh ? '首页' : 'Home'}
-    >
-      <Badge slot="meta" tone="verified">Live Field Stream · Tool 12.9</Badge>
-    </ResponsiveBreadcrumb>
+    />
 
     <header style="margin-bottom:var(--space-6);">
-      <span class="eyebrow eyebrow--accent">Utility Dock · Ground Pulse 12.9</span>
-      <h1 style="margin-top:0.35rem;">{isZh ? '全站现场实测流与动态榜单' : 'Live Ground Pulse & Field Status'}</h1>
+      <h1>{isZh ? '现场实测动态与榜单' : 'Live Field Reports & Benchmarks'}</h1>
       <p class="archive-lead" style="margin-top:0.4rem;">
         {isZh
-          ? '官方规则之外，真实落地体验每小时都在变化。查看近期护照口岸、外卡支付与 eSIM 实测结果，或 10 秒贡献你的现场反馈。'
-          : 'Rules tell you what should work; Ground Pulse shows what actually worked two hours ago at Shanghai PVG, Chengdu Metro, and Railway 12306.'}
+          ? '查看近期各口岸通关、外卡支付与漫游 eSIM 的实测反馈，或快速提交你的最新体验。'
+          : 'See what worked recently at Shanghai PVG, Chengdu Metro, and Railway 12306—or share your own field check.'}
       </p>
     </header>
 
     {/* Live Stream Cards */}
-    <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-7);" aria-label="Recent field reports">
+    <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-7);" aria-label={isZh ? '近期实测' : 'Recent field reports'}>
       {LIVE_PULSE_REPORTS.map((r) => {
         const zhR = PULSE_ZH_MAP[r.id];
         return (
@@ -56,7 +53,7 @@ const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
                 </Badge>
                 <Badge tone="editorial">{isZh && zhR ? zhR.category : r.category}</Badge>
                 <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);">
-                  {isZh && zhR ? `${zhR.passportOrCard} @ ${zhR.location}` : `${r.passportOrCard} @ ${r.location}`}
+                  {isZh && zhR ? `${zhR.passportOrCard} · ${zhR.location}` : `${r.passportOrCard} @ ${r.location}`}
                 </span>
               </div>
               <p style="font-size:var(--text-base);color:var(--ink-primary);">
@@ -66,7 +63,7 @@ const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
             <div style="text-align:end;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
               <div>{isZh && zhR ? zhR.timestamp : r.timestamp}</div>
               <a href={lp(r.relatedHref)} class="text-link" style="display:inline-block;margin-top:0.35rem;">
-                {isZh ? '对应攻略 →' : 'Related Guide →'}
+                {isZh ? '相关指南 →' : 'Related Guide →'}
               </a>
             </div>
           </article>
@@ -76,9 +73,8 @@ const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
 
     {/* Weekly Most Stable China eSIM Top 5 */}
     <section id="esim-top5" style="margin-bottom:var(--space-7);" aria-labelledby="esim-top5-h">
-      <span class="eyebrow eyebrow--accent">{isZh ? '每周实测榜单' : 'Weekly Field Leaderboard'}</span>
-      <h2 id="esim-top5-h" style="margin-top:0.25rem;margin-bottom:var(--space-3);">
-        {isZh ? '本周实测最稳中国 eSIM Top 5' : 'This Week’s Most Stable China eSIM Top 5'}
+      <h2 id="esim-top5-h" style="margin-bottom:var(--space-3);">
+        {isZh ? '本周实测稳定中国 eSIM 榜单' : 'This Week’s Most Reliable China eSIMs'}
       </h2>
       <DataTable
         id="pulse-esim-top5"

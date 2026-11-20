@@ -24,22 +24,19 @@ const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
 ---
 <section class="pe-pulse-box" aria-labelledby="ground-pulse-heading" style="margin-top: var(--space-6);">
   <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
-    <div>
-      <span class="eyebrow eyebrow--accent">Ground Pulse · 12.9</span>
-      <h2 id="ground-pulse-heading" style="margin-top:0.2rem;font-size:1.25rem;">
-        {isZh ? '近期现场实测回报流' : 'Live Ground Pulse Reports'}
-      </h2>
-    </div>
+    <h2 id="ground-pulse-heading" style="font-size:1.25rem;">
+      {isZh ? '近期现场实测' : 'Recent Field Reports'}
+    </h2>
     <Button href={lp('/pulse/#submit-pulse')} variant="secondary" size="sm">
-      {isZh ? '+ 10 秒提交你的实测' : '+ Submit 10s Field Report'}
+      {isZh ? '提交实测' : 'Submit Report'}
     </Button>
   </div>
 
   {stats && total > 0 && (
     <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3);">
-      <Badge tone="verified">{pct(stats.worked)}% {PULSE_STATUS_LABELS[locale].worked} ({stats.worked})</Badge>
-      <Badge tone="standby">{pct(stats.partial)}% {PULSE_STATUS_LABELS[locale].partial} ({stats.partial})</Badge>
-      <Badge tone="danger">{pct(stats.failed)}% {PULSE_STATUS_LABELS[locale].failed} ({stats.failed})</Badge>
+      <Badge tone="verified">{PULSE_STATUS_LABELS[locale].worked} {pct(stats.worked)}%</Badge>
+      <Badge tone="standby">{PULSE_STATUS_LABELS[locale].partial} {pct(stats.partial)}%</Badge>
+      <Badge tone="danger">{PULSE_STATUS_LABELS[locale].failed} {pct(stats.failed)}%</Badge>
     </div>
   )}
 

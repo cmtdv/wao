@@ -20,6 +20,16 @@ const quickCards = [
   { label: isZh ? '护照酒店入住' : 'Hotel Check-In', href: '/cards/hotel-checkin-passport/', tone: 'editorial' },
   { label: isZh ? '120 急救卡' : '120 Emergency', href: '/cards/medical-emergency-120/', tone: 'danger' },
 ];
+
+const KIND_ZH: Record<string, string> = {
+  Guide: '指南',
+  Entity: '词条',
+  Tool: '工具',
+  Card: '字卡',
+  Rescue: '救火',
+  Compare: '对比',
+  Data: '数据',
+};
 ---
 <dialog
   id="pe-cmd-dialog"
@@ -56,17 +66,17 @@ const quickCards = [
     </button>
   </div>
 
-  {/* Zero-Typing Pinned Instant Show-to-Local Cards Strip */}
+  {/* Instant Show-to-Local Cards Strip */}
   <div
     style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--rule-subtle);background:var(--secondary-tint);"
     data-pe-cmd-quick-cards
   >
     <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
       <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:600;color:var(--accent-seal-text);text-transform:uppercase;">
-        {isZh ? '⚡ 现场亮屏字卡（免打字直达）' : '⚡ Instant Show Cards (Zero Typing)'}
+        {isZh ? '常用亮屏字卡' : 'Quick Show Cards'}
       </span>
       <a href={lp('/cards/')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
-        {isZh ? '全部字卡大厅 →' : 'All Cards Wall →'}
+        {isZh ? '全部字卡 →' : 'All Cards →'}
       </a>
     </div>
     <div class="pe-mega-chips" data-pe-cmd-quick-list>
@@ -78,7 +88,7 @@ const quickCards = [
     </div>
   </div>
 
-  <div class="pe-cmd-results" role="region" aria-label={isZh ? '即时匹配结果' : 'Instant matches'} data-pe-cmd-results>
+  <div class="pe-cmd-results" role="region" aria-label={isZh ? '匹配结果' : 'Search matches'} data-pe-cmd-results>
     {COMMAND_PALETTE_INDEX.map((item) => (
       <a
         href={lp(item.href)}
@@ -91,19 +101,19 @@ const quickCards = [
           <span class="pe-cmd-row-sub">{isZh ? item.subtitleZh : item.subtitle}</span>
         </div>
         <Badge tone={item.kind === 'Rescue' || item.kind === 'Card' ? 'danger' : item.kind === 'Tool' ? 'verified' : 'editorial'}>
-          {item.kind}
+          {isZh ? (KIND_ZH[item.kind] ?? item.kind) : item.kind}
         </Badge>
       </a>
     ))}
     <p class="cw-hint" data-pe-cmd-empty hidden style="padding: var(--space-4); text-align: center;">
-      {isZh ? '未找到直接实体匹配，按回车执行全站全文检索。' : 'No direct entity match—press Enter to search all published dispatches.'}
+      {isZh ? '未找到直接匹配，按回车执行全站检索。' : 'No direct match—press Enter to run a full site search.'}
     </p>
   </div>
 
   <form action={lp('/search/')} method="get" class="pe-cmd-foot" data-pe-cmd-fallback-form>
     <input type="hidden" name="q" value="" data-pe-cmd-hidden-q />
     <span>
-      {isZh ? '免收藏直达：32 专题 · 11 工具 · 亮屏字卡 · 848 数据源' : 'Instant jump to 32 guides · 11 tools · show cards · 848 portals'}
+      {isZh ? '按回车执行全站全文检索' : 'Press Enter for full site search'}
     </span>
     <div style="display:flex;align-items:center;gap:var(--space-3);">
       <button type="submit" class="btn btn--sm">

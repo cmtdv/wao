@@ -1,10 +1,6 @@
 ---
 /**
- * Paradigm E — Global App Shell Sticky Header (Locked 58px Desktop / 52px Mobile)
- * - Solid opaque high-contrast background (NN/g: zero translucent bleed-through)
- * - Left: Brand Seal (direct to /, no redundant Home button)
- * - Center: 6 Mutually Exclusive Pillars with 0.5s NN/g hover-debounced 3-column Mega Menus
- * - Right: Global Utility Dock (Tools dropdown / Data / Pulse / Lang / ⌘K / Theme)
+ * Global Sticky Header — Pure single-language labels, zero internal jargon, zero mixed-language subtitles
  */
 import BrandSeal from '@site/BrandSeal.astro';
 import Icon from '@site/Icon.astro';
@@ -38,26 +34,23 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
 ---
 <header class="pe-header" data-pe-header>
   <div class="container pe-header-inner">
-    {/* Left: Brand Logo -> direct home, no separate Home button */}
     <a href={lp('/')} class="pe-brand" aria-label={`${siteTitle} ${isZh ? '首页' : 'Home'}`}>
       <BrandSeal />
       <span>{siteTitle}<span class="brand-period">.</span></span>
     </a>
 
-    {/* Mobile Prominent Search Trigger (< 768px) */}
     <button
       type="button"
       class="pe-mobile-search-bar"
       commandfor="pe-cmd-dialog"
       command="show-modal"
-      aria-label={isZh ? '打开全站意图搜索' : 'Open global intent search'}
+      aria-label={isZh ? '打开全站搜索' : 'Open search'}
     >
       <Icon name="search" size={15} />
-      <span>{isZh ? '搜 240h、微信受限、清河站、USCC…' : 'Search 240h, WeChat, USCC…'}</span>
+      <span>{isZh ? '搜免签、微信受限、清河站、企业核验…' : 'Search visa, WeChat, stations, suppliers…'}</span>
     </button>
 
-    {/* Center: 6 Mutually Exclusive Pillars + 3-Column Mega Menu */}
-    <nav class="pe-pillar-nav" aria-label={isZh ? '六大主柱导航' : 'Primary Pillars'}>
+    <nav class="pe-pillar-nav" aria-label={isZh ? '主导航' : 'Primary navigation'}>
       <ul class="pe-pillar-list">
         {PILLARS.map((pillar) => {
           const pillarHref = lp(`/${pillar.id}/`);
@@ -80,11 +73,10 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
                 id={`mega-${pillar.id}`}
                 class="pe-mega-panel"
                 role="region"
-                aria-label={`${isZh ? pillar.nameZh : pillar.name} ${isZh ? '导航菜单' : 'menu'}`}
+                aria-label={isZh ? pillar.nameZh : pillar.name}
                 data-pe-mega-panel
               >
                 <div class="pe-mega-grid">
-                  {/* Column 1: Core Topics */}
                   <div>
                     <span class="pe-mega-col-title">
                       {isZh ? pillar.megaMenu.coreTitleZh : pillar.megaMenu.coreTitle}
@@ -101,7 +93,6 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
                     </ul>
                   </div>
 
-                  {/* Column 2: Most Viewed & 360° Gaps (GOV.UK pattern) */}
                   <div>
                     <span class="pe-mega-col-title">
                       {isZh ? pillar.megaMenu.mostViewedTitleZh : pillar.megaMenu.mostViewedTitle}
@@ -111,14 +102,13 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
                         <li>
                           <a href={lp(link.href)}>
                             <span>{isZh ? link.labelZh : link.label}</span>
-                            {link.badge && <Badge tone="editorial">{link.badge}</Badge>}
+                            {link.badge && <Badge tone="editorial">{isZh ? (link.badgeZh ?? link.badge) : link.badge}</Badge>}
                           </a>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Column 3: Programmatic Entity Direct Routes (Eliminate orphan routes) */}
                   <div>
                     <span class="pe-mega-col-title">
                       {isZh ? pillar.megaMenu.routesTitleZh : pillar.megaMenu.routesTitle}
@@ -136,7 +126,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
                 <div class="pe-mega-foot">
                   <span>{isZh ? pillar.shortDescZh : pillar.shortDesc}</span>
                   <a href={pillarHref} class="editorial-link">
-                    <span>{isZh ? `进入 ${pillar.nameZh} 主柱首页 →` : `Open ${pillar.name} Hub →`}</span>
+                    <span>{isZh ? `进入${pillar.nameZh} →` : `Explore ${pillar.name} →`}</span>
                   </a>
                 </div>
               </div>
@@ -146,7 +136,6 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
       </ul>
     </nav>
 
-    {/* Right: Global Utility Dock (Tools / Data / Pulse / ⌘K) */}
     <div class="pe-dock">
       <div class="pe-dock-desktop pe-dock">
         <div class="pe-tools-wrap">
@@ -157,39 +146,39 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
             popovertargetaction="toggle"
             aria-controls="pe-tools-menu"
           >
-            <span>{isZh ? '工具 Tools' : 'Tools'}</span>
+            <span>{isZh ? '工具' : 'Tools'}</span>
             <Icon name="down" size={11} />
           </button>
 
-          <div id="pe-tools-menu" popover="auto" class="pe-tools-dropdown" aria-label={isZh ? '11 个实用工具直达' : '11 Practical Tools'}>
+          <div id="pe-tools-menu" popover="auto" class="pe-tools-dropdown" aria-label={isZh ? '实用工具' : 'Practical Tools'}>
             <span class="pe-mega-col-title">
-              {isZh ? '7 个确定性规则工具（原 D12）' : '7 Deterministic Rule Tools'}
+              {isZh ? '常用核验与出行工具' : 'Travel & Verification Tools'}
             </span>
             <div class="pe-tools-grid" style="margin-bottom: var(--space-3);">
               {detTools.map((tool) => (
                 <a href={lp(tool.href)} class="pe-tools-item">
-                  <strong>{tool.code} · {isZh ? tool.nameZh : tool.name}</strong>
+                  <strong>{isZh ? tool.nameZh : tool.name}</strong>
                   <span>{isZh ? tool.shortDescZh : tool.shortDesc}</span>
                 </a>
               ))}
             </div>
             <span class="pe-mega-col-title">
-              {isZh ? '4 个常青微工具与全屏字卡库' : '4 Evergreen Micro-Tools & Cards'}
+              {isZh ? '换算与文化工具' : 'Converters & Cultural Tools'}
             </span>
             <div class="pe-tools-grid">
               {microTools.map((tool) => (
                 <a href={lp(tool.href)} class="pe-tools-item">
-                  <strong>{tool.code} · {isZh ? tool.nameZh : tool.name}</strong>
+                  <strong>{isZh ? tool.nameZh : tool.name}</strong>
                   <span>{isZh ? tool.shortDescZh : tool.shortDesc}</span>
                 </a>
               ))}
             </div>
             <div class="pe-mega-foot">
               <a href={lp('/cards/')} class="pe-mega-chip">
-                {isZh ? '全屏亮屏字卡大厅 /cards/' : 'Fullscreen Card Wall /cards/'}
+                {isZh ? '全屏亮屏字卡' : 'Show-to-Local Cards'}
               </a>
               <a href={lp('/tools/')} class="editorial-link">
-                <span>{isZh ? '全部工具工作台 →' : 'All 11 Tools →'}</span>
+                <span>{isZh ? '全部工具 →' : 'All Tools →'}</span>
               </a>
             </div>
           </div>
@@ -200,14 +189,14 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
           class="pe-dock-link"
           aria-current={pathname.startsWith('/portals') ? 'page' : undefined}
         >
-          {isZh ? '数据 Data' : 'Data'}
+          {isZh ? '数据' : 'Data'}
         </a>
         <a
           href={lp('/pulse/')}
           class="pe-dock-link"
           aria-current={pathname.startsWith('/pulse') ? 'page' : undefined}
         >
-          {isZh ? '实测 Pulse' : 'Pulse'}
+          {isZh ? '实测' : 'Pulse'}
         </a>
       </div>
 
@@ -221,7 +210,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         class="pe-cmd-trigger"
         commandfor="pe-cmd-dialog"
         command="show-modal"
-        aria-label={isZh ? '打开全局意图命令面板' : 'Open command palette'}
+        aria-label={isZh ? '打开全站搜索' : 'Open search'}
       >
         <Icon name="search" size={14} />
         <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
@@ -234,7 +223,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         class="icon-btn pe-mobile-menu-btn"
         commandfor="mobile-drawer"
         command="show-modal"
-        aria-label={isZh ? '打开移动导航抽屉' : 'Open navigation menu'}
+        aria-label={isZh ? '打开菜单' : 'Open menu'}
       >
         <Icon name="menu" size={20} />
       </button>
@@ -242,8 +231,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
   </div>
 </header>
 
-{/* Mobile Navigation Drawer (<dialog closedby="any">) */}
-<dialog id="mobile-drawer" closedby="any" class="mobile-drawer" aria-label={isZh ? '移动端导航' : 'Mobile navigation'}>
+<dialog id="mobile-drawer" closedby="any" class="mobile-drawer" aria-label={isZh ? '导航菜单' : 'Navigation menu'}>
   <div class="drawer-head">
     <a href={lp('/')} class="pe-brand">
       <BrandSeal />
@@ -254,44 +242,41 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
       class="icon-btn"
       commandfor="mobile-drawer"
       command="close"
-      aria-label={isZh ? '关闭导航菜单' : 'Close navigation menu'}
+      aria-label={isZh ? '关闭菜单' : 'Close menu'}
     >
       <Icon name="close" size={20} />
     </button>
   </div>
 
   <div class="drawer-lang-row">
-    <span class="eyebrow">{isZh ? '语言' : 'Language'}</span>
+    <span class="t-label">{isZh ? '语言' : 'Language'}</span>
     <nav class="lang-switch" aria-label={isZh ? '切换语言' : 'Switch language'}>
       <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>English</a>
       <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简体中文</a>
     </nav>
   </div>
 
-  <nav aria-label={isZh ? '六大主柱' : 'Primary Pillars'}>
-    <p class="eyebrow drawer-section-label">{isZh ? '六大主柱' : '6 Core Pillars'}</p>
+  <nav aria-label={isZh ? '主要频道' : 'Sections'}>
     <ul class="drawer-links">
       {PILLARS.map((p) => (
         <li>
           <a href={lp(`/${p.id}/`)} aria-current={pathname.startsWith(`/${p.id}`) ? 'page' : undefined}>
-            {isZh ? `${p.nameZh} · ${p.name}` : p.name}
+            {isZh ? p.nameZh : p.name}
           </a>
         </li>
       ))}
     </ul>
   </nav>
 
-  <nav aria-label={isZh ? '实用工具坞' : 'Utility Dock'}>
-    <p class="eyebrow drawer-section-label">{isZh ? '工具 · 数据 · 实测' : 'Utility Dock'}</p>
+  <nav aria-label={isZh ? '工具与数据' : 'Tools and data'}>
     <ul class="drawer-links">
-      <li><a href={lp('/tools/')}>{isZh ? '11 个交互工具与字卡库' : 'Tools Workbench (11)'}</a></li>
-      <li><a href={lp('/cards/')}>{isZh ? '⚡ 全屏亮屏字卡大厅' : '⚡ Show-to-Local Card Wall'}</a></li>
-      <li><a href={lp('/portals/')}>{isZh ? '848 政务数据源与 MCP' : '848 Gov Data & MCP'}</a></li>
-      <li><a href={lp('/pulse/')}>{isZh ? '现场实测流 Ground Pulse' : 'Live Ground Pulse'}</a></li>
-      <li><a href={lp('/explore/')}>{isZh ? '多维分面探索器' : 'Multi-Facet Explorer'}</a></li>
-      <li><a href={lp('/guides/')}>{isZh ? '32 个深度主题页' : 'All 32 Feature Guides'}</a></li>
-      <li><a href={lp('/posts/')}>{isZh ? 'EmDash 志刊归档' : 'CMS Journal Dispatches'}</a></li>
-      <li><a href={lp('/design-system/')}>{isZh ? 'Route A 设计系统' : 'Design System'}</a></li>
+      <li><a href={lp('/cards/')}>{isZh ? '亮屏字卡' : 'Show Cards'}</a></li>
+      <li><a href={lp('/tools/')}>{isZh ? '实用工具' : 'Tools'}</a></li>
+      <li><a href={lp('/portals/')}>{isZh ? '政务公开数据' : 'Gov Data Portals'}</a></li>
+      <li><a href={lp('/pulse/')}>{isZh ? '现场实测' : 'Field Reports'}</a></li>
+      <li><a href={lp('/explore/')}>{isZh ? '条件筛选' : 'Explore'}</a></li>
+      <li><a href={lp('/guides/')}>{isZh ? '深度指南' : 'Guides'}</a></li>
+      <li><a href={lp('/posts/')}>{isZh ? '深度志刊' : 'Dispatches'}</a></li>
     </ul>
   </nav>
 </dialog>
