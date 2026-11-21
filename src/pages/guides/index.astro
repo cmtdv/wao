@@ -4,7 +4,6 @@
  */
 import BaseShell from '@layouts/BaseShell.astro';
 import ResponsiveBreadcrumb from '../../components/nav/ResponsiveBreadcrumb.astro';
-import Badge from '@ui/data-display/Badge.astro';
 import { GUIDES, type GuideArchetype } from '@data/paradigm-e/guides';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
@@ -51,20 +50,22 @@ const archetypes: { key: GuideArchetype; title: string; titleZh: string }[] = [
             <h2 style="font-size:1.35rem;">{isZh ? arch.titleZh : arch.title}</h2>
           </div>
 
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);margin-top:var(--space-4);">
+          <div class="pe-ruled-grid">
             {list.map((g) => (
-              <article class="pe-side-card" data-persona={g.persona} style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
+              <article class="pe-ruled-item" data-persona={g.persona}>
                 <div>
-                  <div style="display:flex;justify-content:space-between;gap:0.4rem;margin-bottom:0.4rem;">
-                    <Badge tone="editorial">{isZh ? PILLAR_BY_ID[g.pillar].nameZh : PILLAR_BY_ID[g.pillar].name}</Badge>
-                    <a href={`/guides/${g.slug}.md`} class="pe-mega-chip" style="padding:0.1rem 0.4rem;font-size:var(--text-2xs);">.md</a>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-bottom:0.45rem;">
+                    <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);text-transform:uppercase;letter-spacing:0.04em;">
+                      {isZh ? PILLAR_BY_ID[g.pillar].nameZh : PILLAR_BY_ID[g.pillar].name}
+                    </span>
+                    <a href={`/guides/${g.slug}.md`} class="text-link" style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">.md</a>
                   </div>
-                  <h3 style="font-family:var(--font-display);font-size:1.12rem;line-height:1.3;">
+                  <h3 style="font-family:var(--font-display);font-size:1.25rem;line-height:1.3;">
                     <a href={lp(`/guides/${g.slug}/`)} class="text-link">
                       {isZh ? g.titleZh : g.title}
                     </a>
                   </h3>
-                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
+                  <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.4rem;line-height:1.6;">
                     {isZh ? g.leadHookZh : g.leadHook}
                   </p>
                 </div>

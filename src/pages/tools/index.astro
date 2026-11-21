@@ -63,23 +63,25 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
     </section>
 
     <section>
-      <h2 style="font-size:1.3rem;margin-bottom:var(--space-4);">
+      <h2 style="font-size:1.3rem;margin-bottom:var(--space-2);">
         {isZh ? '日常换算与汉字工具' : 'Everyday Converters & Hanzi'}
       </h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:var(--space-4);">
+      <div class="pe-ruled-grid">
         {microTools.map((tool) => (
-          <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
+          <article class="pe-ruled-item">
             <div>
               <h3 style="font-family:var(--font-display);font-size:1.2rem;">
-                {isZh ? tool.nameZh : tool.name}
+                <a href={lp(tool.href)} class="text-link">
+                  {isZh ? tool.nameZh : tool.name}
+                </a>
               </h3>
               <p style="font-size:var(--text-sm);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.55;">
                 {isZh ? tool.shortDescZh : tool.shortDesc}
               </p>
             </div>
-            <Button href={lp(tool.href)} variant="secondary" size="sm">
+            <a href={lp(tool.href)} class="editorial-link" style="font-size:var(--text-xs);align-self:flex-start;">
               {isZh ? '打开工具 →' : 'Open Tool →'}
-            </Button>
+            </a>
           </article>
         ))}
       </div>

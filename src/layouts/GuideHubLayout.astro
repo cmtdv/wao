@@ -307,9 +307,16 @@ const jsonLd = {
         <AutoDisclaimer kinds={guide.disclaimers} locale={locale} />
       </article>
 
-      {/* Right Companion Rail */}
+      {/* Right Companion Rail — 1 featured kit card, secondary items unboxed with hairline dividers */}
       <aside class="pe-guide-companion" aria-label={isZh ? '核验信息与快捷工具' : 'Verification & Tools'}>
         <div class="pe-side-card">
+          <span class="pe-mega-col-title">{isZh ? '配套清单' : 'Checklist Kit'}</span>
+          <Button href={lp(guide.stackLink.href)} variant="primary" size="sm">
+            {guide.stackLink.label} →
+          </Button>
+        </div>
+
+        <div class="pe-rail-group">
           <span class="pe-mega-col-title">{isZh ? '更新记录' : 'Verification'}</span>
           <VerifyMetaBar
             lastVerified={guide.lastVerified}
@@ -319,14 +326,7 @@ const jsonLd = {
           />
         </div>
 
-        <div class="pe-side-card">
-          <span class="pe-mega-col-title">{isZh ? '配套清单' : 'Checklist Kit'}</span>
-          <Button href={lp(guide.stackLink.href)} variant="primary" size="sm">
-            {guide.stackLink.label} →
-          </Button>
-        </div>
-
-        <div class="pe-side-card">
+        <div class="pe-rail-group">
           <span class="pe-mega-col-title">{isZh ? '配套工具' : 'Related Tools'}</span>
           <ul class="pe-mega-links">
             {guide.directTools.map((tool) => (
@@ -340,7 +340,7 @@ const jsonLd = {
           </ul>
         </div>
 
-        <div class="pe-side-card">
+        <div class="pe-rail-group">
           <span class="pe-mega-col-title">{isZh ? '数据与接口' : 'Markdown & API'}</span>
           <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
             <a href={mdHref} class="pe-mega-chip">{isZh ? '查看 Markdown' : 'View .md'}</a>

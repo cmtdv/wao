@@ -243,23 +243,21 @@ const jsonLd = {
         ))}
       </div>
 
-      {/* Latest Dispatches Strip */}
+      {/* Latest Dispatches Strip — open hairline columns alternating after 4-card visual strip */}
       {latestDispatches.length > 0 && (
-        <div style="margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px solid var(--rule-subtle);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
-            <h2 style="font-size:1.15rem;">{isZh ? '最新深度文章' : 'Latest Dispatches'}</h2>
+        <div class="pe-dispatch-strip">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3);">
+            <h2 style="font-size:1.25rem;">{isZh ? '最新深度文章' : 'Latest Dispatches'}</h2>
             <a href={lp('/posts/')} class="text-link" style="font-size:var(--text-xs);">
               {isZh ? '全部文章 →' : 'All Dispatches →'}
             </a>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:var(--space-3);">
+          <div class="pe-dispatch-grid">
             {latestDispatches.map((entry) => (
-              <a href={lp(postPath(entry.data.slug || entry.id))} class="pe-side-card" style="text-decoration:none;color:inherit;">
-                <strong style="font-family:var(--font-display);font-size:1.05rem;">{entry.data.title}</strong>
+              <a href={lp(postPath(entry.data.slug || entry.id))} class="pe-dispatch-item">
+                <strong>{entry.data.title}</strong>
                 {entry.data.excerpt && (
-                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;line-height:1.5;">
-                    {entry.data.excerpt.slice(0, 110)}…
-                  </p>
+                  <p>{entry.data.excerpt.slice(0, 110)}…</p>
                 )}
               </a>
             ))}

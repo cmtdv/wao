@@ -49,8 +49,8 @@ const fLabel = (value: string, fallback: string) => (isZh ? (EXPLORER_FACET_ZH[v
       </Button>
     </header>
 
-    {/* Facet Chip Groups */}
-    <section class="pe-side-card" style="margin-bottom:var(--space-6);display:grid;gap:var(--space-2);" aria-label={isZh ? '筛选条件' : 'Filters'}>
+    {/* Facet Chip Groups — unboxed quiet filter strip */}
+    <section class="pe-filter-strip" aria-label={isZh ? '筛选条件' : 'Filters'}>
       <div>
         <span class="pe-mega-col-title" style="margin-bottom:0.25rem;border:0;padding:0;">
           {isZh ? '地区与口岸' : 'Location & 240h Zone'}

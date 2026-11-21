@@ -40,12 +40,12 @@ const esimRows = isZh ? ESIM_TOP5_ZH : WEEKLY_ESIM_TOP5;
       </p>
     </header>
 
-    {/* Live Stream Cards */}
-    <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-7);" aria-label={isZh ? '近期实测' : 'Recent field reports'}>
+    {/* Live Stream Timeline — unboxed hairline rows contrasting with DataTable below */}
+    <section style="margin-bottom:var(--space-8);" aria-label={isZh ? '近期实测' : 'Recent field reports'}>
       {LIVE_PULSE_REPORTS.map((r) => {
         const zhR = PULSE_ZH_MAP[r.id];
         return (
-          <article class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
+          <article class="pe-editorial-row" style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
             <div style="flex:1;min-width:16rem;">
               <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;margin-bottom:0.35rem;">
                 <Badge tone={r.status === 'worked' ? 'verified' : r.status === 'partial' ? 'standby' : 'danger'}>

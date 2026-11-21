@@ -60,15 +60,14 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
       </p>
     </header>
 
-    {/* Auto-Pinned Recently Used Cards */}
+    {/* Auto-Pinned Recently Used Cards — unboxed quiet inline strip */}
     <section
-      class="pe-side-card"
-      style="margin-bottom:var(--space-5);border-top:3px solid var(--accent-seal);"
+      style="margin-bottom:var(--space-5);padding-bottom:var(--space-4);border-bottom:1px solid var(--rule-subtle);display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);"
       data-pe-recent-cards-box
       hidden
       aria-label={isZh ? '最近使用过的字卡' : 'Recently used cards'}
     >
-      <span class="pe-mega-col-title" style="border:0;padding:0;margin-bottom:var(--space-2);">{isZh ? '最近使用' : 'Recently Used'}</span>
+      <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);text-transform:uppercase;">{isZh ? '最近使用' : 'Recently Used'}</span>
       <div class="pe-mega-chips" data-pe-recent-cards-list></div>
     </section>
 
@@ -137,7 +136,7 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
               </p>
             </div>
 
-            <div style="display:flex;flex-wrap:wrap;gap:0.45rem;padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
               <Button
                 variant="primary"
                 size="sm"
@@ -146,15 +145,15 @@ const catBadgeMap: Record<string, { en: string; zh: string; tone: 'danger' | 've
                 {isZh ? '全屏出示' : 'Flash Fullscreen'}
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
                 data-pe-card-save-png={payload}
               >
                 {isZh ? '保存图片' : 'Save PNG'}
               </Button>
-              <Button href={lp(`/cards/${card.slug}/`)} variant="ghost" size="sm">
+              <a href={lp(`/cards/${card.slug}/`)} class="text-link" style="margin-inline-start:auto;font-size:var(--text-xs);">
                 {isZh ? '详情 →' : 'Guide →'}
-              </Button>
+              </a>
             </div>
           </article>
         );
