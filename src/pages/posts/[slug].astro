@@ -1,14 +1,14 @@
 ---
-import { decodeSlug, getSeoMeta } from 'emdash';
+import { decodeSlug, getSeoMeta, getTaxonomyTermsWithCacheHint } from 'emdash';
 import { Image, PortableText } from 'emdash/ui';
 import Layout from '@layouts/Layout.astro';
 import PostCard from '@site/PostCard.astro';
 import TableOfContents from '@site/TableOfContents.astro';
-import Icon from '@site/Icon.astro';
 import Alert from '@ui/feedback/Alert.astro';
-import { getPublicPost, getPublicPosts } from '@lib/cms';
+import { getPublicPost, getPublicPosts, publicContext } from '@lib/cms';
 import { categoryPath, tagPath } from '@lib/format';
 import { estimateReadingMinutes, extractToc } from '@lib/portable-text';
+import { buildOrgPublisher } from '@lib/seo-geo';
 import { formatLocalizedDate, formatReadTime, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
 import '../../styles/article.css';
 
@@ -20,7 +20,11 @@ const lp = (path: string) => localePath(path, locale);
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return new Response(null, { status: 404 });
 
-const result = await getPublicPost(slug, locale).catch(() => null);
+const [result, catTreeRes] = await Promise.all([
+  getPublicPost(slug, locale).catch(() => null),
+  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })).catch(() => null),
+]);
+
 if (!result || result.error) {
   return new Response('This article is temporarily unavailable.', { status: 503 });
 }
@@ -34,24 +38,50 @@ const isFallbackEnglish = isZh && result.fallbackLocale === 'en';
 
 if (Astro.cache?.enabled) {
   Astro.cache.set(result.cacheHint);
+  if (catTreeRes?.cacheHint) Astro.cache.set(catTreeRes.cacheHint);
 }
 
 const seo = getSeoMeta(post, {
   siteUrl: Astro.url.origin,
   path: Astro.locals.originalPathname ?? Astro.url.pathname,
 });
-const categories = post.data.terms?.category ?? [];
+
+// Resolve real parent -> child category hierarchy for Breadcrumb
+type CatTreeTerm = NonNullable<typeof catTreeRes>['data'][number];
+const flattenCats = (items: CatTreeTerm[]): CatTreeTerm[] =>
+  items.flatMap((item) => [item, ...flattenCats(item.children ?? [])]);
+const allTreeCats = catTreeRes ? flattenCats(catTreeRes.data) : [];
+const catById = new Map(allTreeCats.map((c) => [c.id, c]));
+const catBySlug = new Map(allTreeCats.map((c) => [c.slug, c]));
+
+const rawCategories = post.data.terms?.category ?? [];
 const tags = post.data.terms?.tag ?? [];
-const primaryCategory = categories[0];
-const subCategories = categories.slice(1);
+
+let breadcrumbCats: { slug: string; label: string }[] = [];
+if (rawCategories.length > 0) {
+  const leaf =
+    rawCategories.find((c) => Boolean(catBySlug.get(c.slug)?.parentId)) ??
+    rawCategories[0];
+  const chain: { slug: string; label: string }[] = [];
+  const visited = new Set<string>();
+  let cursorTerm = catBySlug.get(leaf.slug);
+  while (cursorTerm && !visited.has(cursorTerm.id)) {
+    visited.add(cursorTerm.id);
+    chain.unshift({ slug: cursorTerm.slug, label: cursorTerm.label });
+    cursorTerm = cursorTerm.parentId ? catById.get(cursorTerm.parentId) : undefined;
+  }
+  breadcrumbCats = chain.length > 0 ? chain : [{ slug: leaf.slug, label: leaf.label }];
+}
+
+const primaryCategory = breadcrumbCats.at(-1) ?? rawCategories[0];
 
 const pubDate = post.data.publishedAt;
 const updDate = post.data.updatedAt;
-const published = formatLocalizedDate(pubDate, locale);
-const showUpdated =
+const isUpdated =
   Boolean(pubDate && updDate) &&
   pubDate!.toISOString().slice(0, 10) !== updDate!.toISOString().slice(0, 10);
-const updated = showUpdated ? formatLocalizedDate(updDate, locale) : null;
+const displayDate = formatLocalizedDate(isUpdated ? updDate : pubDate, locale);
+const displayDateIso = (isUpdated ? updDate : pubDate)?.toISOString();
 
 const readingMinutes = estimateReadingMinutes(post.data.content);
 const tocItems = extractToc(post.data.content);
@@ -69,6 +99,52 @@ if (relatedPosts.length === 0 && primaryCategory) {
   const fallbackResult = await getPublicPosts({ limit: 4, locale }).catch(() => null);
   relatedPosts = (fallbackResult?.entries ?? []).filter((entry) => entry.id !== post.id).slice(0, 3);
 }
+
+const canonicalUrl = seo.canonical ?? `${Astro.url.origin}${lp(`/posts/${slug}`)}`;
+const breadcrumbItems = [
+  { name: isZh ? '首页' : 'Home', item: `${Astro.url.origin}${lp('/')}` },
+  ...(breadcrumbCats.length > 0
+    ? breadcrumbCats.map((c) => ({
+        name: c.label,
+        item: `${Astro.url.origin}${lp(categoryPath(c.slug))}`,
+      }))
+    : [{ name: isZh ? '全部文章' : 'Articles', item: `${Astro.url.origin}${lp('/posts/')}` }]),
+  { name: post.data.title, item: canonicalUrl },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    buildOrgPublisher(Astro.url.origin),
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbItems.map((b, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: b.name,
+        item: b.item,
+      })),
+    },
+    {
+      '@type': 'Article',
+      '@id': `${canonicalUrl}#article`,
+      headline: post.data.title,
+      description: seo.description ?? post.data.excerpt ?? '',
+      inLanguage: isZh ? 'zh-CN' : 'en',
+      mainEntityOfPage: canonicalUrl,
+      ...(pubDate ? { datePublished: pubDate.toISOString() } : {}),
+      ...(updDate ? { dateModified: updDate.toISOString() } : {}),
+      ...(primaryCategory ? { articleSection: primaryCategory.label } : {}),
+      ...(tags.length > 0 ? { keywords: tags.map((t) => t.label).join(', ') } : {}),
+      author: {
+        '@type': 'Organization',
+        name: isZh ? 'ChinaWao 编辑部' : 'ChinaWao Editorial',
+        url: `${Astro.url.origin}${lp('/pages/editorial-standards')}`,
+      },
+      publisher: { '@id': `${Astro.url.origin}/#organization` },
+    },
+  ],
+};
 ---
 <Layout
   title={seo.title ?? post.data.title}
@@ -81,6 +157,7 @@ if (relatedPosts.length === 0 && primaryCategory) {
   publishedTime={pubDate?.toISOString() ?? null}
   modifiedTime={updDate?.toISOString() ?? null}
   content={{ collection: 'posts', id: post.data.id, slug }}
+  jsonLd={jsonLd}
 >
   <div class="reading-progress" aria-hidden="true"></div>
 
@@ -91,12 +168,17 @@ if (relatedPosts.length === 0 && primaryCategory) {
           <header class="article-header">
             <nav class="breadcrumb" aria-label="Breadcrumb">
               <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
-              <span class="breadcrumb-sep" aria-hidden="true">/</span>
-              <a href={lp('/posts/')}>{isZh ? '全部文章' : 'Articles'}</a>
-              {primaryCategory && (
+              {breadcrumbCats.length > 0 ? (
+                breadcrumbCats.map((cat) => (
+                  <>
+                    <span class="breadcrumb-sep" aria-hidden="true">/</span>
+                    <a href={lp(categoryPath(cat.slug))}>{cat.label}</a>
+                  </>
+                ))
+              ) : (
                 <>
                   <span class="breadcrumb-sep" aria-hidden="true">/</span>
-                  <a href={lp(categoryPath(primaryCategory.slug))}>{primaryCategory.label}</a>
+                  <a href={lp('/posts/')}>{isZh ? '全部文章' : 'Articles'}</a>
                 </>
               )}
             </nav>
@@ -114,13 +196,17 @@ if (relatedPosts.length === 0 && primaryCategory) {
             {post.data.excerpt && <p class="article-dek">{post.data.excerpt}</p>}
 
             <div class="article-byline">
-              {published && (
-                <time datetime={pubDate?.toISOString()}>{published}</time>
-              )}
-              {updated && (
+              <a href={lp('/pages/editorial-standards')} class="byline-author">
+                {isZh ? 'ChinaWao 编辑部 · 一手信源核验' : 'ChinaWao Editorial · Source-Verified'}
+              </a>
+              {displayDate && (
                 <>
                   <span class="byline-sep" aria-hidden="true">·</span>
-                  <span>{isZh ? `更新于 ${updated}` : `Updated ${updated}`}</span>
+                  <time datetime={displayDateIso}>
+                    {isUpdated
+                      ? (isZh ? `更新于 ${displayDate}` : `Updated ${displayDate}`)
+                      : displayDate}
+                  </time>
                 </>
               )}
               {readingMinutes && (
@@ -129,12 +215,6 @@ if (relatedPosts.length === 0 && primaryCategory) {
                   <span>{formatReadTime(readingMinutes, locale)}</span>
                 </>
               )}
-              {subCategories.map((sub) => (
-                <>
-                  <span class="byline-sep" aria-hidden="true">·</span>
-                  <a href={lp(categoryPath(sub.slug))} class="byline-topic-link">{sub.label}</a>
-                </>
-              ))}
             </div>
           </header>
 
@@ -173,10 +253,19 @@ if (relatedPosts.length === 0 && primaryCategory) {
               </div>
             ) : <span />}
 
-            <a href={lp('/posts/')} class="editorial-link">
-              <Icon name="arrow-left" size={15} />
-              <span>{isZh ? '返回全部文章' : 'All articles'}</span>
-            </a>
+            <div class="article-footer-actions">
+              <button
+                type="button"
+                class="article-action-btn"
+                data-pe-copy={canonicalUrl}
+                data-pe-copy-toast={isZh ? '已复制本文链接' : 'Article link copied'}
+              >
+                {isZh ? '复制链接' : 'Copy link'}
+              </button>
+              <a href={lp('/pages/corrections-updates')} class="article-action-btn">
+                {isZh ? '反馈规则变动' : 'Report update'}
+              </a>
+            </div>
           </footer>
         </article>
 
