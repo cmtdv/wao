@@ -27,6 +27,73 @@ const layers = [
   { id: 'industry', label: isZh ? '产业带' : 'Industrial Belts' },
   { id: 'heritage', label: isZh ? '世界遗产与古建' : 'UNESCO & Heritage' },
 ];
+
+const CITY_ZH_MAP: Record<
+  string,
+  { cluster: string; ports240h: string; quick: { label: string; value: string }[] }
+> = {
+  shanghai: {
+    cluster: '长三角城市群',
+    ports240h: '浦东机场 (PVG) · 虹桥机场 (SHA) · 吴淞口邮轮港',
+    quick: [
+      { label: '240h 免签', value: '浦东/虹桥/邮轮港开放' },
+      { label: '经典漫步', value: '武康路 — 安福路街区' },
+      { label: '代表风味', value: '生煎与南翔小笼包' },
+      { label: '公开数据', value: 'data.sh.gov.cn 直连' },
+    ],
+  },
+  beijing: {
+    cluster: '京津冀城市群',
+    ports240h: '首都机场 (PEK) · 大兴机场 (PKX)',
+    quick: [
+      { label: '240h 免签', value: '首都/大兴双枢纽开放' },
+      { label: '高铁防坑', value: '7 大车站请核准全称' },
+      { label: '世界遗产', value: '7 处世界文化遗产' },
+      { label: '地铁过闸', value: '支持外卡直接拍卡进站' },
+    ],
+  },
+  chengdu: {
+    cluster: '成渝双城经济圈',
+    ports240h: '天府机场 (TFU) · 双流机场 (CTU)',
+    quick: [
+      { label: '240h 免签', value: '天府/双流机场开放' },
+      { label: '必去体验', value: '07:30 熊猫基地早场' },
+      { label: '旅居月度成本', value: '¥7,500–¥11,500/月' },
+      { label: '辐射门户', value: '九寨沟与川西环线' },
+    ],
+  },
+  xian: {
+    cluster: '关中平原城市群',
+    ports240h: '西安咸阳国际机场 (XIY)',
+    quick: [
+      { label: '240h 免签', value: '咸阳机场口岸开放' },
+      { label: '核心古迹', value: '秦始皇兵马俑与明城墙' },
+      { label: '地道街巷', value: '洒金桥老街美食' },
+      { label: '预约提示', value: '陕历博提前 5 天放票' },
+    ],
+  },
+  shenzhen: {
+    cluster: '粤港澳大湾区',
+    ports240h: '宝安机场 (SZX) · 蛇口邮轮母港',
+    quick: [
+      { label: '240h 免签', value: '宝安机场与蛇口港开放' },
+      { label: '赴港速度', value: '福田站高铁 14 分钟抵港' },
+      { label: '产业核心', value: '华强北硬件与无人机链' },
+      { label: '跨境医疗', value: '港大深圳医院国际部' },
+    ],
+  },
+};
+
+const localizeCity = (city: (typeof cities)[number]) => {
+  const cd = city.cityData!;
+  const zh = isZh ? CITY_ZH_MAP[city.slug] : undefined;
+  return {
+    cluster: zh?.cluster ?? cd.cluster,
+    ports240h: zh?.ports240h ?? cd.ports240h,
+    quick: zh?.quick ?? cd.quick12Summary,
+  };
+};
+const defaultLoc = defaultCity?.cityData ? localizeCity(defaultCity) : null;
 ---
 <div data-pe-china-map>
   <div class="pe-facet-group" role="group" aria-label={isZh ? '切换地图主题图层' : 'Toggle China map layers'}>
@@ -48,15 +115,15 @@ const layers = [
       <svg class="pe-map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <path
           d="M14,36 L25,22 L42,24 L56,16 L74,14 L86,25 L79,38 L83,56 L77,74 L67,84 L55,81 L43,75 L32,68 L20,58 Z"
-          fill="var(--secondary-tint)"
-          stroke="var(--rule-strong)"
+          fill="var(--surface-sunken)"
+          stroke="var(--border-strong)"
           stroke-width="0.6"
         />
         {/* Stylized HSR arterial corridors */}
         <path
           d="M69,34 L79,57 M69,34 L54,49 L46,60 M79,57 L69,79 M46,60 L69,79"
           fill="none"
-          stroke="var(--accent-seal)"
+          stroke="var(--brand)"
           stroke-width="0.65"
           stroke-dasharray="1.8 1.2"
           opacity="0.7"
@@ -65,6 +132,7 @@ const layers = [
 
       {cities.map((city, idx) => {
         const cd = city.cityData!;
+        const loc = localizeCity(city);
         return (
           <button
             type="button"
@@ -78,10 +146,10 @@ const layers = [
               title: isZh ? city.chineseName : city.title,
               chineseName: city.chineseName,
               mcaCode: cd.mcaCode,
-              cluster: cd.cluster,
-              ports240h: cd.ports240h,
+              cluster: loc.cluster,
+              ports240h: loc.ports240h,
               tagline: isZh ? city.taglineZh : city.tagline,
-              quick: cd.quick12Summary,
+              quick: loc.quick,
               href: lp(`/cities/${city.slug}/`),
             })}
           >
@@ -92,13 +160,13 @@ const layers = [
     </div>
 
     {/* Right-hand City Quick Drawer */}
-    {defaultCity && defaultCity.cityData && (
+    {defaultCity && defaultCity.cityData && defaultLoc && (
       <aside class="pe-map-drawer" aria-live="polite" data-pe-map-drawer>
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:var(--space-2);">
-            <Badge tone="editorial" data-pe-map-mca>{defaultCity.cityData.mcaCode}</Badge>
+            <Badge variant="secondary" data-pe-map-mca>{defaultCity.cityData.mcaCode}</Badge>
             <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-cluster>
-              {defaultCity.cityData.cluster}
+              {defaultLoc.cluster}
             </span>
           </div>
           <h3 style="font-family:var(--font-display);font-size:1.65rem;line-height:1.2;" data-pe-map-title>
@@ -109,7 +177,7 @@ const layers = [
           </p>
 
           <div class="pe-map-kv-grid" style="margin-top:var(--space-4);" data-pe-map-kv-grid>
-            {defaultCity.cityData.quick12Summary.map((kv) => (
+            {defaultLoc.quick.map((kv) => (
               <div class="pe-map-kv">
                 <span>{kv.label}</span>
                 <strong>{kv.value}</strong>
@@ -120,7 +188,7 @@ const layers = [
 
         <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--rule-subtle);">
           <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-secondary);" data-pe-map-ports>
-            {isZh ? `口岸：${defaultCity.cityData.ports240h}` : `240h: ${defaultCity.cityData.ports240h}`}
+            {isZh ? `口岸：${defaultLoc.ports240h}` : `240h: ${defaultLoc.ports240h}`}
           </span>
           <Button href={lp(`/cities/${defaultCity.slug}/`)} variant="primary" size="sm" data-pe-map-cta>
             {isZh ? '查看城市指南 →' : 'Open City Guide →'}

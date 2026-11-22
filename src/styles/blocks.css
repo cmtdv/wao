@@ -196,7 +196,7 @@
   line-height: 1.65;
 }
 
-/* CTA Block */
+/* CTA Block (coss Frame / Card subtle neutral surface) */
 .cw-block-cta {
   display: flex;
   flex-wrap: wrap;
@@ -204,10 +204,10 @@
   justify-content: space-between;
   gap: var(--space-5);
   padding: var(--space-6);
-  background: var(--grad-palace-band);
-  border-top: 2px solid var(--accent-gold);
-  border-bottom: 2px solid var(--accent-gold);
-  color: var(--secondary-solid-ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  color: var(--foreground);
 }
 
 .cw-block-cta-copy {
@@ -219,21 +219,21 @@
 .cw-block-cta-eyebrow {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #e6be72;
+  color: var(--brand-text);
 }
 
 .cw-block-cta-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem);
-  font-weight: 500;
-  color: #fbf6ee;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .cw-block-cta-desc {
   font-size: var(--text-sm);
-  color: #e6d5c8;
+  color: var(--muted-foreground);
 }
 
 .cw-block-cta-actions {
@@ -244,13 +244,13 @@
 }
 
 .cw-cta-ghost {
-  color: #fbf6ee;
-  border-color: rgb(251 246 238 / 0.35);
+  color: var(--foreground);
+  border-color: var(--control-border);
 }
 
 .cw-cta-ghost:hover {
-  background: rgb(251 246 238 / 0.12);
-  color: #e6be72;
+  background: var(--accent);
+  color: var(--foreground);
 }
 
 /* Pricing Block */

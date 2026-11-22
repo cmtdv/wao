@@ -78,15 +78,17 @@
   .ds-swatch {
     display: flex;
     flex-direction: column;
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-radius: var(--control-radius);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--coss-card-shadow);
     overflow: hidden;
   }
 
   .ds-swatch-chip {
     height: 4.5rem;
-    border-bottom: 1px solid var(--rule-subtle);
+    border-bottom: 1px solid var(--border);
   }
 
   .ds-swatch-body {
@@ -97,7 +99,7 @@
 
   .ds-swatch-name {
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: 600;
     color: var(--ink-primary);
   }
 
@@ -119,19 +121,20 @@
     gap: var(--space-4);
     align-content: start;
     padding: var(--space-5);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-top: 2px solid var(--secondary-solid);
-    border-radius: var(--control-radius);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--coss-card-shadow);
   }
 
   .ds-panel-title {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-secondary);
+    color: var(--muted-foreground);
   }
 
   .ds-row {
@@ -171,9 +174,10 @@
   /* Governance Contract Table */
   .ds-table-wrap {
     overflow-x: auto;
-    border: 1px solid var(--rule-subtle);
-    border-radius: var(--control-radius);
-    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--card);
+    box-shadow: var(--coss-card-shadow);
   }
 
   .ds-table {
@@ -186,18 +190,16 @@
   .ds-table th,
   .ds-table td {
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--rule-subtle);
+    border-bottom: 1px solid var(--border);
     vertical-align: top;
   }
 
   .ds-table th {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-secondary);
-    background: var(--secondary-tint);
+    color: var(--muted-foreground);
+    background: var(--surface-sunken);
   }
 
   .ds-table tr:last-child td {

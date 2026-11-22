@@ -1,0 +1,56 @@
+---
+/**
+ * NumberField — Native Astro port of coss ui NumberField
+ * Numeric input with integrated decrement (−) and increment (+) step buttons.
+ */
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  id?: string;
+  name: string;
+  label?: string;
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  hint?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  id,
+  name,
+  label,
+  value = 1,
+  min = 0,
+  max = 999999,
+  step = 1,
+  hint,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const isZh = getLocaleFromContext(Astro) === 'zh';
+const inputId = id ?? `num-${name}`;
+const hintId = hint ? `${inputId}-hint` : undefined;
+---
+<div data-slot="field" class:list={['cw-field', className]}>
+  {label && <label data-slot="field-label" class="cw-label" for={inputId}>{label}</label>}
+  <div data-slot="number-field" data-coss-number-field>
+    <button type="button" data-num-step="-1" aria-label={isZh ? '减少数值' : 'Decrease value'}>−</button>
+    <input
+      id={inputId}
+      name={name}
+      type="number"
+      value={value}
+      min={min}
+      max={max}
+      step={step}
+      aria-describedby={hintId}
+      {...rest}
+    />
+    <button type="button" data-num-step="1" aria-label={isZh ? '增加数值' : 'Increase value'}>+</button>
+  </div>
+  {hint && <span id={hintId} data-slot="field-description" class="cw-hint">{hint}</span>}
+</div>

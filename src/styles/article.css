@@ -185,8 +185,9 @@
     width: 100%;
     min-width: 0;
     overflow: hidden;
-    background: var(--secondary-tint);
-    border: 1px solid var(--rule-subtle);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
   }
 
   .article-figure-frame :is(picture, .emdash-image-media, img) {
@@ -221,13 +222,13 @@
     align-items: start;
   }
 
-  /* Mobile Disclosure TOC (Celadon Secondary Card) */
+  /* Mobile Disclosure TOC */
   .toc-mobile {
     display: none;
     margin-bottom: var(--space-6);
-    border: 1px solid var(--secondary-tint-border);
-    border-top: 3px solid var(--secondary-solid);
-    background: var(--secondary-tint);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-sunken);
   }
 
   .toc-mobile summary {
@@ -262,15 +263,14 @@
     border-top: 1px solid var(--secondary-tint-border);
   }
 
-  /* Desktop Sticky TOC Rail (Celadon Secondary Card) */
+  /* Desktop Sticky TOC Rail */
   .toc-rail {
     position: sticky;
     inset-block-start: calc(var(--header-height) + var(--space-5));
     padding: var(--space-5);
-    background-color: var(--secondary-tint);
-    border: 1px solid var(--secondary-tint-border);
-    border-top: 3px solid var(--secondary-solid);
-    box-shadow: var(--paper-sheet-shadow);
+    background-color: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
   }
 
   .toc-title {
@@ -355,10 +355,10 @@
   .prose blockquote {
     margin-block: 2.1em;
     padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
-    background-color: var(--secondary-tint);
-    border: 1px solid var(--secondary-tint-border);
-    border-inline-start: 3.5px solid var(--accent-seal);
-    box-shadow: var(--paper-sheet-shadow);
+    background-color: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-inline-start: 3px solid var(--brand);
+    border-radius: var(--radius-xl);
     font-family: var(--font-display);
     font-style: italic;
     font-size: 1.22rem;

@@ -1,0 +1,48 @@
+---
+/**
+ * Card — Native Astro port of coss ui Card
+ * Crisp bg-clip-padding card with 1px inner bevel shadow and optional header/action/footer.
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  as?: 'div' | 'article' | 'section';
+  class?: string;
+  panelClass?: string;
+  [key: string]: unknown;
+}
+
+const {
+  title,
+  description,
+  as: Tag = 'div',
+  class: className = '',
+  panelClass = '',
+  ...rest
+} = Astro.props;
+
+const hasHeader = Boolean(title || description || Astro.slots.has('action'));
+---
+<Tag data-slot="card" class:list={['coss-card', className]} {...rest}>
+  {hasHeader && (
+    <div data-slot="card-header" class="coss-card-header">
+      {title && <h3 data-slot="card-title" class="coss-card-title">{title}</h3>}
+      {description && <p data-slot="card-description" class="coss-card-description">{description}</p>}
+      {Astro.slots.has('action') && (
+        <div data-slot="card-action" class="coss-card-action">
+          <slot name="action" />
+        </div>
+      )}
+    </div>
+  )}
+
+  <div data-slot="card-panel" class:list={['coss-card-panel', panelClass]}>
+    <slot />
+  </div>
+
+  {Astro.slots.has('footer') && (
+    <div data-slot="card-footer" class="coss-card-footer">
+      <slot name="footer" />
+    </div>
+  )}
+</Tag>

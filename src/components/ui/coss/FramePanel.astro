@@ -1,0 +1,15 @@
+---
+/**
+ * FramePanel — Native Astro port of coss ui FramePanel
+ * Elevated rounded-xl white/dark surface inside a Frame tray.
+ */
+interface Props {
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { class: className = '', ...rest } = Astro.props;
+---
+<div data-slot="frame-panel" class:list={['coss-frame-panel', className]} {...rest}>
+  <slot />
+</div>

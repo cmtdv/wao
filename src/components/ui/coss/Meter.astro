@@ -1,0 +1,32 @@
+---
+/**
+ * Meter — Native Astro port of coss ui Meter
+ */
+interface Props {
+  label: string;
+  value: number;
+  max?: number;
+  valueText?: string;
+  class?: string;
+}
+
+const { label, value, max = 100, valueText, class: className = '' } = Astro.props;
+const pct = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+---
+<div
+  role="meter"
+  aria-label={label}
+  aria-valuenow={value}
+  aria-valuemin={0}
+  aria-valuemax={max}
+  data-slot="meter"
+  class={className}
+>
+  <div data-slot="meter-header">
+    <span>{label}</span>
+    <span style="font-family:var(--font-mono);color:var(--muted-foreground);">{valueText ?? `${pct}%`}</span>
+  </div>
+  <div data-slot="meter-track">
+    <div data-slot="meter-indicator" style={`width:${pct}%;`}></div>
+  </div>
+</div>

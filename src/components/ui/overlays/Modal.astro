@@ -1,12 +1,13 @@
 ---
 /**
- * Modal — Declarative native <dialog closedby="any"> modal primitive
+ * Modal — Native Astro port of coss ui Dialog (<dialog closedby="any"> + Invoker Commands)
  */
 import Icon from '@site/Icon.astro';
 
 interface Props {
   id: string;
   title: string;
+  description?: string;
   eyebrow?: string;
   triggerLabel?: string;
   triggerVariant?: 'primary' | 'secondary' | 'ghost';
@@ -17,6 +18,7 @@ interface Props {
 const {
   id,
   title,
+  description,
   eyebrow,
   triggerLabel,
   triggerVariant = 'secondary',
@@ -25,11 +27,18 @@ const {
 } = Astro.props;
 
 const titleId = `${id}-title`;
+const descId = description ? `${id}-desc` : undefined;
 ---
 {triggerLabel && (
   <button
     type="button"
-    class={`btn btn--${triggerVariant}`}
+    data-slot="button"
+    data-variant={triggerVariant === 'primary' ? 'primary' : triggerVariant === 'ghost' ? 'ghost' : 'outline'}
+    class:list={[
+      'btn',
+      triggerVariant === 'primary' && 'btn--primary',
+      triggerVariant === 'ghost' && 'btn--ghost',
+    ]}
     data-cw-modal-open={id}
     {...({ commandfor: id, command: 'show-modal' } as Record<string, string>)}
   >
@@ -39,34 +48,37 @@ const titleId = `${id}-title`;
 
 <dialog
   id={id}
+  data-slot="dialog"
   class:list={['cw-modal', `cw-modal--${size}`, className]}
   aria-labelledby={titleId}
+  aria-describedby={descId}
   data-cw-modal
   {...({ closedby: 'any' } as Record<string, string>)}
 >
-  <div class="cw-modal-shell">
-    <div class="cw-modal-head">
+  <div class="cw-modal-shell" data-slot="dialog-popup">
+    <div class="cw-modal-head" data-slot="dialog-header">
       <div>
         {eyebrow && <span class="kicker">{eyebrow}</span>}
-        <h3 id={titleId} class="cw-modal-title">{title}</h3>
+        <h3 id={titleId} class="cw-modal-title" data-slot="dialog-title">{title}</h3>
+        {description && <p id={descId} class="cw-hint" style="margin-top:0.25rem;" data-slot="dialog-description">{description}</p>}
       </div>
       <form method="dialog">
         <button
           type="submit"
-          class="cw-compact-btn cw-compact-btn--stroke cw-compact-btn--sm"
+          class="btn btn--ghost btn--icon-sm"
           aria-label={`Close ${title}`}
         >
-          <Icon name="close" size={14} />
+          <Icon name="close" size={15} />
         </button>
       </form>
     </div>
 
-    <div class="cw-modal-body">
+    <div class="cw-modal-body" data-slot="dialog-panel">
       <slot />
     </div>
 
     {Astro.slots.has('footer') && (
-      <div class="cw-modal-foot">
+      <div class="cw-modal-foot" data-slot="dialog-footer">
         <slot name="footer" />
       </div>
     )}

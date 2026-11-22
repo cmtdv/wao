@@ -149,19 +149,16 @@
     flex-direction: column;
     gap: 0.4rem;
     padding: var(--space-4);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-top: 2px solid var(--rule-subtle);
-    border-radius: var(--radius-xs);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--coss-card-shadow);
     transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease;
   }
 
-  .atlas-topic--live {
-    border-top-color: var(--accent-seal);
-  }
-
   .atlas-topic--live:hover {
-    border-color: var(--accent-seal);
+    border-color: var(--brand);
     background: var(--surface-hover);
   }
 
@@ -180,12 +177,11 @@
   .atlas-badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.12rem 0.45rem;
-    border-radius: 2px;
-    font-family: var(--font-mono);
+    padding: 0.14rem 0.48rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
     font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-weight: 500;
   }
 
   .atlas-badge--live {
@@ -466,9 +462,11 @@
 
   .journey-aside-card {
     padding: var(--space-5);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-top: 2px solid var(--secondary-solid);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--coss-card-shadow);
   }
 
   .journey-aside-card h2 {
@@ -632,16 +630,18 @@
   .visa-workbench {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: var(--space-6);
+    gap: 0.25rem;
     align-items: stretch;
   }
 
   .visa-form-card,
   .visa-result-card {
-    padding: var(--space-6);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-strong);
-    border-radius: var(--radius-xs);
+    padding: var(--space-5);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--coss-card-shadow);
   }
 
   .visa-form-card {
@@ -651,19 +651,18 @@
   }
 
   .visa-result-card {
-    background: var(--secondary-tint);
-    border-inline-start: 4px solid var(--secondary-solid);
+    background: var(--card);
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
   .visa-result-card[data-status="eligible"] {
-    border-inline-start-color: var(--accent-seal);
+    border-color: var(--status-verified-border);
   }
 
   .visa-result-card[data-status="transit"] {
-    border-inline-start-color: var(--accent-gold);
+    border-color: var(--status-standby-border);
   }
 
   .visa-verdict-badge {
@@ -671,13 +670,12 @@
     align-items: center;
     width: fit-content;
     padding: 0.25rem 0.65rem;
-    border-radius: 2px;
-    background: var(--secondary-solid);
-    color: var(--secondary-ink);
-    font-family: var(--font-mono);
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-family: var(--font-sans);
     font-size: var(--text-2xs);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-weight: 500;
   }
 
   .visa-result-card h3 {
@@ -717,17 +715,18 @@
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-5);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-top: 2px solid var(--secondary-solid);
-    border-radius: var(--radius-xs);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--coss-card-shadow);
     text-align: start;
     cursor: pointer;
     transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease;
   }
 
   .flashcard-item:hover {
-    border-color: var(--accent-seal);
+    border-color: var(--border-strong);
     background: var(--surface-hover);
   }
 
@@ -757,12 +756,12 @@
     max-height: calc(100dvh - 3rem);
     margin: auto;
     padding: clamp(1.5rem, 4vw, 2.75rem);
-    background: var(--surface-raised);
-    color: var(--ink-primary);
-    border: 2px solid var(--secondary-solid);
-    border-top: 5px solid var(--accent-seal);
-    border-radius: var(--radius-xs);
-    box-shadow: var(--shadow-float);
+    background: var(--popover);
+    background-clip: padding-box;
+    color: var(--popover-foreground);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--coss-dialog-shadow);
     overflow-y: auto;
 
     opacity: 0;

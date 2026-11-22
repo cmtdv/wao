@@ -1,0 +1,22 @@
+---
+/**
+ * Group — Native Astro port of coss ui Group
+ * Seamlessly attaches adjacent buttons/inputs, collapsing inner radii & shared borders.
+ */
+interface Props {
+  label?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { label, class: className = '', ...rest } = Astro.props;
+---
+<div
+  role="group"
+  aria-label={label}
+  data-slot="group"
+  class:list={['coss-group', className]}
+  {...rest}
+>
+  <slot />
+</div>

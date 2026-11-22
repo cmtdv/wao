@@ -1,9 +1,7 @@
 ---
 /**
- * Accessible Tabbed Interface (modern-web-guidance: tabs)
- * - Initial state rendered in HTML (aria-selected="true" + hidden="until-found")
- * - Single-row scrollable tablist with focusgroup="tablist nomemory" + keyboard fallback
- * - Panel box styles live on .cw-tabpanel-inner (never on [role="tabpanel"] itself)
+ * Tabs — Native Astro port of coss ui Tabs (Segmented Pill Indicator & Underline variants)
+ * Preserves full WCAG keyboard arrow navigation + hidden="until-found" find-in-page support.
  */
 export interface TabItem {
   id: string;
@@ -16,14 +14,15 @@ export interface TabItem {
 interface Props {
   label: string;
   tabs: TabItem[];
+  variant?: 'default' | 'underline';
   class?: string;
 }
 
-const { label, tabs, class: className = '' } = Astro.props;
+const { label, tabs, variant = 'default', class: className = '' } = Astro.props;
 const focusgroupAttr = { focusgroup: 'tablist nomemory' } as Record<string, string>;
 ---
-<div class:list={['cw-tabs', className]} data-cw-tabs>
-  <div class="cw-tablist" role="tablist" aria-label={label} {...focusgroupAttr}>
+<div class:list={['cw-tabs', className]} data-slot="tabs" data-variant={variant} data-cw-tabs>
+  <div class="cw-tablist" data-slot="tabs-list" role="tablist" aria-label={label} {...focusgroupAttr}>
     {tabs.map((tab, idx) => {
       const startAttr = idx === 0 ? ({ focusgroupstart: '' } as Record<string, string>) : {};
       return (
@@ -32,6 +31,7 @@ const focusgroupAttr = { focusgroup: 'tablist nomemory' } as Record<string, stri
           role="tab"
           id={`tab-${tab.id}`}
           class="cw-tab"
+          data-slot="tabs-tab"
           aria-selected={idx === 0 ? 'true' : 'false'}
           tabindex={idx === 0 ? 0 : -1}
           data-cw-tab={tab.id}
@@ -51,6 +51,7 @@ const focusgroupAttr = { focusgroup: 'tablist nomemory' } as Record<string, stri
           role="tabpanel"
           id={`panel-${tab.id}`}
           class="cw-tabpanel"
+          data-slot="tabs-panel"
           aria-labelledby={`tab-${tab.id}`}
           tabindex={idx === 0 ? 0 : undefined}
           data-cw-tabpanel={tab.id}

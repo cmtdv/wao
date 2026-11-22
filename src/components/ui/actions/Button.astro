@@ -1,9 +1,23 @@
 ---
+/**
+ * Button — Native Astro port of coss ui Button
+ * Supports all coss variants (default, primary/brand, outline/secondary, ghost,
+ * destructive, destructive-outline, link) and sizes (xs, sm, md, lg, icon, icon-sm).
+ */
 import type { HTMLAttributes } from 'astro/types';
 
 interface Props extends HTMLAttributes<'button'> {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?:
+    | 'primary'
+    | 'brand'
+    | 'default'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'destructive'
+    | 'destructive-outline'
+    | 'link';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'icon' | 'icon-sm';
   href?: string;
   target?: string;
   rel?: string;
@@ -11,7 +25,7 @@ interface Props extends HTMLAttributes<'button'> {
 }
 
 const {
-  variant = 'secondary',
+  variant = 'outline',
   size = 'md',
   href,
   target,
@@ -23,19 +37,39 @@ const {
 
 const classes = [
   'btn',
-  variant === 'primary' && 'btn--primary',
+  (variant === 'primary' || variant === 'brand') && 'btn--primary',
+  variant === 'default' && 'btn--neutral',
+  variant === 'secondary' && 'btn--secondary-fill',
   variant === 'ghost' && 'btn--ghost',
-  size === 'sm' && 'btn--sm',
-  size === 'lg' && 'btn--lg',
+  variant === 'destructive' && 'btn--destructive',
+  variant === 'destructive-outline' && 'btn--destructive-outline',
+  variant === 'link' && 'btn--link',
+  size !== 'md' && `btn--${size}`,
   className,
 ];
 ---
 {href ? (
-  <a href={href} target={target} rel={rel} class:list={classes} {...(rest as HTMLAttributes<'a'>)}>
+  <a
+    href={href}
+    target={target}
+    rel={rel}
+    data-slot="button"
+    data-variant={variant}
+    data-size={size}
+    class:list={classes}
+    {...(rest as HTMLAttributes<'a'>)}
+  >
     <slot />
   </a>
 ) : (
-  <button type={type} class:list={classes} {...rest}>
+  <button
+    type={type}
+    data-slot="button"
+    data-variant={variant}
+    data-size={size}
+    class:list={classes}
+    {...rest}
+  >
     <slot />
   </button>
 )}

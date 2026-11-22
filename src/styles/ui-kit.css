@@ -134,7 +134,7 @@
 .cw-fancy-btn--seal {
   background: var(--grad-seal-btn);
   border: 1px solid var(--accent-seal);
-  color: var(--accent-on-seal);
+  color: #ffffff;
 }
 
 .cw-fancy-btn--palace {
@@ -182,7 +182,7 @@
 }
 
 .cw-link-btn--gold {
-  color: #e6be72;
+  color: var(--muted-foreground);
 }
 
 .cw-link-btn:hover {

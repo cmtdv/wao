@@ -1,0 +1,15 @@
+---
+/**
+ * Spinner — Native Astro port of coss ui Spinner
+ */
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  label?: string;
+  class?: string;
+}
+
+const isZh = getLocaleFromContext(Astro) === 'zh';
+const { label = isZh ? '加载中' : 'Loading', class: className = '' } = Astro.props;
+---
+<span role="status" aria-label={label} data-slot="spinner" class={className}></span>

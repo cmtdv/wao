@@ -1,0 +1,14 @@
+---
+/**
+ * Toolbar — Native Astro port of coss ui Toolbar
+ */
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className = '' } = Astro.props;
+---
+<div role="toolbar" aria-label={label} data-slot="toolbar" class={className}>
+  <slot />
+</div>

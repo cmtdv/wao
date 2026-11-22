@@ -1,0 +1,42 @@
+---
+/**
+ * InputGroup — Native Astro port of coss ui InputGroup
+ * Groups an input with leading/trailing icons, text prefixes, or inline action buttons/kbd.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'input'>, 'prefix'> {
+  id?: string;
+  name: string;
+  prefixText?: string;
+  suffixText?: string;
+  wrapperClass?: string;
+}
+
+const {
+  id,
+  name,
+  prefixText,
+  suffixText,
+  wrapperClass = '',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const inputId = id ?? `ig-${name}`;
+---
+<div data-slot="input-group" class:list={['coss-input-group', wrapperClass]}>
+  {(prefixText || Astro.slots.has('prefix')) && (
+    <span data-slot="input-group-addon" class="coss-input-addon">
+      {prefixText}
+      <slot name="prefix" />
+    </span>
+  )}
+  <input id={inputId} name={name} class={className} {...rest} />
+  {(suffixText || Astro.slots.has('suffix')) && (
+    <span data-slot="input-group-addon" class="coss-input-addon">
+      {suffixText}
+      <slot name="suffix" />
+    </span>
+  )}
+</div>

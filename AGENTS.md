@@ -2,13 +2,14 @@
 
 ## 1. 项目定位与目录架构
 
-本仓库为独立网站与 100% 原生设计系统工程（Astro 7 + EmDash 1.5 + 分层原生 CSS + 现代 HTML/DOM API，无第三方重型 UI 框架，无 AlignUI 付费代码或 Figma 像素搬运，100% 原创零授权限制）：
+本仓库为独立网站与 **coss ui（原生 Astro 零水合版）** 设计系统工程（Astro 7 + EmDash 1.5 + 分层原生 CSS + 现代 HTML/DOM API，零第三方重型 UI 框架运行时）：
 
 - `src/components/site/`：站点外壳与编辑部专有组件（页头、页脚、搜索命令框、全屏首图轮播、分页、目录、印章等）
-- `src/components/ui/`：完整基础 UI 原语套件（按 `actions` / `data-display` / `feedback` / `forms` / `navigation` / `overlays` 六大域组织，全面覆盖 49 类基础交互原语）
-- `src/components/blocks/`：全套 Pro 级页面区块套件（按 `marketing` / `editorial` / `application` 三大域组织，全面覆盖 39 类业务与营销区块）
+- `src/components/ui/coss/`：完整移植自 `coss.com/ui` 的标志性原生 Astro 表面与组合原语（`Frame`、`FramePanel`、`Card`、`Field`、`InputGroup`、`Group`、`NumberField`、`Switch`、`Empty`、`Sheet`、`Collapsible`、`Spinner`、`Meter`、`Toolbar`）
+- `src/components/ui/`：完整基础 UI 原语套件（按 `actions` / `data-display` / `feedback` / `forms` / `navigation` / `overlays` 组织，全面对齐 coss ui 质感）
+- `src/components/blocks/`：全套页面区块套件（按 `marketing` / `editorial` / `application` 三大域组织，全面覆盖 39 类业务与营销区块）
 - `src/styles/`：严格 CSS `@layer` 分层架构（`reset → tokens → base → layout → components → blocks → pages`）
-- `src/pages/design-system/`：站内交互式设计系统规范与验收双展台（`/design-system/` 基础令牌与 49 原语；`/design-system/blocks/` 39 Pro 级区块与完整覆盖对照表）
+- `src/pages/design-system/`：站内交互式设计系统规范与验收双展台（`/design-system/` coss 令牌与 56 项原生组件；`/design-system/blocks/` 39 类区块与完整覆盖对照表）
 
 ## 2. 浏览器支持基线（Browser Support Policy）
 
@@ -16,16 +17,16 @@
 
 ## 3. 视觉、字体与无障碍硬约束
 
-1. **宣纸质感与 60 / 30 / 10 素宣烈焰朱红配色体系（日光素宣 / 夜读徽墨双模）**：
-   - 60% 主底面：`--surface-canvas` / `--surface-raised`（素宣 `#F7F3E9` / 徽墨 `#141110`）+ 极轻宣纸微纹；
-   - 30% 辅助结构：`--secondary-solid` 烈焰朱红（`#E43216` / `#B8230D`）+ `--secondary-tint` 藕荷暖宣（`#EFE5DC` / `#251D1A`）+ `1px` 细线网格；
-   - 10% 点缀强调：`--accent-seal` 烈焰朱红（`#E43216` / 文字链接高对比 `#C8260E`）与 `--accent-gold` 琉璃泥金（`#B8893D` / `#E6BE72`）。
+1. **coss ui 纯净中立表面 + 单一 `#E43216` 品牌强调色（亮/暗双模态）**：
+   - 主画布与浮层表面：`--background` / `--card` / `--popover`（亮色纯净白 `#FFFFFF` / 暗色深碳灰 `#141414` 与 `#1C1C1F`），摒弃旧版泛黄宣纸底纹与鎏金杂色；
+   - 静音托盘与内切微高光：`--muted` / `--surface-sunken` 托盘（`Frame` `rounded-2xl p-1`）承载 `FramePanel`（`rounded-xl`），配合 `background-clip: padding-box` 与 `1px` 内切阴影；
+   - 唯一品牌强调色：全站仅保留 `--brand: #E43216`（文字高对比 `--brand-text`）作为唯一品牌主强调色，严禁混入金色或次级花哨彩色装饰条。
 2. **零商业版权字体**：
    - 仅使用自托管 SIL OFL 1.1 开源字体（`@fontsource/newsreader`、`@fontsource/dm-sans`、`@fontsource/jetbrains-mono`）及通用字体族回退（`serif` / `sans-serif` / `monospace`）；严禁出现商业字体名。
 3. **几何、对比度与键盘红线**：
-   - 控件统一 **2px 极简微方角**（`--control-radius: 2px`），单选框保留圆形以区分复选框；
+   - 遵循 coss ui 圆角层级：控件 `--radius-lg`（`0.625rem` / `10px`）、内嵌面板 `--radius-xl`（`0.75rem` / `12px`）、外层卡片/托盘/弹窗 `--radius-2xl`（`1rem` / `16px`），复选框保持 `5px` 微圆角以区分圆形单选框；
    - 正文、辅助文字、占位符对比度一律 ≥ `4.5:1`，控件边框与 `:focus-visible` 焦点环 ≥ `3.0:1`，亮/暗双态必检；
-   - 每页/弹窗/独立卡片至多 1 个 `primary` 主按钮；所有原语优先通过 `@ui/*`、`@blocks/*`、`@site/*` 路径别名引入，禁止散写裸控件。
+   - 每页/弹窗/独立卡片至多 1 个实心 `primary`（`#E43216`）主按钮；所有原语优先通过 `@ui/*`、`@ui/coss/*`、`@blocks/*`、`@site/*` 路径别名引入，禁止散写裸控件。
 4. **EmDash 生产与模板分发边界**：
    - 公开路由必须经 `publicContext()` 读取已发布版本；保留 `decodeSlug()`、`queryPage()` 与 `EmDashHead/BodyStart/BodyEnd`；
    - `seed/seed.json` 保持纯净不混入本地 Mock 扩充数据，本地测试内容仅存 `data.db`。

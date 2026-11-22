@@ -1,0 +1,35 @@
+---
+/**
+ * Switch — Native Astro port of coss ui Switch
+ * Accessible binary pill switch using native <input type="checkbox" role="switch" switch>.
+ */
+interface Props {
+  id?: string;
+  name: string;
+  label: string;
+  description?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const { id, name, label, description, checked = false, disabled = false, class: className = '' } = Astro.props;
+const inputId = id ?? `switch-${name}`;
+---
+<label class:list={['cw-check-label', className]} for={inputId}>
+  <input
+    id={inputId}
+    name={name}
+    type="checkbox"
+    role="switch"
+    checked={checked}
+    disabled={disabled}
+    data-slot="switch"
+    class="cw-switch"
+    {...({ switch: '' } as Record<string, string>)}
+  />
+  <span>
+    <span style="display:block;font-weight:500;color:var(--foreground);">{label}</span>
+    {description && <span class="cw-hint" style="display:block;margin-top:0.15rem;">{description}</span>}
+  </span>
+</label>

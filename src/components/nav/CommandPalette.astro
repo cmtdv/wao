@@ -68,11 +68,11 @@ const KIND_ZH: Record<string, string> = {
 
   {/* Instant Show-to-Local Cards Strip */}
   <div
-    style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--rule-subtle);background:var(--secondary-tint);"
+    style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border);background:var(--surface-sunken);"
     data-pe-cmd-quick-cards
   >
     <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
-      <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:600;color:var(--accent-seal-text);text-transform:uppercase;">
+      <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
         {isZh ? '常用亮屏字卡' : 'Quick Show Cards'}
       </span>
       <a href={lp('/cards/')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">

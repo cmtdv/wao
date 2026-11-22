@@ -1,15 +1,36 @@
 ---
+/**
+ * Badge — Native Astro port of coss ui Badge
+ * Backward-compatible with `tone` prop while supporting all coss `variant` & `size` options.
+ */
 interface Props {
-  tone?: 'neutral' | 'editorial' | 'verified' | 'standby' | 'danger';
+  tone?: 'neutral' | 'editorial' | 'verified' | 'standby' | 'danger' | 'info';
+  variant?: 'default' | 'secondary' | 'outline' | 'brand' | 'success' | 'warning' | 'error' | 'destructive' | 'info';
+  size?: 'sm' | 'default' | 'lg';
   class?: string;
   [key: string]: unknown;
 }
 
-const { tone = 'neutral', class: className = '', ...rest } = Astro.props;
+const { tone = 'neutral', variant, size = 'default', class: className = '', ...rest } = Astro.props;
+
+const toneToVariant: Record<NonNullable<Props['tone']>, NonNullable<Props['variant']>> = {
+  neutral: 'secondary',
+  editorial: 'brand',
+  verified: 'success',
+  standby: 'warning',
+  danger: 'error',
+  info: 'info',
+};
+
+const resolvedVariant = variant ?? toneToVariant[tone];
 ---
 <span
+  data-slot="badge"
+  data-variant={resolvedVariant}
+  data-size={size}
   class:list={[
     'cw-badge',
+    tone === 'neutral' && !variant && 'cw-badge--neutral',
     tone !== 'neutral' && `cw-badge--${tone}`,
     className,
   ]}

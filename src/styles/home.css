@@ -140,7 +140,8 @@
   }
 
   .hero-slide-title a:hover {
-    color: #e6be72;
+    color: #ffffff;
+    text-decoration: underline;
   }
 
   .hero-slide-excerpt {
@@ -202,7 +203,7 @@
   .hero-marker-fill {
     position: absolute;
     inset: 0;
-    background: #e6be72;
+    background: var(--brand);
     transform-origin: left center;
     transform: scaleX(0);
     will-change: transform;

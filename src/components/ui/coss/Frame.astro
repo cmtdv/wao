@@ -1,0 +1,40 @@
+---
+/**
+ * Frame — Native Astro port of coss ui Frame
+ * Signature muted tray container (`rounded-2xl bg-muted p-1`) wrapping one or more FramePanels.
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { title, description, class: className = '', ...rest } = Astro.props;
+const hasHeader = Boolean(title || description || Astro.slots.has('header-action'));
+---
+<div data-slot="frame" class:list={['coss-frame', className]} {...rest}>
+  {hasHeader && (
+    <header data-slot="frame-header" class="coss-frame-header">
+      <div data-slot="frame-header-row">
+        <div>
+          {title && <div data-slot="frame-title" class="coss-frame-title">{title}</div>}
+          {description && <div data-slot="frame-description" class="coss-frame-description">{description}</div>}
+        </div>
+        {Astro.slots.has('header-action') && (
+          <div>
+            <slot name="header-action" />
+          </div>
+        )}
+      </div>
+    </header>
+  )}
+
+  <slot />
+
+  {Astro.slots.has('footer') && (
+    <footer data-slot="frame-footer" class="coss-frame-footer">
+      <slot name="footer" />
+    </footer>
+  )}
+</div>

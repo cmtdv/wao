@@ -1,0 +1,27 @@
+---
+/**
+ * Field — Native Astro port of coss ui Field
+ * Accessible label + control + description + error wrapper.
+ */
+interface Props {
+  forId?: string;
+  label?: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const { forId, label, description, error, required = false, class: className = '' } = Astro.props;
+---
+<div data-slot="field" class:list={['cw-field', className]}>
+  {label && (
+    <label data-slot="field-label" class="cw-label" for={forId}>
+      <span>{label}</span>
+      {required && <span class="cw-required" aria-hidden="true">*</span>}
+    </label>
+  )}
+  <slot />
+  {description && <span data-slot="field-description" class="cw-hint">{description}</span>}
+  {error && <span data-slot="field-error" class="cw-error-msg" role="alert">{error}</span>}
+</div>

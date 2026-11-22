@@ -13,6 +13,9 @@ import Input from '@ui/forms/Input.astro';
 import Checkbox from '@ui/forms/Checkbox.astro';
 import Slider from '@ui/forms/Slider.astro';
 import DateInput from '@ui/forms/DateInput.astro';
+import Frame from '@ui/coss/Frame.astro';
+import FramePanel from '@ui/coss/FramePanel.astro';
+import NumberField from '@ui/coss/NumberField.astro';
 import { UTILITY_TOOLS } from '@data/paradigm-e/pillars';
 import { getEntitiesByCollection } from '@data/paradigm-e/entities';
 import { getVisaProfiles } from '@data/mock-portal-zh';
@@ -95,61 +98,66 @@ const webMcpAttrs = {
       </nav>
 
       {/* Right Adaptive Calculation Panel */}
-      <section class="pe-step-card--panel">
-        <h1 style="font-size:clamp(1.55rem, 1.2rem + 1.2vw, 2.2rem);">
-          {isZh ? activeTool.nameZh : activeTool.name}
-        </h1>
-        <p style="color:var(--ink-secondary);margin-block:0.4rem var(--space-5);font-size:var(--text-sm);">
-          {isZh ? activeTool.shortDescZh : activeTool.shortDesc}
-        </p>
+      <section style="min-width:0;">
+        <header style="margin-bottom:var(--space-5);">
+          <h1 style="font-size:clamp(1.65rem, 1.25rem + 1.2vw, 2.25rem);">
+            {isZh ? activeTool.nameZh : activeTool.name}
+          </h1>
+          <p style="color:var(--ink-secondary);margin-top:0.4rem;font-size:var(--text-sm);max-width:60ch;">
+            {isZh ? activeTool.shortDescZh : activeTool.shortDesc}
+          </p>
+        </header>
 
         {/* VISA CHECKER */}
         {activeTool.slug === 'visa-checker' && (
-          <div class="visa-workbench" data-visa-checker {...webMcpAttrs}>
-            <form class="visa-form-card" novalidate>
-              <Select
-                id="visa-country"
-                name="country"
-                label={isZh ? '所持普通护照国籍' : 'Ordinary Passport Nationality'}
-                options={countryOptions}
-                data-visa-country
-              />
-              <Input
-                id="visa-days"
-                name="days"
-                type="number"
-                label={isZh ? '计划在中国内地停留天数' : 'Planned Mainland Stay (Days)'}
-                min={1}
-                max={180}
-                value={10}
-                data-visa-days
-              />
-              <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
-                {isZh ? '持有第三国或港澳台联程确定客票（A → 中国 → C）' : 'Confirmed third-country/region onward ticket (A → China → C)'}
-              </Checkbox>
-            </form>
-            <div class="visa-result-card" aria-live="polite" data-visa-result>
-              <span class="eyebrow eyebrow--accent">{isZh ? '判定结果' : 'Result'}</span>
-              <h2 data-visa-verdict style="margin-top:0.35rem;font-size:1.35rem;">{isZh ? '测算中…' : 'Evaluating…'}</h2>
-              <p data-visa-summary style="margin-top:0.5rem;font-size:var(--text-sm);color:var(--ink-secondary);"></p>
-              <p data-visa-note style="margin-top:0.5rem;font-family:var(--font-mono);font-size:var(--text-xs);"></p>
+          <Frame>
+            <div class="visa-workbench" data-visa-checker {...webMcpAttrs}>
+              <FramePanel class="visa-form-card">
+                <form style="display:grid;gap:var(--space-4);" novalidate>
+                  <Select
+                    id="visa-country"
+                    name="country"
+                    label={isZh ? '所持普通护照国籍' : 'Ordinary Passport Nationality'}
+                    options={countryOptions}
+                    data-visa-country
+                  />
+                  <NumberField
+                    id="visa-days"
+                    name="days"
+                    label={isZh ? '计划在中国内地停留天数' : 'Planned Mainland Stay (Days)'}
+                    min={1}
+                    max={180}
+                    value={10}
+                    data-visa-days
+                  />
+                  <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
+                    {isZh ? '持有第三国或港澳台联程确定客票（A → 中国 → C）' : 'Confirmed third-country/region onward ticket (A → China → C)'}
+                  </Checkbox>
+                </form>
+              </FramePanel>
+              <FramePanel class="visa-result-card" aria-live="polite" data-visa-result>
+                <span class="eyebrow eyebrow--accent">{isZh ? '判定结果' : 'Result'}</span>
+                <h2 data-visa-verdict style="margin-top:0.2rem;font-size:1.35rem;">{isZh ? '测算中…' : 'Evaluating…'}</h2>
+                <p data-visa-summary style="margin-top:0.35rem;font-size:var(--text-sm);color:var(--ink-secondary);"></p>
+                <p data-visa-note style="margin-top:0.35rem;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--muted-foreground);"></p>
+              </FramePanel>
             </div>
-          </div>
+          </Frame>
         )}
 
         {/* SHOW-TO-LOCAL CARDS */}
         {(activeTool.slug === 'station-taxi-cards' || activeTool.slug === 'medical-sos-cards') && (
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:var(--space-4);" {...webMcpAttrs}>
-            {showCards.map((c) => (
+            {showCards.map((c, idx) => (
               <article class="pe-side-card" style="display:flex;flex-direction:column;justify-content:space-between;gap:var(--space-3);">
                 <div>
                   <h2 style="font-size:1.15rem;">{isZh && c.cardData ? c.cardData.titleZh : c.title}</h2>
-                  <p style="font-size:1.05rem;font-weight:600;margin-top:0.35rem;color:var(--accent-seal-text);">
+                  <p style="font-size:1.05rem;font-weight:600;margin-top:0.35rem;color:var(--foreground);">
                     {c.chineseName}
                   </p>
                   <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.35rem;">{isZh ? c.taglineZh : c.tagline}</p>
                 </div>
-                <Button href={lp(`/cards/${c.slug}/`)} variant="primary" size="sm">
+                <Button href={lp(`/cards/${c.slug}/`)} variant={idx === 0 ? 'primary' : 'outline'} size="sm">
                   {isZh ? '全屏亮屏出示 →' : 'Open Fullscreen Card →'}
                 </Button>
               </article>
@@ -159,156 +167,190 @@ const webMcpAttrs = {
 
         {/* TICKET RELEASE TIMEZONE CONVERTER */}
         {activeTool.slug === 'ticket-calendar' && (
-          <div style="display:grid;gap:var(--space-4);" {...webMcpAttrs}>
-            <div class="pe-hard-facts">
-              <div class="pe-fact-slot">
-                <span class="pe-fact-slot-label">{isZh ? '故宫博物院（提前 7 天 · 北京时间 20:00）' : 'Forbidden City (7d · 20:00 BJT)'}</span>
-                <strong class="pe-fact-slot-val" data-pe-bjt-hour="20" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
-                <span class="pe-fact-slot-src">{isZh ? '已按您当前设备时区换算' : 'Converted to your local timezone'}</span>
+          <Frame {...webMcpAttrs}>
+            <FramePanel>
+              <div class="pe-hard-facts" style="margin-top:0;">
+                <div class="pe-fact-slot">
+                  <span class="pe-fact-slot-label">{isZh ? '故宫博物院（提前 7 天 · 北京时间 20:00）' : 'Forbidden City (7d · 20:00 BJT)'}</span>
+                  <strong class="pe-fact-slot-val" data-pe-bjt-hour="20" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
+                  <span class="pe-fact-slot-src">{isZh ? '已按您当前设备时区换算' : 'Converted to your local timezone'}</span>
+                </div>
+                <div class="pe-fact-slot">
+                  <span class="pe-fact-slot-label">{isZh ? '铁路 12306（提前 15 天 · 08:00 起售）' : 'Railway 12306 (15d · 08:00 BJT)'}</span>
+                  <strong class="pe-fact-slot-val" data-pe-bjt-hour="8" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
+                  <span class="pe-fact-slot-src">{isZh ? '主要枢纽站最早起售时间' : 'Earliest major hub station release'}</span>
+                </div>
               </div>
-              <div class="pe-fact-slot">
-                <span class="pe-fact-slot-label">{isZh ? '铁路 12306（提前 15 天 · 08:00 起售）' : 'Railway 12306 (15d · 08:00 BJT)'}</span>
-                <strong class="pe-fact-slot-val" data-pe-bjt-hour="8" data-pe-bjt-minute="0">{isZh ? '换算中…' : 'Calculating…'}</strong>
-                <span class="pe-fact-slot-src">{isZh ? '主要枢纽站最早起售时间' : 'Earliest major hub station release'}</span>
+            </FramePanel>
+            <FramePanel>
+              <div data-ticket-calendar style="max-width:28rem;">
+                <DateInput id="ticket-travel-date" name="travel_date" label={isZh ? '选择计划出行或入园日期' : 'Target Travel / Visit Date'} value="2026-12-20" data-ticket-date />
+                <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:var(--text-sm);" data-ticket-output>
+                  {isZh ? '选择日期即可自动计算 12306（提前 15 天）与故宫（提前 7 天）开售日期。' : 'Select a date to compute exact 15-day 12306 and 7-day Palace Museum booking dates.'}
+                </div>
               </div>
-            </div>
-            <div data-ticket-calendar style="max-width:28rem;">
-              <DateInput id="ticket-travel-date" name="travel_date" label={isZh ? '选择计划出行或入园日期' : 'Target Travel / Visit Date'} value="2026-12-20" data-ticket-date />
-              <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);" data-ticket-output>
-                {isZh ? '选择日期即可自动计算 12306（提前 15 天）与故宫（提前 7 天）开售日期。' : 'Select a date to compute exact 15-day 12306 and 7-day Palace Museum booking dates.'}
-              </div>
-            </div>
-          </div>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* BUDGET & TAX REFUND CALCULATOR */}
         {activeTool.slug === 'budget-calculator' && (
-          <div data-tax-calc style="max-width:34rem;display:grid;gap:var(--space-4);" {...webMcpAttrs}>
-            <Slider
-              id="tax-spend-slider"
-              name="spend_rmb"
-              label={isZh ? '同店同日消费金额（人民币 ¥）' : 'Same-Day Same-Store Spend (RMB ¥)'}
-              min={200}
-              max={20000}
-              step={100}
-              value={3200}
-              unitPrefix="¥"
-              unitSuffix={isZh ? ' 元' : ' RMB'}
-              data-tax-slider
-            />
-            <div class="pe-side-card" style="background:var(--surface-canvas);" data-tax-output>
-              {isZh ? <>预计实得 9% 净退税额（11% 退税率扣除 2% 代理手续费）：<strong>¥288</strong></> : <>Estimated 9% Net Refund (11% VAT − 2% agency fee): <strong>¥288 RMB</strong></>}
-            </div>
-          </div>
+          <Frame style="max-width:38rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <div data-tax-calc style="display:grid;gap:var(--space-4);">
+                <Slider
+                  id="tax-spend-slider"
+                  name="spend_rmb"
+                  label={isZh ? '同店同日消费金额（人民币 ¥）' : 'Same-Day Same-Store Spend (RMB ¥)'}
+                  min={200}
+                  max={20000}
+                  step={100}
+                  value={3200}
+                  unitPrefix="¥"
+                  unitSuffix={isZh ? ' 元' : ' RMB'}
+                  data-tax-slider
+                />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:var(--text-sm);" data-tax-output>
+                  {isZh ? <>预计实得 9% 净退税额（11% 退税率扣除 2% 代理手续费）：<strong>¥288</strong></> : <>Estimated 9% Net Refund (11% VAT − 2% agency fee): <strong>¥288 RMB</strong></>}
+                </div>
+              </div>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* TOOL 12.6: WORK PERMIT POINTS & IIT TAX CALC */}
         {activeTool.slug === 'tax-points-calc' && (
-          <form data-pe-tax-points style="display:grid;gap:var(--space-4);max-width:38rem;" novalidate {...webMcpAttrs}>
-            <div class="pe-dual-desk" style="margin:0;">
-              <Input id="tp-salary" name="salary" type="number" label={isZh ? '税前月薪（人民币 ¥）' : 'Monthly Gross Salary (RMB ¥)'} value={28000} min={5000} max={200000} data-tp-salary />
-              <Select
-                id="tp-degree"
-                name="degree"
-                label={isZh ? '最高学历' : 'Highest Degree'}
-                options={[
-                  { value: '20', label: isZh ? '博士学位（20 分）' : 'PhD / Doctorate (20 pts)' },
-                  { value: '15', label: isZh ? '硕士学位（15 分）' : 'Master’s Degree (15 pts)', selected: true },
-                  { value: '10', label: isZh ? '本科学位（10 分）' : 'Bachelor’s Degree (10 pts)' },
-                ]}
-                data-tp-degree
-              />
-              <Input id="tp-exp" name="exp" type="number" label={isZh ? '相关工作年限（年）' : 'Relevant Work Years'} value={5} min={0} max={30} data-tp-exp />
-              <Input id="tp-age" name="age" type="number" label={isZh ? '申请人年龄' : 'Applicant Age'} value={31} min={18} max={65} data-tp-age />
-            </div>
-            <Select
-              id="tp-hsk"
-              name="hsk"
-              label={isZh ? '汉语水平（HSK 等级）' : 'Chinese Proficiency (HSK)'}
-              options={[
-                { value: '0', label: isZh ? '暂无 HSK（0 分）' : 'No HSK yet (0 pts)', selected: true },
-                { value: '2', label: isZh ? 'HSK 2–3 级（2 分）' : 'HSK 2–3 (2 pts)' },
-                { value: '4', label: isZh ? 'HSK 4 级（4 分）' : 'HSK 4 (4 pts)' },
-                { value: '5', label: isZh ? 'HSK 5 级及以上（5 分）' : 'HSK 5+ (5 pts)' },
-              ]}
-              data-tp-hsk
-            />
-            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-tp-output aria-live="polite"></div>
-          </form>
+          <Frame style="max-width:42rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <form data-pe-tax-points style="display:grid;gap:var(--space-4);" novalidate>
+                <div class="pe-dual-desk" style="margin:0;">
+                  <Input id="tp-salary" name="salary" type="number" label={isZh ? '税前月薪（人民币 ¥）' : 'Monthly Gross Salary (RMB ¥)'} value={28000} min={5000} max={200000} data-tp-salary />
+                  <Select
+                    id="tp-degree"
+                    name="degree"
+                    label={isZh ? '最高学历' : 'Highest Degree'}
+                    options={[
+                      { value: '20', label: isZh ? '博士学位（20 分）' : 'PhD / Doctorate (20 pts)' },
+                      { value: '15', label: isZh ? '硕士学位（15 分）' : 'Master’s Degree (15 pts)', selected: true },
+                      { value: '10', label: isZh ? '本科学位（10 分）' : 'Bachelor’s Degree (10 pts)' },
+                    ]}
+                    data-tp-degree
+                  />
+                  <NumberField id="tp-exp" name="exp" label={isZh ? '相关工作年限（年）' : 'Relevant Work Years'} value={5} min={0} max={30} data-tp-exp />
+                  <NumberField id="tp-age" name="age" label={isZh ? '申请人年龄' : 'Applicant Age'} value={31} min={18} max={65} data-tp-age />
+                </div>
+                <Select
+                  id="tp-hsk"
+                  name="hsk"
+                  label={isZh ? '汉语水平（HSK 等级）' : 'Chinese Proficiency (HSK)'}
+                  options={[
+                    { value: '0', label: isZh ? '暂无 HSK（0 分）' : 'No HSK yet (0 pts)', selected: true },
+                    { value: '2', label: isZh ? 'HSK 2–3 级（2 分）' : 'HSK 2–3 (2 pts)' },
+                    { value: '4', label: isZh ? 'HSK 4 级（4 分）' : 'HSK 4 (4 pts)' },
+                    { value: '5', label: isZh ? 'HSK 5 级及以上（5 分）' : 'HSK 5+ (5 pts)' },
+                  ]}
+                  data-tp-hsk
+                />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);line-height:1.7;font-size:var(--text-sm);" data-tp-output aria-live="polite"></div>
+              </form>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* TOOL 12.7: USCC & GB MATCHER */}
         {activeTool.slug === 'uscc-gb-matcher' && (
-          <div data-pe-uscc-root style="display:grid;gap:var(--space-4);max-width:40rem;" {...webMcpAttrs}>
-            <Input
-              id="tool-uscc-input"
-              name="uscc"
-              type="text"
-              label={isZh ? '18 位统一社会信用代码（GB 32100-2015）' : '18-Digit Unified Social Credit Code (GB 32100-2015)'}
-              value="914403001922038216"
-              maxlength={18}
-              hint={isZh ? '输入中国供应商营业执照上的 18 位代码，本地即时校验防伪校验位。' : 'Paste any Chinese supplier’s 18-character code from their Business License (营业执照).'}
-              data-pe-uscc-input
-            />
-            <div class="pe-side-card" style="background:var(--surface-canvas);" data-pe-uscc-output aria-live="polite"></div>
-            <Button href={lp('/compliance/uscc-gsxt-lookup/')} variant="secondary" size="sm">
-              {isZh ? '前往国家企信网核验指引 →' : 'Open Official GSXT Lookup Guide →'}
-            </Button>
-          </div>
+          <Frame style="max-width:42rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <div data-pe-uscc-root style="display:grid;gap:var(--space-4);">
+                <Input
+                  id="tool-uscc-input"
+                  name="uscc"
+                  type="text"
+                  label={isZh ? '18 位统一社会信用代码（GB 32100-2015）' : '18-Digit Unified Social Credit Code (GB 32100-2015)'}
+                  value="914403001922038216"
+                  maxlength={18}
+                  hint={isZh ? '输入中国供应商营业执照上的 18 位代码，本地即时校验防伪校验位。' : 'Paste any Chinese supplier’s 18-character code from their Business License (营业执照).'}
+                  data-pe-uscc-input
+                />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:var(--text-sm);" data-pe-uscc-output aria-live="polite"></div>
+                <div>
+                  <Button href={lp('/compliance/uscc-gsxt-lookup/')} variant="outline" size="sm">
+                    {isZh ? '前往国家企信网核验指引 →' : 'Open Official GSXT Lookup Guide →'}
+                  </Button>
+                </div>
+              </div>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* MICRO TOOL M1: JIN / LIANG & SIZE CONVERTER */}
         {activeTool.slug === 'jin-size-converter' && (
-          <form data-pe-jin-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
-            <Input id="jin-val" name="jin" type="number" label={isZh ? '市斤重量（斤）' : 'Market Weight in 斤 (Jin)'} value={2} min={0} step={0.5} data-jin-input />
-            <Input id="shoe-val" name="eu_shoe" type="number" label={isZh ? '欧码/中国鞋码（35–48）' : 'EU Shoe Size (35–48)'} value={42} min={35} max={48} data-shoe-input />
-            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-jin-output aria-live="polite"></div>
-          </form>
+          <Frame style="max-width:36rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <form data-pe-jin-calc style="display:grid;gap:var(--space-4);" novalidate>
+                <NumberField id="jin-val" name="jin" label={isZh ? '市斤重量（斤）' : 'Market Weight in 斤 (Jin)'} value={2} min={0} step={0.5} data-jin-input />
+                <NumberField id="shoe-val" name="eu_shoe" label={isZh ? '欧码/中国鞋码（35–48）' : 'EU Shoe Size (35–48)'} value={42} min={35} max={48} data-shoe-input />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);line-height:1.7;font-size:var(--text-sm);" data-jin-output aria-live="polite"></div>
+              </form>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* MICRO TOOL M2: WAN / YI CONVERTER */}
         {activeTool.slug === 'wan-yi-converter' && (
-          <form data-pe-wanyi-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
-            <Input id="wanyi-num" name="amount" type="number" label={isZh ? '中文单位前数值' : 'Number Before Unit'} value={50} min={0} data-wanyi-input />
-            <Select
-              id="wanyi-unit"
-              name="unit"
-              label={isZh ? '中文数量单位' : 'Chinese Unit'}
-              options={[
-                { value: '10000', label: isZh ? '万（10,000）' : '万 (Wàn = 10,000)', selected: true },
-                { value: '100000000', label: isZh ? '亿（100,000,000）' : '亿 (Yì = 100,000,000)' },
-              ]}
-              data-wanyi-unit
-            />
-            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-wanyi-output aria-live="polite"></div>
-          </form>
+          <Frame style="max-width:36rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <form data-pe-wanyi-calc style="display:grid;gap:var(--space-4);" novalidate>
+                <NumberField id="wanyi-num" name="amount" label={isZh ? '中文单位前数值' : 'Number Before Unit'} value={50} min={0} data-wanyi-input />
+                <Select
+                  id="wanyi-unit"
+                  name="unit"
+                  label={isZh ? '中文数量单位' : 'Chinese Unit'}
+                  options={[
+                    { value: '10000', label: isZh ? '万（10,000）' : '万 (Wàn = 10,000)', selected: true },
+                    { value: '100000000', label: isZh ? '亿（100,000,000）' : '亿 (Yì = 100,000,000)' },
+                  ]}
+                  data-wanyi-unit
+                />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);line-height:1.7;font-size:var(--text-sm);" data-wanyi-output aria-live="polite"></div>
+              </form>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* MICRO TOOL M3: HANZI TATTOO CHECK */}
         {activeTool.slug === 'hanzi-tattoo-check' && (
-          <form data-pe-tattoo-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
-            <Input id="tattoo-in" name="hanzi" type="text" label={isZh ? '待检测汉字词组' : 'Chinese Phrase to Audit'} value="免费" placeholder={isZh ? '输入如：免费、自由、勇敢、水…' : 'Try 免费, 自由, 勇敢, 水…'} data-tattoo-input />
-            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-tattoo-output aria-live="polite"></div>
-          </form>
+          <Frame style="max-width:36rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <form data-pe-tattoo-calc style="display:grid;gap:var(--space-4);" novalidate>
+                <Input id="tattoo-in" name="hanzi" type="text" label={isZh ? '待检测汉字词组' : 'Chinese Phrase to Audit'} value="免费" placeholder={isZh ? '输入如：免费、自由、勇敢、水…' : 'Try 免费, 自由, 勇敢, 水…'} data-tattoo-input />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);line-height:1.7;font-size:var(--text-sm);" data-tattoo-output aria-live="polite"></div>
+              </form>
+            </FramePanel>
+          </Frame>
         )}
 
         {/* MICRO TOOL M4: CHINESE NAME STUDIO */}
         {activeTool.slug === 'chinese-name' && (
-          <form data-pe-name-calc style="display:grid;gap:var(--space-4);max-width:34rem;" novalidate {...webMcpAttrs}>
-            <Input id="name-in" name="name" type="text" label={isZh ? '你的英文名' : 'Your English First Name'} value="Alex" data-name-input />
-            <Select
-              id="name-vibe"
-              name="vibe"
-              label={isZh ? '起名气韵风格' : 'Cultural Cadence'}
-              options={[
-                { value: 'literary', label: isZh ? '书卷清雅（古典诗词感）' : 'Literary & Classical', selected: true },
-                { value: 'modern', label: isZh ? '现代明朗（大气干练）' : 'Crisp Modern' },
-                { value: 'warm', label: isZh ? '知行温润（东方哲思）' : 'Grounded & Philosophical' },
-              ]}
-              data-name-vibe
-            />
-            <div class="pe-side-card" style="background:var(--surface-canvas);line-height:1.7;" data-name-output aria-live="polite"></div>
-          </form>
+          <Frame style="max-width:36rem;" {...webMcpAttrs}>
+            <FramePanel>
+              <form data-pe-name-calc style="display:grid;gap:var(--space-4);" novalidate>
+                <Input id="name-in" name="name" type="text" label={isZh ? '你的英文名' : 'Your English First Name'} value="Alex" data-name-input />
+                <Select
+                  id="name-vibe"
+                  name="vibe"
+                  label={isZh ? '起名气韵风格' : 'Cultural Cadence'}
+                  options={[
+                    { value: 'literary', label: isZh ? '书卷清雅（古典诗词感）' : 'Literary & Classical', selected: true },
+                    { value: 'modern', label: isZh ? '现代明朗（大气干练）' : 'Crisp Modern' },
+                    { value: 'warm', label: isZh ? '知行温润（东方哲思）' : 'Grounded & Philosophical' },
+                  ]}
+                  data-name-vibe
+                />
+                <div style="padding:var(--space-4);background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-lg);line-height:1.7;font-size:var(--text-sm);" data-name-output aria-live="polite"></div>
+              </form>
+            </FramePanel>
+          </Frame>
         )}
 
         <AutoDisclaimer kinds={[...disclaimers]} locale={locale} />

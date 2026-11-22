@@ -57,7 +57,7 @@ function syncThemeControls(pref: SchemePreference): void {
       btn.setAttribute(
         'title',
         zh
-          ? `跟随系统（当前为${systemScheme === 'dark' ? '徽墨深色' : '素宣浅色'}）`
+          ? `跟随系统（当前为${systemScheme === 'dark' ? '深色' : '浅色'}）`
           : `System (currently ${systemScheme})`,
       );
     }
@@ -66,8 +66,8 @@ function syncThemeControls(pref: SchemePreference): void {
   document.querySelectorAll<HTMLButtonElement>('[data-theme-quick-toggle]').forEach((btn) => {
     const nextLabel = zh
       ? effective === 'dark'
-        ? '切换为素宣浅色主题'
-        : '切换为徽墨深色主题'
+        ? '切换为浅色主题'
+        : '切换为深色主题'
       : effective === 'dark'
         ? 'Switch to light theme'
         : 'Switch to dark theme';
@@ -537,8 +537,9 @@ function initToolsWorkbench(): void {
     const transitCheck = visaRoot.querySelector<HTMLInputElement>('[data-visa-transit]');
     const resultCard = visaRoot.querySelector<HTMLElement>('[data-visa-result]');
     const badgeEl = visaRoot.querySelector<HTMLElement>('[data-visa-badge]');
-    const headlineEl = visaRoot.querySelector<HTMLElement>('[data-visa-headline]');
-    const detailEl = visaRoot.querySelector<HTMLElement>('[data-visa-detail]');
+    const headlineEl = visaRoot.querySelector<HTMLElement>('[data-visa-headline], [data-visa-verdict]');
+    const detailEl = visaRoot.querySelector<HTMLElement>('[data-visa-detail], [data-visa-summary]');
+    const noteEl = visaRoot.querySelector<HTMLElement>('[data-visa-note]');
 
     const evaluate = () => {
       if (!countrySelect || !daysInput || !transitCheck || !resultCard) return;
@@ -606,6 +607,7 @@ function initToolsWorkbench(): void {
       if (badgeEl) badgeEl.textContent = badge;
       if (headlineEl) headlineEl.textContent = headline;
       if (detailEl) detailEl.textContent = detail;
+      if (noteEl) noteEl.textContent = badge;
     };
 
     countrySelect?.addEventListener('change', evaluate);
@@ -1651,16 +1653,62 @@ function initDrawers(): void {
   });
 }
 
-// 10. Modal Fallback (for browsers without Invoker commandfor="...")
+// 10. Modal & Sheet Fallback (Invoker commandfor + Safari closedby="any" light-dismiss)
 function initModalsFallback(): void {
-  if ('command' in HTMLButtonElement.prototype) return;
-  document.querySelectorAll<HTMLButtonElement>('[data-cw-modal-open]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.cwModalOpen;
-      const modal = id ? document.getElementById(id) : null;
-      if (modal instanceof HTMLDialogElement && !modal.open) {
-        modal.showModal();
+  if (!('command' in HTMLButtonElement.prototype)) {
+    document.addEventListener('click', (ev) => {
+      const btn = (ev.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+        '[commandfor], [data-cw-modal-open]',
+      );
+      if (!btn) return;
+      const targetId = btn.getAttribute('commandfor') ?? btn.dataset.cwModalOpen;
+      const cmd = btn.getAttribute('command') ?? (btn.dataset.cwModalOpen ? 'show-modal' : '');
+      const el = targetId ? document.getElementById(targetId) : null;
+      if (!(el instanceof HTMLDialogElement)) return;
+      if (cmd === 'show-modal' && !el.open) {
+        el.showModal();
+      } else if (cmd === 'close' && el.open) {
+        el.close();
       }
+    });
+  }
+
+  // Safari fallback for <dialog closedby="any"> light-dismiss via bounding-rect check
+  if (!('closedBy' in HTMLDialogElement.prototype)) {
+    document.querySelectorAll<HTMLDialogElement>('dialog[closedby="any"]').forEach((dialog) => {
+      dialog.addEventListener('click', (e) => {
+        if (e.target !== dialog) return;
+        const r = dialog.getBoundingClientRect();
+        if (
+          e.clientX < r.left ||
+          e.clientX > r.right ||
+          e.clientY < r.top ||
+          e.clientY > r.bottom
+        ) {
+          dialog.close();
+        }
+      });
+    });
+  }
+}
+
+// 10b. coss ui NumberField (− / + stepper with live input/change dispatch)
+function initCossNumberFields(): void {
+  document.querySelectorAll<HTMLElement>('[data-coss-number-field]').forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>('input[type="number"]');
+    if (!input) return;
+    root.querySelectorAll<HTMLButtonElement>('[data-num-step]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (input.disabled || input.readOnly) return;
+        const dir = Number(btn.dataset.numStep ?? '0');
+        if (dir < 0) {
+          input.stepDown();
+        } else if (dir > 0) {
+          input.stepUp();
+        }
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
     });
   });
 }
@@ -1747,269 +1795,7 @@ initTextareaCounters();
 initVerticalTabs();
 initDrawers();
 initModalsFallback();
+initCossNumberFields();
 initSegmentedAndPricing();
 initNotificationFeeds();
 initDemoFormsAndToasts();
-
-// 14. Site-Wide 4-Version Design System Switcher & V2 Live Beijing Time Clock
-function initSiteStyleSwitcher(): void {
-  const dock = document.querySelector<HTMLElement>('[data-cw-style-dock]');
-  const buttons = dock ? Array.from(dock.querySelectorAll<HTMLButtonElement>('[data-cw-set-style]')) : [];
-  const valid = new Set(['v1', 'v2', 'v3', 'v4', 'classic']);
-
-  const syncUi = (style: string) => {
-    buttons.forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(btn.dataset.cwSetStyle === style));
-    });
-  };
-
-  const applyStyle = (style: string, persist: boolean) => {
-    if (!valid.has(style)) return;
-    const commit = () => {
-      document.documentElement.setAttribute('data-cw-style', style);
-      syncUi(style);
-      if (persist) {
-        try {
-          localStorage.setItem('cw-site-style', style);
-        } catch {
-          // Ignore restricted storage
-        }
-      }
-    };
-
-    const docWithVT = document as Document & { startViewTransition?: (cb: () => void) => unknown };
-    const allowMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (persist && allowMotion && typeof docWithVT.startViewTransition === 'function') {
-      docWithVT.startViewTransition(commit);
-    } else {
-      commit();
-    }
-  };
-
-  const current = document.documentElement.getAttribute('data-cw-style') || 'v1';
-  syncUi(current);
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const next = btn.dataset.cwSetStyle;
-      if (next) applyStyle(next, true);
-    });
-  });
-
-  window.addEventListener('storage', (ev) => {
-    if (ev.key === 'cw-site-style' && ev.newValue) {
-      applyStyle(ev.newValue, false);
-    }
-  });
-
-  // Live Beijing Time clock for V2 Terminal Rail
-  const clockEl = document.querySelector<HTMLElement>('[data-cw-bjt-clock]');
-  if (clockEl) {
-    const tick = () => {
-      clockEl.textContent = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Shanghai',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).format(new Date());
-    };
-    tick();
-    window.setInterval(tick, 1000);
-  }
-}
-
-initSiteStyleSwitcher();
-
-/* --------------------------------------------------------------------------
-   Live Draggable Ink Tuner (墨色由浅到深 + 边缘不规则墨缘)
-   -------------------------------------------------------------------------- */
-function initInkTuner(): void {
-  const depthInput = document.querySelector<HTMLInputElement>('[data-ink-depth]');
-  const edgeInput = document.querySelector<HTMLInputElement>('[data-ink-edge]');
-  const depthOut = document.querySelector<HTMLOutputElement>('[data-ink-depth-out]');
-  const edgeOut = document.querySelector<HTMLOutputElement>('[data-ink-edge-out]');
-  const seedBtn = document.querySelector<HTMLButtonElement>('[data-ink-seed-btn]');
-  const resetBtn = document.querySelector<HTMLButtonElement>('[data-ink-reset-btn]');
-
-  const deckleTurb = document.querySelector<SVGFETurbulenceElement>('[data-ink-deckle-turbulence]');
-  const deckleDisp = document.querySelector<SVGFEDisplacementMapElement>('[data-ink-deckle-displacement]');
-  const washTurb = document.querySelector<SVGFETurbulenceElement>('[data-ink-wash-turbulence]');
-  const washDisp = document.querySelector<SVGFEDisplacementMapElement>('[data-ink-wash-displacement]');
-
-  if (!depthInput || !edgeInput) return;
-
-  const KEY_DEPTH = 'cw-ink-depth';
-  const KEY_EDGE = 'cw-ink-edge';
-  const KEY_SEED = 'cw-ink-seed';
-  const DEFAULT_DEPTH = 82;
-  const DEFAULT_EDGE = 58;
-  const DEFAULT_SEED = 7;
-
-  // Traditional 5-tone Chinese ink ramp (墨分五色: 清墨 → 淡墨 → 重墨 → 浓墨 → 焦墨)
-  const INK_STOPS: ReadonlyArray<{ at: number; rgb: [number, number, number] }> = [
-    { at: 0, rgb: [110, 44, 30] },   // #6E2C1E 清墨
-    { at: 25, rgb: [79, 31, 21] },   // #4F1F15 淡墨
-    { at: 50, rgb: [51, 21, 16] },   // #331510 重墨
-    { at: 75, rgb: [29, 15, 12] },   // #1D0F0C 浓墨
-    { at: 100, rgb: [9, 6, 5] },     // #090605 焦墨
-  ];
-
-  const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, v));
-
-  function sampleInkRgb(depth: number): [number, number, number] {
-    const t = clamp(depth, 0, 100);
-    for (let i = 0; i < INK_STOPS.length - 1; i += 1) {
-      const a = INK_STOPS[i];
-      const b = INK_STOPS[i + 1];
-      if (t >= a.at && t <= b.at) {
-        const f = (t - a.at) / (b.at - a.at);
-        return [
-          Math.round(a.rgb[0] + (b.rgb[0] - a.rgb[0]) * f),
-          Math.round(a.rgb[1] + (b.rgb[1] - a.rgb[1]) * f),
-          Math.round(a.rgb[2] + (b.rgb[2] - a.rgb[2]) * f),
-        ];
-      }
-    }
-    return INK_STOPS[INK_STOPS.length - 1].rgb;
-  }
-
-  function rgbToHex([r, g, b]: [number, number, number]): string {
-    return `#${[r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
-  }
-
-  function inkToneLabel(depth: number, zh: boolean): string {
-    if (depth < 20) return zh ? '清墨' : 'Pale Wash';
-    if (depth < 42) return zh ? '淡墨' : 'Light Ink';
-    if (depth < 68) return zh ? '重墨' : 'Mid Ink';
-    if (depth < 90) return zh ? '浓墨' : 'Rich Ink';
-    return zh ? '焦墨' : 'Charred Ink';
-  }
-
-  function edgeLabel(edge: number, zh: boolean): string {
-    if (edge < 12) return zh ? '齐边' : 'Clean';
-    if (edge < 40) return zh ? '微渗' : 'Soft Bleed';
-    if (edge < 72) return zh ? '毛边' : 'Deckled';
-    return zh ? '飞白泼墨' : 'Ragged Splash';
-  }
-
-  function syncSliderVars(input: HTMLInputElement): void {
-    input.style.setProperty('--attr-min', input.min || '0');
-    input.style.setProperty('--attr-max', input.max || '100');
-    input.style.setProperty('--control-value', input.value);
-  }
-
-  let currentSeed = DEFAULT_SEED;
-  let currentDepth = DEFAULT_DEPTH;
-  let currentEdge = DEFAULT_EDGE;
-
-  try {
-    const sDepth = Number(localStorage.getItem(KEY_DEPTH));
-    const sEdge = Number(localStorage.getItem(KEY_EDGE));
-    const sSeed = Number(localStorage.getItem(KEY_SEED));
-    if (Number.isFinite(sDepth) && localStorage.getItem(KEY_DEPTH) !== null) {
-      currentDepth = clamp(Math.round(sDepth), 0, 100);
-    }
-    if (Number.isFinite(sEdge) && localStorage.getItem(KEY_EDGE) !== null) {
-      currentEdge = clamp(Math.round(sEdge), 0, 100);
-    }
-    if (Number.isFinite(sSeed) && localStorage.getItem(KEY_SEED) !== null) {
-      currentSeed = clamp(Math.round(sSeed), 1, 999);
-    }
-  } catch {
-    // Ignore restricted storage
-  }
-
-  function applyInkState(depth: number, edge: number, seed: number, persist: boolean): void {
-    const zh = isZhPage();
-    const rgb = sampleInkRgb(depth);
-    const hex = rgbToHex(rgb);
-    const [r, g, b] = rgb;
-    const mutedAlpha = (0.72 + (depth / 100) * 0.1).toFixed(2);
-    const washOpacity = (0.22 + (depth / 100) * 0.72).toFixed(2);
-
-    const root = document.documentElement;
-    // Apply live ink concentration across vermilion surfaces (preserves dark mode legibility)
-    root.style.setProperty('--secondary-ink', `light-dark(${hex}, #f3e4d8)`);
-    root.style.setProperty('--secondary-ink-muted', `light-dark(rgb(${r} ${g} ${b} / ${mutedAlpha}), rgb(243 228 216 / 0.8))`);
-    root.style.setProperty('--secondary-rule', `light-dark(rgb(${r} ${g} ${b} / 0.22), rgb(243 228 216 / 0.24))`);
-    root.style.setProperty('--secondary-rule-strong', `light-dark(rgb(${r} ${g} ${b} / 0.42), rgb(243 228 216 / 0.42))`);
-    root.style.setProperty('--accent-on-seal', `light-dark(${hex}, #fff2e8)`);
-    root.style.setProperty('--accent-seal-on-dark', `light-dark(${hex}, #f3e4d8)`);
-    root.style.setProperty('--ink-wash-color', `light-dark(${hex}, #0c0807)`);
-    root.style.setProperty('--ink-wash-opacity', washOpacity);
-
-    // Apply live irregular ink edge parameters to SVG turbulence + displacement filters
-    const eNorm = clamp(edge, 0, 100) / 100;
-    const deckleScale = (eNorm * 54).toFixed(1);
-    const washScale = (eNorm * 68).toFixed(1);
-    const deckleFreqX = (0.011 + eNorm * 0.022).toFixed(4);
-    const deckleFreqY = (0.024 + eNorm * 0.048).toFixed(4);
-    const washFreqX = (0.01 + eNorm * 0.02).toFixed(4);
-    const washFreqY = (0.016 + eNorm * 0.032).toFixed(4);
-
-    if (deckleTurb) {
-      deckleTurb.setAttribute('baseFrequency', `${deckleFreqX} ${deckleFreqY}`);
-      deckleTurb.setAttribute('seed', String(seed));
-    }
-    if (deckleDisp) {
-      deckleDisp.setAttribute('scale', deckleScale);
-    }
-    if (washTurb) {
-      washTurb.setAttribute('baseFrequency', `${washFreqX} ${washFreqY}`);
-      washTurb.setAttribute('seed', String(seed));
-    }
-    if (washDisp) {
-      washDisp.setAttribute('scale', washScale);
-    }
-
-    depthInput!.value = String(depth);
-    edgeInput!.value = String(edge);
-    syncSliderVars(depthInput!);
-    syncSliderVars(edgeInput!);
-
-    const tone = inkToneLabel(depth, zh);
-    const edgeName = edgeLabel(edge, zh);
-    depthInput!.setAttribute('aria-valuetext', `${tone} ${depth}% (${hex})`);
-    edgeInput!.setAttribute('aria-valuetext', `${edgeName} ${edge}%`);
-
-    if (depthOut) depthOut.textContent = `${tone} · ${hex}`;
-    if (edgeOut) edgeOut.textContent = `${edgeName} · ${edge}%`;
-
-    if (persist) {
-      try {
-        localStorage.setItem(KEY_DEPTH, String(depth));
-        localStorage.setItem(KEY_EDGE, String(edge));
-        localStorage.setItem(KEY_SEED, String(seed));
-      } catch {
-        // Ignore restricted storage
-      }
-    }
-  }
-
-  depthInput.addEventListener('input', () => {
-    currentDepth = clamp(Number(depthInput.value), 0, 100);
-    applyInkState(currentDepth, currentEdge, currentSeed, true);
-  });
-
-  edgeInput.addEventListener('input', () => {
-    currentEdge = clamp(Number(edgeInput.value), 0, 100);
-    applyInkState(currentDepth, currentEdge, currentSeed, true);
-  });
-
-  seedBtn?.addEventListener('click', () => {
-    currentSeed = (currentSeed % 97) + 1;
-    applyInkState(currentDepth, currentEdge, currentSeed, true);
-  });
-
-  resetBtn?.addEventListener('click', () => {
-    currentDepth = DEFAULT_DEPTH;
-    currentEdge = DEFAULT_EDGE;
-    currentSeed = DEFAULT_SEED;
-    applyInkState(currentDepth, currentEdge, currentSeed, true);
-  });
-
-  applyInkState(currentDepth, currentEdge, currentSeed, false);
-}
-
-initInkTuner();
