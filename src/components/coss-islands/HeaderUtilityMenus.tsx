@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { CheckIcon, MoonIcon, SunIcon } from "lucide-react";
+import cnFlagUrl from "circle-flags/flags/cn.svg?url";
+import gbFlagUrl from "circle-flags/flags/gb.svg?url";
 import { Button } from "@coss/button";
 import {
   Menu,
@@ -18,37 +20,29 @@ export interface HeaderUtilityMenusProps {
 
 function FlagCn(): React.ReactElement {
   return (
-    <svg
+    <img
+      alt=""
       aria-hidden="true"
-      className="h-3 w-4 shrink-0 rounded-[2px] ring-1 ring-black/10 dark:ring-white/15"
-      viewBox="0 0 24 16"
-    >
-      <rect fill="#DE2910" height="16" width="24" />
-      <polygon
-        fill="#FFDE00"
-        points="4.2,2.1 4.78,3.88 6.65,3.88 5.14,4.98 5.72,6.76 4.2,5.66 2.68,6.76 3.26,4.98 1.75,3.88 3.62,3.88"
-      />
-      <circle cx="8.2" cy="2.1" fill="#FFDE00" r="0.65" />
-      <circle cx="9.4" cy="3.6" fill="#FFDE00" r="0.65" />
-      <circle cx="9.4" cy="5.6" fill="#FFDE00" r="0.65" />
-      <circle cx="8.2" cy="7.1" fill="#FFDE00" r="0.65" />
-    </svg>
+      className="size-4 shrink-0 rounded-full ring-1 ring-black/10 dark:ring-white/15"
+      decoding="async"
+      height={16}
+      src={cnFlagUrl}
+      width={16}
+    />
   );
 }
 
 function FlagEn(): React.ReactElement {
   return (
-    <svg
+    <img
+      alt=""
       aria-hidden="true"
-      className="h-3 w-4 shrink-0 rounded-[2px] ring-1 ring-black/10 dark:ring-white/15"
-      viewBox="0 0 24 16"
-    >
-      <rect fill="#012169" height="16" width="24" />
-      <path d="M0,0 L24,16 M24,0 L0,16" stroke="#FFFFFF" strokeWidth="3.2" />
-      <path d="M0,0 L24,16 M24,0 L0,16" stroke="#C8102E" strokeWidth="1.6" />
-      <path d="M12,0 V16 M0,8 H24" stroke="#FFFFFF" strokeWidth="4.8" />
-      <path d="M12,0 V16 M0,8 H24" stroke="#C8102E" strokeWidth="2.8" />
-    </svg>
+      className="size-4 shrink-0 rounded-full ring-1 ring-black/10 dark:ring-white/15"
+      decoding="async"
+      height={16}
+      src={gbFlagUrl}
+      width={16}
+    />
   );
 }
 
