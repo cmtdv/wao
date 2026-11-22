@@ -6,9 +6,7 @@
  * - Clean dual-track head metadata: JSON-LD, <link rel="alternate" type="text/markdown">, hreflang
  * - Conditional MobileFieldBar on practical field-action pages
  */
-import '@fontsource/dm-sans/latin-400.css';
-import '@fontsource/dm-sans/latin-500.css';
-import '@fontsource/dm-sans/latin-600.css';
+import '@fontsource-variable/inter';
 import '@fontsource/newsreader/latin-400.css';
 import '@fontsource/newsreader/latin-400-italic.css';
 import '@fontsource/newsreader/latin-500.css';
@@ -144,7 +142,7 @@ const jsonLdList = props.jsonLd
       } catch (e) {}
     </script>
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
     <EmDashHead page={page} />
     {hreflangLinks.map((alt) => (

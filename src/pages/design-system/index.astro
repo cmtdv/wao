@@ -1,15 +1,14 @@
 ---
 /**
- * Official coss.com/ui Design System Showcase — Branch A (Official Registry Edition)
- * Powered by 100% genuine coss.com/ui TSX source (@base-ui/react + Tailwind CSS v4) via Astro Islands.
- * Zero legacy AlignUI components or Pro Blocks.
+ * Official AlignUI Design System v2.0 Showcase — Branch feat/alignui-official
+ * Astro 7.4.13 + React 19 + Tailwind CSS v4 + Official AlignUI 49 Free Primitives + Pro Blocks & Templates
  */
 import Layout from '@layouts/Layout.astro';
 import Breadcrumb from '@ui/navigation/Breadcrumb.astro';
 import {
-  CossOfficialShowcase,
+  AlignUIOfficialShowcase,
   type VisaRowItem,
-} from '../../components/coss-islands/CossOfficialShowcase';
+} from '../../components/alignui-islands/AlignUIOfficialShowcase';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import '@styles/specialty.css';
 import '@styles/design-system.css';
@@ -17,28 +16,6 @@ import '@styles/design-system.css';
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
-
-const swatches = isZh
-  ? [
-      { name: '纯净画布 (#FFFFFF / #141414)', token: '--background', bg: 'var(--background)' },
-      { name: '浮起卡片面板', token: '--card', bg: 'var(--card)' },
-      { name: '静音托盘 (Frame Tray)', token: '--muted', bg: 'var(--muted)' },
-      { name: '中性实心色 (#262626 / #F5F5F5)', token: '--primary', bg: 'var(--primary)' },
-      { name: '唯一品牌朱砂红 (#E43216)', token: '--brand', bg: 'var(--brand)' },
-      { name: '微切边边框', token: '--border-strong', bg: 'var(--border-strong)' },
-      { name: '核验翡翠绿', token: '--status-verified-ink', bg: 'var(--status-verified-ink)' },
-      { name: '备用琥珀黄', token: '--status-standby-ink', bg: 'var(--status-standby-ink)' },
-    ]
-  : [
-      { name: 'Pure Canvas (#FFFFFF / #141414)', token: '--background', bg: 'var(--background)' },
-      { name: 'Elevated Card', token: '--card', bg: 'var(--card)' },
-      { name: 'Muted Frame Tray', token: '--muted', bg: 'var(--muted)' },
-      { name: 'Neutral Primary (#262626 / #F5F5F5)', token: '--primary', bg: 'var(--primary)' },
-      { name: 'Single Brand Accent (#E43216)', token: '--brand', bg: 'var(--brand)' },
-      { name: 'Crisp Bevel Border', token: '--border-strong', bg: 'var(--border-strong)' },
-      { name: 'Verified Emerald', token: '--status-verified-ink', bg: 'var(--status-verified-ink)' },
-      { name: 'Standby Amber', token: '--status-standby-ink', bg: 'var(--status-standby-ink)' },
-    ];
 
 const visaRows: VisaRowItem[] = isZh
   ? [
@@ -48,7 +25,7 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '—',
         transit240h: '适用（24 省跨省）',
         ports: '全国 60 个口岸',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
         passport: '新加坡 / 马来西亚 / 泰国',
@@ -56,7 +33,7 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '30 天互免',
         transit240h: '适用（24 省跨省）',
         ports: '全国 60 个口岸',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
         passport: '澳大利亚 / 新西兰 / 日本 / 韩国',
@@ -64,7 +41,7 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '—',
         transit240h: '适用（24 省跨省）',
         ports: '全国 60 个口岸',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
         passport: '美国 / 英国 / 加拿大',
@@ -72,7 +49,7 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '—',
         transit240h: '适用（需第三国联程票）',
         ports: '全国 60 个口岸',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
     ]
   : [
@@ -82,7 +59,7 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '—',
         transit240h: 'Eligible (24 Provinces)',
         ports: '60 Official Ports',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
         passport: 'Singapore / Malaysia / Thailand',
@@ -90,106 +67,70 @@ const visaRows: VisaRowItem[] = isZh
         mutual: '30 Days Mutual',
         transit240h: 'Eligible (24 Provinces)',
         ports: '60 Official Ports',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
-        passport: 'Australia / New Zealand / Japan / ROK',
+        passport: 'Australia / New Zealand / Japan / Korea',
         unilateral: '30 Days Visa-Free',
         mutual: '—',
         transit240h: 'Eligible (24 Provinces)',
         ports: '60 Official Ports',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
       {
         passport: 'United States / United Kingdom / Canada',
         unilateral: 'Visa Required',
         mutual: '—',
-        transit240h: 'Eligible (3rd-Country Ticket)',
+        transit240h: 'Eligible (Onward Ticket)',
         ports: '60 Official Ports',
-        updated: '2026-11-20',
+        updated: '2026-11-23',
       },
     ];
 ---
 <Layout
-  title={isZh ? '设计系统 · coss.com/ui 官方原版（路线 A）' : 'Design System · Official coss.com/ui (Branch A)'}
+  title={isZh ? '设计系统 · 正版 AlignUI v2.0 官方组件库 (49 Free + Pro)' : 'Design System · Official AlignUI v2.0 (49 Free + Pro)'}
   description={
     isZh
-      ? '基于 Astro Islands 挂载 100% coss.com/ui 官方源码（55 个 @base-ui/react + Tailwind CSS v4 组件，已彻底清退 AlignUI）。'
-      : '100% genuine coss.com/ui official source (55 @base-ui/react + Tailwind CSS v4 components via Astro Islands, purged of AlignUI).'
+      ? 'Astro 7 + React 19 + Tailwind CSS v4 驱动的正版 AlignUI v2.0 官方组件库（49 个 Free 基础组件 + 22 类 Pro 区块 + 4 套行业模板）。'
+      : 'Genuine AlignUI v2.0 Design System powered by Astro 7 + React 19 + Tailwind CSS v4 (49 Free primitives + 22 Pro Blocks + 4 Pro Templates).'
   }
 >
   <div class="container ds-shell">
     <Breadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? 'coss.com/ui 官方原版（路线 A）' : 'Official coss.com/ui (Branch A)' },
+        { label: isZh ? '设计系统 · AlignUI v2.0 官方版' : 'Design System · Official AlignUI v2.0' },
       ]}
       jsonLd
     />
 
-    <header class="portal-hero">
+    <header class="portal-hero" style="margin-bottom:var(--space-6);">
       <div class="portal-hero-head">
         <div class="portal-hero-copy">
           <span class="kicker">
             {isZh
-              ? '路线 A · 100% coss.com/ui 官方源码（@base-ui/react + Tailwind v4 · 已清退 AlignUI）'
-              : 'Branch A · 100% Official coss.com/ui Source (@base-ui/react + Tailwind v4 · AlignUI Purged)'}
+              ? 'Official AlignUI v2.0 · Astro 7.4.13 + React 19 + Tailwind CSS v4'
+              : 'Official AlignUI v2.0 · Astro 7.4.13 + React 19 + Tailwind CSS v4'}
           </span>
-          <h1>{isZh ? 'coss.com/ui 官方注册表原版系统' : 'Official coss.com/ui Registry System'}</h1>
-          <p class="portal-lead">
+          <h1>
             {isZh
-              ? '直接接入 https://coss.com/ui/r/*.json 官方全套 55 个 TSX 组件，基于 Astro 7 Islands 按需水合交互区，静态文章页维持零 JS，完整保留滑动指示器 Tabs、三维叠放 Toast 与 @base-ui 浮窗动画。'
-              : 'Mounts all 55 official https://coss.com/ui/r/*.json TSX components via Astro 7 Islands—delivering sliding-indicator Tabs, 3D stacked Toasts, and @base-ui popups while static pages ship zero React.'}
+              ? '正版 AlignUI 官方基础组件库（全部 49 个 Free 原语）'
+              : 'Official AlignUI v2.0 Base Component Library (All 49 Free Primitives)'}
+          </h1>
+          <p>
+            {isZh
+              ? '采用官方标准蓝 blue-500（#335cff，白字对比度 5.10:1）、Figma 2.0 标准外观、Inter Variable + 中文 600 字重/零负字距与浅深双模式；Pro 区块与 4 套行业模板独立挂载于子展台。'
+              : 'Configured with official AlignUI Blue 500 (#335cff, 5.10:1 contrast), standard Figma 2.0 appearance, Inter Variable, and dual light/dark themes.'}
           </p>
         </div>
-        <div class="portal-hero-meta">
-          <div class="portal-stat-box">
-            <span class="kicker">{isZh ? '当前分支' : 'Branch'}</span>
-            <strong>Route A</strong>
-            <span class="portal-stat-note">{isZh ? '@base-ui + Tailwind v4' : '@base-ui + Tailwind v4'}</span>
-          </div>
-          <div class="portal-stat-box">
-            <span class="kicker">{isZh ? '官方 TSX 组件' : 'Official TSX'}</span>
-            <strong>55</strong>
-            <span class="portal-stat-note">{isZh ? 'src/components/coss/' : 'src/components/coss/'}</span>
-          </div>
-        </div>
       </div>
-
-      <nav class="pillar-jump-bar" aria-label={isZh ? '跳转至章节' : 'Jump to section'}>
-        <a href="#coss-tokens" class="pillar-jump-link">{isZh ? '令牌与色彩' : 'Tokens'}</a>
-        <a href="#coss-surfaces" class="pillar-jump-link">{isZh ? '容器表面 (Frame / Card)' : 'Surfaces'}</a>
-        <a href="#coss-actions" class="pillar-jump-link">{isZh ? '按钮与工具条' : 'Actions & Toolbar'}</a>
-        <a href="#coss-forms" class="pillar-jump-link">{isZh ? '表单与日历' : 'Forms & Calendar'}</a>
-        <a href="#coss-data" class="pillar-jump-link">{isZh ? '状态与数据展示' : 'Data & Status'}</a>
-        <a href="#coss-table" class="pillar-jump-link">{isZh ? '卡片式表格' : 'Card Table'}</a>
-        <a href="#coss-overlays" class="pillar-jump-link">{isZh ? '滑动 Tabs 与浮窗' : 'Tabs & Overlays'}</a>
-      </nav>
     </header>
 
-    {/* 01 · Design Tokens */}
-    <section id="coss-tokens" class="ds-section">
-      <span class="kicker">{isZh ? '01 · 设计令牌' : '01 · Design Tokens'}</span>
-      <h2>{isZh ? '纯净白 / 深碳灰双模态表面与单一 #E43216 强调色' : 'Pure White / Deep Neutral Surfaces & Single #E43216 Accent'}</h2>
-      <div class="ds-swatch-grid">
-        {swatches.map((s) => (
-          <div class="ds-swatch">
-            <div class="ds-swatch-chip" style={`background:${s.bg};`}></div>
-            <div class="ds-swatch-body">
-              <strong class="ds-swatch-name">{s.name}</strong>
-              <span class="ds-swatch-token">{s.token}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    {/* 02–07 · Official @coss/* Interactive Showcase Island */}
-    <CossOfficialShowcase
+    <AlignUIOfficialShowcase
       client:load
       isZh={isZh}
       visaRows={visaRows}
-      localePrefix={isZh ? '/zh' : ''}
+      blocksHref={lp('/design-system/blocks/')}
     />
   </div>
 </Layout>

@@ -8,3 +8,7 @@ uploads/
 .env.*
 *.pem
 *.key
+
+lint-baseline.txt
+lint-after-move.txt
+build.log

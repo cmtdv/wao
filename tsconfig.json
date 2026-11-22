@@ -2,16 +2,25 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "baseUrl": ".",
+    "verbatimModuleSyntax": false,
     "paths": {
+      "@/*": ["src/*"],
       "@site/*": ["src/components/site/*"],
       "@ui/*": ["src/components/ui/*"],
-      "@coss/*": ["src/components/coss/*"],
       "@hooks/*": ["src/hooks/*"],
       "@layouts/*": ["src/layouts/*"],
       "@lib/*": ["src/lib/*"],
       "@data/*": ["src/data/*"],
       "@styles/*": ["src/styles/*"],
-      "@i18n/*": ["src/i18n/*"]
+      "@i18n/*": ["src/i18n/*"],
+      "@repo/registry/next-image-mock": ["src/shims/next-image-mock.tsx"],
+      "@repo/registry/next-link-mock": ["src/shims/next-link-mock.tsx"],
+      "@repo/registry/default/blocks/components/announcement-01.tsx": [
+        "src/components/alignui-pro/blocks/announcement.tsx"
+      ],
+      "@repo/registry/default/blocks/components/navigation-01.tsx": [
+        "src/components/alignui-pro/blocks/navigation.tsx"
+      ]
     }
   },
   "include": [".astro/types.d.ts", "emdash-env.d.ts", "**/*"],

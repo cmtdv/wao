@@ -168,9 +168,9 @@ kbd {
 }
 
 /* coss Default Native Form Elements (excludes official @coss/* slotted primitives) */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([data-slot]),
-select:not([data-slot]),
-textarea:not([data-slot]) {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]),
+select:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]),
+textarea:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]) {
   max-width: 100%;
   min-height: var(--control-h-md);
   padding: 0.42rem 0.75rem;
@@ -188,23 +188,23 @@ textarea:not([data-slot]) {
     box-shadow var(--dur-fast) ease;
 }
 
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):hover:not(:disabled),
-select:not([data-slot]):hover:not(:disabled),
-textarea:not([data-slot]):hover:not(:disabled) {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):hover:not(:disabled),
+select:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):hover:not(:disabled),
+textarea:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):hover:not(:disabled) {
   border-color: var(--control-border-hover);
 }
 
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):focus-visible,
-select:not([data-slot]):focus-visible,
-textarea:not([data-slot]):focus-visible {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):focus-visible,
+select:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):focus-visible,
+textarea:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):focus-visible {
   border-color: var(--control-border-focus);
   outline: none;
   box-shadow: 0 0 0 3px var(--focus-ring-soft);
 }
 
-input:not([data-slot]):disabled,
-select:not([data-slot]):disabled,
-textarea:not([data-slot]):disabled {
+input:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):disabled,
+select:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):disabled,
+textarea:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]):disabled {
   background: var(--control-bg-disabled);
   color: var(--ink-tertiary);
   border-color: var(--border);
@@ -214,9 +214,9 @@ textarea:not([data-slot]):disabled {
 }
 
 @media (pointer: coarse) {
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]),
-  select:not([data-slot]),
-  textarea:not([data-slot]) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]),
+  select:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]),
+  textarea:not([data-slot]):not([data-alignui-scope] *):not([role="dialog"] *):not([cmdk-input]) {
     min-height: 2.75rem;
     font-size: 1rem;
   }

@@ -1,0 +1,58 @@
+---
+/**
+ * Official AlignUI Pro Blocks (22 Categories) & 4 Pro Industry Templates Showcase
+ */
+import Layout from '@layouts/Layout.astro';
+import Breadcrumb from '@ui/navigation/Breadcrumb.astro';
+import { AlignUIProShowcase } from '../../components/alignui-islands/AlignUIProShowcase';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '@styles/specialty.css';
+import '@styles/design-system.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+---
+<Layout
+  title={isZh ? '设计系统 · 正版 AlignUI Pro 区块与 4 套行业模板库' : 'Design System · Official AlignUI Pro Blocks & 4 Templates'}
+  description={
+    isZh
+      ? '正版 AlignUI Pro 官方区块库（22 类 Block 01 源码）与 4 套已购行业模板（AI、Finance、HR、Marketing）实机展台。'
+      : 'Live showcase of 22 Official AlignUI Pro Blocks and 4 Purchased Pro Industry Templates (AI, Finance, HR, Marketing).'
+  }
+>
+  <div class="container ds-shell">
+    <Breadcrumb
+      items={[
+        { label: isZh ? '首页' : 'Home', href: lp('/') },
+        { label: isZh ? 'AlignUI v2.0 基础组件 (49)' : 'AlignUI v2.0 Primitives (49)', href: lp('/design-system/') },
+        { label: isZh ? 'Pro 区块与 4 套行业模板库' : 'Pro Blocks & 4 Templates' },
+      ]}
+      jsonLd
+    />
+
+    <header class="portal-hero" style="margin-bottom:var(--space-6);">
+      <div class="portal-hero-head">
+        <div class="portal-hero-copy">
+          <span class="kicker">
+            {isZh
+              ? 'Official AlignUI Pro · 4 Industry Templates + 22 Pro Blocks'
+              : 'Official AlignUI Pro · 4 Industry Templates + 22 Pro Blocks'}
+          </span>
+          <h1>
+            {isZh
+              ? '正版 AlignUI Pro 商业区块与 4 套行业模板库'
+              : 'Official AlignUI Pro Blocks & 4 Industry Templates'}
+          </h1>
+          <p>
+            {isZh
+              ? '汇总本机 D:\\alignui\\template\\ 四套完整 Pro 模板（AI / Finance / HR / Marketing）与已登录 pro.alignui.com 账户提取的 22 类原版商业区块（仅限本地/私有仓库）。'
+              : 'Combining the 4 purchased Pro templates (AI, Finance, HR, Marketing) and 22 verbatim official Pro Blocks from pro.alignui.com.'}
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <AlignUIProShowcase client:load isZh={isZh} />
+  </div>
+</Layout>
