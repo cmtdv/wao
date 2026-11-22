@@ -15,17 +15,17 @@
     gap: var(--space-3) var(--space-6);
     margin-top: var(--space-5);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--secondary-rule);
+    border-top: 1px solid var(--border);
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--secondary-ink-muted);
+    color: var(--muted-foreground);
   }
 
   .portal-meta-strip strong {
-    color: var(--accent-gold-on-dark);
-    font-weight: 500;
+    color: var(--foreground);
+    font-weight: 600;
   }
 
   /* ------------------------------------------------------------------------
@@ -236,9 +236,9 @@
     gap: var(--space-3);
     padding: var(--space-4) var(--space-5);
     margin-bottom: var(--space-5);
-    background: var(--secondary-tint);
-    border: 1px solid var(--secondary-tint-border);
-    border-inline-start: 3px solid var(--secondary-solid);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
   }
 
   .journey-progress-meta {
@@ -291,25 +291,25 @@
   }
 
   .journey-step {
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-inline-start: 3px solid var(--rule-strong);
-    border-radius: var(--radius-xs);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--coss-card-shadow);
     transition: border-color var(--dur-fast) ease;
   }
 
   .journey-step[data-done="true"] {
-    border-inline-start-color: var(--accent-gold);
-    background: var(--surface-canvas);
+    border-color: var(--status-verified-border);
+    background: var(--surface-sunken);
   }
 
   .journey-step[open] {
-    border-color: var(--rule-strong);
-    border-inline-start-color: var(--accent-seal);
+    border-color: var(--border-strong);
   }
 
   .journey-step[data-done="true"][open] {
-    border-inline-start-color: var(--accent-gold);
+    border-color: var(--status-verified-border);
   }
 
   .journey-step > summary {
@@ -367,8 +367,9 @@
   }
 
   .journey-step[data-done="true"] .journey-step-num {
-    background: var(--accent-gold);
-    color: #201916;
+    background: var(--status-verified-bg);
+    color: var(--status-verified-ink);
+    border: 1px solid var(--status-verified-border);
   }
 
   .journey-step-head {
@@ -516,20 +517,20 @@
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-5);
-    background: var(--surface-raised);
-    border: 1px solid var(--rule-subtle);
-    border-inline-start: 2.5px solid var(--secondary-solid);
-    border-radius: var(--radius-xs);
+    background: var(--card);
+    background-clip: padding-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--coss-card-shadow);
     transition: border-color var(--dur-fast) ease;
   }
 
   .portal-card:hover {
-    border-color: var(--rule-strong);
-    border-inline-start-color: var(--accent-seal);
+    border-color: var(--border-strong);
   }
 
   .portal-card--standby {
-    border-inline-start-color: var(--accent-gold);
+    border-color: var(--status-standby-border);
   }
 
   .portal-card-top {
@@ -552,20 +553,20 @@
   .portal-status-pill {
     display: inline-flex;
     align-items: center;
-    padding: 0.16rem 0.5rem;
-    border-radius: 2px;
-    border: 1px solid var(--rule-subtle);
-    background: var(--surface-canvas);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-    color: var(--ink-secondary);
+    padding: 0.16rem 0.52rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--status-verified-border);
+    background: var(--status-verified-bg);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--status-verified-ink);
   }
 
   .portal-status-pill--standby {
-    border-color: var(--accent-gold);
-    background: var(--secondary-tint);
-    color: var(--ink-primary);
+    border-color: var(--status-standby-border);
+    background: var(--status-standby-bg);
+    color: var(--status-standby-ink);
   }
 
   .portal-card h2 {

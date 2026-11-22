@@ -6,7 +6,7 @@
 import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import type { GuidePulseItem } from '@data/paradigm-e/guides';
-import { PULSE_STATUS_LABELS } from '@data/paradigm-e/i18n-zh';
+import { DEFAULT_PULSE_ZH_BY_CONTEXT, PULSE_STATUS_LABELS } from '@data/paradigm-e/i18n-zh';
 import { localePath, type Locale } from '@i18n/ui';
 
 interface Props {
@@ -41,19 +41,22 @@ const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
   )}
 
   <ul class="pe-pulse-list">
-    {items.map((item) => (
-      <li class="pe-pulse-row">
-        <Badge tone={item.status === 'worked' ? 'verified' : item.status === 'partial' ? 'standby' : 'danger'}>
-          {PULSE_STATUS_LABELS[locale][item.status]}
-        </Badge>
-        <div style="min-width:0;flex:1;">
-          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.35rem;font-size:var(--text-xs);color:var(--ink-secondary);font-family:var(--font-mono);">
-            <strong>{item.context}</strong>
-            <span>{item.ago}</span>
+    {items.map((item) => {
+      const zhItem = isZh ? DEFAULT_PULSE_ZH_BY_CONTEXT[item.context] : undefined;
+      return (
+        <li class="pe-pulse-row">
+          <Badge tone={item.status === 'worked' ? 'verified' : item.status === 'partial' ? 'standby' : 'danger'}>
+            {PULSE_STATUS_LABELS[locale][item.status]}
+          </Badge>
+          <div style="min-width:0;flex:1;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.35rem;font-size:var(--text-xs);color:var(--ink-secondary);font-family:var(--font-mono);">
+              <strong>{zhItem ? zhItem.context : item.context}</strong>
+              <span>{zhItem ? zhItem.ago : item.ago}</span>
+            </div>
+            <p style="margin-top:0.2rem;color:var(--ink-primary);">{zhItem ? zhItem.detail : item.detail}</p>
           </div>
-          <p style="margin-top:0.2rem;color:var(--ink-primary);">{item.detail}</p>
-        </div>
-      </li>
-    ))}
+        </li>
+      );
+    })}
   </ul>
 </section>

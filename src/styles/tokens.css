@@ -121,8 +121,8 @@
   /* ========================================================================
      5. TYPOGRAPHY & LAYOUT SCALE (SIL OFL 1.1 Open-Source Fonts Only)
      ======================================================================== */
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-heading: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "DM Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  --font-heading: "DM Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "PingFang SC", "Microsoft YaHei UI", sans-serif;
   --font-editorial: "Newsreader", Georgia, serif;
   --font-display: var(--font-heading);
   --font-body: var(--font-sans);
@@ -165,6 +165,7 @@
 
   --ink-primary: var(--foreground);
   --ink-secondary: var(--muted-foreground);
+  --ink-muted: var(--muted-foreground);
   --ink-tertiary: light-dark(#6b6b6b, #969696); /* >= 5.3:1 WCAG AA */
 
   --rule-subtle: var(--border);
@@ -256,6 +257,7 @@
   --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 150ms;
   --dur-base: 200ms;
+  --dur-med: 220ms;
   --dur-normal: 220ms;
   --dur-slow: 360ms;
 }

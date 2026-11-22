@@ -155,7 +155,8 @@
   transition: opacity 100ms ease, transform 100ms ease, visibility 100ms ease;
 }
 
-.pe-pillar-item.is-open > .pe-mega-panel {
+.pe-pillar-item.is-open > .pe-mega-panel,
+.pe-pillar-item:focus-within > .pe-mega-panel {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -254,7 +255,8 @@
 }
 
 /* Right: Global Utility Dock (Tools / Data / Pulse / ⌘K) */
-.pe-dock {
+.pe-dock,
+.pe-dock-desktop {
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -302,8 +304,7 @@
 
 .pe-tools-dropdown {
   position: fixed;
-  inset-block-start: 58px;
-  inset-inline-end: max(1rem, calc((100dvw - var(--container-max)) / 2));
+  inset: 58px max(1rem, calc((100dvw - var(--container-max)) / 2)) auto auto;
   width: min(calc(100dvw - 2rem), 34rem);
   max-block-size: calc(100dvh - 80px);
   overflow-y: auto;
@@ -315,6 +316,15 @@
   box-shadow: var(--coss-dialog-shadow);
   padding: var(--space-4);
   margin: 0;
+}
+
+@supports (position-area: block-end) {
+  .pe-tools-dropdown {
+    inset: auto;
+    margin: 0.35rem 0 0;
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-inline, flip-block;
+  }
 }
 
 .pe-tools-grid {
@@ -505,7 +515,7 @@
 }
 
 .pe-hero-center {
-  max-width: 52rem;
+  max-width: 58rem;
   margin-inline: auto;
   text-align: center;
 }
@@ -1371,6 +1381,8 @@
 }
 
 .pe-showcard-fullscreen-dialog {
+  position: fixed;
+  inset: 0;
   width: 100dvw;
   height: 100dvh;
   max-width: 100dvw;
@@ -1501,9 +1513,9 @@
 }
 
 .pe-facet-chip[aria-pressed="true"] {
-  background-color: var(--secondary-solid);
-  border-color: var(--secondary-solid);
-  color: var(--secondary-ink);
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* --------------------------------------------------------------------------
