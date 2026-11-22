@@ -1,35 +1,27 @@
 ---
 /**
- * Paradigm E — Global Intent Command Palette (⌘K / Ctrl+K)
- * - Zero-typing pinned Emergency / Field Show Cards strip at the top when input is empty
- * - Auto-displays user's last-used card from localStorage
- * - Instant natural-language/entity search + Esc 1-tap close
+ * Editorial Command Palette (⌘K / Ctrl+K) — Live EmDash Articles, Topics & Tags Search
  */
+import { getTaxonomyTermsWithCacheHint } from 'emdash';
 import Icon from '@site/Icon.astro';
 import Badge from '@ui/data-display/Badge.astro';
-import { COMMAND_PALETTE_INDEX } from '@data/paradigm-e/pillars';
+import { getPublicPosts, publicContext } from '@lib/cms';
+import { categoryPath, postPath, tagPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
 
-const quickCards = [
-  { label: isZh ? '防花生油过敏' : 'Peanut Allergy', href: '/cards/peanut-allergy-sos/', tone: 'danger' },
-  { label: isZh ? '清河站司机卡' : 'Qinghe Taxi', href: '/cards/taxi-beijing-qinghe/', tone: 'standby' },
-  { label: isZh ? '护照酒店入住' : 'Hotel Check-In', href: '/cards/hotel-checkin-passport/', tone: 'editorial' },
-  { label: isZh ? '120 急救卡' : '120 Emergency', href: '/cards/medical-emergency-120/', tone: 'danger' },
-];
+const [postsRes, catsRes, tagsRes] = await Promise.all([
+  getPublicPosts({ limit: 16, locale }).catch(() => ({ entries: [] as never[] })),
+  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })).catch(() => ({ data: [] as never[] })),
+  publicContext(() => getTaxonomyTermsWithCacheHint('tag', { includeCounts: false, locale })).catch(() => ({ data: [] as never[] })),
+]);
 
-const KIND_ZH: Record<string, string> = {
-  Guide: '指南',
-  Entity: '词条',
-  Tool: '工具',
-  Card: '字卡',
-  Rescue: '救火',
-  Compare: '对比',
-  Data: '数据',
-};
+const posts = postsRes.entries ?? [];
+const rootCats = (catsRes.data ?? []).filter((t) => !t.parentId).slice(0, 6);
+const topTags = (tagsRes.data ?? []).slice(0, 8);
 ---
 <dialog
   id="pe-cmd-dialog"
@@ -41,13 +33,13 @@ const KIND_ZH: Record<string, string> = {
   <div class="pe-cmd-top">
     <Icon name="search" size={18} />
     <label id="pe-cmd-title" for="pe-cmd-input" class="visually-hidden">
-      {isZh ? '输入自然语言或实体词即时跳转' : 'Search ChinaWao guides, tools, cards & entities'}
+      {isZh ? '输入关键词检索文章、栏目或标签' : 'Search ChinaWao articles, categories, and tags'}
     </label>
     <input
       id="pe-cmd-input"
       type="search"
       class="pe-cmd-input"
-      placeholder={isZh ? '试搜："Adderall"、"清河站"、"花生过敏"、"USCC"、"240h"…' : 'Try "Adderall", "清河站", "peanut", "USCC", "240h"…'}
+      placeholder={isZh ? '搜索文章，如："12306"、"240 小时免签"、"退税"、"支付宝"…' : 'Search articles, e.g. "12306", "240-hour visa", "tax refund", "Alipay"…'}
       autocomplete="off"
       autocorrect="off"
       autocapitalize="none"
@@ -60,60 +52,74 @@ const KIND_ZH: Record<string, string> = {
       class="icon-btn"
       commandfor="pe-cmd-dialog"
       command="close"
-      aria-label={isZh ? '关闭命令面板' : 'Close command palette'}
+      aria-label={isZh ? '关闭搜索面板' : 'Close search palette'}
     >
       <Icon name="close" size={18} />
     </button>
   </div>
 
-  {/* Instant Show-to-Local Cards Strip */}
-  <div
-    style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border);background:var(--surface-sunken);"
-    data-pe-cmd-quick-cards
-  >
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
-      <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
-        {isZh ? '常用亮屏字卡' : 'Quick Show Cards'}
-      </span>
-      <a href={lp('/cards/')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
-        {isZh ? '全部字卡 →' : 'All Cards →'}
-      </a>
-    </div>
-    <div class="pe-mega-chips" data-pe-cmd-quick-list>
-      {quickCards.map((c) => (
-        <a href={lp(c.href)} class="pe-mega-chip" style="font-weight:600;">
-          {c.label}
+  {/* Quick Categories & Tags Strip */}
+  {rootCats.length > 0 && (
+    <div
+      style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border);background:var(--surface-sunken);"
+      data-pe-cmd-quick-cards
+    >
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
+        <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
+          {isZh ? '栏目分类' : 'Categories'}
+        </span>
+        <a href={lp('/topics/')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
+          {isZh ? '全部栏目 →' : 'All Topics →'}
         </a>
-      ))}
+      </div>
+      <div class="pe-mega-chips">
+        {rootCats.map((cat) => (
+          <a href={lp(categoryPath(cat.slug))} class="pe-mega-chip">
+            {cat.label}
+          </a>
+        ))}
+        {topTags.slice(0, 4).map((tag) => (
+          <a href={lp(tagPath(tag.slug))} class="pe-mega-chip">
+            #{tag.label}
+          </a>
+        ))}
+      </div>
     </div>
-  </div>
+  )}
 
-  <div class="pe-cmd-results" role="region" aria-label={isZh ? '匹配结果' : 'Search matches'} data-pe-cmd-results>
-    {COMMAND_PALETTE_INDEX.map((item) => (
-      <a
-        href={lp(item.href)}
-        class="pe-cmd-row"
-        data-pe-cmd-item
-        data-search={`${item.title} ${item.titleZh} ${item.subtitle} ${item.subtitleZh} ${item.keywords}`.toLowerCase()}
-      >
-        <div>
-          <span class="pe-cmd-row-title">{isZh ? item.titleZh : item.title}</span>
-          <span class="pe-cmd-row-sub">{isZh ? item.subtitleZh : item.subtitle}</span>
-        </div>
-        <Badge tone={item.kind === 'Rescue' || item.kind === 'Card' ? 'danger' : item.kind === 'Tool' ? 'verified' : 'editorial'}>
-          {isZh ? (KIND_ZH[item.kind] ?? item.kind) : item.kind}
-        </Badge>
-      </a>
-    ))}
+  <div class="pe-cmd-results" role="region" aria-label={isZh ? '文章匹配结果' : 'Article matches'} data-pe-cmd-results>
+    {posts.map((post) => {
+      const slug = post.data.slug || post.id;
+      const href = lp(postPath(slug));
+      const primaryCat = post.data.terms?.category?.[0];
+      const tagLabels = (post.data.terms?.tag ?? []).map((t) => t.label).join(' ');
+      const searchStr = `${post.data.title} ${post.data.excerpt ?? ''} ${primaryCat?.label ?? ''} ${tagLabels}`.toLowerCase();
+      return (
+        <a
+          href={href}
+          class="pe-cmd-row"
+          data-pe-cmd-item
+          data-search={searchStr}
+        >
+          <div>
+            <span class="pe-cmd-row-title">{post.data.title}</span>
+            {post.data.excerpt && <span class="pe-cmd-row-sub">{post.data.excerpt}</span>}
+          </div>
+          <Badge tone="editorial">
+            {primaryCat ? primaryCat.label : (isZh ? '文章' : 'Article')}
+          </Badge>
+        </a>
+      );
+    })}
     <p class="cw-hint" data-pe-cmd-empty hidden style="padding: var(--space-4); text-align: center;">
-      {isZh ? '未找到直接匹配，按回车执行全站检索。' : 'No direct match—press Enter to run a full site search.'}
+      {isZh ? '未找到直接匹配，按回车执行全文检索。' : 'No direct match—press Enter to run a full archive search.'}
     </p>
   </div>
 
   <form action={lp('/search/')} method="get" class="pe-cmd-foot" data-pe-cmd-fallback-form>
     <input type="hidden" name="q" value="" data-pe-cmd-hidden-q />
     <span>
-      {isZh ? '按回车执行全站全文检索' : 'Press Enter for full site search'}
+      {isZh ? '按回车执行全文检索' : 'Press Enter for full-text search'}
     </span>
     <div style="display:flex;align-items:center;gap:var(--space-3);">
       <button type="submit" class="btn btn--sm">

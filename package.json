@@ -8,7 +8,10 @@
     "build": "astro build",
     "preview": "astro preview --host localhost --port 4342",
     "start": "node ./dist/server/entry.mjs",
-    "check": "astro check"
+    "check": "astro check",
+    "publish:md": "node ./scripts/publish-md.mjs",
+    "post:list": "node ./scripts/publish-md.mjs --list",
+    "post:new": "node ./scripts/publish-md.mjs --new"
   },
   "dependencies": {
     "@astrojs/node": "11.1.13",

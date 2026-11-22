@@ -1,16 +1,21 @@
 ---
 /**
- * Global Sticky Header — Pure single-language labels, zero internal jargon, zero mixed-language subtitles
+ * Global Sticky Header — Minimal Content Editorial MVP
+ * - Pure content navigation: All Articles, Dynamic Root Categories, Topics Index, Tags Index, Search (⌘K)
+ * - Zero tools workbench, map, or placeholder mega-menus
  */
+import type { getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
 import Icon from '@site/Icon.astro';
-import Badge from '@ui/data-display/Badge.astro';
 import { HeaderUtilityMenus } from '../coss-islands/HeaderUtilityMenus';
-import { PILLARS, UTILITY_TOOLS } from '@data/paradigm-e/pillars';
+import { categoryPath } from '@lib/format';
 import { localePath, stripLocalePrefix, switchLocaleHref, type Locale } from '@i18n/ui';
+
+type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
 
 interface Props {
   siteTitle?: string;
+  roots?: Term[];
   locale?: Locale;
   originalPathname?: string;
   activePillar?: string;
@@ -18,9 +23,9 @@ interface Props {
 
 const {
   siteTitle = 'ChinaWao',
+  roots = [],
   locale = 'en',
   originalPathname,
-  activePillar,
 } = Astro.props;
 
 const isZh = locale === 'zh';
@@ -29,8 +34,7 @@ const pathname = stripLocalePrefix(originalPathname ?? Astro.url.pathname);
 const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
 const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
 
-const detTools = UTILITY_TOOLS.filter((t) => t.group === 'deterministic');
-const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
+const navCategories = roots.slice(0, 5);
 ---
 <header class="pe-header" data-pe-header>
   <div class="container pe-header-inner">
@@ -47,159 +51,60 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
       aria-label={isZh ? '打开全站搜索' : 'Open search'}
     >
       <Icon name="search" size={15} />
-      <span>{isZh ? '搜免签、微信受限、清河站、企业核验…' : 'Search visa, WeChat, stations, suppliers…'}</span>
+      <span>{isZh ? '搜索文章、高铁、免签、退税…' : 'Search articles, rail, visa, tax refund…'}</span>
     </button>
 
     <nav class="pe-pillar-nav" aria-label={isZh ? '主导航' : 'Primary navigation'}>
       <ul class="pe-pillar-list">
-        {PILLARS.map((pillar) => {
-          const pillarHref = lp(`/${pillar.id}/`);
-          const isCurrent = activePillar === pillar.id || pathname === `/${pillar.id}/` || pathname.startsWith(`/${pillar.id}/`);
+        <li class="pe-pillar-item">
+          <a
+            href={lp('/posts/')}
+            class="pe-pillar-link"
+            aria-current={pathname === '/posts/' || pathname.startsWith('/posts/') ? 'page' : undefined}
+          >
+            <span>{isZh ? '全部文章' : 'Articles'}</span>
+          </a>
+        </li>
+
+        {navCategories.map((cat) => {
+          const catHref = lp(categoryPath(cat.slug));
+          const isCurrent = pathname === categoryPath(cat.slug) || pathname === `${categoryPath(cat.slug)}/`;
           return (
-            <li class="pe-pillar-item" data-pe-mega-item={pillar.id}>
+            <li class="pe-pillar-item">
               <a
-                href={pillarHref}
+                href={catHref}
                 class="pe-pillar-link"
                 aria-current={isCurrent ? 'page' : undefined}
-                aria-expanded="false"
-                aria-controls={`mega-${pillar.id}`}
-                data-pe-mega-trigger
               >
-                <span>{isZh ? pillar.nameZh : pillar.name}</span>
-                <Icon name="down" size={12} />
+                <span>{cat.label}</span>
               </a>
-
-              <div
-                id={`mega-${pillar.id}`}
-                class="pe-mega-panel"
-                role="region"
-                aria-label={isZh ? pillar.nameZh : pillar.name}
-                data-pe-mega-panel
-              >
-                <div class="pe-mega-grid">
-                  <div>
-                    <span class="pe-mega-col-title">
-                      {isZh ? pillar.megaMenu.coreTitleZh : pillar.megaMenu.coreTitle}
-                    </span>
-                    <ul class="pe-mega-links">
-                      {pillar.megaMenu.coreLinks.map((link) => (
-                        <li>
-                          <a href={lp(link.href)}>
-                            <span>{isZh ? link.labelZh : link.label}</span>
-                            <Icon name="chevron" size={12} />
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <span class="pe-mega-col-title">
-                      {isZh ? pillar.megaMenu.mostViewedTitleZh : pillar.megaMenu.mostViewedTitle}
-                    </span>
-                    <ul class="pe-mega-links">
-                      {pillar.megaMenu.mostViewed.map((link) => (
-                        <li>
-                          <a href={lp(link.href)}>
-                            <span>{isZh ? link.labelZh : link.label}</span>
-                            {link.badge && <Badge tone="editorial">{isZh ? (link.badgeZh ?? link.badge) : link.badge}</Badge>}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <span class="pe-mega-col-title">
-                      {isZh ? pillar.megaMenu.routesTitleZh : pillar.megaMenu.routesTitle}
-                    </span>
-                    <div class="pe-mega-chips">
-                      {pillar.megaMenu.programmaticChips.map((chip) => (
-                        <a href={lp(chip.href)} class="pe-mega-chip">
-                          {isZh ? chip.labelZh : chip.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="pe-mega-foot">
-                  <span>{isZh ? pillar.shortDescZh : pillar.shortDesc}</span>
-                  <a href={pillarHref} class="editorial-link">
-                    <span>{isZh ? `进入${pillar.nameZh} →` : `Explore ${pillar.name} →`}</span>
-                  </a>
-                </div>
-              </div>
             </li>
           );
         })}
+
+        <li class="pe-pillar-item">
+          <a
+            href={lp('/topics/')}
+            class="pe-pillar-link"
+            aria-current={pathname.startsWith('/topics') ? 'page' : undefined}
+          >
+            <span>{isZh ? '栏目' : 'Topics'}</span>
+          </a>
+        </li>
+
+        <li class="pe-pillar-item">
+          <a
+            href={lp('/tags/')}
+            class="pe-pillar-link"
+            aria-current={pathname.startsWith('/tags') || pathname.startsWith('/tag/') ? 'page' : undefined}
+          >
+            <span>{isZh ? '标签' : 'Tags'}</span>
+          </a>
+        </li>
       </ul>
     </nav>
 
     <div class="pe-dock">
-      <div class="pe-dock-desktop pe-dock">
-        <div class="pe-tools-wrap">
-          <button
-            type="button"
-            class="pe-dock-btn"
-            popovertarget="pe-tools-menu"
-            popovertargetaction="toggle"
-            aria-controls="pe-tools-menu"
-          >
-            <span>{isZh ? '工具' : 'Tools'}</span>
-            <Icon name="down" size={11} />
-          </button>
-
-          <div id="pe-tools-menu" popover="auto" class="pe-tools-dropdown" aria-label={isZh ? '实用工具' : 'Practical Tools'}>
-            <span class="pe-mega-col-title">
-              {isZh ? '常用核验与出行工具' : 'Travel & Verification Tools'}
-            </span>
-            <div class="pe-tools-grid" style="margin-bottom: var(--space-3);">
-              {detTools.map((tool) => (
-                <a href={lp(tool.href)} class="pe-tools-item">
-                  <strong>{isZh ? tool.nameZh : tool.name}</strong>
-                  <span>{isZh ? tool.shortDescZh : tool.shortDesc}</span>
-                </a>
-              ))}
-            </div>
-            <span class="pe-mega-col-title">
-              {isZh ? '换算与文化工具' : 'Converters & Cultural Tools'}
-            </span>
-            <div class="pe-tools-grid">
-              {microTools.map((tool) => (
-                <a href={lp(tool.href)} class="pe-tools-item">
-                  <strong>{isZh ? tool.nameZh : tool.name}</strong>
-                  <span>{isZh ? tool.shortDescZh : tool.shortDesc}</span>
-                </a>
-              ))}
-            </div>
-            <div class="pe-mega-foot">
-              <a href={lp('/cards/')} class="pe-mega-chip">
-                {isZh ? '全屏亮屏字卡' : 'Show-to-Local Cards'}
-              </a>
-              <a href={lp('/tools/')} class="editorial-link">
-                <span>{isZh ? '全部工具 →' : 'All Tools →'}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <a
-          href={lp('/portals/')}
-          class="pe-dock-link"
-          aria-current={pathname.startsWith('/portals') ? 'page' : undefined}
-        >
-          {isZh ? '数据' : 'Data'}
-        </a>
-        <a
-          href={lp('/pulse/')}
-          class="pe-dock-link"
-          aria-current={pathname.startsWith('/pulse') ? 'page' : undefined}
-        >
-          {isZh ? '实测' : 'Pulse'}
-        </a>
-      </div>
-
       <button
         type="button"
         class="pe-cmd-trigger"
@@ -208,6 +113,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         aria-label={isZh ? '打开全站搜索' : 'Open search'}
       >
         <Icon name="search" size={14} />
+        <span style="font-size:var(--text-xs);color:var(--muted-foreground);">{isZh ? '搜索' : 'Search'}</span>
         <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
       </button>
 
@@ -256,27 +162,27 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
     </nav>
   </div>
 
-  <nav aria-label={isZh ? '主要频道' : 'Sections'}>
+  <nav aria-label={isZh ? '内容导航' : 'Editorial navigation'}>
     <ul class="drawer-links">
-      {PILLARS.map((p) => (
-        <li>
-          <a href={lp(`/${p.id}/`)} aria-current={pathname.startsWith(`/${p.id}`) ? 'page' : undefined}>
-            {isZh ? p.nameZh : p.name}
-          </a>
-        </li>
-      ))}
+      <li><a href={lp('/')} aria-current={pathname === '/' ? 'page' : undefined}>{isZh ? '首页' : 'Home'}</a></li>
+      <li><a href={lp('/posts/')} aria-current={pathname.startsWith('/posts') ? 'page' : undefined}>{isZh ? '全部文章' : 'All Articles'}</a></li>
+      <li><a href={lp('/topics/')} aria-current={pathname.startsWith('/topics') ? 'page' : undefined}>{isZh ? '栏目索引' : 'Topics'}</a></li>
+      <li><a href={lp('/tags/')} aria-current={pathname.startsWith('/tags') ? 'page' : undefined}>{isZh ? '标签索引' : 'Tags'}</a></li>
+      <li><a href={lp('/search/')} aria-current={pathname.startsWith('/search') ? 'page' : undefined}>{isZh ? '全站检索' : 'Search'}</a></li>
     </ul>
   </nav>
 
-  <nav aria-label={isZh ? '工具与数据' : 'Tools and data'}>
-    <ul class="drawer-links">
-      <li><a href={lp('/cards/')}>{isZh ? '亮屏字卡' : 'Show Cards'}</a></li>
-      <li><a href={lp('/tools/')}>{isZh ? '实用工具' : 'Tools'}</a></li>
-      <li><a href={lp('/portals/')}>{isZh ? '政务公开数据' : 'Gov Data Portals'}</a></li>
-      <li><a href={lp('/pulse/')}>{isZh ? '现场实测' : 'Field Reports'}</a></li>
-      <li><a href={lp('/explore/')}>{isZh ? '条件筛选' : 'Explore'}</a></li>
-      <li><a href={lp('/guides/')}>{isZh ? '深度指南' : 'Guides'}</a></li>
-      <li><a href={lp('/posts/')}>{isZh ? '深度志刊' : 'Dispatches'}</a></li>
-    </ul>
-  </nav>
+  {roots.length > 0 && (
+    <nav aria-label={isZh ? '主要栏目' : 'Categories'}>
+      <ul class="drawer-links">
+        {roots.map((cat) => (
+          <li>
+            <a href={lp(categoryPath(cat.slug))} aria-current={pathname === categoryPath(cat.slug) ? 'page' : undefined}>
+              {cat.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )}
 </dialog>
