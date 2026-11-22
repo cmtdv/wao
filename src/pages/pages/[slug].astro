@@ -9,6 +9,7 @@ import { getLocaleFromContext, localePath } from '@i18n/ui';
 import '../../styles/article.css';
 
 const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return new Response(null, { status: 404 });
@@ -27,8 +28,12 @@ if (Astro.cache?.enabled) {
   Astro.cache.set(result.cacheHint);
 }
 
-const seo = getSeoMeta(page, { siteUrl: Astro.url.origin, path: Astro.locals.originalPathname ?? Astro.url.pathname });
+const seo = getSeoMeta(page, {
+  siteUrl: Astro.url.origin,
+  path: Astro.locals.originalPathname ?? Astro.url.pathname,
+});
 const tocItems = extractToc(page.data.content);
+const hasToc = tocItems.length > 0;
 ---
 <Layout
   title={seo.title ?? page.data.title}
@@ -40,29 +45,33 @@ const tocItems = extractToc(page.data.content);
   content={{ collection: 'pages', id: page.data.id, slug }}
 >
   <div class="reading-progress" aria-hidden="true"></div>
-  <article class="container article-shell">
-    <div class="article-header">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href={lp('/')}>{locale === 'zh' ? '首页' : 'Home'}</a>
-        <span class="breadcrumb-sep" aria-hidden="true">/</span>
-        <span aria-current="page">{page.data.title}</span>
-      </nav>
-      <p class="eyebrow eyebrow--accent">{locale === 'zh' ? '编辑部页面' : 'Editorial Page'}</p>
-      <h1>{page.data.title}</h1>
-    </div>
 
-    <TableOfContents items={tocItems} variant="mobile" />
+  <div class="container">
+    <div class:list={['article-shell', !hasToc && 'article-shell--single']}>
+      <div class:list={['article-grid', hasToc && 'article-grid--with-toc']}>
+        <article class="article-main">
+          <header class="article-header">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+              <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+              <span class="breadcrumb-sep" aria-hidden="true">/</span>
+              <span aria-current="page">{page.data.title}</span>
+            </nav>
+            <h1>{page.data.title}</h1>
+          </header>
 
-    <div class:list={['article-layout', tocItems.length > 0 && 'article-layout--with-toc']}>
-      <div class="prose" data-article-prose>
-        {page.data.content?.length ? (
-          <PortableText value={page.data.content} />
-        ) : (
-          <p>{locale === 'zh' ? '该页面暂未发布正文内容。' : 'This page has no content yet.'}</p>
-        )}
+          <TableOfContents items={tocItems} variant="mobile" />
+
+          <div class="prose" data-article-prose>
+            {page.data.content?.length ? (
+              <PortableText value={page.data.content} />
+            ) : (
+              <p>{isZh ? '该页面暂未发布正文内容。' : 'This page has no content yet.'}</p>
+            )}
+          </div>
+        </article>
+
+        <TableOfContents items={tocItems} variant="desktop" />
       </div>
-
-      <TableOfContents items={tocItems} variant="desktop" />
     </div>
-  </article>
+  </div>
 </Layout>

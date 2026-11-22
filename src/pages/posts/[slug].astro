@@ -7,12 +7,13 @@ import TableOfContents from '@site/TableOfContents.astro';
 import Icon from '@site/Icon.astro';
 import Alert from '@ui/feedback/Alert.astro';
 import { getPublicPost, getPublicPosts } from '@lib/cms';
-import { categoryPath, formatShortDate, tagPath, topicIconName } from '@lib/format';
+import { categoryPath, tagPath } from '@lib/format';
 import { estimateReadingMinutes, extractToc } from '@lib/portable-text';
 import { formatLocalizedDate, formatReadTime, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
 import '../../styles/article.css';
 
 const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
 const strings = getStrings(locale);
 const lp = (path: string) => localePath(path, locale);
 
@@ -29,22 +30,32 @@ if (!post || post.data.status !== 'published') {
   return new Response(null, { status: 404 });
 }
 
-const isFallbackEnglish = locale === 'zh' && result.fallbackLocale === 'en';
+const isFallbackEnglish = isZh && result.fallbackLocale === 'en';
 
 if (Astro.cache?.enabled) {
   Astro.cache.set(result.cacheHint);
 }
 
-const seo = getSeoMeta(post, { siteUrl: Astro.url.origin, path: Astro.locals.originalPathname ?? Astro.url.pathname });
+const seo = getSeoMeta(post, {
+  siteUrl: Astro.url.origin,
+  path: Astro.locals.originalPathname ?? Astro.url.pathname,
+});
 const categories = post.data.terms?.category ?? [];
 const tags = post.data.terms?.tag ?? [];
 const primaryCategory = categories[0];
-const published = formatLocalizedDate(post.data.publishedAt, locale);
-const updatedShort = locale === 'zh'
-  ? formatLocalizedDate(post.data.updatedAt ?? post.data.publishedAt, locale)
-  : formatShortDate(post.data.updatedAt ?? post.data.publishedAt);
+const subCategories = categories.slice(1);
+
+const pubDate = post.data.publishedAt;
+const updDate = post.data.updatedAt;
+const published = formatLocalizedDate(pubDate, locale);
+const showUpdated =
+  Boolean(pubDate && updDate) &&
+  pubDate!.toISOString().slice(0, 10) !== updDate!.toISOString().slice(0, 10);
+const updated = showUpdated ? formatLocalizedDate(updDate, locale) : null;
+
 const readingMinutes = estimateReadingMinutes(post.data.content);
 const tocItems = extractToc(post.data.content);
+const hasToc = tocItems.length > 0;
 
 // Fetch up to 3 related/recent dispatches (preferring primary category)
 const relatedResult = await getPublicPosts({
@@ -58,7 +69,6 @@ if (relatedPosts.length === 0 && primaryCategory) {
   const fallbackResult = await getPublicPosts({ limit: 4, locale }).catch(() => null);
   relatedPosts = (fallbackResult?.entries ?? []).filter((entry) => entry.id !== post.id).slice(0, 3);
 }
-const isZh = locale === 'zh';
 ---
 <Layout
   title={seo.title ?? post.data.title}
@@ -68,173 +78,123 @@ const isZh = locale === 'zh';
   canonical={seo.canonical}
   robots={seo.robots}
   type="article"
-  publishedTime={post.data.publishedAt?.toISOString() ?? null}
-  modifiedTime={post.data.updatedAt?.toISOString() ?? null}
+  publishedTime={pubDate?.toISOString() ?? null}
+  modifiedTime={updDate?.toISOString() ?? null}
   content={{ collection: 'posts', id: post.data.id, slug }}
 >
   <div class="reading-progress" aria-hidden="true"></div>
-  <article class="container article-shell">
-    <div class="article-header">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href={lp('/')}>{locale === 'zh' ? '首页' : 'Home'}</a>
-        <span class="breadcrumb-sep" aria-hidden="true">/</span>
-        <a href={lp('/posts/')}>{strings.nav.journal}</a>
-        {primaryCategory && (
-          <>
-            <span class="breadcrumb-sep" aria-hidden="true">/</span>
-            <a href={lp(categoryPath(primaryCategory.slug))}>{primaryCategory.label}</a>
-          </>
-        )}
-      </nav>
 
-      {isFallbackEnglish && (
-        <div style="margin-bottom: var(--space-4);">
-          <Alert tone="info" title={strings.posts.fallbackNoticeTitle}>
-            {strings.posts.fallbackNoticeBody}
-          </Alert>
-        </div>
-      )}
+  <div class="container">
+    <div class:list={['article-shell', !hasToc && 'article-shell--single']}>
+      <div class:list={['article-grid', hasToc && 'article-grid--with-toc']}>
+        <article class="article-main">
+          <header class="article-header">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+              <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+              <span class="breadcrumb-sep" aria-hidden="true">/</span>
+              <a href={lp('/posts/')}>{isZh ? '全部文章' : 'Articles'}</a>
+              {primaryCategory && (
+                <>
+                  <span class="breadcrumb-sep" aria-hidden="true">/</span>
+                  <a href={lp(categoryPath(primaryCategory.slug))}>{primaryCategory.label}</a>
+                </>
+              )}
+            </nav>
 
-      <p class="eyebrow eyebrow--accent">
-        {primaryCategory ? primaryCategory.label : (locale === 'zh' ? 'ChinaWao 志刊' : 'ChinaWao Journal')}
-      </p>
-      <h1>{post.data.title}</h1>
-      {post.data.excerpt && <p class="article-dek">{post.data.excerpt}</p>}
+            {isFallbackEnglish && (
+              <div style="margin-bottom: var(--space-4);">
+                <Alert tone="info" title={strings.posts.fallbackNoticeTitle}>
+                  {strings.posts.fallbackNoticeBody}
+                </Alert>
+              </div>
+            )}
 
-      <div class="article-meta-bar">
-        <div class="meta-line">
-          {published && (
-            <time datetime={post.data.publishedAt?.toISOString()}>{published}</time>
+            <h1>{post.data.title}</h1>
+
+            {post.data.excerpt && <p class="article-dek">{post.data.excerpt}</p>}
+
+            <div class="article-byline">
+              {published && (
+                <time datetime={pubDate?.toISOString()}>{published}</time>
+              )}
+              {updated && (
+                <>
+                  <span class="byline-sep" aria-hidden="true">·</span>
+                  <span>{isZh ? `更新于 ${updated}` : `Updated ${updated}`}</span>
+                </>
+              )}
+              {readingMinutes && (
+                <>
+                  <span class="byline-sep" aria-hidden="true">·</span>
+                  <span>{formatReadTime(readingMinutes, locale)}</span>
+                </>
+              )}
+              {subCategories.map((sub) => (
+                <>
+                  <span class="byline-sep" aria-hidden="true">·</span>
+                  <a href={lp(categoryPath(sub.slug))} class="byline-topic-link">{sub.label}</a>
+                </>
+              ))}
+            </div>
+          </header>
+
+          {post.data.featured_image && (
+            <figure class="article-figure">
+              <div class="article-figure-frame">
+                <Image
+                  image={post.data.featured_image}
+                  sizes="(max-width: 960px) 100vw, 720px"
+                  priority
+                  placeholder={false}
+                />
+              </div>
+              {post.data.featured_image.caption && (
+                <figcaption>{post.data.featured_image.caption}</figcaption>
+              )}
+            </figure>
           )}
-          {published && readingMinutes && (
-            <span class="meta-dot" aria-hidden="true">/</span>
-          )}
-          {readingMinutes && <span>{formatReadTime(readingMinutes, locale)}</span>}
-        </div>
 
-        {(categories.length > 0 || tags.length > 0) && (
-          <nav class="term-list" aria-label={isZh ? '文章归档与标签' : 'Article topics'}>
-            {categories.map((term) => (
-              <a href={lp(categoryPath(term.slug))} class="term-pill">{term.label}</a>
-            ))}
-            {tags.map((term) => (
-              <a href={lp(tagPath(term.slug))} class="term-pill">#{term.label}</a>
-            ))}
-          </nav>
-        )}
-      </div>
-    </div>
+          <TableOfContents items={tocItems} variant="mobile" />
 
-    {/* Wayfare-inspired 4-column unboxed Key-Facts Strip */}
-    <dl class="key-facts-strip" aria-label={isZh ? '实录要点概览' : 'Dispatch quick facts'}>
-      <div class="key-fact-cell">
-        <dt class="key-fact-label">{isZh ? '所属栏目' : 'Section'}</dt>
-        <dd class="key-fact-value">
-          {primaryCategory ? (
-            <>
-              <Icon name={topicIconName(primaryCategory.slug)} size={16} />
-              <a href={lp(categoryPath(primaryCategory.slug))}>{primaryCategory.label}</a>
-            </>
-          ) : (
-            <span>{strings.nav.journal}</span>
-          )}
-        </dd>
-      </div>
-
-      <div class="key-fact-cell">
-        <dt class="key-fact-label">{isZh ? '阅读时长' : 'Read Time'}</dt>
-        <dd class="key-fact-value">
-          <Icon name="clock" size={15} />
-          <span>{readingMinutes ? formatReadTime(readingMinutes, locale) : (isZh ? '简讯速览' : 'Quick note')}</span>
-        </dd>
-      </div>
-
-      <div class="key-fact-cell">
-        <dt class="key-fact-label">{isZh ? '最近更新' : 'Last Updated'}</dt>
-        <dd class="key-fact-value">
-          <span>{updatedShort ?? (isZh ? '当前版本' : 'Current edition')}</span>
-        </dd>
-      </div>
-
-      <div class="key-fact-cell">
-        <dt class="key-fact-label">{isZh ? '归档标签' : 'Filed Under'}</dt>
-        <dd class="key-fact-value">
-          {tags.length > 0 ? (
-            tags.slice(0, 2).map((term) => (
-              <a href={lp(tagPath(term.slug))}>#{term.label}</a>
-            ))
-          ) : categories.length > 1 ? (
-            <a href={lp(categoryPath(categories[1].slug))}>{categories[1].label}</a>
-          ) : (
-            <span>{isZh ? 'ChinaWao 档案库' : 'ChinaWao Archive'}</span>
-          )}
-        </dd>
-      </div>
-    </dl>
-
-    {post.data.featured_image && (
-      <figure class="article-figure">
-        <div class="article-figure-frame">
-          <Image
-            image={post.data.featured_image}
-            sizes="(max-width: 960px) 100vw, 1200px"
-            priority
-            placeholder={false}
-          />
-        </div>
-        {post.data.featured_image.caption && (
-          <figcaption>{post.data.featured_image.caption}</figcaption>
-        )}
-      </figure>
-    )}
-
-    <TableOfContents items={tocItems} variant="mobile" />
-
-    <div class:list={['article-layout', tocItems.length > 0 && 'article-layout--with-toc']}>
-      <div class="prose" data-article-prose>
-        {post.data.content?.length ? (
-          <PortableText value={post.data.content} />
-        ) : (
-          <p>{isZh ? '该实录暂未发布正文内容。' : 'This article has no body content yet.'}</p>
-        )}
-      </div>
-
-      <TableOfContents items={tocItems} variant="desktop" />
-    </div>
-
-    <footer class="article-footer">
-      <a href={lp('/posts/')} class="editorial-link">
-        <Icon name="arrow-left" size={15} />
-        <span>{isZh ? '返回志刊列表' : 'Back to journal'}</span>
-      </a>
-
-      {tags.length > 0 && (
-        <div class="term-list" aria-label={isZh ? '文章标签' : 'Tags'}>
-          {tags.map((term) => (
-            <a href={lp(tagPath(term.slug))} class="term-pill">#{term.label}</a>
-          ))}
-        </div>
-      )}
-    </footer>
-
-    {relatedPosts.length > 0 && (
-      <section class="section-block related-section" aria-labelledby="related-heading">
-        <div class="section-header">
-          <div>
-            <p class="eyebrow eyebrow--accent">{isZh ? '延伸阅读' : 'Continue Reading'}</p>
-            <h2 id="related-heading">{isZh ? '相关实录推荐' : 'Further dispatches'}</h2>
+          <div class="prose" data-article-prose>
+            {post.data.content?.length ? (
+              <PortableText value={post.data.content} />
+            ) : (
+              <p>{isZh ? '该文章暂未发布正文内容。' : 'This article has no body content yet.'}</p>
+            )}
           </div>
-          <a href={lp('/posts/')} class="editorial-link">
-            <span>{isZh ? '全部文章' : 'All articles'}</span>
-            <Icon name="arrow" size={15} />
-          </a>
-        </div>
-        <div class="post-grid">
-          {relatedPosts.map((entry) => (
-            <PostCard post={entry} headingLevel="h3" />
-          ))}
-        </div>
-      </section>
-    )}
-  </article>
+
+          <footer class="article-footer">
+            {tags.length > 0 ? (
+              <div class="term-list" aria-label={isZh ? '文章标签' : 'Article tags'}>
+                {tags.map((term) => (
+                  <a href={lp(tagPath(term.slug))} class="term-pill">#{term.label}</a>
+                ))}
+              </div>
+            ) : <span />}
+
+            <a href={lp('/posts/')} class="editorial-link">
+              <Icon name="arrow-left" size={15} />
+              <span>{isZh ? '返回全部文章' : 'All articles'}</span>
+            </a>
+          </footer>
+        </article>
+
+        <TableOfContents items={tocItems} variant="desktop" />
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <section class="related-section" aria-labelledby="related-heading">
+          <div class="related-header">
+            <h2 id="related-heading">{isZh ? '延伸阅读' : 'Further reading'}</h2>
+          </div>
+          <div class="post-grid">
+            {relatedPosts.map((entry) => (
+              <PostCard post={entry} headingLevel="h3" />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  </div>
 </Layout>
