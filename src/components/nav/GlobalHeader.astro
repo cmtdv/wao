@@ -163,15 +163,48 @@ const extraCategories = roots.slice(6);
     </nav>
 
     <div class="pe-dock">
+      <div class="cw-media-links" aria-label={isZh ? '视听频道' : 'Watch and Listen'}>
+        <a
+          href={lp('/watch/')}
+          class="cw-media-link"
+          aria-current={pathname.startsWith('/watch') ? 'page' : undefined}
+        >
+          <span class="cw-live-dot" aria-hidden="true"></span>
+          <span>{isZh ? '视频' : 'Watch'}</span>
+        </a>
+        <a
+          href={lp('/listen/')}
+          class="cw-media-link"
+          aria-current={pathname.startsWith('/listen') ? 'page' : undefined}
+        >
+          <svg
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+          </svg>
+          <span>{isZh ? '收听' : 'Listen'}</span>
+        </a>
+      </div>
+
+      <span class="cw-dock-sep" aria-hidden="true"></span>
+
       <button
         type="button"
         class="pe-cmd-trigger"
         commandfor="pe-cmd-dialog"
         command="show-modal"
         aria-label={isZh ? '打开全站搜索' : 'Open search'}
+        title={isZh ? '搜索 (Ctrl+K)' : 'Search (Ctrl+K)'}
       >
-        <Icon name="search" size={14} />
-        <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
+        <Icon name="search" size={16} />
       </button>
 
       <HeaderUtilityMenus
@@ -219,12 +252,36 @@ const extraCategories = roots.slice(6);
     </nav>
   </div>
 
-  {/* Wise-style mobile drawer: Blog & Category accordions on top */}
+  {/* Wise-style mobile drawer: Watch/Listen + Category accordions on top */}
   <nav aria-label={isZh ? '文章分类' : 'Categories'}>
     <ul class="drawer-links">
       <li>
+        <a href={lp('/watch/')} class="cw-drawer-media-link" aria-current={pathname.startsWith('/watch') ? 'page' : undefined}>
+          <span class="cw-live-dot" aria-hidden="true"></span>
+          <span>{isZh ? '视频' : 'Watch'}</span>
+        </a>
+      </li>
+      <li>
+        <a href={lp('/listen/')} class="cw-drawer-media-link" aria-current={pathname.startsWith('/listen') ? 'page' : undefined}>
+          <svg
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+          </svg>
+          <span>{isZh ? '收听' : 'Listen'}</span>
+        </a>
+      </li>
+      <li>
         <a href={lp('/posts/')} aria-current={pathname === '/posts/' ? 'page' : undefined}>
-          {isZh ? '全部志刊文章' : 'All Blog Articles'}
+          {isZh ? '全部文章' : 'All Articles'}
         </a>
       </li>
       {roots.map((cat) => {

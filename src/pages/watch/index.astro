@@ -1,0 +1,56 @@
+---
+import Layout from '@layouts/Layout.astro';
+import PostCard from '@site/PostCard.astro';
+import { getPublicPosts, queryPage } from '@lib/cms';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const { result } = await queryPage(() => getPublicPosts({ limit: 12, locale }));
+const posts = result && !result.error ? result.entries : [];
+
+if (Astro.cache?.enabled && result && !result.error) {
+  Astro.cache.set(result.cacheHint);
+}
+
+const visualPosts = posts.filter((p) => Boolean(p.data.featured_image));
+const displayPosts = visualPosts.length > 0 ? visualPosts : posts;
+---
+<Layout
+  title={isZh ? '视频与影像' : 'Watch'}
+  description={
+    isZh
+      ? 'ChinaWao 视频报道与图文影像实录：一线实地记录中国出行、城市与日常。'
+      : 'ChinaWao video dispatches and visual reporting from across China.'
+  }
+>
+  <div class="container archive-shell">
+    <header class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '视频' : 'Watch'}</span>
+      </nav>
+      <h1>{isZh ? '视频与影像' : 'Watch'}</h1>
+      <p class="archive-lead">
+        {isZh
+          ? '实地影像与图解报道；短片与现场视频栏目正在陆续上线。'
+          : 'Field photography and visual explainers — original video dispatches are rolling out soon.'}
+      </p>
+    </header>
+
+    {displayPosts.length > 0 ? (
+      <div class="post-grid">
+        {displayPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>{isZh ? '暂无影像内容，请稍后再访。' : 'No visual dispatches published yet.'}</p>
+      </div>
+    )}
+  </div>
+</Layout>

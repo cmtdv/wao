@@ -1,0 +1,164 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { getPublicPosts, queryPage } from '@lib/cms';
+import { postPath } from '@lib/format';
+import { estimateReadingMinutes } from '@lib/portable-text';
+import { formatLocalizedDate, getLocaleFromContext, localePath } from '@i18n/ui';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (path: string) => localePath(path, locale);
+
+const { result } = await queryPage(() => getPublicPosts({ limit: 24, locale }));
+const posts = result && !result.error ? result.entries : [];
+
+if (Astro.cache?.enabled && result && !result.error) {
+  Astro.cache.set(result.cacheHint);
+}
+---
+<Layout
+  title={isZh ? '收听文章' : 'Listen'}
+  description={
+    isZh
+      ? '收听 ChinaWao 全站文章语音朗读：点击任意篇目即可在正文顶部一键播放。'
+      : 'Listen to ChinaWao articles with built-in audio narration.'
+  }
+>
+  <div class="container archive-shell listen-shell">
+    <header class="archive-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '收听' : 'Listen'}</span>
+      </nav>
+      <h1>{isZh ? '收听文章' : 'Listen'}</h1>
+      <p class="archive-lead">
+        {isZh
+          ? '每篇已发布指南均内置语音朗读播放器，点击篇目即可收听，支持调节倍速。'
+          : 'Every published guide includes a built-in audio player with variable playback speed.'}
+      </p>
+    </header>
+
+    {posts.length > 0 ? (
+      <ol class="listen-list">
+        {posts.map((post) => {
+          const href = lp(postPath(post.data.slug ?? post.id));
+          const minutes = estimateReadingMinutes(post.data.content) ?? 2;
+          const dateStr = formatLocalizedDate(post.data.publishedAt, locale);
+          return (
+            <li class="listen-row">
+              <a href={href} class="listen-row-link">
+                <span class="listen-play-badge" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5.14v14l11-7-11-7z" />
+                  </svg>
+                </span>
+                <div class="listen-row-body">
+                  <h2 class="listen-row-title">{post.data.title}</h2>
+                  {post.data.excerpt && <p class="listen-row-excerpt">{post.data.excerpt}</p>}
+                  <div class="listen-row-meta">
+                    <span>{isZh ? `约 ${minutes} 分钟` : `${minutes} min listen`}</span>
+                    {dateStr && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{dateStr}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    ) : (
+      <div class="empty-state">
+        <p>{isZh ? '暂无可收听的文章。' : 'No audio articles available yet.'}</p>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .listen-shell {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .listen-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .listen-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .listen-row-link {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .listen-play-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    margin-top: 0.15rem;
+    border-radius: 9999px;
+    background-color: var(--surface-sunken);
+    color: var(--ink-primary);
+    flex-shrink: 0;
+    transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+
+  .listen-row-link:hover .listen-play-badge {
+    background-color: var(--ink-primary);
+    color: var(--background);
+  }
+
+  .listen-row-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .listen-row-title {
+    margin: 0 0 0.35rem;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink-primary);
+  }
+
+  .listen-row-link:hover .listen-row-title {
+    color: var(--accent-seal-text);
+  }
+
+  .listen-row-excerpt {
+    margin: 0 0 0.55rem;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .listen-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+  }
+</style>
