@@ -32,21 +32,20 @@ function getTermCount(term: Term): number | null {
 const tags = taxonomy.data.toSorted((a, b) => a.label.localeCompare(b.label, isZh ? 'zh-CN' : 'en'));
 ---
 <Layout
-  title={isZh ? '全部标签索引' : 'Tags'}
-  description={isZh ? '浏览 ChinaWao 全站跨栏目高频主题标签。' : 'Browse all recurring themes and editorial tags across ChinaWao.'}
+  title={isZh ? '标签索引' : 'Tags'}
+  description={isZh ? '浏览 ChinaWao 全站跨栏目主题标签。' : 'Browse all recurring themes and editorial tags across ChinaWao.'}
 >
   <div class="container directory-shell">
-    <div class="directory-header">
+    <header class="directory-header">
       <div class="directory-header-copy">
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
           <span class="breadcrumb-sep" aria-hidden="true">/</span>
-          <span aria-current="page">{isZh ? '标签索引' : 'Tags'}</span>
+          <span aria-current="page">{isZh ? '标签' : 'Tags'}</span>
         </nav>
-        <p class="eyebrow eyebrow--accent">{isZh ? '交叉索引' : 'Cross-Reference'}</p>
-        <h1>{isZh ? '主题标签总索引' : 'Tags index.'}</h1>
+        <h1>{isZh ? '主题标签' : 'Tags'}</h1>
         <p class="archive-lead">
-          {isZh ? '串联不同支柱实录的城市、政策与文化高频关键词。' : 'Cross-cutting threads, places, and recurring motifs linking dispatches across sections.'}
+          {isZh ? '串联不同栏目的城市、政策与出行高频关键词。' : 'Cross-cutting topics, places, and practical keywords across articles.'}
         </p>
       </div>
 
@@ -55,7 +54,7 @@ const tags = taxonomy.data.toSorted((a, b) => a.label.localeCompare(b.label, isZ
           {isZh ? `共 ${tags.length} 个标签` : `${tags.length} ${tags.length === 1 ? 'tag' : 'tags'}`}
         </span>
       </div>
-    </div>
+    </header>
 
     {tags.length > 0 ? (
       <div class="tags-index-grid">
@@ -80,10 +79,8 @@ const tags = taxonomy.data.toSorted((a, b) => a.label.localeCompare(b.label, isZ
     ) : (
       <div class="empty-panel">
         <h2>{isZh ? '暂无已发布标签。' : 'No tags published yet.'}</h2>
-        <p>{isZh ? '暂无已发布的主题标签。' : 'No published topic tags yet.'}</p>
         <div class="empty-actions">
-          <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
-          <a href={lp('/topics/')} class="editorial-link">{isZh ? '浏览栏目' : 'Explore topics'}</a>
+          <a href={lp('/posts/')} class="btn">{isZh ? '浏览全部文章' : 'All articles'}</a>
         </div>
       </div>
     )}
