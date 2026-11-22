@@ -668,12 +668,11 @@ dialog::backdrop {
 }
 
 .footer-col h2 {
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
   font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--secondary-ink-muted);
+  letter-spacing: 0.02em;
+  color: var(--secondary-ink);
   margin-bottom: var(--space-3);
 }
 
@@ -681,7 +680,7 @@ dialog::backdrop {
   list-style: none;
   padding: 0;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .footer-links a {
@@ -689,16 +688,15 @@ dialog::backdrop {
   max-width: 100%;
   padding-block: 0.2rem;
   font-size: var(--text-sm);
-  color: var(--secondary-ink);
-  opacity: 0.9;
+  color: var(--secondary-ink-muted);
   overflow-wrap: break-word;
+  transition: color var(--dur-fast) ease;
 }
 
 .footer-links a:hover {
-  opacity: 1;
-  color: #ffffff;
+  color: var(--secondary-ink);
   text-decoration: underline;
-  text-underline-offset: 0.22em;
+  text-underline-offset: 0.24em;
 }
 
 .footer-bottom {

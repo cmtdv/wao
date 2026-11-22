@@ -1312,14 +1312,14 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--accent-on-seal);
   background-color: var(--accent-seal);
-  color: #fff;
+  color: var(--accent-on-seal);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 0 0 4px rgb(201 59 43 / 0.35);
+  box-shadow: 0 0 0 4px rgb(228 50 22 / 0.32);
 }
 
 .pe-hotspot-pin[aria-pressed="true"] {

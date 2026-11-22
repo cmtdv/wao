@@ -32,11 +32,11 @@
      ======================================================================== */
   --secondary-solid: light-dark(#e43216, #b8230d);
   --secondary-solid-elevated: light-dark(#c8260e, #d42d13);
-  --secondary-ink: #ffffff;
+  --secondary-ink: #fff2e8;
   --secondary-solid-ink: var(--secondary-ink);
-  --secondary-ink-muted: rgb(255 255 255 / 0.86);
-  --secondary-rule: rgb(255 255 255 / 0.28);
-  --secondary-rule-strong: rgb(255 255 255 / 0.45);
+  --secondary-ink-muted: rgb(255 236 226 / 0.8);
+  --secondary-rule: rgb(255 242 232 / 0.24);
+  --secondary-rule-strong: rgb(255 242 232 / 0.42);
 
   --secondary-tint: light-dark(#efe5dc, #251d1a);
   --secondary-tint-border: light-dark(rgb(228 50 22 / 0.2), rgb(255 180 166 / 0.22));
@@ -59,9 +59,9 @@
   --accent-seal: light-dark(#e43216, #ec4326);
   --accent-seal-hover: light-dark(#c8260e, #ff5b3e);
   --accent-seal-text: light-dark(#c8260e, #ff7a61);
-  --accent-seal-on-dark: #ffffff;
+  --accent-seal-on-dark: #fff2e8;
   --accent-seal-soft: light-dark(rgb(228 50 22 / 0.1), rgb(236 67 38 / 0.18));
-  --accent-on-seal: #ffffff;
+  --accent-on-seal: #fff2e8;
   --accent-pine: var(--secondary-solid);
   --accent-on-pine: var(--secondary-ink);
 
