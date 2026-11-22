@@ -12,28 +12,30 @@ const { items, variant } = Astro.props;
 const isZh = getLocaleFromContext(Astro) === 'zh';
 ---
 {items.length > 0 && variant === 'desktop' && (
-  <aside class="toc-rail" aria-label={isZh ? '本文目录' : 'On this page'}>
-    <p class="eyebrow eyebrow--accent toc-title">{isZh ? '目录导航' : 'Contents'}</p>
-    <ol class="toc-list">
-      {items.map((item) => (
-        <li>
-          <a
-            href={`#${item.id}`}
-            data-toc-link
-            class:list={['toc-link', item.level === 3 && 'toc-link--sub']}
-          >
-            {item.text}
-          </a>
-        </li>
-      ))}
-    </ol>
+  <aside class="toc-rail" aria-label={isZh ? '本页目录' : 'On this page'}>
+    <div class="toc-sticky">
+      <p class="toc-title">{isZh ? '本页目录' : 'On this page'}</p>
+      <ol class="toc-list">
+        {items.map((item) => (
+          <li>
+            <a
+              href={`#${item.id}`}
+              data-toc-link
+              class:list={['toc-link', item.level === 3 && 'toc-link--sub']}
+            >
+              {item.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
   </aside>
 )}
 
 {items.length > 0 && variant === 'mobile' && (
   <details class="toc-mobile">
     <summary>
-      <span>{isZh ? `本文目录（${items.length}）` : `On this page (${items.length})`}</span>
+      <span>{isZh ? `本页目录（${items.length}）` : `On this page (${items.length})`}</span>
       <Icon name="down" size={16} />
     </summary>
     <ol class="toc-list">
