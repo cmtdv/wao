@@ -52,7 +52,9 @@ function syncThemeControls(pref: SchemePreference): void {
 
   document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((btn) => {
     const choice = btn.dataset.themeChoice as SchemePreference | undefined;
-    btn.setAttribute('aria-pressed', String(choice === pref));
+    const isActive = String(choice === pref);
+    btn.setAttribute('aria-pressed', isActive);
+    btn.setAttribute('aria-checked', isActive);
     if (choice === 'system') {
       btn.setAttribute(
         'title',
@@ -61,6 +63,24 @@ function syncThemeControls(pref: SchemePreference): void {
           : `System (currently ${systemScheme})`,
       );
     }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-menu-trigger]').forEach((btn) => {
+    btn.dataset.currentPref = pref;
+    const modeLabel = zh
+      ? pref === 'light'
+        ? '浅色模式'
+        : pref === 'dark'
+          ? '深色模式'
+          : `跟随系统（当前${systemScheme === 'dark' ? '深色' : '浅色'}）`
+      : pref === 'light'
+        ? 'Light'
+        : pref === 'dark'
+          ? 'Dark'
+          : `System (${systemScheme})`;
+    const label = zh ? `主题模式：${modeLabel}` : `Color theme: ${modeLabel}`;
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
   });
 
   document.querySelectorAll<HTMLButtonElement>('[data-theme-quick-toggle]').forEach((btn) => {
@@ -76,8 +96,7 @@ function syncThemeControls(pref: SchemePreference): void {
   });
 }
 
-// Header 2-state comfort toggle: toggles opposite of currently rendered scheme,
-// and reverts to system (removing stored override) when target matches OS preference.
+// Header 2-state comfort toggle (fallback if used standalone)
 document.querySelectorAll<HTMLButtonElement>('[data-theme-quick-toggle]').forEach((btn) => {
   btn.addEventListener('click', () => {
     const currentEffective = getEffectiveScheme(readStoredPreference());
@@ -87,12 +106,18 @@ document.querySelectorAll<HTMLButtonElement>('[data-theme-quick-toggle]').forEac
   });
 });
 
-// Footer explicit 3-state control: Light / Dark / System
+// Explicit 3-state theme menu: Light / Dark / System
 document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((btn) => {
   btn.addEventListener('click', () => {
     const choice = btn.dataset.themeChoice;
     if (choice === 'light' || choice === 'dark' || choice === 'system') {
       applyScheme(choice, true);
+      const pop = btn.closest<HTMLElement & { hidePopover?: () => void }>('[popover]');
+      try {
+        pop?.hidePopover?.();
+      } catch {
+        // Ignore if not open
+      }
     }
   });
 });

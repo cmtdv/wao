@@ -105,10 +105,12 @@
     color: var(--accent-seal);
   }
 
+  /* Proportional Spacing Rhythm:
+     Section (--space-8 / --space-7) >= 2 x Group (--space-6 / --space-5) >= 2 x Element (--space-3) */
   .ds-section {
-    padding-top: var(--space-6);
-    margin-top: var(--space-7);
-    border-top: 1px solid var(--rule-strong);
+    padding-top: var(--space-7);
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--border-strong);
     scroll-margin-top: calc(var(--header-height) + var(--space-4));
   }
 
@@ -118,9 +120,23 @@
     border-top: 0;
   }
 
+  .ds-section > .kicker {
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .ds-section > h2 {
+    margin-top: 0;
+    margin-bottom: var(--space-5);
+  }
+
+  .ds-section > h2:has(+ .ds-lead) {
+    margin-bottom: var(--space-2);
+  }
+
   .ds-lead {
     max-width: 64ch;
-    margin-top: var(--space-2);
+    margin-top: 0;
     margin-bottom: var(--space-5);
     font-size: var(--text-sm);
     color: var(--ink-secondary);
@@ -203,9 +219,16 @@
     gap: var(--space-3);
   }
 
+  /* Element-level stack inside a card/column (12px) */
   .ds-stack {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  /* Group-level stack between distinct showcase components inside a section (32px >= 2 x 12px) */
+  .ds-group-stack {
+    display: grid;
+    gap: var(--space-6);
   }
 
   /* Typography Scale Table */

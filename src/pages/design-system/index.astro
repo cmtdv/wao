@@ -682,7 +682,7 @@ const vtabItems: VerticalTabItem[] = isZh
     <section id="ds-feedback" class="ds-section">
       <span class="kicker">{isZh ? '09 · 反馈与加载状态' : '09 · Feedback & Loading States'}</span>
       <h2>{isZh ? '顶部公告条、coss 告警卡片、通知卡片、常驻吐司与骨架屏' : 'Banner, Alert, NotificationCard, Persistent Toast & Skeleton'}</h2>
-      <div class="ds-stack">
+      <div class="ds-group-stack">
         <Banner variant="palace" kicker={isZh ? '政策更新' : 'Policy Update'} dismissible>
           {isZh ? (
             <>240 小时过境免签现已覆盖全国 24 省 60 个口岸 —— <a href={lp('/tools/visa-checker/')}>立即测算您的行程 &rarr;</a></>
@@ -731,7 +731,7 @@ const vtabItems: VerticalTabItem[] = isZh
     <section id="ds-navigation" class="ds-section">
       <span class="kicker">{isZh ? '10 · 导航组件（胶囊轨道与下划线双形态 Tabs）' : '10 · Navigation Primitives (Pill & Underline Tabs)'}</span>
       <h2>{isZh ? '横纵标签页、分段控制器、手风琴折叠面板与步骤条' : 'Tabs (Pill & Underline), VerticalTabs, SegmentedControl, Accordion & Stepper'}</h2>
-      <div class="ds-stack">
+      <div class="ds-group-stack">
         <div class="ds-grid-2">
           <div class="ds-panel">
             <span class="ds-panel-title">{isZh ? '分段控制器与点状步骤条' : 'SegmentedControl & Dot Stepper'}</span>

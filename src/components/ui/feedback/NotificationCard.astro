@@ -3,6 +3,7 @@
  * NotificationCard — Structured inbox / policy update notification item
  */
 import Badge from '@ui/data-display/Badge.astro';
+import { getLocaleFromContext } from '@i18n/ui';
 
 interface Props {
   title: string;
@@ -28,6 +29,7 @@ const {
   class: className = '',
 } = Astro.props;
 
+const isZh = getLocaleFromContext(Astro) === 'zh';
 const badgeTone = tone === 'info' ? 'editorial' : tone;
 ---
 <article class:list={['cw-notif', unread && 'cw-notif--unread', className]} data-cw-notif-item data-unread={unread ? 'true' : 'false'}>
@@ -38,7 +40,7 @@ const badgeTone = tone === 'info' ? 'editorial' : tone;
         {category && <Badge tone={badgeTone}>{category}</Badge>}
         <span class="cw-notif-time">{timestamp}</span>
       </div>
-      {unread && <span class="cw-notif-unread-label">Unread</span>}
+      {unread && <span class="cw-notif-unread-label">{isZh ? '未读' : 'Unread'}</span>}
     </div>
     <h4 class="cw-notif-title">{title}</h4>
     <p class="cw-notif-text">{body}</p>

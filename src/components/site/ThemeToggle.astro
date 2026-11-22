@@ -1,41 +1,91 @@
 ---
+/**
+ * ThemeToggle — 3-Mode coss ui Popover Dropdown (Light / Dark / System)
+ */
 import Icon from '@site/Icon.astro';
 import { getLocaleFromContext } from '@i18n/ui';
 
 interface Props {
-  variant?: 'quick' | 'segmented';
+  id?: string;
+  variant?: 'quick' | 'segmented' | 'dropdown';
 }
 
-const { variant = 'quick' } = Astro.props;
+const { id = 'pe-theme-menu' } = Astro.props;
 const isZh = getLocaleFromContext(Astro) === 'zh';
 ---
-{variant === 'quick' ? (
+<div class="coss-menu-anchor">
   <button
     type="button"
-    class="icon-btn theme-quick-btn"
-    data-theme-quick-toggle
-    aria-label={isZh ? '切换日光素宣 / 夜读徽墨模式' : 'Toggle color theme'}
+    class="pe-util-menu-btn pe-theme-trigger"
+    popovertarget={id}
+    popovertargetaction="toggle"
+    aria-controls={id}
+    aria-label={isZh ? '切换主题模式（浅色 / 深色 / 跟随系统）' : 'Switch theme (Light / Dark / System)'}
+    data-theme-menu-trigger
+    data-current-pref="system"
   >
-    <span class="icon-moon" aria-hidden="true">
-      <Icon name="moon" size={18} />
+    <span class="theme-trigger-icon theme-trigger-icon--light" aria-hidden="true">
+      <Icon name="sun" size={15} />
     </span>
-    <span class="icon-sun" aria-hidden="true">
-      <Icon name="sun" size={18} />
+    <span class="theme-trigger-icon theme-trigger-icon--dark" aria-hidden="true">
+      <Icon name="moon" size={15} />
     </span>
+    <span class="theme-trigger-icon theme-trigger-icon--system" aria-hidden="true">
+      <Icon name="system" size={15} />
+    </span>
+    <Icon name="down" size={11} />
   </button>
-) : (
-  <div class="theme-switcher" role="group" aria-label={isZh ? '色彩模式' : 'Color theme'}>
-    <button type="button" class="theme-segment" data-theme-choice="light" aria-pressed="false">
-      <Icon name="sun" size={13} />
-      <span>{isZh ? '素宣' : 'Paper'}</span>
+
+  <div
+    id={id}
+    popover="auto"
+    role="menu"
+    aria-label={isZh ? '主题模式' : 'Color theme'}
+    class="coss-header-menu"
+  >
+    <button
+      type="button"
+      role="menuitemradio"
+      class="coss-menu-item"
+      data-theme-choice="light"
+      aria-checked="false"
+      aria-pressed="false"
+    >
+      <span class="coss-menu-item-lead">
+        <Icon name="sun" size={14} />
+        <span>{isZh ? '浅色模式' : 'Light'}</span>
+      </span>
+      <Icon name="check" size={14} class="coss-menu-check" />
     </button>
-    <button type="button" class="theme-segment" data-theme-choice="dark" aria-pressed="false">
-      <Icon name="moon" size={13} />
-      <span>{isZh ? '徽墨' : 'Ink'}</span>
+
+    <button
+      type="button"
+      role="menuitemradio"
+      class="coss-menu-item"
+      data-theme-choice="dark"
+      aria-checked="false"
+      aria-pressed="false"
+    >
+      <span class="coss-menu-item-lead">
+        <Icon name="moon" size={14} />
+        <span>{isZh ? '深色模式' : 'Dark'}</span>
+      </span>
+      <Icon name="check" size={14} class="coss-menu-check" />
     </button>
-    <button type="button" class="theme-segment" data-theme-choice="system" aria-pressed="true">
-      <Icon name="system" size={13} />
-      <span>{isZh ? '跟随系统' : 'System'}</span>
+
+    <button
+      type="button"
+      role="menuitemradio"
+      class="coss-menu-item"
+      data-theme-choice="system"
+      aria-checked="true"
+      aria-pressed="true"
+    >
+      <span class="coss-menu-item-lead">
+        <Icon name="system" size={14} />
+        <span>{isZh ? '跟随系统' : 'System'}</span>
+      </span>
+      <Icon name="check" size={14} class="coss-menu-check" />
     </button>
   </div>
-)}
+</div>

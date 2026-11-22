@@ -115,7 +115,7 @@ const coverageRows = PRO_BLOCK_COVERAGE.map((r) => ({
     </header>
 
     {/* 1. Marketing Blocks */}
-    <section id="blk-marketing" class="ds-section ds-stack">
+    <section id="blk-marketing" class="ds-section ds-group-stack">
       <span class="kicker">{isZh ? '01 · 营销展示区块（公告栏 · 首屏 · 来源墙 · 特性 · 行动号召）' : '01 · Marketing Blocks (Announcement · Hero · Brand Sources · Features · CTA)'}</span>
       <AnnouncementBlock
         text={isZh ? 'ChinaWao 2026 冬季版上线：全景中国图谱、18 个核验官方门户与 240 小时过境实操剧本。' : 'ChinaWao 2026 Winter Edition live: China Atlas, 18 Verified Official Portals & 240-Hour Transit Playbook.'}
@@ -148,7 +148,7 @@ const coverageRows = PRO_BLOCK_COVERAGE.map((r) => ({
     </section>
 
     {/* 3. Proof, Teams, Careers, Integrations */}
-    <section id="blk-proof" class="ds-section ds-stack">
+    <section id="blk-proof" class="ds-section ds-group-stack">
       <TestimonialsBlock title={isZh ? '受旅行者、采购商与研究者信赖' : 'Trusted by Travelers, Buyers & Researchers'} items={DS_TESTIMONIALS} />
       <TeamsBlock
         title={isZh ? '编辑部与一手核验案头' : 'Editorial & Verification Desk'}
@@ -168,7 +168,7 @@ const coverageRows = PRO_BLOCK_COVERAGE.map((r) => ({
     </section>
 
     {/* 4. Editorial Blocks */}
-    <section id="blk-editorial" class="ds-section ds-stack">
+    <section id="blk-editorial" class="ds-section ds-group-stack">
       <span class="kicker">{isZh ? '04 · 编辑出版区块（数据带 · 筛选栏 · 志刊网格 · 核验流程 · FAQ · 订阅）' : '04 · Editorial Blocks (Stats · FilterBar · BlogGrid · HowItWorks · FAQ · Newsletter)'}</span>
       <StatsStrip
         items={
@@ -204,7 +204,7 @@ const coverageRows = PRO_BLOCK_COVERAGE.map((r) => ({
     </section>
 
     {/* 5. Application Blocks */}
-    <section id="blk-app" class="ds-section ds-stack">
+    <section id="blk-app" class="ds-section ds-group-stack">
       <span class="kicker">{isZh ? '05 · 应用交互区块（认证卡片与 OTP · 资料卡片 · 通知动态流）' : '05 · Application Blocks (AuthCard + OTP · ProfileCard · NotificationFeed)'}</span>
       <AuthCardBlock />
       <ProfileCardBlock />
@@ -212,7 +212,7 @@ const coverageRows = PRO_BLOCK_COVERAGE.map((r) => ({
     </section>
 
     {/* 6. Contact & Ground Pulse */}
-    <section id="blk-contact" class="ds-section ds-stack">
+    <section id="blk-contact" class="ds-section ds-group-stack">
       <ContactBlock />
       <GroundPulseForm />
     </section>

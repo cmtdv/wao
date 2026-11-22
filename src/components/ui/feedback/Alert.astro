@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromContext } from '@i18n/ui';
+
 interface Props {
   tone?: 'info' | 'verified' | 'warning' | 'danger';
   title: string;
@@ -15,12 +17,21 @@ const {
   class: className = '',
 } = Astro.props;
 
-const defaultLabels: Record<NonNullable<Props['tone']>, string> = {
-  info: 'Note',
-  verified: 'Verified',
-  warning: 'Notice',
-  danger: 'Alert',
-};
+const isZh = getLocaleFromContext(Astro) === 'zh';
+
+const defaultLabels: Record<NonNullable<Props['tone']>, string> = isZh
+  ? {
+      info: '提示',
+      verified: '已核验',
+      warning: '注意',
+      danger: '警示',
+    }
+  : {
+      info: 'Note',
+      verified: 'Verified',
+      warning: 'Notice',
+      danger: 'Alert',
+    };
 ---
 <div class:list={['cw-alert', `cw-alert--${tone}`, className]} role={role}>
   <span class="cw-alert-badge">{label ?? defaultLabels[tone]}</span>

@@ -1,10 +1,9 @@
 ---
 import type { getEmDashCollection, getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
-import ThemeToggle from '@site/ThemeToggle.astro';
 import { PILLARS } from '@data/paradigm-e/pillars';
 import { pagePath } from '@lib/format';
-import { getStrings, localePath, switchLocaleHref, type Locale } from '@i18n/ui';
+import { localePath, type Locale } from '@i18n/ui';
 
 type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
 type PageEntry = Awaited<ReturnType<typeof getEmDashCollection<'pages'>>>['entries'][number];
@@ -18,12 +17,9 @@ interface Props {
   originalPathname?: string;
 }
 
-const { siteTitle, tagline, pages, locale = 'en', originalPathname } = Astro.props;
-const strings = getStrings(locale);
+const { siteTitle, tagline, pages, locale = 'en' } = Astro.props;
 const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
-const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
-const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
@@ -34,10 +30,6 @@ const year = new Date().getFullYear();
         <span>{siteTitle}<span class="brand-period">.</span></span>
       </a>
       <p>{tagline}</p>
-      <nav class="lang-switch" aria-label={strings.langLabel} style="margin-top: var(--space-3);">
-        <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>English</a>
-        <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简体中文</a>
-      </nav>
     </div>
 
     <div class="footer-col">
@@ -79,6 +71,5 @@ const year = new Date().getFullYear();
       <span>© {year} {siteTitle}</span>
       <span>{isZh ? '经核验的中国实用指南与开放数据门户' : 'Verified practical guides and open data on China'}</span>
     </div>
-    <ThemeToggle variant="segmented" />
   </div>
 </footer>

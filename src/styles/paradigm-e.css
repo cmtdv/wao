@@ -1616,7 +1616,8 @@
   }
 
   .pe-cmd-trigger,
-  .pe-header .lang-switch {
+  .pe-header .lang-switch,
+  .pe-header .pe-lang-dropdown-wrap {
     display: none;
   }
 

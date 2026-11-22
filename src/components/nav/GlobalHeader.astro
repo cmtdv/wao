@@ -200,10 +200,50 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         </a>
       </div>
 
-      <nav class="lang-switch" aria-label={isZh ? '切换语言' : 'Switch language'}>
-        <a href={enHref} hreflang="en" class="lang-switch-link" aria-current={locale === 'en' ? 'true' : undefined}>EN</a>
-        <a href={zhHref} hreflang="zh-CN" class="lang-switch-link" aria-current={locale === 'zh' ? 'true' : undefined}>简中</a>
-      </nav>
+      <div class="coss-menu-anchor pe-lang-dropdown-wrap">
+        <button
+          type="button"
+          class="pe-util-menu-btn"
+          popovertarget="pe-lang-menu"
+          popovertargetaction="toggle"
+          aria-controls="pe-lang-menu"
+          aria-label={isZh ? '切换语言' : 'Switch language'}
+        >
+          <Icon name="globe" size={14} />
+          <span>{isZh ? '简体中文' : 'English'}</span>
+          <Icon name="down" size={11} />
+        </button>
+
+        <div
+          id="pe-lang-menu"
+          popover="auto"
+          class="coss-header-menu"
+          aria-label={isZh ? '选择语言' : 'Select language'}
+        >
+          <a
+            href={enHref}
+            hreflang="en"
+            class="coss-menu-item"
+            aria-current={locale === 'en' ? 'true' : undefined}
+          >
+            <span class="coss-menu-item-lead">
+              <span>English</span>
+            </span>
+            {locale === 'en' && <Icon name="check" size={14} class="coss-menu-check" />}
+          </a>
+          <a
+            href={zhHref}
+            hreflang="zh-CN"
+            class="coss-menu-item"
+            aria-current={locale === 'zh' ? 'true' : undefined}
+          >
+            <span class="coss-menu-item-lead">
+              <span>简体中文</span>
+            </span>
+            {locale === 'zh' && <Icon name="check" size={14} class="coss-menu-check" />}
+          </a>
+        </div>
+      </div>
 
       <button
         type="button"
@@ -216,7 +256,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
       </button>
 
-      <ThemeToggle variant="quick" />
+      <ThemeToggle />
 
       <button
         type="button"
