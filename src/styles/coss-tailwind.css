@@ -19,9 +19,9 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-sans);
-  --font-heading: var(--font-heading);
-  --font-mono: var(--font-mono);
+  --font-sans: "DM Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  --font-heading: "DM Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand: var(--brand);

@@ -1638,6 +1638,12 @@ function initDrawers(): void {
     const closeDrawer = () => {
       if (!drawer.open) return;
       scroller.scrollTo({ left: scroller.offsetWidth, behavior: 'auto' });
+      window.setTimeout(() => {
+        if (drawer.open) {
+          drawer.close();
+          openBtn.setAttribute('aria-expanded', 'false');
+        }
+      }, 180);
     };
 
     const visibleThreshold = Math.min(0.05, 1 / Math.max(window.innerWidth, 320));

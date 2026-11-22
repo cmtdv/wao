@@ -236,8 +236,8 @@ dialog::backdrop {
   overscroll-behavior: contain;
 }
 
-dialog,
-[popover]:not(.cw-toast-region) {
+dialog:not([open]),
+[popover]:not(.cw-toast-region):not(:popover-open) {
   opacity: 0;
   transition-property: opacity, transform, display, overlay;
   transition-duration: var(--dur-base);
@@ -249,8 +249,13 @@ dialog,
   }
 }
 
-:is(dialog[open], [popover]:not(.cw-toast-region):is(:popover-open, .\:popover-open)):where(:not([data-closing])) {
+dialog[open]:not([data-closing]),
+[popover]:not(.cw-toast-region):popover-open:not([data-closing]) {
   opacity: 1;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-editorial);
+  transition-behavior: allow-discrete;
 
   @starting-style {
     opacity: 0;

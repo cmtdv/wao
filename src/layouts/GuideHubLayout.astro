@@ -18,7 +18,7 @@ import Button from '@ui/actions/Button.astro';
 import DataTable from '@ui/data-display/DataTable.astro';
 import { getGuidesByPillar, type GuideDefinition } from '@data/paradigm-e/guides';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
-import { RESCUE_FILTER_ZH } from '@data/paradigm-e/i18n-zh';
+import { RESCUE_FILTER_ZH, resolveZhHrefLabel } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import { buildGuideJsonLd } from '@lib/seo-geo';
 
@@ -257,9 +257,9 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
             <div style="display:grid;gap:var(--space-5);">
               {guide.galleryItems.map((card) => (
                 <article class="pe-step-card">
-                  <h2 style="font-size:1.35rem;">{card.title}</h2>
+                  <h2 style="font-size:1.35rem;">{isZh ? card.chineseName : card.title}</h2>
                   <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.2rem;">
-                    {card.chineseName}
+                    {isZh ? card.title : card.chineseName}
                   </p>
                   <p style="margin-top:var(--space-3);font-size:var(--text-base);line-height:1.7;">
                     {card.summary}
@@ -293,7 +293,7 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
           <div class="pe-mega-chips" style="margin-top:var(--space-3);">
             {guide.relatedEntities.map((ent) => (
               <a href={lp(ent.href)} class="pe-mega-chip">
-                {ent.label}
+                {isZh ? resolveZhHrefLabel(ent.href, ent.label) : ent.label}
               </a>
             ))}
           </div>
@@ -311,7 +311,7 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
         <div class="pe-side-card">
           <span class="pe-mega-col-title">{isZh ? '配套清单' : 'Checklist Kit'}</span>
           <Button href={lp(guide.stackLink.href)} variant="primary" size="sm">
-            {guide.stackLink.label} →
+            {isZh ? resolveZhHrefLabel(guide.stackLink.href, guide.stackLink.label) : guide.stackLink.label} →
           </Button>
         </div>
 
@@ -331,7 +331,7 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
             {guide.directTools.map((tool) => (
               <li>
                 <a href={lp(tool.href)}>
-                  <span>{tool.label}</span>
+                  <span>{isZh ? resolveZhHrefLabel(tool.href, tool.label) : tool.label}</span>
                   <span>→</span>
                 </a>
               </li>

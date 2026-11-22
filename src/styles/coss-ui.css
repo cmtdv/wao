@@ -262,7 +262,32 @@
 }
 
 .cw-compact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-h-md);
+  height: var(--control-h-md);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-md);
+  background: var(--control-bg);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.cw-compact-btn--sm {
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+}
+
+.cw-compact-btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.cw-compact-btn:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
 }
 
 .cw-fancy-btn {
@@ -293,6 +318,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   border-radius: var(--radius-2xl);
   background-color: var(--surface-sunken);
   border: 1px solid var(--border);
@@ -1644,6 +1672,17 @@
   color: var(--brand-text);
 }
 
+.cw-table thead th[aria-sort="ascending"] .cw-sort-down,
+.cw-table thead th[aria-sort="descending"] .cw-sort-up {
+  opacity: 0.22;
+}
+
+.cw-table-empty-row {
+  text-align: center;
+  padding: var(--space-6) var(--space-4) !important;
+  color: var(--muted-foreground) !important;
+}
+
 .cw-table tbody th,
 .cw-table tbody td {
   padding: 0.72rem 0.95rem;
@@ -1875,6 +1914,14 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding: 0.9rem 1.35rem;
+}
+
+.cw-modal-foot > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
 }
 
 .cw-dropdown,

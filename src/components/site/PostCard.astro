@@ -23,7 +23,16 @@ const primaryCategory = categories[0];
 const published = formatLocalizedDate(post.data.publishedAt, locale);
 const readingMinutes = estimateReadingMinutes(post.data.content);
 const readTimeText = readingMinutes ? formatReadTime(readingMinutes, locale) : '';
-const hasImage = Boolean(post.data.featured_image);
+const rawFeaturedImg = post.data.featured_image as unknown;
+const hasImage =
+  typeof rawFeaturedImg === 'string'
+    ? rawFeaturedImg.trim().length > 0
+    : Boolean(
+        rawFeaturedImg &&
+          typeof rawFeaturedImg === 'object' &&
+          (('src' in rawFeaturedImg && Boolean((rawFeaturedImg as { src?: string }).src)) ||
+            ('url' in rawFeaturedImg && Boolean((rawFeaturedImg as { url?: string }).url))),
+      );
 const Heading = headingLevel;
 
 const catSlugs = categories.map((c) => c.slug).join(',');
@@ -37,7 +46,7 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
   data-tags={tagSlugs}
   data-search={searchable}
 >
-  {post.data.featured_image && (
+  {hasImage && post.data.featured_image && (
     <a href={href} class="post-card-media" tabindex="-1" aria-hidden="true">
       <Image
         image={post.data.featured_image}

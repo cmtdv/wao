@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Badge } from "@coss/badge";
-import { Field, FieldLabel } from "@coss/field";
 import { Frame, FramePanel } from "@coss/frame";
 import {
   NumberField,
@@ -94,10 +93,10 @@ export function VisaCheckerIsland({
     <Frame>
       <div className="grid grid-cols-1 gap-1 md:grid-cols-[1fr_1.15fr]">
         <FramePanel className="flex flex-col gap-5">
-          <Field>
-            <FieldLabel>
+          <div className="flex flex-col gap-2">
+            <span className="font-medium text-foreground text-sm">
               {isZh ? "所持普通护照国籍" : "Ordinary Passport Nationality"}
-            </FieldLabel>
+            </span>
             <Select
               items={items}
               onValueChange={(val) => {
@@ -108,7 +107,7 @@ export function VisaCheckerIsland({
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectPopup>
+              <SelectPopup alignItemWithTrigger={false}>
                 {profiles.map((p) => (
                   <SelectItem key={p.code} value={p.code}>
                     {p.country}
@@ -116,14 +115,14 @@ export function VisaCheckerIsland({
                 ))}
               </SelectPopup>
             </Select>
-          </Field>
+          </div>
 
-          <Field>
-            <FieldLabel>
+          <div className="flex flex-col gap-2">
+            <span className="font-medium text-foreground text-sm">
               {isZh
                 ? "计划在中国内地停留天数"
                 : "Planned Mainland Stay (Days)"}
-            </FieldLabel>
+            </span>
             <NumberField
               className="w-36"
               max={180}
@@ -141,7 +140,7 @@ export function VisaCheckerIsland({
                 <NumberFieldIncrement />
               </NumberFieldGroup>
             </NumberField>
-          </Field>
+          </div>
 
           <label className="flex cursor-pointer items-start gap-3">
             <Switch

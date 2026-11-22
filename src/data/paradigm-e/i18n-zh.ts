@@ -4,6 +4,10 @@
  * and EmDash 1.5 multi-locale Live Collections & Admin locales (['en', 'zh-CN']).
  */
 import type { Locale } from '@i18n/ui';
+import { COMPARISONS, PERSONA_LANDINGS, ROUTES, STACKS } from './collections';
+import { getEntity } from './entities';
+import { GUIDE_BY_SLUG } from './guides';
+import { UTILITY_TOOLS } from './pillars';
 
 export const ARCHETYPE_LABELS: Record<'en' | 'zh', Record<string, string>> = {
   en: {
@@ -201,6 +205,66 @@ export const NEARBY_CAT_ZH: Record<string, string> = {
   '24h Bathhouse': '24h 汤泉',
   'Tax-Free Shop': '离境退税店',
 };
+
+export const DEFAULT_PULSE_ZH_BY_CONTEXT: Record<string, { context: string; detail: string; ago: string }> = {
+  'US Passport · PVG Terminal 2': {
+    context: '美国护照 · 上海浦东 T2',
+    detail: '凭打印版首尔联程机票，18 分钟顺畅签发 240 小时临时入境许可。',
+    ago: '2 小时前',
+  },
+  'UK Visa Debit · Alipay': {
+    context: '英国 Visa 借记卡 · 支付宝',
+    detail: '上海地铁与便利店单笔 ¥200 以内免收 3% 国际卡手续费，秒级扣款。',
+    ago: '6 小时前',
+  },
+  'Chase Sapphire · Chengdu Metro': {
+    context: 'Chase Visa · 成都地铁 1 号线',
+    detail: '主进站闸机支持外卡拍卡直刷；早晚高峰使用支付宝乘车码通行更快。',
+    ago: '1 天前',
+  },
+};
+
+export function resolveZhHrefLabel(href: string, fallback: string): string {
+  const clean = href.split('#')[0].split('?')[0].replace(/^\/zh(?=\/)/, '');
+  if (clean === '/explore/') return '多维条件筛选';
+  if (clean === '/portals/') return '政务公开数据源';
+  if (clean === '/tools/') return '实用工具工作台';
+  if (clean === '/cards/') return '全屏亮屏字卡库';
+  if (clean === '/guides/') return '全部深度指南';
+  if (clean === '/pulse/') return '现场实测动态';
+
+  const parts = clean.split('/').filter(Boolean);
+  if (parts.length === 2) {
+    const [col, slug] = parts;
+    if (col === 'guides' && GUIDE_BY_SLUG[slug]) return GUIDE_BY_SLUG[slug].titleZh;
+    if (col === 'tools') {
+      const t = UTILITY_TOOLS.find((x) => x.slug === slug);
+      if (t) return t.nameZh;
+    }
+    if (col === 'stacks') {
+      const s = STACKS.find((x) => x.slug === slug);
+      if (s) return s.titleZh;
+    }
+    if (col === 'compare') {
+      const c = COMPARISONS.find((x) => x.slug === slug);
+      if (c) return c.titleZh;
+    }
+    if (col === 'routes') {
+      const r = ROUTES.find((x) => x.slug === slug);
+      if (r) return r.titleZh;
+    }
+    if (col === 'for') {
+      const f = PERSONA_LANDINGS.find((x) => x.slug === slug);
+      if (f) return f.titleZh;
+    }
+    const ent = getEntity(col as Parameters<typeof getEntity>[0], slug);
+    if (ent) {
+      if (ent.cardData?.titleZh) return ent.cardData.titleZh;
+      return col === 'cities' ? `${ent.chineseName}城市指南` : ent.chineseName;
+    }
+  }
+  return fallback;
+}
 
 export function tLocale<T>(locale: Locale, en: T, zh: T): T {
   return locale === 'zh' ? zh : en;

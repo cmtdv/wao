@@ -87,7 +87,7 @@ function initMegaMenus(): void {
         if (e.pointerType === 'touch') return;
         clearTimers(item);
         const alreadyAnyOpen = items.some((x) => x.classList.contains('is-open'));
-        const delay = alreadyAnyOpen ? 120 : 500; // NN/g 0.5s initial hover intent delay
+        const delay = alreadyAnyOpen ? 50 : 120;
         openTimers.set(item, window.setTimeout(() => openItem(item), delay));
       });
 
@@ -97,9 +97,14 @@ function initMegaMenus(): void {
         closeTimers.set(item, window.setTimeout(() => {
           item.classList.remove('is-open');
           trigger.setAttribute('aria-expanded', 'false');
-        }, 500)); // NN/g 0.5s exit forgiveness delay
+        }, 220));
       });
     }
+
+    item.addEventListener('focusin', () => {
+      clearTimers(item);
+      openItem(item);
+    });
 
     item.addEventListener('focusout', (e) => {
       const next = e.relatedTarget as Node | null;
@@ -853,6 +858,7 @@ function initCardDeck(): void {
 
   // Render auto-pinned recently used cards on /cards/ wall & Command Palette
   const recent = readRecentCards();
+  const localeCardHref = (slug: string) => `${isZh() ? '/zh' : ''}/cards/${slug}/`;
   const recentBox = document.querySelector<HTMLElement>('[data-pe-recent-cards-box]');
   const recentList = document.querySelector<HTMLElement>('[data-pe-recent-cards-list]');
   if (recent.length > 0 && recentBox && recentList) {
@@ -860,7 +866,7 @@ function initCardDeck(): void {
     recentList.innerHTML = recent
       .map(
         (c) =>
-          `<a href="${c.href}" class="pe-mega-chip" style="border-color:var(--accent-seal);font-weight:600;">${
+          `<a href="${localeCardHref(c.slug)}" class="pe-mega-chip" style="border-color:var(--accent-seal);font-weight:600;">${
             isZh() ? c.titleZh : c.title
           }</a>`,
       )
@@ -872,7 +878,7 @@ function initCardDeck(): void {
     const latest = recent[0];
     if (!cmdQuickList.querySelector(`[data-recent-slug="${latest.slug}"]`)) {
       const a = document.createElement('a');
-      a.href = latest.href;
+      a.href = localeCardHref(latest.slug);
       a.className = 'pe-mega-chip';
       a.dataset.recentSlug = latest.slug;
       a.style.borderColor = 'var(--accent-seal)';
