@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 import cnFlagUrl from "circle-flags/flags/cn.svg?url";
 import gbFlagUrl from "circle-flags/flags/gb.svg?url";
 import { Button } from "@coss/button";
@@ -109,30 +109,30 @@ export function HeaderUtilityMenus({
           </MenuTrigger>
           <MenuPopup align="end">
             <MenuLinkItem
-              className="justify-between gap-4"
+              aria-current={locale === "en" ? "true" : undefined}
+              className={
+                locale === "en"
+                  ? "gap-2 bg-accent font-medium text-foreground"
+                  : "gap-2"
+              }
               href={enHref}
               hrefLang="en"
             >
-              <span className="inline-flex items-center gap-2">
-                <FlagEn />
-                <span>English</span>
-              </span>
-              {locale === "en" && (
-                <CheckIcon className="size-3.5 text-brand" />
-              )}
+              <FlagEn />
+              <span>English</span>
             </MenuLinkItem>
             <MenuLinkItem
-              className="justify-between gap-4"
+              aria-current={locale === "zh" ? "true" : undefined}
+              className={
+                locale === "zh"
+                  ? "gap-2 bg-accent font-medium text-foreground"
+                  : "gap-2"
+              }
               href={zhHref}
               hrefLang="zh-CN"
             >
-              <span className="inline-flex items-center gap-2">
-                <FlagCn />
-                <span>简体中文</span>
-              </span>
-              {locale === "zh" && (
-                <CheckIcon className="size-3.5 text-brand" />
-              )}
+              <FlagCn />
+              <span>简体中文</span>
             </MenuLinkItem>
           </MenuPopup>
         </Menu>
