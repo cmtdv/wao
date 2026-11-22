@@ -667,6 +667,29 @@ dialog::backdrop {
   line-height: 1.7;
 }
 
+.site-footer .lang-switch {
+  background: rgb(20 8 4 / 0.14);
+  border-color: var(--secondary-rule);
+}
+
+.site-footer .lang-switch-link {
+  color: var(--secondary-ink-muted);
+}
+
+.site-footer .lang-switch-link + .lang-switch-link {
+  border-inline-start-color: var(--secondary-rule);
+}
+
+.site-footer .lang-switch-link:hover {
+  background: rgb(255 242 232 / 0.12);
+  color: var(--secondary-ink);
+}
+
+.site-footer .lang-switch-link[aria-current="true"] {
+  background: rgb(255 242 232 / 0.22);
+  color: var(--secondary-ink);
+}
+
 .footer-col h2 {
   font-family: var(--font-body);
   font-size: var(--text-sm);
