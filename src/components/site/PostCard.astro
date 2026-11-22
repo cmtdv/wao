@@ -11,9 +11,10 @@ type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
 interface Props {
   post: Post;
   headingLevel?: 'h2' | 'h3';
+  showExcerpt?: boolean;
 }
 
-const { post, headingLevel = 'h2' } = Astro.props;
+const { post, headingLevel = 'h2', showExcerpt = true } = Astro.props;
 const locale = getLocaleFromContext(Astro);
 const slug = post.data.slug || post.id;
 const href = localePath(postPath(slug), locale);
@@ -62,7 +63,7 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
     <a href={href}>{post.data.title}</a>
   </Heading>
 
-  {post.data.excerpt && (
+  {showExcerpt && post.data.excerpt && (
     <p class="post-card-excerpt">{post.data.excerpt}</p>
   )}
 
