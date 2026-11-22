@@ -58,7 +58,11 @@ const year = new Date().getFullYear();
         {pages.slice(0, 4).map((entry) => (
           <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
         ))}
-        <li><a href="/_emdash/admin">{isZh ? '文章发布后台' : 'CMS Admin'}</a></li>
+        <li>
+          <a href={import.meta.env.DEV ? '/_emdash/api/setup/dev-bypass?content=0&redirect=/_emdash/admin' : '/_emdash/admin'}>
+            {isZh ? '文章发布后台' : 'CMS Admin'}
+          </a>
+        </li>
       </ul>
     </div>
   </div>
