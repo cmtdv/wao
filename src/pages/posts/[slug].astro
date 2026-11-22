@@ -281,6 +281,18 @@ const jsonLd = {
                 <button
                   type="button"
                   class="article-util-btn"
+                  aria-pressed="false"
+                  data-audio-launch
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+                  </svg>
+                  <span>{isZh ? '朗读' : 'Listen'}</span>
+                </button>
+                <span class="article-util-sep" aria-hidden="true"></span>
+                <button
+                  type="button"
+                  class="article-util-btn"
                   data-article-share
                   data-share-title={post.data.title}
                   data-share-url={canonicalUrl}
@@ -311,14 +323,16 @@ const jsonLd = {
             </div>
           </header>
 
-          {/* Dual-Mode Article Audio Player (MP3 <audio> or automatic Web Speech fallback) */}
+          {/* Compact On-Demand coss Toolbar Audio Mini-Player */}
           <div
-            class="article-audio-bar"
-            role="region"
-            aria-label={isZh ? '语音朗读本文' : 'Listen to this article'}
+            role="toolbar"
+            data-slot="toolbar"
+            class="article-audio-toolbar"
+            aria-label={isZh ? '语音朗读控制' : 'Audio playback controls'}
             data-article-audio
             data-audio-lang={isZh ? 'zh-CN' : 'en-US'}
             data-audio-est-sec={String(estimatedSeconds)}
+            hidden
           >
             <button
               type="button"
@@ -326,52 +340,44 @@ const jsonLd = {
               aria-label={isZh ? '播放本文语音朗读' : 'Play article audio'}
               data-audio-toggle
             >
-              <svg class="icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg class="icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <polygon points="6 4 20 12 6 20 6 4" />
               </svg>
-              <svg class="icon-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg class="icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <rect x="6" y="4" width="4" height="16" rx="1" />
                 <rect x="14" y="4" width="4" height="16" rx="1" />
               </svg>
             </button>
 
-            <div class="audio-center">
-              <div class="audio-label-row">
-                <span class="audio-heading" data-audio-status>
-                  {isZh ? '朗读本文' : 'Listen to this article'}
-                </span>
-                <span class="audio-time">
-                  <span data-audio-current>00:00</span>
-                  <span> / </span>
-                  <span data-audio-duration>{formatAudioTime(estimatedSeconds)}</span>
-                </span>
-              </div>
-              <div class="audio-track" aria-hidden="true">
-                <div class="audio-progress" data-audio-progress style="width: 0%;"></div>
-              </div>
+            <span class="audio-time">
+              <span data-audio-current>00:00</span>
+              <span aria-hidden="true">/</span>
+              <span data-audio-duration>{formatAudioTime(estimatedSeconds)}</span>
+            </span>
+
+            <div class="audio-track" aria-hidden="true">
+              <div class="audio-progress" data-audio-progress style="width: 0%;"></div>
             </div>
 
-            <div class="audio-controls">
-              <button
-                type="button"
-                class="audio-speed-btn"
-                aria-label={isZh ? '切换朗读倍速' : 'Change playback speed'}
-                data-audio-speed
-              >
-                1x
-              </button>
-              <button
-                type="button"
-                class="audio-stop-btn"
-                aria-label={isZh ? '停止朗读' : 'Stop audio'}
-                data-audio-stop
-                hidden
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <rect x="5" y="5" width="14" height="14" rx="2" />
-                </svg>
-              </button>
-            </div>
+            <button
+              type="button"
+              class="audio-speed-btn"
+              aria-label={isZh ? '切换朗读倍速' : 'Change playback speed'}
+              data-audio-speed
+            >
+              1x
+            </button>
+
+            <button
+              type="button"
+              class="audio-stop-btn"
+              aria-label={isZh ? '停止并收起朗读' : 'Stop and close audio'}
+              data-audio-stop
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           <TableOfContents items={tocItems} variant="mobile" />

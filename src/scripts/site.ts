@@ -1910,10 +1910,11 @@ function initArticleReaderTools(): void {
     });
   });
 
-  // 3. Dual-Mode Article Audio Player (MP3 <audio> or Web Speech API fallback)
+  // 3. Compact On-Demand coss Toolbar Audio Player
   const audioBar = document.querySelector<HTMLElement>('[data-article-audio]');
   if (!audioBar) return;
 
+  const launchBtn = document.querySelector<HTMLButtonElement>('[data-audio-launch]');
   const toggleBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-toggle]');
   const speedBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-speed]');
   const stopBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-stop]');
@@ -1960,8 +1961,10 @@ function initArticleReaderTools(): void {
 
   const updateUi = () => {
     const isPlaying = state === 'playing';
+    const isActive = state !== 'idle';
+    audioBar.hidden = !isActive;
+    launchBtn?.setAttribute('aria-pressed', String(isActive));
     toggleBtn.dataset.playing = String(isPlaying);
-    if (stopBtn) stopBtn.hidden = state === 'idle';
     toggleBtn.setAttribute(
       'aria-label',
       isPlaying
@@ -2033,7 +2036,7 @@ function initArticleReaderTools(): void {
     window.speechSynthesis.speak(utter);
   };
 
-  toggleBtn.addEventListener('click', () => {
+  const handleToggle = () => {
     if (!('speechSynthesis' in window)) {
       showSiteToast(zh ? '当前浏览器不支持语音朗读' : 'Speech playback is unavailable in this browser');
       return;
@@ -2063,7 +2066,10 @@ function initArticleReaderTools(): void {
       window.speechSynthesis.resume();
       updateUi();
     }
-  });
+  };
+
+  toggleBtn.addEventListener('click', handleToggle);
+  launchBtn?.addEventListener('click', handleToggle);
 
   speedBtn?.addEventListener('click', () => {
     rateIdx = (rateIdx + 1) % rates.length;
