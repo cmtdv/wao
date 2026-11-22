@@ -147,8 +147,8 @@ export function AlignUIOfficialShowcase({
 
         {/* Top Official Banner + Quick Jump to Pro Blocks & Templates */}
         <div className='flex flex-col gap-4'>
-          <Banner.Root variant='filled' status='information'>
-            <Banner.Content>
+          <Banner.Root variant='filled' status='information' className='h-auto min-h-11 py-2.5'>
+            <Banner.Content className='flex-wrap justify-center gap-y-1'>
               <Banner.Icon as={RiSparklingFill} />
               <span>
                 {isZh

@@ -6,6 +6,7 @@
 @import "./layout.css" layer(layout);
 @import "./components.css" layer(components);
 @import "./controls.css" layer(components);
+@import "./alignui-astro.css" layer(components);
 @import "./paradigm-e.css" layer(pages);
 @import "./alignui-tailwind.css";
 
