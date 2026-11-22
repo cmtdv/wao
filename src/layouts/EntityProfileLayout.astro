@@ -120,14 +120,16 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
       <div class="pe-entity-name-row">
         <h1>{isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title)}</h1>
         {!isZh && <span class="pe-entity-hanzi">{entity.chineseName}</span>}
-        <button
-          type="button"
-          class="pe-mega-chip"
-          data-pe-speak={entity.chineseName}
-          aria-label={isZh ? `朗读 ${entity.chineseName}` : `Play pronunciation for ${entity.chineseName}`}
-        >
-          {isZh ? '朗读发音' : entity.pinyin}
-        </button>
+        {!entity.cardData && (
+          <button
+            type="button"
+            class="pe-mega-chip"
+            data-pe-speak={entity.chineseName}
+            aria-label={isZh ? `朗读 ${entity.chineseName}` : `Play pronunciation for ${entity.chineseName}`}
+          >
+            {isZh ? '朗读发音' : entity.pinyin}
+          </button>
+        )}
       </div>
 
       <p class="archive-lead" style="margin-top:var(--space-3);">
@@ -140,28 +142,30 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
         ))}
       </div>
 
-      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4);">
-        {entity.primaryAmapTerm && (
-          <Button
-            variant="primary"
-            size="sm"
-            data-pe-copy={entity.primaryAmapTerm}
-            data-pe-copy-toast={`Copied Amap name: ${entity.primaryAmapTerm}`}
-          >
-            {isZh ? `复制高德中文名 (${entity.primaryAmapTerm})` : `Copy Amap Name (${entity.primaryAmapTerm})`}
-          </Button>
-        )}
-        {entity.cardSlug && (
-          <Button href={lp(`/cards/${entity.cardSlug}/`)} variant="secondary" size="sm">
-            {isZh ? '全屏出示司机/字卡' : 'Fullscreen Show Card'}
-          </Button>
-        )}
-        {entity.officialUrl && (
-          <Button href={entity.officialUrl} target="_blank" rel="noopener noreferrer" variant="ghost" size="sm">
-            {entity.officialLabel ?? (isZh ? '前往官方核验页 ↗' : 'Official Portal ↗')}
-          </Button>
-        )}
-      </div>
+      {(entity.primaryAmapTerm || (entity.cardSlug && !entity.cardData) || entity.officialUrl) && (
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4);">
+          {entity.primaryAmapTerm && (
+            <Button
+              variant="primary"
+              size="sm"
+              data-pe-copy={entity.primaryAmapTerm}
+              data-pe-copy-toast={`Copied Amap name: ${entity.primaryAmapTerm}`}
+            >
+              {isZh ? `复制高德中文名 (${entity.primaryAmapTerm})` : `Copy Amap Name (${entity.primaryAmapTerm})`}
+            </Button>
+          )}
+          {entity.cardSlug && !entity.cardData && (
+            <Button href={lp(`/cards/${entity.cardSlug}/`)} variant="secondary" size="sm">
+              {isZh ? '全屏出示司机/字卡' : 'Fullscreen Show Card'}
+            </Button>
+          )}
+          {entity.officialUrl && (
+            <Button href={entity.officialUrl} target="_blank" rel="noopener noreferrer" variant="ghost" size="sm">
+              {entity.officialLabel ?? (isZh ? '前往官方核验页 ↗' : 'Official Portal ↗')}
+            </Button>
+          )}
+        </div>
+      )}
     </header>
 
     {/* FIRST-EYE VISUAL ENHANCEMENT FOR /cards/ */}
