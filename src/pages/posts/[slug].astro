@@ -75,6 +75,24 @@ if (rawCategories.length > 0) {
 
 const primaryCategory = breadcrumbCats.at(-1) ?? rawCategories[0];
 
+// Native EmDash 1.5 Bylines (reads real author avatar & displayName when assigned in /_emdash/admin)
+const rawBylines = (post.data as unknown as {
+  bylines?: Array<{
+    displayName?: string;
+    avatarStorageKey?: string | null;
+    avatarAlt?: string | null;
+    websiteUrl?: string | null;
+  }>;
+}).bylines;
+const primaryByline = rawBylines?.[0];
+const authorName = primaryByline?.displayName || (isZh ? 'ChinaWao 编辑部' : 'ChinaWao Editorial');
+const authorAvatarSrc = primaryByline?.avatarStorageKey
+  ? `/_emdash/api/media/file/${primaryByline.avatarStorageKey}`
+  : null;
+const authorInitial = authorName.trim().charAt(0).toUpperCase() || 'C';
+const authorHref = primaryByline?.websiteUrl || lp('/pages/editorial-standards');
+const isExternalAuthorLink = /^https?:\/\//i.test(authorHref);
+
 const pubDate = post.data.publishedAt;
 const updDate = post.data.updatedAt;
 const isUpdated =
@@ -137,9 +155,9 @@ const jsonLd = {
       ...(primaryCategory ? { articleSection: primaryCategory.label } : {}),
       ...(tags.length > 0 ? { keywords: tags.map((t) => t.label).join(', ') } : {}),
       author: {
-        '@type': 'Organization',
-        name: isZh ? 'ChinaWao 编辑部' : 'ChinaWao Editorial',
-        url: `${Astro.url.origin}${lp('/pages/editorial-standards')}`,
+        '@type': primaryByline ? 'Person' : 'Organization',
+        name: authorName,
+        url: isExternalAuthorLink ? authorHref : `${Astro.url.origin}${authorHref}`,
       },
       publisher: { '@id': `${Astro.url.origin}/#organization` },
     },
@@ -196,8 +214,27 @@ const jsonLd = {
             {post.data.excerpt && <p class="article-dek">{post.data.excerpt}</p>}
 
             <div class="article-byline">
-              <a href={lp('/pages/editorial-standards')} class="byline-author">
-                {isZh ? 'ChinaWao 编辑部 · 一手信源核验' : 'ChinaWao Editorial · Source-Verified'}
+              <a
+                href={authorHref}
+                class="byline-author"
+                target={isExternalAuthorLink ? '_blank' : undefined}
+                rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
+              >
+                {authorAvatarSrc ? (
+                  <img
+                    src={authorAvatarSrc}
+                    alt={primaryByline?.avatarAlt || authorName}
+                    class="byline-avatar"
+                    width="24"
+                    height="24"
+                    loading="eager"
+                  />
+                ) : (
+                  <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">
+                    {authorInitial}
+                  </span>
+                )}
+                <span>{authorName}</span>
               </a>
               {displayDate && (
                 <>
