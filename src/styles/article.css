@@ -368,8 +368,8 @@
   }
 
   .article-figure--hero .article-figure-frame :is(picture, .emdash-image-media, img) {
-    aspect-ratio: 21 / 9;
-    max-height: 27rem;
+    aspect-ratio: 2 / 1;
+    max-height: 32rem;
   }
 
   @media (max-width: 768px) {
