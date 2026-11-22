@@ -1,14 +1,26 @@
 /* ==========================================================================
-   Search Page & 404 Editorial Detour (Full 1320px grid alignment)
+   Search Page & 404 Editorial Detour — Centered Single-Axis Reading Layout
    ========================================================================== */
 
 @layer pages {
   .search-shell {
-    padding-block: var(--space-7) var(--space-8);
+    max-width: 48rem;
+    margin-inline: auto;
+    padding-block: var(--space-6) var(--space-8);
   }
 
-  .search-content {
-    max-width: 54rem;
+  .search-header {
+    padding-bottom: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  .search-header .breadcrumb {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  .search-header h1 {
+    color: var(--ink-primary);
   }
 
   .search-form-bar {
@@ -16,10 +28,11 @@
     flex-wrap: nowrap;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
     background: var(--surface-raised);
-    border: 1px solid var(--rule-strong);
-    border-radius: var(--radius-xs);
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--coss-control-shadow);
     margin-bottom: var(--space-6);
   }
 
@@ -32,9 +45,10 @@
     min-width: 0;
     border: 0;
     background: transparent;
-    padding: 0.35rem 0;
-    font-family: var(--font-display);
-    font-size: 1.2rem;
+    padding: 0.4rem 0;
+    font-size: var(--text-md);
+    color: var(--ink-primary);
+    box-shadow: none;
   }
 
   .search-form-bar input:focus-visible {
@@ -46,7 +60,7 @@
   }
 
   .search-summary {
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--ink-secondary);
@@ -62,7 +76,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-5);
-    padding-block: var(--space-5);
+    padding-block: var(--space-4);
     border-bottom: 1px solid var(--rule-subtle);
   }
 
@@ -71,35 +85,43 @@
   }
 
   .search-item h2 {
-    margin-top: var(--space-2);
-    font-size: var(--text-xl);
-    line-height: 1.25;
+    margin-top: 0.3rem;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.3;
   }
 
-  /* 404 Page — Aligned to site 1320px grid with 30% Deep Pine editorial banner */
+  .search-suggestions {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .search-suggest-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-tertiary);
+    margin-bottom: var(--space-3);
+  }
+
+  /* 404 Page — Centered 44rem Editorial Block */
   .error-shell {
-    padding-block: var(--space-7) var(--space-8);
+    max-width: 44rem;
+    margin-inline: auto;
+    padding-block: var(--space-8);
   }
 
   .error-banner {
-    padding: clamp(1.5rem, 3.5vw, 2.5rem) 0;
-    background: transparent;
+    padding-block: var(--space-4);
     color: var(--ink-primary);
-    border-bottom: 1px solid var(--rule-strong);
-  }
-
-  .error-banner .eyebrow {
-    color: var(--ink-muted);
-  }
-
-  .error-banner .eyebrow--accent::before {
-    background: var(--accent-seal);
   }
 
   .error-banner h1 {
     margin-top: var(--space-2);
     color: var(--ink-primary);
-    max-width: 18ch;
   }
 
   .error-banner .archive-lead {
@@ -114,16 +136,6 @@
     gap: var(--space-4);
   }
 
-  .error-banner .editorial-link {
-    color: var(--ink-primary);
-    border-bottom-color: var(--rule-strong);
-  }
-
-  .error-banner .editorial-link:hover {
-    color: var(--accent-seal);
-    border-bottom-color: var(--accent-seal);
-  }
-
   @media (max-width: 560px) {
     .search-form-bar {
       gap: var(--space-2);
@@ -131,7 +143,7 @@
     }
 
     .search-form-bar input {
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
 
     .search-form-bar .btn {

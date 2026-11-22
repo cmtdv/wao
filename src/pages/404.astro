@@ -13,27 +13,23 @@ const lp = (path: string) => localePath(path, locale);
   title={isZh ? '页面未找到（404）' : 'Page not found'}
   description={isZh ? '请求的页面不存在或已迁移。' : 'The requested page could not be found.'}
 >
-  <div class="container error-shell">
-    <div class="error-banner">
-      <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
-        <span class="breadcrumb-sep" aria-hidden="true">/</span>
-        <span aria-current="page">404</span>
-      </nav>
-      <p class="eyebrow eyebrow--accent">{isZh ? '404 / 坐标之外' : '404 / Off the map'}</p>
-      <h1>{isZh ? '该路径尚未收录任何页面。' : 'This path doesn’t lead anywhere yet.'}</h1>
-      <p class="archive-lead">
-        {isZh ? '目标实录可能已迁移位置，或访问链接存在拼写误差。' : 'The dispatch may have moved, or the address might contain a typo.'}
-      </p>
-      <div class="error-actions">
-        <a href={lp('/')} class="btn btn--primary">
-          <span>{isZh ? '返回首页' : 'Back to front page'}</span>
-          <Icon name="arrow" size={16} />
-        </a>
-        <a href={lp('/posts/')} class="editorial-link">
-          <span>{isZh ? '浏览志刊' : 'Browse journal'}</span>
-          <Icon name="arrow" size={15} />
-        </a>
+  <div class="container">
+    <div class="error-shell">
+      <div class="error-banner">
+        <p class="meta-line">404</p>
+        <h1>{isZh ? '该路径下没有找到页面。' : 'This page could not be found.'}</h1>
+        <p class="archive-lead">
+          {isZh ? '目标文章可能已调整地址，或链接存在拼写误差。' : 'The article may have moved, or the address might contain a typo.'}
+        </p>
+        <div class="error-actions">
+          <a href={lp('/')} class="btn btn--primary">
+            <span>{isZh ? '返回首页' : 'Back to home'}</span>
+          </a>
+          <a href={lp('/posts/')} class="editorial-link">
+            <span>{isZh ? '浏览全部文章' : 'All articles'}</span>
+            <Icon name="arrow" size={15} />
+          </a>
+        </div>
       </div>
     </div>
   </div>

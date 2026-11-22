@@ -51,10 +51,10 @@ const totalCount =
 ---
 <Layout
   title={`#${term.label}`}
-  description={term.description || (isZh ? `带有 #${term.label} 标签的全部实录` : `Articles tagged ${term.label}`)}
+  description={term.description || (isZh ? `带有 #${term.label} 标签的全部文章` : `Articles tagged ${term.label}`)}
 >
   <div class="container dossier-shell">
-    <div class="dossier-header">
+    <header class="dossier-header">
       <div class="dossier-header-main">
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
@@ -63,17 +63,16 @@ const totalCount =
           <span class="breadcrumb-sep" aria-hidden="true">/</span>
           <span aria-current="page">#{term.label}</span>
         </nav>
-        <p class="eyebrow eyebrow--accent">{isZh ? '标签索引' : 'Tag Index'}</p>
         <h1>#{term.label}</h1>
         {term.description && <p class="archive-lead">{term.description}</p>}
       </div>
 
       <div class="dossier-stats">
         <span class="meta-line">
-          {isZh ? `${totalCount} 篇实录` : `${totalCount} ${totalCount === 1 ? 'dispatch' : 'dispatches'}`}
+          {isZh ? `${totalCount} 篇文章` : `${totalCount} ${totalCount === 1 ? 'article' : 'articles'}`}
         </span>
       </div>
-    </div>
+    </header>
 
     {result.entries.length > 0 ? (
       <div class="post-grid">
@@ -83,9 +82,9 @@ const totalCount =
       </div>
     ) : (
       <div class="empty-panel">
-        <h2>{isZh ? '该标签下暂无已发布文章。' : 'No published posts with this tag yet.'}</h2>
+        <h2>{isZh ? '该标签下暂无已发布文章。' : 'No published articles with this tag yet.'}</h2>
         <div class="empty-actions">
-          <a href={lp('/posts/')} class="btn">{isZh ? '浏览志刊' : 'Browse journal'}</a>
+          <a href={lp('/posts/')} class="btn">{isZh ? '浏览全部文章' : 'All articles'}</a>
         </div>
       </div>
     )}
