@@ -1825,3 +1825,258 @@ initCossNumberFields();
 initSegmentedAndPricing();
 initNotificationFeeds();
 initDemoFormsAndToasts();
+
+// ============================================================================
+// Article Reader Utilities: Share, Save (localStorage), & Listen Audio Bar
+// ============================================================================
+function initArticleReaderTools(): void {
+  const zh = isZhPage();
+
+  // 1. Share (native Web Share API -> clipboard fallback)
+  document.querySelectorAll<HTMLButtonElement>('[data-article-share]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const title = btn.dataset.shareTitle || document.title;
+      const url = btn.dataset.shareUrl || window.location.href;
+      if (typeof navigator.share === 'function' && window.matchMedia('(pointer: coarse)').matches) {
+        try {
+          await navigator.share({ title, url });
+          return;
+        } catch {
+          // User dismissed share sheet or fallback to clipboard
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        showSiteToast(zh ? '已复制本文链接' : 'Article link copied');
+      } catch {
+        showSiteToast(zh ? '请从地址栏复制链接' : 'Copy link from address bar');
+      }
+    });
+  });
+
+  // 2. Save / Bookmark (zero-login localStorage)
+  const SAVED_KEY = 'chinawao:saved-articles';
+  interface SavedItem {
+    slug: string;
+    title: string;
+    url: string;
+    savedAt: string;
+  }
+  const readSaved = (): SavedItem[] => {
+    try {
+      const raw = localStorage.getItem(SAVED_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+  const writeSaved = (items: SavedItem[]): void => {
+    try {
+      localStorage.setItem(SAVED_KEY, JSON.stringify(items));
+    } catch {
+      // Ignore storage quota errors
+    }
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-article-save]').forEach((btn) => {
+    const slug = btn.dataset.saveSlug || '';
+    const title = btn.dataset.saveTitle || document.title;
+    const url = btn.dataset.saveUrl || window.location.href;
+    const labelEl = btn.querySelector<HTMLElement>('[data-save-label]');
+
+    const renderSavedState = (saved: boolean) => {
+      btn.setAttribute('aria-pressed', String(saved));
+      if (labelEl) {
+        labelEl.textContent = saved ? (zh ? '已收藏' : 'Saved') : (zh ? '收藏' : 'Save');
+      }
+    };
+
+    renderSavedState(readSaved().some((item) => item.slug === slug));
+
+    btn.addEventListener('click', () => {
+      const list = readSaved();
+      const exists = list.some((item) => item.slug === slug);
+      const next = exists
+        ? list.filter((item) => item.slug !== slug)
+        : [{ slug, title, url, savedAt: new Date().toISOString() }, ...list];
+      writeSaved(next);
+      renderSavedState(!exists);
+      showSiteToast(
+        !exists
+          ? (zh ? '已收藏到本地阅读清单' : 'Saved to your reading list')
+          : (zh ? '已取消收藏' : 'Removed from saved'),
+      );
+    });
+  });
+
+  // 3. Dual-Mode Article Audio Player (MP3 <audio> or Web Speech API fallback)
+  const audioBar = document.querySelector<HTMLElement>('[data-article-audio]');
+  if (!audioBar) return;
+
+  const toggleBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-toggle]');
+  const speedBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-speed]');
+  const stopBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-stop]');
+  const statusEl = audioBar.querySelector<HTMLElement>('[data-audio-status]');
+  const currentEl = audioBar.querySelector<HTMLElement>('[data-audio-current]');
+  const durationEl = audioBar.querySelector<HTMLElement>('[data-audio-duration]');
+  const progressEl = audioBar.querySelector<HTMLElement>('[data-audio-progress]');
+  const proseEl = document.querySelector<HTMLElement>('[data-article-prose]');
+
+  if (!toggleBtn || !proseEl) return;
+
+  const lang = audioBar.dataset.audioLang || (zh ? 'zh-CN' : 'en-US');
+  const estTotalSec = Math.max(30, Number(audioBar.dataset.audioEstSec || '60'));
+  const rates = [1, 1.25, 1.5];
+  let rateIdx = 0;
+
+  const fmtTime = (sec: number): string => {
+    const clamped = Math.max(0, Math.floor(sec));
+    const m = Math.floor(clamped / 60);
+    const s = clamped % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  // Extract clean readable chunks from headings + paragraphs + list items
+  const extractChunks = (): string[] => {
+    const nodes = Array.from(proseEl.querySelectorAll<HTMLElement>('h2, h3, p, li, blockquote'));
+    const chunks: string[] = [];
+    const seen = new Set<HTMLElement>();
+    for (const el of nodes) {
+      if (el.closest('blockquote') && el.tagName === 'P') continue;
+      if (seen.has(el)) continue;
+      seen.add(el);
+      const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (text.length > 0) chunks.push(text);
+    }
+    return chunks;
+  };
+
+  let chunks: string[] = [];
+  let chunkIdx = 0;
+  let state: 'idle' | 'playing' | 'paused' = 'idle';
+  let elapsedSec = 0;
+  let timerId: number | null = null;
+
+  const updateUi = () => {
+    const isPlaying = state === 'playing';
+    toggleBtn.dataset.playing = String(isPlaying);
+    if (stopBtn) stopBtn.hidden = state === 'idle';
+    toggleBtn.setAttribute(
+      'aria-label',
+      isPlaying
+        ? (zh ? '暂停语音朗读' : 'Pause article audio')
+        : (zh ? '播放本文语音朗读' : 'Play article audio'),
+    );
+    if (statusEl) {
+      statusEl.textContent =
+        state === 'playing'
+          ? (zh ? '正在朗读本文…' : 'Listening…')
+          : state === 'paused'
+            ? (zh ? '已暂停朗读' : 'Paused')
+            : (zh ? '朗读本文' : 'Listen to this article');
+    }
+    const ratio = chunks.length > 0 && state !== 'idle'
+      ? Math.min(1, Math.max(elapsedSec / estTotalSec, chunkIdx / chunks.length))
+      : 0;
+    if (progressEl) progressEl.style.width = `${Math.round(ratio * 100)}%`;
+    if (currentEl) currentEl.textContent = fmtTime(state === 'idle' ? 0 : elapsedSec);
+    if (durationEl) durationEl.textContent = fmtTime(estTotalSec / rates[rateIdx]);
+  };
+
+  const clearTimer = () => {
+    if (timerId !== null) {
+      window.clearInterval(timerId);
+      timerId = null;
+    }
+  };
+
+  const stopAll = () => {
+    clearTimer();
+    try {
+      window.speechSynthesis?.cancel();
+    } catch {
+      // Ignore speechSynthesis errors
+    }
+    state = 'idle';
+    chunkIdx = 0;
+    elapsedSec = 0;
+    updateUi();
+  };
+
+  const speakCurrentChunk = () => {
+    if (!('speechSynthesis' in window)) {
+      showSiteToast(zh ? '当前浏览器不支持语音朗读' : 'Speech playback is unavailable in this browser');
+      stopAll();
+      return;
+    }
+    if (chunkIdx >= chunks.length) {
+      stopAll();
+      return;
+    }
+    const utter = new SpeechSynthesisUtterance(chunks[chunkIdx]);
+    utter.lang = lang;
+    utter.rate = rates[rateIdx];
+    utter.onend = () => {
+      if (state !== 'playing') return;
+      chunkIdx += 1;
+      updateUi();
+      if (chunkIdx < chunks.length) {
+        speakCurrentChunk();
+      } else {
+        stopAll();
+      }
+    };
+    utter.onerror = () => {
+      if (state === 'playing') stopAll();
+    };
+    window.speechSynthesis.speak(utter);
+  };
+
+  toggleBtn.addEventListener('click', () => {
+    if (!('speechSynthesis' in window)) {
+      showSiteToast(zh ? '当前浏览器不支持语音朗读' : 'Speech playback is unavailable in this browser');
+      return;
+    }
+    if (state === 'idle') {
+      chunks = extractChunks();
+      if (chunks.length === 0) return;
+      chunkIdx = 0;
+      elapsedSec = 0;
+      state = 'playing';
+      window.speechSynthesis.cancel();
+      clearTimer();
+      timerId = window.setInterval(() => {
+        if (state === 'playing') {
+          elapsedSec += 1;
+          updateUi();
+        }
+      }, 1000);
+      updateUi();
+      speakCurrentChunk();
+    } else if (state === 'playing') {
+      state = 'paused';
+      window.speechSynthesis.pause();
+      updateUi();
+    } else {
+      state = 'playing';
+      window.speechSynthesis.resume();
+      updateUi();
+    }
+  });
+
+  speedBtn?.addEventListener('click', () => {
+    rateIdx = (rateIdx + 1) % rates.length;
+    speedBtn.textContent = `${rates[rateIdx]}x`;
+    if (state === 'playing') {
+      window.speechSynthesis.cancel();
+      speakCurrentChunk();
+    }
+    updateUi();
+  });
+
+  stopBtn?.addEventListener('click', stopAll);
+  window.addEventListener('pagehide', stopAll);
+}
+
+initArticleReaderTools();

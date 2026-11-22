@@ -102,6 +102,12 @@ const displayDate = formatLocalizedDate(isUpdated ? updDate : pubDate, locale);
 const displayDateIso = (isUpdated ? updDate : pubDate)?.toISOString();
 
 const readingMinutes = estimateReadingMinutes(post.data.content);
+const estimatedSeconds = Math.max(45, (readingMinutes ?? 1) * 60);
+const formatAudioTime = (sec: number) => {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
 const tocItems = extractToc(post.data.content);
 const hasToc = tocItems.length > 0;
 
@@ -213,47 +219,144 @@ const jsonLd = {
 
             {post.data.excerpt && <p class="article-dek">{post.data.excerpt}</p>}
 
-            <div class="article-byline">
-              <a
-                href={authorHref}
-                class="byline-author"
-                target={isExternalAuthorLink ? '_blank' : undefined}
-                rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
-              >
-                {authorAvatarSrc ? (
-                  <img
-                    src={authorAvatarSrc}
-                    alt={primaryByline?.avatarAlt || authorName}
-                    class="byline-avatar"
-                    width="24"
-                    height="24"
-                    loading="eager"
-                  />
-                ) : (
-                  <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">
-                    {authorInitial}
-                  </span>
+            <div class="article-byline-row">
+              <div class="article-byline">
+                <a
+                  href={authorHref}
+                  class="byline-author"
+                  target={isExternalAuthorLink ? '_blank' : undefined}
+                  rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
+                >
+                  {authorAvatarSrc ? (
+                    <img
+                      src={authorAvatarSrc}
+                      alt={primaryByline?.avatarAlt || authorName}
+                      class="byline-avatar"
+                      width="24"
+                      height="24"
+                      loading="eager"
+                    />
+                  ) : (
+                    <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">
+                      {authorInitial}
+                    </span>
+                  )}
+                  <span>{authorName}</span>
+                </a>
+                {displayDate && (
+                  <>
+                    <span class="byline-sep" aria-hidden="true">·</span>
+                    <time datetime={displayDateIso}>
+                      {isUpdated
+                        ? (isZh ? `更新于 ${displayDate}` : `Updated ${displayDate}`)
+                        : displayDate}
+                    </time>
+                  </>
                 )}
-                <span>{authorName}</span>
-              </a>
-              {displayDate && (
-                <>
-                  <span class="byline-sep" aria-hidden="true">·</span>
-                  <time datetime={displayDateIso}>
-                    {isUpdated
-                      ? (isZh ? `更新于 ${displayDate}` : `Updated ${displayDate}`)
-                      : displayDate}
-                  </time>
-                </>
-              )}
-              {readingMinutes && (
-                <>
-                  <span class="byline-sep" aria-hidden="true">·</span>
-                  <span>{formatReadTime(readingMinutes, locale)}</span>
-                </>
-              )}
+                {readingMinutes && (
+                  <>
+                    <span class="byline-sep" aria-hidden="true">·</span>
+                    <span>{formatReadTime(readingMinutes, locale)}</span>
+                  </>
+                )}
+              </div>
+
+              <div class="article-utility-strip" role="group" aria-label={isZh ? '文章操作' : 'Article actions'}>
+                <button
+                  type="button"
+                  class="article-util-btn"
+                  data-article-share
+                  data-share-title={post.data.title}
+                  data-share-url={canonicalUrl}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                    <polyline points="16 6 12 2 8 6" />
+                    <line x1="12" y1="2" x2="12" y2="15" />
+                  </svg>
+                  <span>{isZh ? '分享' : 'Share'}</span>
+                </button>
+                <span class="article-util-sep" aria-hidden="true"></span>
+                <button
+                  type="button"
+                  class="article-util-btn"
+                  aria-pressed="false"
+                  data-article-save
+                  data-save-slug={slug}
+                  data-save-title={post.data.title}
+                  data-save-url={canonicalUrl}
+                >
+                  <svg class="icon-bookmark" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span data-save-label>{isZh ? '收藏' : 'Save'}</span>
+                </button>
+              </div>
             </div>
           </header>
+
+          {/* Dual-Mode Article Audio Player (MP3 <audio> or automatic Web Speech fallback) */}
+          <div
+            class="article-audio-bar"
+            role="region"
+            aria-label={isZh ? '语音朗读本文' : 'Listen to this article'}
+            data-article-audio
+            data-audio-lang={isZh ? 'zh-CN' : 'en-US'}
+            data-audio-est-sec={String(estimatedSeconds)}
+          >
+            <button
+              type="button"
+              class="audio-play-btn"
+              aria-label={isZh ? '播放本文语音朗读' : 'Play article audio'}
+              data-audio-toggle
+            >
+              <svg class="icon-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <polygon points="6 4 20 12 6 20 6 4" />
+              </svg>
+              <svg class="icon-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            </button>
+
+            <div class="audio-center">
+              <div class="audio-label-row">
+                <span class="audio-heading" data-audio-status>
+                  {isZh ? '朗读本文' : 'Listen to this article'}
+                </span>
+                <span class="audio-time">
+                  <span data-audio-current>00:00</span>
+                  <span> / </span>
+                  <span data-audio-duration>{formatAudioTime(estimatedSeconds)}</span>
+                </span>
+              </div>
+              <div class="audio-track" aria-hidden="true">
+                <div class="audio-progress" data-audio-progress style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="audio-controls">
+              <button
+                type="button"
+                class="audio-speed-btn"
+                aria-label={isZh ? '切换朗读倍速' : 'Change playback speed'}
+                data-audio-speed
+              >
+                1x
+              </button>
+              <button
+                type="button"
+                class="audio-stop-btn"
+                aria-label={isZh ? '停止朗读' : 'Stop audio'}
+                data-audio-stop
+                hidden
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <rect x="5" y="5" width="14" height="14" rx="2" />
+                </svg>
+              </button>
+            </div>
+          </div>
 
           {post.data.featured_image && (
             <figure class="article-figure">
@@ -291,14 +394,6 @@ const jsonLd = {
             ) : <span />}
 
             <div class="article-footer-actions">
-              <button
-                type="button"
-                class="article-action-btn"
-                data-pe-copy={canonicalUrl}
-                data-pe-copy-toast={isZh ? '已复制本文链接' : 'Article link copied'}
-              >
-                {isZh ? '复制链接' : 'Copy link'}
-              </button>
               <a href={lp('/pages/corrections-updates')} class="article-action-btn">
                 {isZh ? '反馈规则变动' : 'Report update'}
               </a>

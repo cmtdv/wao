@@ -103,8 +103,16 @@
     color: var(--ink-secondary);
   }
 
-  .article-byline {
+  .article-byline-row {
     margin-top: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .article-byline {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -113,6 +121,173 @@
     font-size: var(--text-xs);
     color: var(--ink-tertiary);
     font-variant-numeric: tabular-nums;
+  }
+
+  /* NBC-inspired borderless hairline-separated utility actions (Share | Save) */
+  .article-utility-strip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .article-util-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.45rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+  }
+
+  .article-util-btn:hover {
+    color: var(--ink-primary);
+    background: var(--surface-sunken);
+  }
+
+  .article-util-btn[aria-pressed="true"] {
+    color: var(--accent-seal-text);
+  }
+
+  .article-util-btn[aria-pressed="true"] .icon-bookmark {
+    fill: currentColor;
+  }
+
+  .article-util-sep {
+    width: 1px;
+    height: 0.9rem;
+    background: var(--border-strong);
+  }
+
+  /* Quiet coss-ui Dual-Mode Article Audio Bar */
+  .article-audio-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0.65rem 0.9rem;
+    margin-bottom: var(--space-5);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+  }
+
+  .audio-play-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    border: 0;
+    background: var(--ink-primary);
+    color: var(--background);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
+  }
+
+  .audio-play-btn:hover {
+    opacity: 0.88;
+  }
+
+  .audio-play-btn:active {
+    transform: scale(0.96);
+  }
+
+  .audio-play-btn .icon-pause {
+    display: none;
+  }
+
+  .audio-play-btn[data-playing="true"] .icon-play {
+    display: none;
+  }
+
+  .audio-play-btn[data-playing="true"] .icon-pause {
+    display: block;
+  }
+
+  .audio-center {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .audio-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .audio-heading {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--ink-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .audio-time {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .audio-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--border-strong);
+    overflow: hidden;
+  }
+
+  .audio-progress {
+    height: 100%;
+    border-radius: 9999px;
+    background: var(--accent-seal);
+    transition: width 220ms linear;
+  }
+
+  .audio-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .audio-speed-btn,
+  .audio-stop-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.75rem;
+    min-width: 2.15rem;
+    padding-inline: 0.45rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--background);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+
+  .audio-speed-btn:hover,
+  .audio-stop-btn:hover {
+    border-color: var(--ink-primary);
+    color: var(--ink-primary);
   }
 
   .byline-sep {
