@@ -187,6 +187,22 @@ const jsonLd = {
 
   <div class="container">
     <div class:list={['article-shell', !hasToc && 'article-shell--single']}>
+      {post.data.featured_image && (
+        <figure class="article-figure article-figure--hero">
+          <div class="article-figure-frame">
+            <Image
+              image={post.data.featured_image}
+              sizes="(max-width: 1080px) 100vw, 1024px"
+              priority
+              placeholder={false}
+            />
+          </div>
+          {post.data.featured_image.caption && (
+            <figcaption>{post.data.featured_image.caption}</figcaption>
+          )}
+        </figure>
+      )}
+
       <div class:list={['article-grid', hasToc && 'article-grid--with-toc']}>
         <article class="article-main">
           <header class="article-header">
@@ -357,22 +373,6 @@ const jsonLd = {
               </button>
             </div>
           </div>
-
-          {post.data.featured_image && (
-            <figure class="article-figure">
-              <div class="article-figure-frame">
-                <Image
-                  image={post.data.featured_image}
-                  sizes="(max-width: 960px) 100vw, 720px"
-                  priority
-                  placeholder={false}
-                />
-              </div>
-              {post.data.featured_image.caption && (
-                <figcaption>{post.data.featured_image.caption}</figcaption>
-              )}
-            </figure>
-          )}
 
           <TableOfContents items={tocItems} variant="mobile" />
 

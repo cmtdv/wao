@@ -339,10 +339,14 @@
   }
 
   /* ------------------------------------------------------------------------
-     Proportional Lead Figure — aligned strictly to the reading column width
+     Proportional Lead Figure — full inner-page width at top of article shell
      ------------------------------------------------------------------------ */
   .article-figure {
     margin: 0 0 var(--space-6);
+  }
+
+  .article-figure--hero {
+    margin-bottom: var(--space-7);
   }
 
   .article-figure-frame {
@@ -361,6 +365,18 @@
     aspect-ratio: 16 / 9;
     max-height: 23rem;
     object-fit: cover;
+  }
+
+  .article-figure--hero .article-figure-frame :is(picture, .emdash-image-media, img) {
+    aspect-ratio: 21 / 9;
+    max-height: 27rem;
+  }
+
+  @media (max-width: 768px) {
+    .article-figure--hero .article-figure-frame :is(picture, .emdash-image-media, img) {
+      aspect-ratio: 16 / 9;
+      max-height: 18rem;
+    }
   }
 
   .article-figure figcaption {
