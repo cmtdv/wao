@@ -1,9 +1,9 @@
 /* ==========================================================================
-   ChinaWao Editorial Design Tokens — 故宫宫墙体系 (Forbidden City Palace Wall)
-   - True 60 / 30 / 10 Traditional Chinese Color Architecture:
+   ChinaWao Editorial Design Tokens — 素宣烈焰朱砂体系 (Xuan Paper & Vermilion)
+   - True 60 / 30 / 10 Color Architecture:
        60% Dominant  — 素宣暖白 (#F7F3E9) / 夜读徽墨 (#141110) + 极轻宣纸凹凸
-       30% Secondary — 故宫宫墙绛红 (#732520) + 藕荷暖宣 (#EFE5DC)
-       10% Accent    — 琉璃泥金 (#B8893D / #E6BE72) + 正朱砂 (#C93B2B)
+       30% Secondary — 烈焰朱红 (#E43216 / #B8230D) + 藕荷暖宣 (#EFE5DC)
+       10% Accent    — 烈焰朱红 (#E43216) + 琉璃泥金 (#B8893D / #E6BE72)
    - Fonts: 100% SIL OFL 1.1 open-source self-hosted + CSS generic fallbacks
    ========================================================================== */
 
@@ -28,18 +28,18 @@
   --surface-hover: light-dark(#ede5d8, #28211e);
 
   /* ========================================================================
-     30% SECONDARY — 故宫宫墙绛红 + 藕荷暖宣 + 徽墨文字层级
+     30% SECONDARY — 烈焰朱红 + 藕荷暖宣 + 徽墨文字层级
      ======================================================================== */
-  --secondary-solid: light-dark(#732520, #4f1c18);
-  --secondary-solid-elevated: light-dark(#862d27, #61231e);
-  --secondary-ink: #fbf6ee;
+  --secondary-solid: light-dark(#e43216, #b8230d);
+  --secondary-solid-elevated: light-dark(#c8260e, #d42d13);
+  --secondary-ink: #ffffff;
   --secondary-solid-ink: var(--secondary-ink);
-  --secondary-ink-muted: #e6d5c8;
-  --secondary-rule: rgb(251 246 238 / 0.18);
-  --secondary-rule-strong: rgb(251 246 238 / 0.34);
+  --secondary-ink-muted: rgb(255 255 255 / 0.86);
+  --secondary-rule: rgb(255 255 255 / 0.28);
+  --secondary-rule-strong: rgb(255 255 255 / 0.45);
 
   --secondary-tint: light-dark(#efe5dc, #251d1a);
-  --secondary-tint-border: light-dark(rgb(115 37 32 / 0.2), rgb(230 213 200 / 0.2));
+  --secondary-tint-border: light-dark(rgb(228 50 22 / 0.2), rgb(255 180 166 / 0.22));
 
   --surface-sunken: var(--secondary-tint);
   --ink-primary: light-dark(#221b18, #f2ece1);
@@ -56,12 +56,12 @@
   --accent-gold-on-dark: #e6be72;
   --accent-gold-soft: light-dark(rgb(184 137 61 / 0.15), rgb(223 179 98 / 0.2));
 
-  --accent-seal: light-dark(#c93b2b, #c93d2e);
-  --accent-seal-hover: light-dark(#a82e20, #de4d3d);
-  --accent-seal-text: light-dark(#b83223, #ec7766);
-  --accent-seal-on-dark: var(--accent-gold-on-dark);
-  --accent-seal-soft: light-dark(rgb(201 59 43 / 0.1), rgb(236 119 102 / 0.16));
-  --accent-on-seal: #fcf9f2;
+  --accent-seal: light-dark(#e43216, #ec4326);
+  --accent-seal-hover: light-dark(#c8260e, #ff5b3e);
+  --accent-seal-text: light-dark(#c8260e, #ff7a61);
+  --accent-seal-on-dark: #ffffff;
+  --accent-seal-soft: light-dark(rgb(228 50 22 / 0.1), rgb(236 67 38 / 0.18));
+  --accent-on-seal: #ffffff;
   --accent-pine: var(--secondary-solid);
   --accent-on-pine: var(--secondary-ink);
 
@@ -147,11 +147,11 @@
   --grad-palace-band: linear-gradient(
     180deg,
     var(--secondary-solid) 0%,
-    light-dark(#641f1b, #431714) 100%
+    light-dark(#c8260e, #9c1d0a) 100%
   );
   --grad-seal-btn: linear-gradient(
     180deg,
-    light-dark(#d44332, #d44636) 0%,
+    light-dark(#eb3d1f, #f24d30) 0%,
     var(--accent-seal) 100%
   );
 
@@ -168,12 +168,12 @@
   --control-bg-disabled: light-dark(#eee8dc, #191513);
   --control-border: light-dark(#8e7f75, #7d6e64);
   --control-border-hover: light-dark(#5c4d45, #a99a8e);
-  --control-border-focus: light-dark(#b83223, #e6be72);
-  --control-border-error: light-dark(#9e2318, #f07b6e);
+  --control-border-focus: light-dark(#c8260e, #e6be72);
+  --control-border-error: light-dark(#c8260e, #ff7a61);
   --control-placeholder: light-dark(#695950, #a5968a);
 
-  --focus-ring-color: light-dark(#b83223, #e6be72);
-  --focus-ring-soft: light-dark(rgb(184 50 35 / 0.16), rgb(230 190 114 / 0.22));
+  --focus-ring-color: light-dark(#c8260e, #e6be72);
+  --focus-ring-soft: light-dark(rgb(228 50 22 / 0.18), rgb(230 190 114 / 0.22));
 
   /* Semantic Status Badges & Alerts (Info / Verified / Standby / Error) */
   --status-info-bg: light-dark(#edf1f5, #18212b);

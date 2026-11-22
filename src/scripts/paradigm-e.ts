@@ -770,7 +770,7 @@ function exportCardAsPng(card: CardExportPayload): void {
   const bg = isYellow ? '#0E0E0E' : '#111111';
   const fg = isYellow ? '#FFE135' : '#FFFFFF';
   const subFg = isYellow ? '#F6E79A' : '#D6D0C8';
-  const accent = isYellow ? '#FFE135' : '#C93B2B';
+  const accent = isYellow ? '#FFE135' : '#E43216';
 
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, canvas.width, canvas.height);

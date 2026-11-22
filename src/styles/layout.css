@@ -632,7 +632,7 @@ dialog::backdrop {
   margin-top: var(--space-9);
   background: var(--secondary-solid);
   color: var(--secondary-ink);
-  border-top: 2px solid var(--accent-gold);
+  border-top: 0;
   overflow: hidden;
 }
 
@@ -696,7 +696,9 @@ dialog::backdrop {
 
 .footer-links a:hover {
   opacity: 1;
-  color: var(--accent-seal-on-dark);
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
 }
 
 .footer-bottom {

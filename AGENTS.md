@@ -16,10 +16,10 @@
 
 ## 3. 视觉、字体与无障碍硬约束
 
-1. **宣纸质感与 60 / 30 / 10 故宫宫墙配色体系（日光素宣 / 夜读徽墨双模）**：
+1. **宣纸质感与 60 / 30 / 10 素宣烈焰朱红配色体系（日光素宣 / 夜读徽墨双模）**：
    - 60% 主底面：`--surface-canvas` / `--surface-raised`（素宣 `#F7F3E9` / 徽墨 `#141110`）+ 极轻宣纸微纹；
-   - 30% 辅助结构：`--secondary-solid` 故宫宫墙绛红（`#732520` / `#4F1C18`）+ `--secondary-tint` 藕荷暖宣（`#EFE5DC` / `#251D1A`）+ `1px` 细线网格；
-   - 10% 点缀强调：`--accent-gold` 琉璃泥金（`#B8893D` / `#E6BE72`）与 `--accent-seal` 正朱砂（`#C93B2B`）。
+   - 30% 辅助结构：`--secondary-solid` 烈焰朱红（`#E43216` / `#B8230D`）+ `--secondary-tint` 藕荷暖宣（`#EFE5DC` / `#251D1A`）+ `1px` 细线网格；
+   - 10% 点缀强调：`--accent-seal` 烈焰朱红（`#E43216` / 文字链接高对比 `#C8260E`）与 `--accent-gold` 琉璃泥金（`#B8893D` / `#E6BE72`）。
 2. **零商业版权字体**：
    - 仅使用自托管 SIL OFL 1.1 开源字体（`@fontsource/newsreader`、`@fontsource/dm-sans`、`@fontsource/jetbrains-mono`）及通用字体族回退（`serif` / `sans-serif` / `monospace`）；严禁出现商业字体名。
 3. **几何、对比度与键盘红线**：
