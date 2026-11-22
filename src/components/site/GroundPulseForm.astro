@@ -3,6 +3,8 @@ import Select from '@ui/forms/Select.astro';
 import RadioGroup from '@ui/forms/RadioGroup.astro';
 import Button from '@ui/actions/Button.astro';
 import Badge from '@ui/data-display/Badge.astro';
+import Frame from '@ui/coss/Frame.astro';
+import FramePanel from '@ui/coss/FramePanel.astro';
 import { getLocaleFromContext } from '@i18n/ui';
 
 interface Props {
@@ -80,56 +82,60 @@ const initialReports = isZh
     ];
 ---
 <div class:list={['cw-pulse-grid', className]} data-cw-pulse-root>
-  <form class="cw-pulse-form" data-cw-pulse-form novalidate>
-    <Select
-      id={`${idPrefix}-topic`}
-      name="topic"
-      label={isZh ? '实测服务或流程' : 'Service or Procedure Tested'}
-      options={topicOptions}
-    />
+  <Frame>
+    <FramePanel>
+      <form style="display:grid;gap:var(--space-4);" data-cw-pulse-form novalidate>
+        <Select
+          id={`${idPrefix}-topic`}
+          name="topic"
+          label={isZh ? '实测服务或流程' : 'Service or Procedure Tested'}
+          options={topicOptions}
+        />
 
-    <div class="cw-field">
-      <label class="cw-label" for={`${idPrefix}-city`}>
-        <span>{isZh ? '城市 / 口岸 / 场馆' : 'City / Port / Venue'}</span>
-        <span class="cw-required" aria-hidden="true">*</span>
-      </label>
-      <input
-        id={`${idPrefix}-city`}
-        name="city"
-        type="text"
-        required
-        minlength="2"
-        placeholder={isZh ? '如：成都东站、上海浦东 T2' : 'e.g. Chengdu East Station or Pudong T2'}
-        class="cw-input"
-      />
-    </div>
+        <div class="cw-field">
+          <label class="cw-label" for={`${idPrefix}-city`}>
+            <span>{isZh ? '城市 / 口岸 / 场馆' : 'City / Port / Venue'}</span>
+            <span class="cw-required" aria-hidden="true">*</span>
+          </label>
+          <input
+            id={`${idPrefix}-city`}
+            name="city"
+            type="text"
+            required
+            minlength="2"
+            placeholder={isZh ? '如：成都东站、上海浦东 T2' : 'e.g. Chengdu East Station or Pudong T2'}
+            class="cw-input"
+          />
+        </div>
 
-    <RadioGroup
-      name={`${idPrefix}-outcome`}
-      legend={isZh ? '现场实测结论' : 'On-the-Ground Outcome'}
-      options={outcomeOptions}
-      inline
-    />
+        <RadioGroup
+          name={`${idPrefix}-outcome`}
+          legend={isZh ? '现场实测结论' : 'On-the-Ground Outcome'}
+          options={outcomeOptions}
+          inline
+        />
 
-    <div class="cw-field">
-      <label class="cw-label" for={`${idPrefix}-note`}>
-        <span>{isZh ? '现场细节 / 勘误说明' : 'Field Note / Correction Detail'}</span>
-        <span class="cw-required" aria-hidden="true">*</span>
-      </label>
-      <textarea
-        id={`${idPrefix}-note`}
-        name="note"
-        required
-        minlength="10"
-        placeholder={isZh ? '写明具体柜台、航站楼、核验耗时或费率细节…' : 'Share exact counter, terminal, or fee threshold you observed...'}
-        class="cw-input cw-textarea"
-      ></textarea>
-    </div>
+        <div class="cw-field">
+          <label class="cw-label" for={`${idPrefix}-note`}>
+            <span>{isZh ? '现场细节 / 勘误说明' : 'Field Note / Correction Detail'}</span>
+            <span class="cw-required" aria-hidden="true">*</span>
+          </label>
+          <textarea
+            id={`${idPrefix}-note`}
+            name="note"
+            required
+            minlength="10"
+            placeholder={isZh ? '写明具体柜台、航站楼、核验耗时或费率细节…' : 'Share exact counter, terminal, or fee threshold you observed...'}
+            class="cw-input cw-textarea"
+          ></textarea>
+        </div>
 
-    <div style="display:flex;justify-content:flex-end;">
-      <Button type="submit" variant="primary">{isZh ? '提交现场实测' : 'Submit Field Report'}</Button>
-    </div>
-  </form>
+        <div style="display:flex;justify-content:flex-end;">
+          <Button type="submit" variant="primary">{isZh ? '提交现场实测' : 'Submit Field Report'}</Button>
+        </div>
+      </form>
+    </FramePanel>
+  </Frame>
 
   <div class="cw-pulse-feed" data-cw-pulse-feed aria-live="polite">
     <span class="rail-heading">{isZh ? '近期现场实测' : 'Recent Field Reports'}</span>

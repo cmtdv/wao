@@ -1,30 +1,23 @@
 ---
+/**
+ * Pure coss ui Design System Showcase — Branch B (Astro Zero-React Edition)
+ * Zero AlignUI legacy components or Pro Blocks. Strictly organized around coss.com/ui primitives.
+ */
 import Layout from '@layouts/Layout.astro';
 import Icon from '@site/Icon.astro';
 import Button from '@ui/actions/Button.astro';
-import ButtonGroup from '@ui/actions/ButtonGroup.astro';
-import CompactButton from '@ui/actions/CompactButton.astro';
-import LinkButton from '@ui/actions/LinkButton.astro';
 import Avatar from '@ui/data-display/Avatar.astro';
-import AvatarGroup from '@ui/data-display/AvatarGroup.astro';
 import Badge from '@ui/data-display/Badge.astro';
 import DataTable from '@ui/data-display/DataTable.astro';
 import Divider from '@ui/data-display/Divider.astro';
 import Kbd from '@ui/data-display/Kbd.astro';
 import ProgressBar from '@ui/data-display/ProgressBar.astro';
-import ProgressCircle from '@ui/data-display/ProgressCircle.astro';
-import Rating from '@ui/data-display/Rating.astro';
 import Skeleton from '@ui/data-display/Skeleton.astro';
-import Tag from '@ui/data-display/Tag.astro';
 import Alert from '@ui/feedback/Alert.astro';
-import Banner from '@ui/feedback/Banner.astro';
-import NotificationCard from '@ui/feedback/NotificationCard.astro';
 import Tooltip from '@ui/feedback/Tooltip.astro';
 import Checkbox from '@ui/forms/Checkbox.astro';
-import ColorPicker from '@ui/forms/ColorPicker.astro';
 import DateInput from '@ui/forms/DateInput.astro';
 import DigitInput from '@ui/forms/DigitInput.astro';
-import FileUpload from '@ui/forms/FileUpload.astro';
 import Input from '@ui/forms/Input.astro';
 import RadioGroup from '@ui/forms/RadioGroup.astro';
 import Select from '@ui/forms/Select.astro';
@@ -33,9 +26,7 @@ import Textarea from '@ui/forms/Textarea.astro';
 import Accordion, { type AccordionItem } from '@ui/navigation/Accordion.astro';
 import Breadcrumb from '@ui/navigation/Breadcrumb.astro';
 import SegmentedControl from '@ui/navigation/SegmentedControl.astro';
-import Stepper, { type StepItem } from '@ui/navigation/Stepper.astro';
 import Tabs from '@ui/navigation/Tabs.astro';
-import VerticalTabs, { type VerticalTabItem } from '@ui/navigation/VerticalTabs.astro';
 import Drawer from '@ui/overlays/Drawer.astro';
 import DropdownMenu from '@ui/overlays/DropdownMenu.astro';
 import Modal from '@ui/overlays/Modal.astro';
@@ -54,12 +45,7 @@ import Sheet from '@ui/coss/Sheet.astro';
 import Spinner from '@ui/coss/Spinner.astro';
 import Switch from '@ui/coss/Switch.astro';
 import Toolbar from '@ui/coss/Toolbar.astro';
-import {
-  BASE_PRIMITIVE_COVERAGE,
-  DS_FAQ_ITEMS,
-  DS_HOW_STEPS,
-  DS_VTAB_ITEMS,
-} from '@data/design-system-catalog';
+import { COSS_ASTRO_COMPONENTS, DS_FAQ_ITEMS } from '@data/design-system-catalog';
 import { getVisaMatrixTable } from '@data/mock-portal-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import '@styles/specialty.css';
@@ -75,15 +61,15 @@ const swatches = isZh
       { name: '纯净画布 (#FFFFFF / #141414)', token: '--background', bg: 'var(--background)' },
       { name: '浮起卡片面板', token: '--card', bg: 'var(--card)' },
       { name: '静音托盘 (Frame Tray)', token: '--muted', bg: 'var(--muted)' },
-      { name: '中性主色 (#262626 / #F5F5F5)', token: '--primary', bg: 'var(--primary)' },
+      { name: '中性实心色 (#262626 / #F5F5F5)', token: '--primary', bg: 'var(--primary)' },
       { name: '唯一品牌朱砂红 (#E43216)', token: '--brand', bg: 'var(--brand)' },
-      { name: '精细切边边框', token: '--border-strong', bg: 'var(--border-strong)' },
+      { name: '微切边边框', token: '--border-strong', bg: 'var(--border-strong)' },
       { name: '核验翡翠绿', token: '--status-verified-ink', bg: 'var(--status-verified-ink)' },
       { name: '备用琥珀黄', token: '--status-standby-ink', bg: 'var(--status-standby-ink)' },
     ]
   : [
       { name: 'Pure Canvas (#FFFFFF / #141414)', token: '--background', bg: 'var(--background)' },
-      { name: 'Elevated Card Panel', token: '--card', bg: 'var(--card)' },
+      { name: 'Elevated Card', token: '--card', bg: 'var(--card)' },
       { name: 'Muted Frame Tray', token: '--muted', bg: 'var(--muted)' },
       { name: 'Neutral Primary (#262626 / #F5F5F5)', token: '--primary', bg: 'var(--primary)' },
       { name: 'Single Brand Accent (#E43216)', token: '--brand', bg: 'var(--brand)' },
@@ -95,129 +81,74 @@ const swatches = isZh
 const dsTabs = isZh
   ? [
       {
-        id: 'spec',
-        label: 'coss 几何与微切边',
-        heading: 'bg-clip-padding + 1px 内切微高光',
-        body: '全部交互控件统一采用 10px（--radius-lg）至 16px（--radius-2xl）圆角体系、半透明精细边框与 1px 内切阴影，在纯净白（#FFFFFF）与深碳灰（#141414）双模态下严格满足 WCAG AA 对比度。',
+        id: 'surfaces',
+        label: 'Frame 与微切边卡片',
+        heading: 'rounded-2xl 静音托盘 + bg-clip-padding 浮起面板',
+        body: '完全清退旧版 AlignUI 遗留区块，严格遵循 coss.com/ui 外托盘（bg-muted p-1 rounded-2xl）嵌套内面板（rounded-xl bg-clip-padding）的标志性空间层次。',
       },
       {
-        id: 'a11y',
-        label: '原生 Web 平台语义',
-        heading: '零 React 水合负担，100% 原生 Astro',
-        body: '将 coss ui 的 54 项视觉与交互模式完整移植为原生 Astro 组件：基于 <dialog closedby="any">、Popover API、appearance: base-select、commandfor 触发器与 ARIA 实时播报。',
+        id: 'native',
+        label: '零 React 原生 Astro',
+        heading: '原生 HTML/CSS 驱动（路线 B）',
+        body: '本分支完全不加载客户端 React 运行时，依托原生 <dialog closedby="any">、Popover API、appearance: base-select 与轻量 TS 实现交互。',
       },
       {
-        id: 'license',
-        label: '开源字体与单色克制',
-        heading: '单一 #E43216 品牌强调色 + SIL OFL 字体',
-        body: '全站仅保留 #E43216 作为唯一品牌强调色，每屏至多一处实心主操作按钮；字体严格自托管 DM Sans、Newsreader 与 JetBrains Mono，零商业版权负债。',
+        id: 'accent',
+        label: '单一 #E43216 强调色',
+        heading: '克制的主次视觉焦点',
+        body: '全站仅保留 #E43216 作为唯一品牌强调色，每块独立容器至多保留 1 个实心主按钮，其余操作退居描边或静音层级。',
       },
     ]
   : [
       {
-        id: 'spec',
-        label: 'coss Bevel & Geometry',
-        heading: 'bg-clip-padding + 1px Inner Bevel Craft',
-        body: 'Controls share 10px (--radius-lg) to 16px (--radius-2xl) radii, crisp translucent borders, and 1px inner bevel highlights with verified WCAG AA contrast across Pure White (#FFFFFF) and Deep Neutral (#141414).',
+        id: 'surfaces',
+        label: 'Frame & Bevel Surfaces',
+        heading: 'Muted Outer Trays + Crisp bg-clip-padding Panels',
+        body: 'Purged of all legacy AlignUI blocks—strictly follows coss.com/ui outer Frame trays (bg-muted p-1 rounded-2xl) cradling inner FramePanels (rounded-xl).',
       },
       {
-        id: 'a11y',
-        label: 'Zero-Hydration Native Astro',
-        heading: 'Native Platform Semantics Without React Overhead',
-        body: 'Ports coss ui’s 54 component patterns into zero-hydration Astro primitives powered by <dialog closedby="any">, Popover API, appearance: base-select, commandfor invokers, and ARIA live regions.',
+        id: 'native',
+        label: 'Zero-React Native Astro',
+        heading: 'Powered by Modern Web Platform Primitives (Branch B)',
+        body: 'Ships zero React client runtime, relying on native <dialog closedby="any">, Popover API, appearance: base-select, and lightweight TypeScript.',
       },
       {
-        id: 'license',
-        label: 'Brand Restraint & Open Fonts',
-        heading: 'Single #E43216 Brand Accent + SIL OFL Fonts',
-        body: 'Retains #E43216 as the sole brand accent (at most one solid primary CTA per view) paired with self-hosted DM Sans, Newsreader, and JetBrains Mono.',
+        id: 'accent',
+        label: 'Single #E43216 Accent',
+        heading: 'Disciplined Focal Hierarchy',
+        body: 'Retains #E43216 as the sole brand accent with at most one solid primary action per surface.',
       },
     ];
 
 const faqItems: AccordionItem[] = isZh
   ? [
       {
-        question: '240 小时过境免签是否允许跨省乘坐高铁？',
-        answer: '允许。根据国家移民管理局现行政策，符合条件的过境旅客可在 24 个省份规定停留区域内跨省通行，并从 60 个适用口岸任一离境，前提是持有前往第三国或地区（含港澳台）的联程确定客票。',
-        badge: '9.1 签证入境',
+        question: '路线 B（纯 .astro 版 coss ui）与旧版相比清理了什么？',
+        answer: '已彻底删除旧版 AlignUI 对标的 39 个营销/定价/招聘 Pro 区块、blocks.css、ui-kit.css 以及 FancyButton、ColorPicker、Rating、VerticalTabs 等非 coss 组件，仅保留纯粹的 coss.com/ui 组件体系。',
+        badge: '路线 B 架构',
         open: true,
       },
       {
-        question: '为什么部分政务平台标记为反爬拦截官方备用源？',
-        answer: '部分部委及省市政务公开数据库对自动化采集开启瑞数 412、创宇 521 或动态令牌 202 防护，但在人类浏览器中可正常免费查询。ChinaWao 如实记录其状态，绝不静默丢弃官方一手数据源。',
-        badge: '12.8 公开数据',
-      },
-      {
-        question: '这套原生 Astro 版 coss ui 组件是否引入客户端框架体积？',
-        answer: '零客户端 UI 框架体积。所有卡片、托盘（Frame）、输入组合（InputGroup）、步进数字框（NumberField）、侧滑抽屉（Sheet）均由原生 HTML/CSS 与轻量渐进增强脚本驱动。',
-        badge: '架构规范',
+        question: '240 小时过境免签是否允许跨省乘坐高铁？',
+        answer: '允许。符合条件的过境旅客持确定日期及座位的第三国/地区联程客票，可在 24 个省份规定停留区域内跨省通行并从 60 个适用口岸任一离境。',
+        badge: '9.1 签证入境',
       },
     ]
   : DS_FAQ_ITEMS;
-
-const howSteps: StepItem[] = isZh
-  ? [
-      { title: '一手源定位', description: '锁定部委、铁路、博物馆或省市政务公开数据库原始 URL。', status: 'complete' },
-      { title: '条款逐字核对', description: '直接在官方页面核验停留天数、限额、开放时间与收费标准。', status: 'complete' },
-      { title: '一线实操验证', description: '以真实外籍护照场景交叉验证绑卡、进站与预约流程。', status: 'current' },
-      { title: '时间戳归档发布', description: '写入 EmDash 内容库与 OKF 核验台账，附明确核验日期。', status: 'upcoming' },
-    ]
-  : DS_HOW_STEPS;
-
-const vtabItems: VerticalTabItem[] = isZh
-  ? [
-      {
-        id: 'rail',
-        label: '铁路 12306 高铁购票',
-        meta: '9.4 · 提前 15 天起售',
-        heading: '外籍护照在线核验与刷证进站',
-        body: '车票提前 15 个自然日按车站梯队分批起售。上传清晰护照资料页后，在线身份核验通常在 5–15 分钟内完成。',
-        points: [
-          '主要枢纽车站自助检票闸机支持直接刷外籍护照原件进站',
-          '一等座与商务座同二等座同步放票',
-          '开车前 48 小时以上线上免费改签一次',
-        ],
-      },
-      {
-        id: 'payments',
-        label: '移动扫码支付',
-        meta: '9.2 · 支付宝与微信支付',
-        heading: '外卡直绑 Visa 与 Mastercard',
-        body: '支付宝与微信支付均支持直接绑定境外银行卡扫商户二维码消费，无需开立中国内地银行账户。',
-        points: [
-          '单笔人民币 200 元及以下免收 3% 国际卡手续费',
-          '单笔超过 200 元按 3% 收取国际卡组织通道费',
-          '建议在出发前完成护照实名认证与首次绑卡测试',
-        ],
-      },
-      {
-        id: 'tax',
-        label: '离境退税即买即退',
-        meta: '9.8 · 最高实得约 9%',
-        heading: '退税商店单日同店满 ¥200 即可申领',
-        body: '境外旅客同日在同一退税商店购买退税物品满 200 元人民币，可申领 11% 增值税退税（扣除约 2% 代理手续费后实得约 9%）。',
-        points: [
-          '结账时出示护照开具《离境退税申请单》与增值税普通发票',
-          '未拆封退税物品需在离境口岸接受海关核验',
-          '核心商圈支持信用卡预授权市区即买即退人民币现金',
-        ],
-      },
-    ]
-  : DS_VTAB_ITEMS;
 ---
 <Layout
-  title={isZh ? '设计系统 · coss ui 原生 Astro 组件库' : 'Design System · coss ui Native Astro Kit'}
+  title={isZh ? '设计系统 · coss ui 纯 Astro 版（路线 B）' : 'Design System · Pure Astro coss ui (Branch B)'}
   description={
     isZh
-      ? 'ChinaWao 原生 Astro 版 coss ui 设计系统——纯净白与深碳灰双模态令牌、Frame/Card 微切边容器及 56 项交互组件。'
-      : 'ChinaWao coss ui (Astro Native Edition) — Pure White & Deep Neutral tokens, Frame/Card bevel surfaces, and 56 interactive primitives.'
+      ? '彻底清退 AlignUI 遗产后的纯原生 Astro 版 coss ui 组件库（#FFFFFF / #141414 中立表面 + #E43216 单一强调色）。'
+      : 'Pure native Astro coss ui component library purged of legacy AlignUI blocks (#FFFFFF / #141414 neutral surfaces + #E43216 accent).'
   }
 >
   <div class="container ds-shell">
     <Breadcrumb
       items={[
         { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? '设计系统' : 'Design System' },
+        { label: isZh ? 'coss ui 设计系统（路线 B）' : 'coss ui Design System (Branch B)' },
       ]}
       jsonLd
     />
@@ -225,57 +156,43 @@ const vtabItems: VerticalTabItem[] = isZh
     <header class="portal-hero">
       <div class="portal-hero-head">
         <div class="portal-hero-copy">
-          <span class="kicker">{isZh ? 'coss ui · 原生 Astro 零水合组件系统' : 'coss ui · Astro Native Zero-Hydration System'}</span>
-          <h1>{isZh ? '纯净中立画布与 56 项原生组件套件' : 'Crisp Neutral Surfaces & 56 Native Primitives'}</h1>
+          <span class="kicker">{isZh ? '路线 B · 纯 .astro 零 React 复刻版（已彻底清退 AlignUI）' : 'Branch B · Pure .astro Zero-React Edition (AlignUI Purged)'}</span>
+          <h1>{isZh ? 'coss ui 纯净原生组件规范' : 'coss ui Pure Native Primitives'}</h1>
           <p class="portal-lead">
             {isZh
-              ? '基于 coss ui 视觉工程规范重构的原生 Astro 组件体系：纯净白（#FFFFFF）与深碳灰（#141414）底色、bg-clip-padding 微切边阴影、Frame 静音托盘，以及全站唯一的 #E43216 品牌强调色。'
-              : 'Native Astro implementation of coss ui craft: pure white (#FFFFFF) and deep neutral (#141414) surfaces, bg-clip-padding 1px inner bevels, muted Frame trays, and #E43216 as the sole brand accent.'}
+              ? '已完全移除旧版 AlignUI 遗留的 39 类营销区块与非标组件，仅按 coss.com/ui 官方结构保留纯净白（#FFFFFF）/ 深碳灰（#141414）表面、Frame 静音托盘与唯一 #E43216 品牌色。'
+              : 'Completely purged of legacy AlignUI blocks and stylesheets—retaining only coss.com/ui surfaces, Frame trays, crisp bevel controls, and #E43216 as the sole brand accent.'}
           </p>
-          <div class="ds-row" style="margin-top: var(--space-3);">
-            <Button href={lp('/design-system/')} variant="primary" size="sm">{isZh ? 'coss 基础组件库 (56)' : 'coss Base Kit (56)'}</Button>
-            <Button href={lp('/design-system/blocks/')} variant="outline" size="sm">{isZh ? '页面区块展台 (39) →' : 'Page Blocks Showcase (39) →'}</Button>
-          </div>
         </div>
         <div class="portal-hero-meta">
           <div class="portal-stat-box">
-            <span class="kicker">{isZh ? '组件覆盖' : 'Primitives'}</span>
-            <strong>56 / 56</strong>
-            <span class="portal-stat-note">{isZh ? 'coss 原生 Astro 组件' : 'coss Astro primitives'}</span>
+            <span class="kicker">{isZh ? '当前分支' : 'Branch'}</span>
+            <strong>Route B</strong>
+            <span class="portal-stat-note">{isZh ? '纯 .astro 零 React' : 'Pure .astro · 0 KB React'}</span>
           </div>
           <div class="portal-stat-box">
-            <span class="kicker">{isZh ? '页面区块' : 'Blocks'}</span>
-            <strong>39 / 39</strong>
-            <span class="portal-stat-note">{isZh ? '组合区块全覆盖' : 'Composed page blocks'}</span>
+            <span class="kicker">{isZh ? 'coss 原语' : 'Primitives'}</span>
+            <strong>{COSS_ASTRO_COMPONENTS.length}</strong>
+            <span class="portal-stat-note">{isZh ? '零 AlignUI 遗留' : 'Zero AlignUI legacy'}</span>
           </div>
         </div>
       </div>
 
-      <nav class="pillar-jump-bar" aria-label={isZh ? '跳转至设计系统章节' : 'Jump to design system section'}>
-        <a href="#ds-tokens" class="pillar-jump-link">{isZh ? '色彩与字体令牌' : 'Tokens & Type'}</a>
-        <a href="#ds-coss-surfaces" class="pillar-jump-link">{isZh ? 'coss 核心容器与控件' : 'coss Surfaces'}</a>
-        <a href="#ds-actions" class="pillar-jump-link">{isZh ? '按钮体系' : 'Buttons'}</a>
-        <a href="#ds-data-display" class="pillar-jump-link">{isZh ? '数据展示' : 'Data Display'}</a>
-        <a href="#ds-table" class="pillar-jump-link">{isZh ? '可排序表格' : 'DataTable'}</a>
-        <a href="#ds-progress" class="pillar-jump-link">{isZh ? '进度与评分' : 'Progress & Rating'}</a>
-        <a href="#ds-forms" class="pillar-jump-link">{isZh ? '核心表单' : 'Core Forms'}</a>
-        <a href="#ds-advanced-forms" class="pillar-jump-link">{isZh ? '高级表单' : 'Advanced Forms'}</a>
-        <a href="#ds-feedback" class="pillar-jump-link">{isZh ? '状态反馈' : 'Feedback'}</a>
-        <a href="#ds-navigation" class="pillar-jump-link">{isZh ? '导航结构' : 'Navigation'}</a>
-        <a href="#ds-overlays" class="pillar-jump-link">{isZh ? '顶层浮窗' : 'Overlays'}</a>
+      <nav class="pillar-jump-bar" aria-label={isZh ? '跳转至章节' : 'Jump to section'}>
+        <a href="#coss-tokens" class="pillar-jump-link">{isZh ? '令牌与色彩' : 'Tokens'}</a>
+        <a href="#coss-surfaces" class="pillar-jump-link">{isZh ? '容器表面 (Frame / Card)' : 'Surfaces'}</a>
+        <a href="#coss-actions" class="pillar-jump-link">{isZh ? '按钮与工具条' : 'Actions & Toolbar'}</a>
+        <a href="#coss-forms" class="pillar-jump-link">{isZh ? '表单与输入组合' : 'Forms & Inputs'}</a>
+        <a href="#coss-data" class="pillar-jump-link">{isZh ? '状态与数据展示' : 'Data & Status'}</a>
+        <a href="#coss-table" class="pillar-jump-link">{isZh ? '数据表格' : 'Table'}</a>
+        <a href="#coss-overlays" class="pillar-jump-link">{isZh ? '标签与顶层浮窗' : 'Tabs & Overlays'}</a>
       </nav>
     </header>
 
-    {/* 1. Tokens & Local Styles */}
-    <section id="ds-tokens" class="ds-section">
-      <span class="kicker">{isZh ? '01 · 色彩令牌与排版梯度' : '01 · Foundations & Typography'}</span>
-      <h2>{isZh ? '纯净白 / 深碳灰双模态与四阶字重梯度' : 'Pure White / Deep Neutral Palette & 4-Tier Type Hierarchy'}</h2>
-      <p class="ds-lead">
-        {isZh
-          ? <>所有表面、文本、边框、微阴影与语义状态均通过原生 <code>light-dark()</code> 自动切换。可在右上角或页脚切换浅色/深色主题实时核验对比度。</>
-          : <>All surface, foreground, border, bevel-shadow, and semantic tokens switch automatically via native <code>light-dark()</code>. Toggle Light/Dark in the header or footer to inspect both modes.</>}
-      </p>
-
+    {/* 1. Tokens */}
+    <section id="coss-tokens" class="ds-section">
+      <span class="kicker">{isZh ? '01 · 设计令牌' : '01 · Design Tokens'}</span>
+      <h2>{isZh ? '纯净白 / 深碳灰双模态表面与单一品牌强调色' : 'Pure White / Deep Neutral Surfaces & Single Brand Accent'}</h2>
       <div class="ds-swatch-grid">
         {swatches.map((s) => (
           <div class="ds-swatch">
@@ -287,145 +204,69 @@ const vtabItems: VerticalTabItem[] = isZh
           </div>
         ))}
       </div>
-
-      <div class="ds-type-list" style="margin-top: var(--space-5);">
-        <div class="ds-type-row">
-          <span class="ds-swatch-token">.t-title (L1)</span>
-          <p class="t-title">{isZh ? 'Newsreader 主标题 —— 240 小时过境免签全流程手册' : 'Newsreader Display Title — 240-Hour Transit Playbook'}</p>
-        </div>
-        <div class="ds-type-row">
-          <span class="ds-swatch-token">.t-subheading (L2)</span>
-          <p class="t-subheading">{isZh ? '区块副标题 · 口岸核验与联程客票规范' : 'Section Subheading · Verified Port & Ticket Rules'}</p>
-        </div>
-        <div class="ds-type-row">
-          <span class="ds-swatch-token">.t-paragraph (L3)</span>
-          <p class="t-paragraph">{isZh ? '正文排版 —— 高辨识度 DM Sans 无衬线字体，在纯白与深碳灰背景下保持清晰阅读节奏。' : 'Body copy — High-legibility DM Sans set for sustained reading on crisp white and deep neutral dark surfaces.'}</p>
-        </div>
-        <div class="ds-type-row">
-          <span class="ds-swatch-token">.t-docs (L4)</span>
-          <p class="t-docs">{isZh ? '元信息与编号 —— GB 32100-2015 · NIA 12367 · 核验于 2026-11-22' : 'Metadata & Monospace — GB 32100-2015 · NIA 12367 · Verified 2026-11-22'}</p>
-        </div>
-      </div>
     </section>
 
-    {/* 2. Signature coss ui Surfaces & Primitives */}
-    <section id="ds-coss-surfaces" class="ds-section">
-      <span class="kicker">{isZh ? '02 · coss ui 标志性表面与组合控件（@ui/coss/*）' : '02 · Signature coss ui Surfaces & Controls (@ui/coss/*)'}</span>
-      <h2>{isZh ? 'Frame 静音托盘、Card 微切边卡片、InputGroup、NumberField 与 Sheet' : 'Frame + FramePanel, Card, InputGroup, Group, NumberField, Switch, Empty & Sheet'}</h2>
-      <p class="ds-lead">
-        {isZh
-          ? <>完整移植自官方 <code>coss.com/ui</code> 组件注册表：外层静音托盘（<code>rounded-2xl bg-muted p-1</code>）包裹内层纯白/碳黑微切边面板（<code>rounded-xl bg-clip-padding</code>）。</>
-          : <>Ported directly from the official <code>coss.com/ui</code> registry: muted outer trays (<code>rounded-2xl bg-muted p-1</code>) cradling crisp elevated panels (<code>rounded-xl bg-clip-padding</code>).</>}
-      </p>
-
-      <div class="ds-grid-2">
-        <Frame
-          title={isZh ? '入境核验工作台托盘（Frame + FramePanel）' : 'Arrival Verification Tray (Frame + FramePanel)'}
-          description={isZh ? '多块关联内嵌面板共享同一个静音托盘容器' : 'Multiple stacked panels nested cleanly inside a muted outer frame'}
-        >
-          <Badge slot="header-action" variant="success">{isZh ? '实时生效' : 'Live 2026'}</Badge>
-          <FramePanel>
-            <Field
-              forId="coss-demo-search"
-              label={isZh ? '组合输入框（InputGroup）' : 'InputGroup with Addons'}
-              description={isZh ? '支持前置图标、内嵌快捷键与无感焦点环合并。' : 'Merges leading icon, input, and trailing shortcut keycap into one focusable control.'}
-            >
-              <InputGroup
-                id="coss-demo-search"
-                name="coss_search"
-                type="search"
-                placeholder={isZh ? '搜索口岸代码、高铁站或 18 位信用代码…' : 'Search port code, station, or 18-digit USCC…'}
-              >
-                <Icon slot="prefix" name="search" size={15} />
-                <Kbd slot="suffix">⌘K</Kbd>
-              </InputGroup>
-            </Field>
-          </FramePanel>
-          <FramePanel>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:var(--space-4);align-items:end;">
-              <NumberField
-                id="coss-demo-stay"
-                name="stay_days"
-                label={isZh ? '计划停留天数（NumberField）' : 'Planned Stay Days (NumberField)'}
-                value={10}
-                min={1}
-                max={30}
-              />
-              <Switch
-                id="coss-demo-switch"
-                name="onward_ticket"
-                label={isZh ? '已出联程机票' : 'Confirmed onward ticket'}
-                description={isZh ? '持有第三国确定座位客票' : 'Seat-confirmed 3rd-country ticket'}
-                checked
-              />
-            </div>
-          </FramePanel>
-          <span slot="footer">{isZh ? '数据源：国家移民管理局 12367 平台' : 'Source: NIA 12367 Official Portal'}</span>
-        </Frame>
-
-        <div class="ds-stack">
-          <Card
-            title={isZh ? '独立微切边卡片（Card）' : 'Standalone Bevel Card'}
-            description={isZh ? '内置标题、右上操作槽、主体内容与底栏区' : 'Header, action slot, body panel, and muted footer'}
+    {/* 2. Surfaces: Frame, Card, Empty, Collapsible, Separator */}
+    <section id="coss-surfaces" class="ds-section">
+      <span class="kicker">{isZh ? '02 · 容器与表面（Frame · Card · Empty · Collapsible · Separator）' : '02 · Surfaces (Frame · Card · Empty · Collapsible · Separator)'}</span>
+      <h2>{isZh ? 'Frame 静音托盘与微切边卡片体系' : 'Muted Frame Trays & Bevel Card Panels'}</h2>
+      <div class="ds-group-stack">
+        <div class="ds-grid-2">
+          <Frame
+            title={isZh ? '口岸核验工作台（Frame + FramePanel）' : 'Port Verification Tray (Frame + FramePanel)'}
+            description={isZh ? '多块内嵌面板组合于统一静音外框中' : 'Stacked panels nested cleanly inside a muted outer tray'}
           >
-            <Badge slot="action" variant="info">{isZh ? '工具栏' : 'Toolbar'}</Badge>
-            <div class="ds-stack">
-              <div class="ds-row">
-                <Group label={isZh ? '无缝拼接控件组' : 'Joined control group'}>
-                  <Button variant="outline" size="sm">{isZh ? '复制中文' : 'Copy ZH'}</Button>
-                  <Button variant="outline" size="sm">{isZh ? '语音播报' : 'Speak'}</Button>
-                  <Button variant="outline" size="sm">{isZh ? '全屏出示' : 'Fullscreen'}</Button>
-                </Group>
-                <Toolbar label={isZh ? '浮动工具条' : 'Floating toolbar'}>
-                  <Button variant="ghost" size="xs">{isZh ? '简' : 'EN'}</Button>
-                  <Button variant="secondary" size="xs">{isZh ? '拼' : 'PY'}</Button>
-                  <Spinner label={isZh ? '同步状态' : 'Syncing'} />
-                </Toolbar>
-              </div>
-              <Meter label={isZh ? '官方数据源可用率（Meter）' : 'Official Portal Uptime (Meter)'} value={94} valueText="94%" />
-              <Collapsible title={isZh ? '展开查看口岸现场核验补充说明（Collapsible）' : 'Inspect port counter verification notes (Collapsible)'}>
+            <Badge slot="header-action" variant="success">{isZh ? '实时生效' : 'Live 2026'}</Badge>
+            <FramePanel>
+              <p class="t-paragraph">
                 {isZh
-                  ? '请提前打印或离线保存英文版酒店预订确认单及离境联程机票行程单，边检柜台通常在 2 分钟内完成核验。'
-                  : 'Keep an offline PDF of your hotel confirmation and onward ticket itinerary ready; manual inspection counters typically clear eligible travelers in under 2 minutes.'}
+                  ? 'coss ui 通过 p-1 静音底托与 1px bg-clip-padding 内面板形成干净分组，告别粗黑顶条与多层套框。'
+                  : 'coss ui groups related sections using a p-1 muted tray and 1px bg-clip-padding inner panels without heavy borders.'}
+              </p>
+            </FramePanel>
+            <FramePanel>
+              <Collapsible title={isZh ? '展开查看边检现场核验材料清单（Collapsible）' : 'Inspect immigration counter checklist (Collapsible)'}>
+                {isZh
+                  ? '请准备有效期 6 个月以上普通护照、已确定座位与日期的第三国联程机票行程单，以及首晚酒店订单。'
+                  : 'Carry an ordinary passport valid for at least 6 months, a seat-confirmed onward ticket to a third country/region, and your hotel booking.'}
               </Collapsible>
+            </FramePanel>
+            <span slot="footer">{isZh ? '信源：国家移民管理局 12367' : 'Source: NIA 12367 Official Portal'}</span>
+          </Frame>
+
+          <Card
+            title={isZh ? '独立卡片容器（Card）' : 'Standalone Card'}
+            description={isZh ? '支持右上操作槽、主体内容与静音底栏' : 'Supports header action slot, body panel, and muted footer'}
+          >
+            <Badge slot="action" variant="info">coss Card</Badge>
+            <div class="ds-stack">
+              <p class="t-paragraph">
+                {isZh
+                  ? '用于承载独立操作单元或关键摘要信息，底部操作区采用静音浅底自然分层。'
+                  : 'Used for self-contained interactive units with a subtly recessed footer bar.'}
+              </p>
+              <Divider label={isZh ? 'Separator 1px 细线' : 'Separator 1px Rule'} />
+              <div class="ds-row">
+                <span class="t-docs">{isZh ? '全局检索快捷键' : 'Global Command'}</span>
+                <Kbd keys={['⌘', 'K']} />
+              </div>
             </div>
-            <div slot="footer" style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:var(--space-3);">
-              <Sheet
-                id="ds-coss-sheet"
-                variant="inset"
-                triggerLabel={isZh ? '打开侧滑面板（Inset Sheet）' : 'Open Inset Sheet'}
-                title={isZh ? '口岸核验清单侧滑窗' : 'Port Verification Sheet'}
-                description={isZh ? '原生 <dialog closedby="any"> 内嵌浮层卡片' : 'Native <dialog closedby="any"> floating inset sheet'}
-              >
-                <p class="t-paragraph">
-                  {isZh
-                    ? 'coss ui 的 Sheet 支持贴边（default）与悬浮内嵌（inset）两种形态，具备完整焦点锁定、Esc 关闭与遮罩轻点收起能力。'
-                    : 'coss ui Sheet supports both flush edge and floating inset layouts with native focus trapping, Escape dismissal, and backdrop light-dismiss.'}
-                </p>
-                <div slot="footer">
-                  <form method="dialog">
-                    <Button type="submit" variant="outline" size="sm">{isZh ? '关闭面板' : 'Close Sheet'}</Button>
-                  </form>
-                </div>
-              </Sheet>
-              <Button variant="primary" size="sm" href={lp('/tools/visa-checker/')}>
-                {isZh ? '打开免签测算器 →' : 'Open Visa Checker →'}
-              </Button>
+            <div slot="footer" style="display:flex;justify-content:flex-end;width:100%;gap:var(--space-2);">
+              <Button variant="outline" size="sm" href={lp('/portals/')}>{isZh ? '查看数据源' : 'Data Portals'}</Button>
+              <Button variant="primary" size="sm" href={lp('/tools/visa-checker/')}>{isZh ? '免签测算 →' : 'Visa Checker →'}</Button>
             </div>
           </Card>
         </div>
-      </div>
 
-      <div style="margin-top: var(--space-5);">
         <Frame>
           <FramePanel>
             <Empty
-              title={isZh ? '暂无匹配的筛选记录（Empty）' : 'No matching verification records (Empty)'}
-              description={isZh ? '尝试放宽省份或证件条件，或直接清空筛选查看全部口岸。' : 'Try broadening your province or document filter, or reset filters to browse all 60 approved ports.'}
+              title={isZh ? '未找到匹配口岸（Empty）' : 'No matching ports found (Empty)'}
+              description={isZh ? '请尝试放宽省份或交通方式筛选条件。' : 'Try broadening your province or transport mode filter.'}
             >
               <Icon slot="icon" name="search" size={18} />
-              <Button variant="outline" size="sm" data-cw-toast-trigger={isZh ? '筛选条件已清空。' : 'Filters cleared.'}>
-                {isZh ? '重置筛选条件' : 'Reset Filters'}
+              <Button variant="outline" size="sm" data-cw-toast-trigger={isZh ? '筛选条件已重置。' : 'Filters reset.'}>
+                {isZh ? '重置条件' : 'Reset Filters'}
               </Button>
             </Empty>
           </FramePanel>
@@ -433,20 +274,20 @@ const vtabItems: VerticalTabItem[] = isZh
       </div>
     </section>
 
-    {/* 3. Actions */}
-    <section id="ds-actions" class="ds-section">
-      <span class="kicker">{isZh ? '03 · 按钮变体与尺寸阶梯' : '03 · Button Variants & Sizes'}</span>
-      <h2>{isZh ? '严格克制的单一强调色与完整 coss 按钮变体' : 'Single Brand Primary + Full coss Button Variant Matrix'}</h2>
+    {/* 3. Actions: Button, Group, Toolbar, ToggleGroup */}
+    <section id="coss-actions" class="ds-section">
+      <span class="kicker">{isZh ? '03 · 按钮与动作组（Button · Group · Toolbar · ToggleGroup）' : '03 · Actions (Button · Group · Toolbar · ToggleGroup)'}</span>
+      <h2>{isZh ? '按钮变体、无缝拼接组与浮动工具条' : 'Button Variants, Attached Groups & Toolbars'}</h2>
       <div class="ds-grid-2">
         <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? 'coss 按钮变体（每组至多 1 个 Primary）' : 'coss Button Variants (Max 1 Brand Primary per Group)'}</span>
+          <span class="ds-panel-title">{isZh ? 'Button 变体与尺寸阶梯' : 'Button Variants & Sizes'}</span>
           <div class="ds-row">
-            <Button variant="primary">{isZh ? '主操作 (#E43216)' : 'Brand Primary'}</Button>
-            <Button variant="default">{isZh ? '中性实心按钮' : 'Neutral Solid'}</Button>
-            <Button variant="outline">{isZh ? '微切边描边' : 'Outline Bevel'}</Button>
-            <Button variant="secondary">{isZh ? '柔和次级' : 'Secondary'}</Button>
+            <Button variant="primary">{isZh ? '品牌主操作' : 'Brand Primary'}</Button>
+            <Button variant="default">{isZh ? '中性实心' : 'Neutral Solid'}</Button>
+            <Button variant="outline">{isZh ? '描边默认' : 'Outline'}</Button>
+            <Button variant="secondary">{isZh ? '次要填充' : 'Secondary'}</Button>
             <Button variant="ghost">{isZh ? '幽灵态' : 'Ghost'}</Button>
-            <Button variant="destructive-outline">{isZh ? '危险描边' : 'Destructive Outline'}</Button>
+            <Button variant="destructive-outline">{isZh ? '危险描边' : 'Destructive'}</Button>
           </div>
           <div class="ds-row">
             <Button variant="outline" size="xs">XS</Button>
@@ -458,374 +299,286 @@ const vtabItems: VerticalTabItem[] = isZh
         </div>
 
         <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '按钮组、紧凑图标按钮与外链文字按钮' : 'ButtonGroup, CompactButton & LinkButton'}</span>
+          <span class="ds-panel-title">{isZh ? 'Group · Toolbar · ToggleGroup' : 'Group · Toolbar · ToggleGroup'}</span>
           <div class="ds-row">
-            <ButtonGroup label={isZh ? '视图切换' : 'View switch'}>
-              <button type="button" aria-pressed="true">{isZh ? '网格' : 'Grid'}</button>
-              <button type="button">{isZh ? '表格' : 'Table'}</button>
-              <button type="button">{isZh ? '地图' : 'Map'}</button>
-            </ButtonGroup>
-            <CompactButton icon="copy" label={isZh ? '复制引用' : 'Copy citation'} variant="stroke" data-cw-toast-trigger={isZh ? '引用已复制到剪贴板。' : 'Citation copied to clipboard.'} />
-            <CompactButton icon="share" label={isZh ? '分享实录' : 'Share dispatch'} variant="ghost" data-cw-toast-trigger={isZh ? '分享链接已复制。' : 'Share link copied.'} />
+            <Group label={isZh ? '字卡操作组' : 'Card actions'}>
+              <Button variant="outline" size="sm">{isZh ? '复制中文' : 'Copy ZH'}</Button>
+              <Button variant="outline" size="sm">{isZh ? '语音播报' : 'Speak'}</Button>
+              <Button variant="outline" size="sm">{isZh ? '全屏亮屏' : 'Fullscreen'}</Button>
+            </Group>
+            <Toolbar label={isZh ? '工具条' : 'Toolbar'}>
+              <Button variant="ghost" size="xs">EN</Button>
+              <Button variant="secondary" size="xs">PY</Button>
+              <Spinner />
+            </Toolbar>
           </div>
-          <div class="ds-row">
-            <LinkButton href={lp('/atlas/')} tone="accent">{isZh ? '浏览全景图谱' : 'Explore China Atlas'}</LinkButton>
-            <LinkButton href={lp('/portals/')} tone="neutral">{isZh ? '政务公开数据' : 'Gov Data Portals'}</LinkButton>
-            <LinkButton href="https://en.nia.gov.cn/" external>{isZh ? '国家移民管理局官网' : 'External NIA Portal'}</LinkButton>
-          </div>
+          <SegmentedControl
+            label={isZh ? '数据状态过滤' : 'Status filter'}
+            options={
+              isZh
+                ? [
+                    { value: 'all', label: '全部条目' },
+                    { value: 'verified', label: '直连可用' },
+                    { value: 'standby', label: '反爬备用' },
+                  ]
+                : [
+                    { value: 'all', label: 'All Entries' },
+                    { value: 'verified', label: 'Direct Live' },
+                    { value: 'standby', label: 'WAF Standby' },
+                  ]
+            }
+          />
         </div>
       </div>
     </section>
 
-    {/* 4. Data Display */}
-    <section id="ds-data-display" class="ds-section">
-      <span class="kicker">{isZh ? '04 · 数据展示（Avatar · Badge · Tag · Divider · Kbd）' : '04 · Data Display (Avatar, Badge, Tag, Divider, Kbd)'}</span>
-      <h2>{isZh ? '头像组、coss 柔和语义徽章、可移除标签与快捷键帽' : 'Avatars, coss Soft Tinted Badges, Removable Tags & Keycaps'}</h2>
+    {/* 4. Forms & Inputs */}
+    <section id="coss-forms" class="ds-section">
+      <span class="kicker">{isZh ? '04 · 表单与输入控件（Field · Input · InputGroup · NumberField · Select · Switch · Slider · OTP）' : '04 · Forms & Inputs'}</span>
+      <h2>{isZh ? '输入组合、步进数字框、顶层下拉选框与开关控件' : 'InputGroup, NumberField, Select, Switch, Slider & OTP'}</h2>
       <div class="ds-grid-2">
         <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '头像与紧凑头像组（Avatar & AvatarGroup）' : 'Avatar & AvatarGroup (Default + Compact)'}</span>
-          <div class="ds-row">
-            <Avatar name="Shen Ming" size="xs" tone="palace" />
-            <Avatar name="Lin Wei" size="sm" tone="gold" status="online" />
-            <Avatar name="Hannah Reid" size="md" tone="ink" status="away" />
-            <Avatar name="Chen Tao" size="lg" tone="sage" status="offline" />
-          </div>
-          <AvatarGroup
-            caption={isZh ? '6 位核验编辑' : '6 contributing editors'}
-            items={[
-              { name: 'Shen Ming', tone: 'palace' },
-              { name: 'Lin Wei', tone: 'gold' },
-              { name: 'Hannah Reid', tone: 'ink' },
-              { name: 'Chen Tao', tone: 'sage' },
-              { name: 'Maya Sato', tone: 'palace' },
-              { name: 'Zhou Qi', tone: 'ink' },
-            ]}
+          <Field
+            forId="b-ig-search"
+            label={isZh ? '组合输入框（InputGroup）' : 'InputGroup'}
+            description={isZh ? '前置图标、输入框与后缀快捷键融为一体。' : 'Combines leading icon, input, and trailing Kbd.'}
+          >
+            <InputGroup
+              id="b-ig-search"
+              name="q"
+              type="search"
+              placeholder={isZh ? '输入口岸、高铁站或 18 位信用码…' : 'Search port, rail hub, or 18-digit USCC…'}
+            >
+              <Icon slot="prefix" name="search" size={15} />
+              <Kbd slot="suffix">⌘K</Kbd>
+            </InputGroup>
+          </Field>
+
+          <Input
+            id="b-city"
+            name="city"
+            label={isZh ? '入境口岸城市（Input）' : 'Arrival Port City (Input)'}
+            placeholder={isZh ? '例如：上海浦东 (PVG)' : 'e.g. Shanghai Pudong (PVG)'}
           />
-          <AvatarGroup
-            variant="compact"
-            max={3}
-            caption={isZh ? '紧凑折叠计数' : 'Compact group badge'}
-            items={[
-              { name: 'Shen Ming', tone: 'palace' },
-              { name: 'Lin Wei', tone: 'gold' },
-              { name: 'Hannah Reid', tone: 'ink' },
-              { name: 'Chen Tao', tone: 'sage' },
-            ]}
+
+          <Textarea
+            id="b-note"
+            label={isZh ? '现场实测备注（Textarea）' : 'Field Note (Textarea)'}
+            placeholder={isZh ? '支持随内容自动增高…' : 'Auto-grows vertically with content…'}
+            maxlength={240}
           />
         </div>
 
         <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '语义徽章、可移除标签、键盘按键与细分隔线' : 'Badge, Removable Tag, Kbd & Divider'}</span>
-          <div class="ds-row">
-            <Badge variant="outline">{isZh ? '描边默认' : 'Outline'}</Badge>
-            <Badge variant="secondary">{isZh ? '中性标签' : 'Secondary'}</Badge>
-            <Badge variant="info">{isZh ? '政策解读' : 'Info'}</Badge>
-            <Badge variant="success">{isZh ? '已核验生效' : 'Verified Live'}</Badge>
-            <Badge variant="warning">{isZh ? '反爬备用源' : 'WAF Standby'}</Badge>
-            <Badge variant="error">{isZh ? '已废止失效' : 'Superseded'}</Badge>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:var(--space-4);align-items:end;">
+            <NumberField
+              id="b-stay-days"
+              name="days"
+              label={isZh ? '计划停留天数（NumberField）' : 'Planned Stay Days (NumberField)'}
+              value={10}
+              min={1}
+              max={30}
+            />
+            <DateInput
+              id="b-date"
+              name="date"
+              label={isZh ? '出行日期' : 'Travel Date'}
+              value="2026-12-15"
+            />
           </div>
-          <div class="ds-row">
-            <Tag label={isZh ? '签证入境' : 'Visas & Entry'} count={14} tone="editorial" removable />
-            <Tag label={isZh ? '高铁出行' : 'High-Speed Rail'} tone="verified" removable />
-            <Tag label={isZh ? '英文友好' : 'English UI'} tone="neutral" removable />
-          </div>
-          <div class="ds-row">
-            <span class="t-label">{isZh ? '全站检索：' : 'Quick search:'}</span>
-            <Kbd keys={['⌘', 'K']} />
-            <Divider orientation="vertical" />
-            <span class="t-label">{isZh ? '关闭弹窗：' : 'Dismiss dialog:'}</span>
-            <Kbd>Esc</Kbd>
-          </div>
-          <Divider label={isZh ? '1px 精细分隔线' : '1px Hairline Separator'} />
+
+          <Select
+            id="b-pillar"
+            name="pillar"
+            label={isZh ? '目标频道（Select）' : 'Section (Select)'}
+            options={
+              isZh
+                ? [
+                    { value: 'visit', label: '来华旅行与 240h 免签' },
+                    { value: 'live', label: '留学长居与工作许可' },
+                    { value: 'business', label: '商务采购与企业核验' },
+                  ]
+                : [
+                    { value: 'visit', label: 'Visit China & 240h Transit' },
+                    { value: 'live', label: 'Live, Study & Work Permit' },
+                    { value: 'business', label: 'Sourcing & USCC Compliance' },
+                  ]
+            }
+          />
+
+          <Switch
+            id="b-switch"
+            name="transit"
+            label={isZh ? '已持第三国联程客票（Switch）' : 'Confirmed third-country ticket (Switch)'}
+            checked
+          />
+
+          <Checkbox id="b-check" checked>
+            {isZh ? '同时显示反爬拦截官方备用数据源（Checkbox）' : 'Include WAF-protected official standby sources (Checkbox)'}
+          </Checkbox>
+
+          <RadioGroup
+            name="b-seat"
+            legend={isZh ? '高铁席别（RadioGroup）' : 'Rail Seat Class (RadioGroup)'}
+            inline
+            options={
+              isZh
+                ? [
+                    { value: '2nd', label: '二等座', checked: true },
+                    { value: '1st', label: '一等座' },
+                  ]
+                : [
+                    { value: '2nd', label: 'Second Class', checked: true },
+                    { value: '1st', label: 'First Class' },
+                  ]
+            }
+          />
+
+          <Slider
+            id="b-slider"
+            name="spend"
+            label={isZh ? '退税消费额测算（Slider）' : 'Tax-Free Spend (Slider)'}
+            min={200}
+            max={10000}
+            step={100}
+            value={2400}
+            unitPrefix="¥"
+          />
+
+          <DigitInput
+            id="b-otp"
+            label={isZh ? '六位验证码（OTP Field）' : '6-Digit Verification (OTP Field)'}
+          />
         </div>
       </div>
     </section>
 
-    {/* 5. DataTable */}
-    <section id="ds-table" class="ds-section">
-      <span class="kicker">{isZh ? '05 · 可排序响应式数据表（DataTable）' : '05 · Sortable & Responsive DataTable'}</span>
-      <h2>{isZh ? '点击列头实时排序 · 窄屏自动卡片折叠' : 'Click Column Headers to Sort — Stacks Cleanly Under 580px'}</h2>
-      <p class="ds-lead">
-        {isZh
-          ? <>基于原生 <code>command="--sort"</code> 触发器、<code>Intl.Collator</code>、原始数值 <code>data-value</code> 比较与 <code>moveBefore()</code> 就地行重排，外层自动融合 coss 圆角边框容器。</>
-          : <>Uses native <code>command="--sort"</code> invokers, <code>Intl.Collator</code>, raw numeric <code>data-value</code> comparison, and in-place <code>moveBefore()</code> row reordering inside a coss table frame.</>}
-      </p>
+    {/* 5. Data & Status */}
+    <section id="coss-data" class="ds-section">
+      <span class="kicker">{isZh ? '05 · 状态与反馈（Badge · Avatar · Alert · Progress · Meter · Skeleton）' : '05 · Data & Feedback'}</span>
+      <h2>{isZh ? '柔和语义徽章、告警框、计量条与加载占位' : 'Soft Tinted Badges, Alerts, Meter, Progress & Skeleton'}</h2>
+      <div class="ds-grid-2">
+        <div class="ds-stack">
+          <Alert tone="verified" title={isZh ? '官方一手信源已核验' : 'Primary official source verified'}>
+            {isZh ? '国家移民管理局中英文公告已于 2026-11-20 完成双语核对。' : 'NIA bilingual policy clauses verified on 2026-11-20.'}
+          </Alert>
+          <Alert tone="warning" title={isZh ? '反爬拦截官方备用数据源' : 'WAF-Protected Official Standby'}>
+            {isZh ? '自动化采集返回 HTTP 412，普通浏览器可正常访问。' : 'Automated fetch returned HTTP 412; standard browser access works normally.'}
+          </Alert>
+          <Alert tone="danger" title={isZh ? '旧版口岸试点通知已废止' : 'Legacy port notice superseded'}>
+            {isZh ? '请以现行全国 24 省 60 口岸 240 小时统一规定为准。' : 'Superseded by the unified 24-province, 60-port 240-hour policy.'}
+          </Alert>
+        </div>
+
+        <div class="ds-panel">
+          <div class="ds-row">
+            <Badge variant="outline">{isZh ? '默认描边' : 'Outline'}</Badge>
+            <Badge variant="secondary">{isZh ? '次要灰底' : 'Secondary'}</Badge>
+            <Badge variant="info">{isZh ? '信息提示' : 'Info'}</Badge>
+            <Badge variant="success">{isZh ? '核验有效' : 'Verified'}</Badge>
+            <Badge variant="warning">{isZh ? '备用观察' : 'Standby'}</Badge>
+            <Badge variant="error">{isZh ? '失效警示' : 'Superseded'}</Badge>
+          </div>
+          <div class="ds-row">
+            <Avatar name="SM" size="sm" tone="palace" />
+            <Avatar name="LW" size="md" tone="ink" status="online" />
+            <Avatar name="HR" size="lg" tone="sage" status="away" />
+          </div>
+          <Meter label={isZh ? '政务公开源在线率（Meter）' : 'Official Portal Uptime (Meter)'} value={94} valueText="94%" />
+          <ProgressBar value={84} max={97} label={isZh ? '专题覆盖进度（Progress）' : 'Topic Coverage (Progress)'} valueLabel="84 / 97" tone="seal" />
+          <Skeleton variant="title" />
+          <Skeleton variant="short" />
+        </div>
+      </div>
+    </section>
+
+    {/* 6. Table */}
+    <section id="coss-table" class="ds-section">
+      <span class="kicker">{isZh ? '06 · 数据表格（Table）' : '06 · Table'}</span>
+      <h2>{isZh ? '可排序响应式数据表' : 'Sortable & Responsive Table'}</h2>
       <DataTable
-        id="ds-visa-table"
-        caption={isZh ? '9.1 中国免签与 240 小时过境免签对照表（点击列头排序）' : '9.1 China Visa-Free & 240-Hour Transit Matrix (Click headers to sort)'}
+        id="b-visa-table"
+        caption={isZh ? '9.1 中国免签与 240 小时过境免签速查表' : '9.1 China Visa-Free & 240-Hour Transit Matrix'}
         columns={visaMatrix.columns}
         rows={visaMatrix.rows}
       />
     </section>
 
-    {/* 6. Progress & Rating */}
-    <section id="ds-progress" class="ds-section">
-      <span class="kicker">{isZh ? '06 · 进度与评分（Progress · Rating）' : '06 · Progress & Rating'}</span>
-      <h2>{isZh ? '进度条、环形进度指示器与无障碍星级评分' : 'ProgressBar, ProgressCircle & Interactive Rating'}</h2>
-      <div class="ds-grid-2">
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '线性与环形进度（ProgressBar & ProgressCircle）' : 'ProgressBar & ProgressCircle'}</span>
-          <ProgressBar value={84} max={97} label={isZh ? '97 项细分专题覆盖率' : '97-Topic Coverage'} valueLabel="84 / 97" tone="seal" />
-          <ProgressBar value={92} label={isZh ? '官方信源时效新鲜度' : 'Official Source Freshness'} tone="verified" />
-          <div class="ds-row">
-            <ProgressCircle value={88} label={isZh ? '图谱就绪' : 'Atlas Ready'} tone="seal" />
-            <ProgressCircle value={96} label="WCAG AA" tone="verified" />
-            <ProgressCircle value={72} label={isZh ? '数据同步' : 'OKF Sync'} tone="gold" />
-          </div>
-        </div>
-
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '星级评分（只读展示与可交互单选组）' : 'Rating (Readonly & Interactive Radio Fieldset)'}</span>
-          <Rating value={4.8} count={42} readonly />
-          <Divider />
-          <Rating name="ds-field-rating" legend={isZh ? '评价口岸自助通关顺畅度' : 'Rate airport e-gate smoothness'} value={4} />
-        </div>
-      </div>
-    </section>
-
-    {/* 7. Core Forms */}
-    <section id="ds-forms" class="ds-section">
-      <span class="kicker">{isZh ? '07 · 核心表单原子' : '07 · Core Form Primitives'}</span>
-      <h2>{isZh ? '输入框、自适应文本域、原生顶层下拉选框与开关单选组' : 'Input, Textarea (field-sizing), Select (base-select), Checkbox, Switch & RadioGroup'}</h2>
-      <div class="ds-grid-2">
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '文本输入与自动增高多行文本域' : 'Text Inputs & Auto-Growing Textarea'}</span>
-          <Input
-            id="ds-input-city"
-            name="city"
-            label={isZh ? '入境口岸或城市' : 'Arrival port or city'}
-            placeholder={isZh ? '例如：上海浦东 (PVG)' : 'e.g. Shanghai Pudong (PVG)'}
-            hint={isZh ? '支持城市名或三字机场代码。' : 'Supports city name or 3-letter IATA code.'}
-          />
-          <Input
-            id="ds-input-code"
-            name="uscc"
-            label={isZh ? '18 位统一社会信用代码（清空失焦测试 :user-invalid）' : 'USCC 18-digit code (blur empty to test :user-invalid)'}
-            placeholder="91310000XXXXXXXXXX"
-            required
-            error={isZh ? '请输入完整的 18 位统一社会信用代码。' : 'Enter an 18-character Unified Social Credit Code.'}
-          />
-          <Textarea
-            id="ds-textarea"
-            label={isZh ? '现场核验备注（基于 field-sizing: content 自动增高）' : 'Field verification note (grows vertically via field-sizing: content)'}
-            placeholder={isZh ? '输入多行文字观察高度自适应与实时字数统计…' : 'Type multiple lines to observe vertical auto-sizing and live counter...'}
-            maxlength={280}
-            hint={isZh ? '欢迎附上 .gov.cn 官方出处链接。' : 'Links to official .gov.cn sources welcomed.'}
-          />
-        </div>
-
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '定制下拉框、复选框、胶囊开关与单选组' : 'Branded Select, Checkbox, Pill Switch & RadioGroup'}</span>
-          <Select
-            id="ds-select-pillar"
-            name="pillar"
-            label={isZh ? '所属全景频道' : 'ChinaWao Editorial Section'}
-            hint={isZh ? '基于 appearance: base-select 渲染 coss 顶层弹出菜单。' : 'Renders a crisp coss top-layer ::picker(select) menu.'}
-            options={
-              isZh
-                ? [
-                    { value: 'visit', label: '9. 畅游中国（11 个专题）' },
-                    { value: 'live', label: '10. 旅居求学（6 个专题）' },
-                    { value: 'business', label: '11. 经贸采购（6 个专题）' },
-                    { value: 'tools', label: '12. 工具与公开数据（9 个专题）' },
-                  ]
-                : [
-                    { value: 'visit', label: '9. Visit China (11 topics)' },
-                    { value: 'live', label: '10. Live & Study (6 topics)' },
-                    { value: 'business', label: '11. Business & Sourcing (6 topics)' },
-                    { value: 'tools', label: '12. Tools & Open Data (9 topics)' },
-                  ]
-            }
-          />
-          <Checkbox id="ds-chk-transit" checked>{isZh ? '持有第三国或港澳台确定日期联程机票' : 'Hold confirmed third-country onward ticket'}</Checkbox>
-          <Checkbox id="ds-sw-standby" variant="switch" checked>{isZh ? '包含反爬拦截官方备用数据源' : 'Include WAF-Protected Official Standby portals'}</Checkbox>
-          <RadioGroup
-            name="ds-rail-class"
-            legend={isZh ? '高铁席别选择' : 'High-speed rail seat tier'}
-            options={
-              isZh
-                ? [
-                    { value: 'second', label: '二等座（2+3 布局）—— 4 小时内高性价比首选' },
-                    { value: 'first', label: '一等座（2+2 布局）—— 更宽腿部空间与独立电源', checked: true },
-                  ]
-                : [
-                    { value: 'second', label: 'Second Class (2+3) — best value under 4h' },
-                    { value: 'first', label: 'First Class (2+2) — wider seats & power outlets', checked: true },
-                  ]
-            }
-          />
-        </div>
-      </div>
-    </section>
-
-    {/* 8. Advanced Forms */}
-    <section id="ds-advanced-forms" class="ds-section">
-      <span class="kicker">{isZh ? '08 · 高级表单原子' : '08 · Advanced Form Primitives'}</span>
-      <h2>{isZh ? '滑块、日期选择、色板取色器、六位 OTP 验证码与文件拖拽上传' : 'Slider, DateInput, ColorPicker, DigitInput (OTP) & FileUpload'}</h2>
-      <div class="ds-grid-2">
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '区间滑块、日期输入与品牌色板' : 'Slider, DateInput & ColorPicker'}</span>
-          <Slider id="ds-slider" name="spend" label={isZh ? '离境退税消费金额' : 'Tax-free purchase amount'} min={200} max={20000} step={100} value={3500} unitPrefix="¥" />
-          <DateInput id="ds-date" name="departure" label={isZh ? '计划出发日期' : 'Target departure date'} value="2026-12-05" hint={isZh ? '用于自动推算 12306 提前 15 天放票日。' : 'Used for 15-day Railway 12306 ticket release calculation.'} />
-          <ColorPicker id="ds-color" label={isZh ? '语义强调色预设' : 'Semantic highlight swatch'} value="#E43216" />
-        </div>
-
-        <div class="ds-panel">
-          <span class="ds-panel-title">{isZh ? '六位验证码（OTP）与文件拖拽区' : 'DigitInput (6-Box OTP) & FileUpload Dropzone'}</span>
-          <DigitInput id="ds-otp" label={isZh ? '短信验证码（可尝试直接粘贴 240198）' : 'Verification code (try pasting 240198)'} hint={isZh ? '支持连续输入、剪贴板粘贴、方向键与退格跳转。' : 'Supports sequential typing, paste, arrows, and Backspace.'} />
-          <FileUpload id="ds-upload" label={isZh ? '上传登机牌或官方公告 PDF' : 'Attach boarding pass or official PDF notice'} />
-        </div>
-      </div>
-    </section>
-
-    {/* 9. Feedback */}
-    <section id="ds-feedback" class="ds-section">
-      <span class="kicker">{isZh ? '09 · 反馈与加载状态' : '09 · Feedback & Loading States'}</span>
-      <h2>{isZh ? '顶部公告条、coss 告警卡片、通知卡片、常驻吐司与骨架屏' : 'Banner, Alert, NotificationCard, Persistent Toast & Skeleton'}</h2>
+    {/* 7. Navigation & Overlays */}
+    <section id="coss-overlays" class="ds-section">
+      <span class="kicker">{isZh ? '07 · 导航与顶层浮层（Tabs · Accordion · Dialog · Sheet · Drawer · Menu · Popover · Tooltip · Toast）' : '07 · Navigation & Overlays'}</span>
+      <h2>{isZh ? '双形态标签页、手风琴折叠与原生顶层弹窗' : 'Pill & Underline Tabs, Accordion & Top-Layer Overlays'}</h2>
       <div class="ds-group-stack">
-        <Banner variant="palace" kicker={isZh ? '政策更新' : 'Policy Update'} dismissible>
-          {isZh ? (
-            <>240 小时过境免签现已覆盖全国 24 省 60 个口岸 —— <a href={lp('/tools/visa-checker/')}>立即测算您的行程 &rarr;</a></>
-          ) : (
-            <>240-Hour Visa-Free Transit now spans 60 ports across 24 provinces — <a href={lp('/tools/visa-checker/')}>verify your route &rarr;</a></>
-          )}
-        </Banner>
-        <div class="ds-grid-2">
-          <div class="ds-stack">
-            <Alert tone="verified" title={isZh ? '官方一手信源已核验' : 'Primary source verified'}>
-              {isZh ? '国家移民管理局门户已于 2026-11-20 核对中英文条款一致。' : 'NIA portal checked live on 2026-11-20 with matching Chinese & English clauses.'}
-            </Alert>
-            <Alert tone="warning" title={isZh ? '反爬拦截官方备用数据源' : 'WAF-Protected Official Standby'}>
-              {isZh ? '自动化脚本返回 HTTP 412，普通浏览器可直接正常访问查询。' : 'Automated script received HTTP 412; standard human browser access works normally.'}
-            </Alert>
-            <Alert tone="danger" title={isZh ? '旧版临时通知已废止' : 'Superseded temporary notice'}>
-              {isZh ? '2024 年单口岸试点规定已由全国统一 240 小时过境免签政策替代。' : 'This 2024 port pilot has been superseded by the 240-hour national policy.'}
-            </Alert>
-          </div>
-          <div class="ds-stack">
-            <NotificationCard
-              title={isZh ? '故宫博物院旺季开放时间更新' : 'Palace Museum Peak Hours Published'}
-              body={isZh ? '开放时段调整为 08:30–17:00；门票提前 7 天于北京时间 20:00 放票。' : 'Entry window set to 08:30–17:00; tickets release 7 days prior at 20:00 Beijing Time.'}
-              timestamp={isZh ? '14 分钟前' : '14 mins ago'}
-              category={isZh ? '9.6 预约购票' : '9.6 Ticketing'}
-              tone="verified"
-              unread
-            />
-            <div class="ds-panel">
-              <span class="ds-panel-title">{isZh ? '常驻吐司通知与骨架屏占位' : 'Persistent Toast & Skeleton Loading'}</span>
-              <div class="ds-row">
-                <Button size="sm" variant="primary" data-cw-toast-trigger={isZh ? '已保存至本地阅读清单。' : 'Saved to your local ChinaWao reading list.'}>
-                  {isZh ? '触发常驻吐司' : 'Trigger Persistent Toast'}
+        <Tabs label={isZh ? '胶囊态标签页' : 'Pill Tabs'} tabs={dsTabs} />
+        <Tabs label={isZh ? '下划线态标签页' : 'Underline Tabs'} variant="underline" tabs={dsTabs.map((t) => ({ ...t, id: `${t.id}-u` }))} />
+        <Accordion items={faqItems} name="b-faq" />
+
+        <div class="ds-panel">
+          <div class="ds-row">
+            <Modal
+              id="b-dialog"
+              title={isZh ? '导出核验清单（Dialog）' : 'Export Verification Checklist (Dialog)'}
+              triggerLabel={isZh ? '打开模态框 (Dialog)' : 'Open Dialog'}
+              triggerVariant="primary"
+            >
+              <p>{isZh ? '基于原生 <dialog closedby="any"> 构建，支持 Esc 关闭与遮罩轻点收起。' : 'Built on native <dialog closedby="any"> with Escape and backdrop light-dismiss.'}</p>
+              <div slot="footer">
+                <form method="dialog">
+                  <Button type="submit" variant="ghost" size="sm">{isZh ? '取消' : 'Cancel'}</Button>
+                </form>
+                <Button size="sm" variant="default" data-cw-toast-trigger={isZh ? '已加入导出队列。' : 'Export queued.'}>
+                  {isZh ? '确认' : 'Confirm'}
                 </Button>
               </div>
-              <Skeleton variant="title" />
-              <Skeleton variant="text" />
-              <Skeleton variant="short" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            </Modal>
 
-    {/* 10. Navigation */}
-    <section id="ds-navigation" class="ds-section">
-      <span class="kicker">{isZh ? '10 · 导航组件（胶囊轨道与下划线双形态 Tabs）' : '10 · Navigation Primitives (Pill & Underline Tabs)'}</span>
-      <h2>{isZh ? '横纵标签页、分段控制器、手风琴折叠面板与步骤条' : 'Tabs (Pill & Underline), VerticalTabs, SegmentedControl, Accordion & Stepper'}</h2>
-      <div class="ds-group-stack">
-        <div class="ds-grid-2">
-          <div class="ds-panel">
-            <span class="ds-panel-title">{isZh ? '分段控制器与点状步骤条' : 'SegmentedControl & Dot Stepper'}</span>
-            <SegmentedControl
-              label={isZh ? '状态筛选' : 'Mode'}
-              options={
-                isZh
-                  ? [
-                      { value: 'all', label: '全部条目' },
-                      { value: 'verified', label: '已核验' },
-                      { value: 'standby', label: '备用源' },
-                    ]
-                  : [
-                      { value: 'all', label: 'All Entries' },
-                      { value: 'verified', label: 'Verified' },
-                      { value: 'standby', label: 'Standby' },
-                    ]
-              }
+            <Sheet
+              id="b-sheet"
+              variant="inset"
+              triggerLabel={isZh ? '打开悬浮侧滑窗 (Sheet)' : 'Open Inset Sheet'}
+              title={isZh ? '口岸详情侧滑面板' : 'Port Details Sheet'}
+              description={isZh ? 'coss 悬浮内嵌侧滑面板' : 'coss floating inset side sheet'}
+            >
+              <p class="t-paragraph">{isZh ? '右侧悬浮内嵌式抽屉，适合筛选条件或次级详情检视。' : 'Floating right-side inset sheet ideal for filters or secondary detail views.'}</p>
+            </Sheet>
+
+            <Drawer
+              id="b-drawer"
+              triggerLabel={isZh ? '打开滑动抽屉 (Drawer)' : 'Open Drawer'}
+              title={isZh ? '移动端滑动抽屉' : 'Scroll-Snap Drawer'}
+            >
+              <p class="t-paragraph">{isZh ? '支持触控手势滑动关闭。' : 'Supports touch swipe-to-close.'}</p>
+            </Drawer>
+
+            <DropdownMenu
+              id="b-menu"
+              triggerLabel={isZh ? '下拉菜单 (Menu)' : 'Open Menu'}
+              items={[
+                { label: isZh ? '复制本页链接' : 'Copy page link', icon: 'copy', toastMessage: isZh ? '链接已复制。' : 'Link copied.' },
+                { label: isZh ? '打开免签测算器' : 'Open Visa Checker', icon: 'spark', href: lp('/tools/visa-checker/') },
+              ]}
             />
-            <Stepper steps={howSteps} orientation="dot" label={isZh ? '核验进度' : 'Dot progress'} />
+
+            <PopoverCard
+              id="b-popover"
+              triggerLabel={isZh ? '浮窗卡片 (Popover)' : 'Open Popover'}
+              title={isZh ? '信源核验说明' : 'Verification Note'}
+            >
+              <p>{isZh ? '采用 CSS 锚点定位自动贴合触发按钮并防溢出翻转。' : 'Anchored via CSS Anchor Positioning with automatic edge flip.'}</p>
+            </PopoverCard>
+
+            <Button
+              variant="outline"
+              size="md"
+              data-cw-toast-trigger={isZh ? '已触发常驻吐司通知。' : 'Persistent toast triggered.'}
+            >
+              {isZh ? '触发吐司 (Toast)' : 'Trigger Toast'}
+            </Button>
+
+            <Tooltip id="b-tip" label={isZh ? '提示 (Tooltip)' : 'Tooltip'}>
+              {isZh ? '纯原生 HTML Popover 悬停/聚焦提示。' : 'Pure native HTML Popover tooltip.'}
+            </Tooltip>
           </div>
-          <div class="ds-panel">
-            <span class="ds-panel-title">{isZh ? '纵向步骤条（Vertical Stepper）' : 'Vertical Stepper'}</span>
-            <Stepper steps={howSteps.slice(0, 3)} orientation="vertical" label={isZh ? '抵华流程' : 'Arrival flow'} />
-          </div>
-        </div>
-
-        <Tabs label={isZh ? '设计系统规范（胶囊态）' : 'Design system pillars (Pill)'} tabs={dsTabs} />
-        <Tabs label={isZh ? '设计系统规范（下划线态）' : 'Design system pillars (Underline)'} variant="underline" tabs={dsTabs.map((t) => ({ ...t, id: `${t.id}-ul` }))} />
-        <VerticalTabs id="ds-vtabs" label={isZh ? '出行速查纵向标签' : 'Travel reference tabs'} items={vtabItems} />
-        <Accordion items={faqItems} name="ds-faq-group" />
-      </div>
-    </section>
-
-    {/* 11. Overlays */}
-    <section id="ds-overlays" class="ds-section">
-      <span class="kicker">{isZh ? '11 · 顶层浮窗组件（Dialog · Drawer · Menu · Popover · Tooltip）' : '11 · Overlays (Modal, Drawer, DropdownMenu, PopoverCard, Tooltip)'}</span>
-      <h2>{isZh ? 'coss 原生顶层模态框、滑动抽屉与锚点浮窗' : 'coss Top-Layer Dialogs, Scroll-Snap Drawer & Anchored Popovers'}</h2>
-      <div class="ds-panel">
-        <div class="ds-row">
-          <Modal id="ds-modal-demo" title={isZh ? '确认导出核验条目' : 'Confirm Verified Entry Export'} eyebrow={isZh ? 'coss Dialog' : 'coss Dialog'} triggerLabel={isZh ? '打开模态框' : 'Open Modal'} triggerVariant="primary">
-            <p>{isZh ? <>本模态框采用原生 <code>&lt;dialog closedby="any"&gt;</code> 与 coss 底栏分层结构，内置 Esc 关闭、遮罩轻点关闭与焦点自动归位。</> : <>Uses native <code>&lt;dialog closedby="any"&gt;</code> with coss muted footer bar, Escape dismissal, backdrop light-dismiss, and focus restoration.</>}</p>
-            <div slot="footer">
-              <form method="dialog">
-                <Button type="submit" variant="ghost" size="sm">{isZh ? '取消' : 'Cancel'}</Button>
-              </form>
-              <Button size="sm" variant="primary" data-cw-toast-trigger={isZh ? '导出任务已加入队列。' : 'Export queued.'}>
-                {isZh ? '确认导出' : 'Confirm Export'}
-              </Button>
-            </div>
-          </Modal>
-
-          <Drawer id="ds-drawer-demo" triggerLabel={isZh ? '打开滑动抽屉' : 'Open Swipe Drawer'} title={isZh ? '筛选抽屉' : 'Field Filter Drawer'} eyebrow={isZh ? '滑动抽屉' : 'Scroll-Snap Sheet'}>
-            <p class="t-paragraph">{isZh ? <>支持左滑、点击遮罩、按 Esc 或关闭按钮收起。遮罩透明度通过原生 <code>animation-timeline: scroll()</code> 同步。</> : <>Swipe left, click the dimmed backdrop, press Escape, or click close. Backdrop opacity tracks scroll position via <code>animation-timeline: scroll()</code>.</>}</p>
-            <Checkbox id="ds-drw-1" checked>{isZh ? '仅显示英文友好官方门户' : 'Show English-friendly official portals only'}</Checkbox>
-            <Checkbox id="ds-drw-2">{isZh ? '包含反爬官方备用源' : 'Include WAF-Protected Standby sources'}</Checkbox>
-            <Button variant="default" size="sm" data-cw-toast-trigger={isZh ? '抽屉筛选已应用。' : 'Drawer filters applied.'}>{isZh ? '应用筛选' : 'Apply Filters'}</Button>
-          </Drawer>
-
-          <DropdownMenu
-            id="ds-dropdown-demo"
-            triggerLabel={isZh ? '操作菜单' : 'Action Menu'}
-            items={[
-              { label: isZh ? '复制固定链接' : 'Copy permalink', icon: 'copy', toastMessage: isZh ? '固定链接已复制。' : 'Permalink copied.' },
-              { label: isZh ? '查看区块展台' : 'View Page Blocks', icon: 'spark', href: lp('/design-system/blocks/') },
-              { label: isZh ? '上报失效官方链接' : 'Report broken official URL', icon: 'mail', tone: 'danger', toastMessage: isZh ? '失效链接上报已记录。' : 'Broken link report logged.' },
-            ]}
-          />
-
-          <PopoverCard id="ds-popover-demo" triggerLabel={isZh ? '打开浮窗卡片' : 'Open Popover Card'} eyebrow={isZh ? 'OKF 元数据' : 'OKF Metadata'} title={isZh ? '来源核验台账' : 'Source Verification Ledger'}>
-            <p>{isZh ? <>通过 CSS 锚点定位（<code>position-area: block-end span-inline-end</code>）与边缘翻转自动定位。</> : <>Positioned with CSS Anchor Positioning (<code>position-area: block-end span-inline-end</code>) and automatic edge flip fallbacks.</>}</p>
-          </PopoverCard>
-
-          <Tooltip id="ds-tooltip-demo" label={isZh ? 'coss 原生架构说明' : 'About coss Astro Native'}>
-            {isZh
-              ? '零 React 水合运行时，100% 原生 Astro + 现代 Web 标准实现 coss ui 质感。'
-              : 'Zero React hydration runtime — 100% native Astro + modern Web Platform APIs with coss ui surface craft.'}
-          </Tooltip>
-        </div>
-      </div>
-
-      <div class="ds-panel" style="margin-top: var(--space-5);">
-        <span class="ds-panel-title">{isZh ? `${BASE_PRIMITIVE_COVERAGE.length} / ${BASE_PRIMITIVE_COVERAGE.length} 原生组件映射清单` : `Complete ${BASE_PRIMITIVE_COVERAGE.length} / ${BASE_PRIMITIVE_COVERAGE.length} Native Component Mapping`}</span>
-        <p class="t-paragraph">
-          {isZh ? (
-            <>全部 coss ui 核心容器与基础交互原子均已映射为原生 Astro 组件。前往查看全部 39 类组合页面区块：<a href={lp('/design-system/blocks/')} class="text-link">/zh/design-system/blocks/ &rarr;</a></>
-          ) : (
-            <>Every coss ui surface and interactive primitive maps cleanly to a native Astro component. Inspect all 39 composed page blocks on <a href={lp('/design-system/blocks/')} class="text-link">/design-system/blocks/ &rarr;</a></>
-          )}
-        </p>
-        <div class="ds-row">
-          {BASE_PRIMITIVE_COVERAGE.map((row) => (
-            <a href={row.anchor} class="cw-tag cw-tag--neutral">{row.category}</a>
-          ))}
         </div>
       </div>
     </section>

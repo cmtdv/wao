@@ -1,0 +1,60 @@
+---
+import Button from '@ui/actions/Button.astro';
+import Frame from '@ui/coss/Frame.astro';
+import FramePanel from '@ui/coss/FramePanel.astro';
+import { getLocaleFromContext } from '@i18n/ui';
+
+interface Props {
+  id?: string;
+  kicker?: string;
+  heading?: string;
+  description?: string;
+  class?: string;
+}
+
+const isZh = getLocaleFromContext(Astro) === 'zh';
+
+const {
+  id = 'newsletter-email',
+  kicker = isZh ? '每周简报' : 'Weekly Dispatch',
+  heading = isZh ? '订阅 ChinaWao 周报' : 'The ChinaWao Brief',
+  description = isZh
+    ? '每周日一封精选邮件，汇总最新核验的中国免签与出行政策变动、新发文章与季节性旅行提示。'
+    : 'One concise Sunday letter covering verified policy shifts, new field guides, and seasonal travel notes across China.',
+  class: className = '',
+} = Astro.props;
+---
+<Frame class={className}>
+  <FramePanel>
+    <section class="cw-newsletter" style="background:transparent;border:0;padding:0;" aria-labelledby={`${id}-heading`}>
+      <div class="cw-newsletter-copy">
+        <span class="eyebrow eyebrow--accent">{kicker}</span>
+        <h2 id={`${id}-heading`}>{heading}</h2>
+        <p>{description}</p>
+      </div>
+
+      <form class="cw-newsletter-form" data-cw-newsletter-form novalidate>
+        <label class="cw-label" for={id}>
+          <span>{isZh ? '电子邮箱' : 'Email Address'}</span>
+          <span class="cw-required" aria-hidden="true">*</span>
+        </label>
+        <div class="cw-newsletter-row">
+          <input
+            id={id}
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="reader@example.com"
+            class="cw-input"
+          />
+          <Button type="submit" variant="primary">{isZh ? '订阅周报' : 'Subscribe'}</Button>
+        </div>
+        <span class="cw-hint" data-cw-newsletter-hint></span>
+      </form>
+    </section>
+  </FramePanel>
+</Frame>

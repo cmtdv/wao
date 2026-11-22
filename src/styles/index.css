@@ -6,9 +6,7 @@
 @import "./layout.css" layer(layout);
 @import "./components.css" layer(components);
 @import "./controls.css" layer(components);
-@import "./ui-kit.css" layer(components);
 @import "./coss-ui.css" layer(components);
-@import "./blocks.css" layer(blocks);
 @import "./paradigm-e.css" layer(pages);
 
 /* Registered custom property for scroll-driven drawer backdrop fade (modern-web-guidance: navigation-drawer) */
