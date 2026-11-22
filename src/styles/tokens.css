@@ -32,11 +32,14 @@
      ======================================================================== */
   --secondary-solid: light-dark(#e43216, #b8230d);
   --secondary-solid-elevated: light-dark(#c8260e, #d42d13);
-  --secondary-ink: #fff2e8;
+  --secondary-ink: light-dark(#160e0c, #f3e4d8);
   --secondary-solid-ink: var(--secondary-ink);
-  --secondary-ink-muted: rgb(255 236 226 / 0.8);
-  --secondary-rule: rgb(255 242 232 / 0.24);
-  --secondary-rule-strong: rgb(255 242 232 / 0.42);
+  --secondary-ink-muted: light-dark(rgb(22 14 12 / 0.76), rgb(243 228 216 / 0.8));
+  --secondary-rule: light-dark(rgb(22 14 12 / 0.22), rgb(243 228 216 / 0.24));
+  --secondary-rule-strong: light-dark(rgb(22 14 12 / 0.42), rgb(243 228 216 / 0.42));
+  --ink-wash-color: light-dark(#160e0c, #0c0807);
+  --ink-wash-opacity: 0.78;
+  --ink-deckle-scale: 1;
 
   --secondary-tint: light-dark(#efe5dc, #251d1a);
   --secondary-tint-border: light-dark(rgb(228 50 22 / 0.2), rgb(255 180 166 / 0.22));
@@ -59,9 +62,9 @@
   --accent-seal: light-dark(#e43216, #ec4326);
   --accent-seal-hover: light-dark(#c8260e, #ff5b3e);
   --accent-seal-text: light-dark(#c8260e, #ff7a61);
-  --accent-seal-on-dark: #fff2e8;
+  --accent-seal-on-dark: light-dark(#160e0c, #f3e4d8);
   --accent-seal-soft: light-dark(rgb(228 50 22 / 0.1), rgb(236 67 38 / 0.18));
-  --accent-on-seal: #fff2e8;
+  --accent-on-seal: light-dark(#160e0c, #fff2e8);
   --accent-pine: var(--secondary-solid);
   --accent-on-pine: var(--secondary-ink);
 

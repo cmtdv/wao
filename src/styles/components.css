@@ -203,7 +203,7 @@
 
 /* Footer Theme Switcher (same @layer components so it wins cleanly over base) */
 .site-footer .theme-switcher {
-  background: var(--secondary-solid-elevated);
+  background: rgb(22 14 12 / 0.12);
   border-color: var(--secondary-rule);
 }
 
@@ -216,9 +216,9 @@
 }
 
 .site-footer .theme-segment[aria-pressed="true"] {
-  background: var(--accent-gold-on-dark);
-  color: #221b18;
-  font-weight: 500;
+  background: var(--secondary-ink);
+  color: var(--secondary-solid);
+  font-weight: 600;
 }
 
 /* --------------------------------------------------------------------------

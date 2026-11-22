@@ -1820,3 +1820,196 @@ function initSiteStyleSwitcher(): void {
 }
 
 initSiteStyleSwitcher();
+
+/* --------------------------------------------------------------------------
+   Live Draggable Ink Tuner (墨色由浅到深 + 边缘不规则墨缘)
+   -------------------------------------------------------------------------- */
+function initInkTuner(): void {
+  const depthInput = document.querySelector<HTMLInputElement>('[data-ink-depth]');
+  const edgeInput = document.querySelector<HTMLInputElement>('[data-ink-edge]');
+  const depthOut = document.querySelector<HTMLOutputElement>('[data-ink-depth-out]');
+  const edgeOut = document.querySelector<HTMLOutputElement>('[data-ink-edge-out]');
+  const seedBtn = document.querySelector<HTMLButtonElement>('[data-ink-seed-btn]');
+  const resetBtn = document.querySelector<HTMLButtonElement>('[data-ink-reset-btn]');
+
+  const deckleTurb = document.querySelector<SVGFETurbulenceElement>('[data-ink-deckle-turbulence]');
+  const deckleDisp = document.querySelector<SVGFEDisplacementMapElement>('[data-ink-deckle-displacement]');
+  const washTurb = document.querySelector<SVGFETurbulenceElement>('[data-ink-wash-turbulence]');
+  const washDisp = document.querySelector<SVGFEDisplacementMapElement>('[data-ink-wash-displacement]');
+
+  if (!depthInput || !edgeInput) return;
+
+  const KEY_DEPTH = 'cw-ink-depth';
+  const KEY_EDGE = 'cw-ink-edge';
+  const KEY_SEED = 'cw-ink-seed';
+  const DEFAULT_DEPTH = 82;
+  const DEFAULT_EDGE = 58;
+  const DEFAULT_SEED = 7;
+
+  // Traditional 5-tone Chinese ink ramp (墨分五色: 清墨 → 淡墨 → 重墨 → 浓墨 → 焦墨)
+  const INK_STOPS: ReadonlyArray<{ at: number; rgb: [number, number, number] }> = [
+    { at: 0, rgb: [110, 44, 30] },   // #6E2C1E 清墨
+    { at: 25, rgb: [79, 31, 21] },   // #4F1F15 淡墨
+    { at: 50, rgb: [51, 21, 16] },   // #331510 重墨
+    { at: 75, rgb: [29, 15, 12] },   // #1D0F0C 浓墨
+    { at: 100, rgb: [9, 6, 5] },     // #090605 焦墨
+  ];
+
+  const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, v));
+
+  function sampleInkRgb(depth: number): [number, number, number] {
+    const t = clamp(depth, 0, 100);
+    for (let i = 0; i < INK_STOPS.length - 1; i += 1) {
+      const a = INK_STOPS[i];
+      const b = INK_STOPS[i + 1];
+      if (t >= a.at && t <= b.at) {
+        const f = (t - a.at) / (b.at - a.at);
+        return [
+          Math.round(a.rgb[0] + (b.rgb[0] - a.rgb[0]) * f),
+          Math.round(a.rgb[1] + (b.rgb[1] - a.rgb[1]) * f),
+          Math.round(a.rgb[2] + (b.rgb[2] - a.rgb[2]) * f),
+        ];
+      }
+    }
+    return INK_STOPS[INK_STOPS.length - 1].rgb;
+  }
+
+  function rgbToHex([r, g, b]: [number, number, number]): string {
+    return `#${[r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+  }
+
+  function inkToneLabel(depth: number, zh: boolean): string {
+    if (depth < 20) return zh ? '清墨' : 'Pale Wash';
+    if (depth < 42) return zh ? '淡墨' : 'Light Ink';
+    if (depth < 68) return zh ? '重墨' : 'Mid Ink';
+    if (depth < 90) return zh ? '浓墨' : 'Rich Ink';
+    return zh ? '焦墨' : 'Charred Ink';
+  }
+
+  function edgeLabel(edge: number, zh: boolean): string {
+    if (edge < 12) return zh ? '齐边' : 'Clean';
+    if (edge < 40) return zh ? '微渗' : 'Soft Bleed';
+    if (edge < 72) return zh ? '毛边' : 'Deckled';
+    return zh ? '飞白泼墨' : 'Ragged Splash';
+  }
+
+  function syncSliderVars(input: HTMLInputElement): void {
+    input.style.setProperty('--attr-min', input.min || '0');
+    input.style.setProperty('--attr-max', input.max || '100');
+    input.style.setProperty('--control-value', input.value);
+  }
+
+  let currentSeed = DEFAULT_SEED;
+  let currentDepth = DEFAULT_DEPTH;
+  let currentEdge = DEFAULT_EDGE;
+
+  try {
+    const sDepth = Number(localStorage.getItem(KEY_DEPTH));
+    const sEdge = Number(localStorage.getItem(KEY_EDGE));
+    const sSeed = Number(localStorage.getItem(KEY_SEED));
+    if (Number.isFinite(sDepth) && localStorage.getItem(KEY_DEPTH) !== null) {
+      currentDepth = clamp(Math.round(sDepth), 0, 100);
+    }
+    if (Number.isFinite(sEdge) && localStorage.getItem(KEY_EDGE) !== null) {
+      currentEdge = clamp(Math.round(sEdge), 0, 100);
+    }
+    if (Number.isFinite(sSeed) && localStorage.getItem(KEY_SEED) !== null) {
+      currentSeed = clamp(Math.round(sSeed), 1, 999);
+    }
+  } catch {
+    // Ignore restricted storage
+  }
+
+  function applyInkState(depth: number, edge: number, seed: number, persist: boolean): void {
+    const zh = isZhPage();
+    const rgb = sampleInkRgb(depth);
+    const hex = rgbToHex(rgb);
+    const [r, g, b] = rgb;
+    const mutedAlpha = (0.72 + (depth / 100) * 0.1).toFixed(2);
+    const washOpacity = (0.22 + (depth / 100) * 0.72).toFixed(2);
+
+    const root = document.documentElement;
+    // Apply live ink concentration across vermilion surfaces (preserves dark mode legibility)
+    root.style.setProperty('--secondary-ink', `light-dark(${hex}, #f3e4d8)`);
+    root.style.setProperty('--secondary-ink-muted', `light-dark(rgb(${r} ${g} ${b} / ${mutedAlpha}), rgb(243 228 216 / 0.8))`);
+    root.style.setProperty('--secondary-rule', `light-dark(rgb(${r} ${g} ${b} / 0.22), rgb(243 228 216 / 0.24))`);
+    root.style.setProperty('--secondary-rule-strong', `light-dark(rgb(${r} ${g} ${b} / 0.42), rgb(243 228 216 / 0.42))`);
+    root.style.setProperty('--accent-on-seal', `light-dark(${hex}, #fff2e8)`);
+    root.style.setProperty('--accent-seal-on-dark', `light-dark(${hex}, #f3e4d8)`);
+    root.style.setProperty('--ink-wash-color', `light-dark(${hex}, #0c0807)`);
+    root.style.setProperty('--ink-wash-opacity', washOpacity);
+
+    // Apply live irregular ink edge parameters to SVG turbulence + displacement filters
+    const eNorm = clamp(edge, 0, 100) / 100;
+    const deckleScale = (eNorm * 54).toFixed(1);
+    const washScale = (eNorm * 68).toFixed(1);
+    const deckleFreqX = (0.011 + eNorm * 0.022).toFixed(4);
+    const deckleFreqY = (0.024 + eNorm * 0.048).toFixed(4);
+    const washFreqX = (0.01 + eNorm * 0.02).toFixed(4);
+    const washFreqY = (0.016 + eNorm * 0.032).toFixed(4);
+
+    if (deckleTurb) {
+      deckleTurb.setAttribute('baseFrequency', `${deckleFreqX} ${deckleFreqY}`);
+      deckleTurb.setAttribute('seed', String(seed));
+    }
+    if (deckleDisp) {
+      deckleDisp.setAttribute('scale', deckleScale);
+    }
+    if (washTurb) {
+      washTurb.setAttribute('baseFrequency', `${washFreqX} ${washFreqY}`);
+      washTurb.setAttribute('seed', String(seed));
+    }
+    if (washDisp) {
+      washDisp.setAttribute('scale', washScale);
+    }
+
+    depthInput!.value = String(depth);
+    edgeInput!.value = String(edge);
+    syncSliderVars(depthInput!);
+    syncSliderVars(edgeInput!);
+
+    const tone = inkToneLabel(depth, zh);
+    const edgeName = edgeLabel(edge, zh);
+    depthInput!.setAttribute('aria-valuetext', `${tone} ${depth}% (${hex})`);
+    edgeInput!.setAttribute('aria-valuetext', `${edgeName} ${edge}%`);
+
+    if (depthOut) depthOut.textContent = `${tone} · ${hex}`;
+    if (edgeOut) edgeOut.textContent = `${edgeName} · ${edge}%`;
+
+    if (persist) {
+      try {
+        localStorage.setItem(KEY_DEPTH, String(depth));
+        localStorage.setItem(KEY_EDGE, String(edge));
+        localStorage.setItem(KEY_SEED, String(seed));
+      } catch {
+        // Ignore restricted storage
+      }
+    }
+  }
+
+  depthInput.addEventListener('input', () => {
+    currentDepth = clamp(Number(depthInput.value), 0, 100);
+    applyInkState(currentDepth, currentEdge, currentSeed, true);
+  });
+
+  edgeInput.addEventListener('input', () => {
+    currentEdge = clamp(Number(edgeInput.value), 0, 100);
+    applyInkState(currentDepth, currentEdge, currentSeed, true);
+  });
+
+  seedBtn?.addEventListener('click', () => {
+    currentSeed = (currentSeed % 97) + 1;
+    applyInkState(currentDepth, currentEdge, currentSeed, true);
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    currentDepth = DEFAULT_DEPTH;
+    currentEdge = DEFAULT_EDGE;
+    currentSeed = DEFAULT_SEED;
+    applyInkState(currentDepth, currentEdge, currentSeed, true);
+  });
+
+  applyInkState(currentDepth, currentEdge, currentSeed, false);
+}
+
+initInkTuner();
