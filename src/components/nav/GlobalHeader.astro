@@ -70,16 +70,6 @@ const extraCategories = roots.slice(6);
 
     <nav class="cw-main-nav" aria-label={isZh ? '文章分类导航' : 'Primary navigation'}>
       <ul class="cw-sub-list">
-        <li class="cw-sub-item">
-          <a
-            href={lp('/posts/')}
-            class="cw-sub-link"
-            aria-current={pathname === '/posts/' ? 'page' : undefined}
-          >
-            <span>{isZh ? '志刊' : 'Blog'}</span>
-          </a>
-        </li>
-
         {navCategories.map((cat) => {
           const children = getChildren(cat);
           const catPath = categoryPath(cat.slug);
@@ -151,6 +141,11 @@ const extraCategories = roots.slice(6);
                   </li>
                 ))}
                 <li>
+                  <a href={lp('/posts/')} class="cw-sub-dropdown-link">
+                    {isZh ? '全部文章' : 'All Articles'}
+                  </a>
+                </li>
+                <li>
                   <a href={lp('/topics/')} class="cw-sub-dropdown-link">
                     {isZh ? '全部栏目索引' : 'All Topics'}
                   </a>
@@ -176,7 +171,6 @@ const extraCategories = roots.slice(6);
         aria-label={isZh ? '打开全站搜索' : 'Open search'}
       >
         <Icon name="search" size={14} />
-        <span class="cw-search-label">{isZh ? '搜索' : 'Search'}</span>
         <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
       </button>
 

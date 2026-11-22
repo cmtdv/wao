@@ -5,7 +5,6 @@ import {
   CheckIcon,
   ChevronDownIcon,
   GlobeIcon,
-  MonitorIcon,
   MoonIcon,
   SunIcon,
 } from "lucide-react";
@@ -14,12 +13,8 @@ import {
   Menu,
   MenuLinkItem,
   MenuPopup,
-  MenuRadioGroup,
-  MenuRadioItem,
   MenuTrigger,
 } from "@coss/menu";
-
-type SchemePref = "light" | "dark" | "system";
 
 export interface HeaderUtilityMenusProps {
   locale: "en" | "zh";
@@ -33,59 +28,61 @@ export function HeaderUtilityMenus({
   zhHref,
 }: HeaderUtilityMenusProps): React.ReactElement {
   const isZh = locale === "zh";
-  const [pref, setPref] = React.useState<SchemePref>("system");
+  const [isDark, setIsDark] = React.useState(false);
 
-  const applyTheme = React.useCallback((next: SchemePref, persist: boolean) => {
-    setPref(next);
+  React.useEffect(() => {
+    const syncFromDom = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    syncFromDom();
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSystemChange = () => {
+      try {
+        const stored = localStorage.getItem("color-scheme");
+        if (stored !== "light" && stored !== "dark") {
+          document.documentElement.classList.toggle("dark", mq.matches);
+          setIsDark(mq.matches);
+        }
+      } catch {}
+    };
+    mq.addEventListener("change", onSystemChange);
+    return () => mq.removeEventListener("change", onSystemChange);
+  }, []);
+
+  const toggleTheme = React.useCallback(() => {
+    const nextDark = !document.documentElement.classList.contains("dark");
+    const nextMode = nextDark ? "dark" : "light";
+    setIsDark(nextDark);
+    document.documentElement.classList.toggle("dark", nextDark);
     const meta = document.querySelector<HTMLMetaElement>(
       'meta[name="color-scheme"]',
     );
     if (meta) {
-      meta.content = next === "system" ? "light dark" : next;
+      meta.content = nextMode;
     }
-    const sysDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = next === "dark" || (next === "system" && sysDark);
-    document.documentElement.classList.toggle("dark", isDark);
-    if (persist) {
-      try {
-        if (next === "system") {
-          localStorage.removeItem("color-scheme");
-        } else {
-          localStorage.setItem("color-scheme", next);
-        }
-      } catch {}
-    }
-  }, []);
-
-  React.useEffect(() => {
     try {
-      const stored = localStorage.getItem("color-scheme");
-      if (stored === "light" || stored === "dark") {
-        setPref(stored);
-      }
+      localStorage.setItem("color-scheme", nextMode);
     } catch {}
   }, []);
 
-  const ThemeIcon =
-    pref === "light" ? SunIcon : pref === "dark" ? MoonIcon : MonitorIcon;
-
   return (
-    <div className="inline-flex items-center gap-1.5">
-      {/* Official coss Menu: Language Dropdown */}
+    <div className="inline-flex items-center gap-1">
+      {/* Compact Language Dropdown */}
       <div className="pe-lang-dropdown-wrap">
         <Menu>
           <MenuTrigger
             render={
               <Button
                 aria-label={isZh ? "切换语言" : "Switch language"}
+                className="h-8 gap-1 px-2 text-xs font-medium"
                 size="sm"
-                variant="outline"
+                variant="ghost"
               />
             }
           >
-            <GlobeIcon className="size-3.5" />
-            <span>{isZh ? "简体中文" : "English"}</span>
-            <ChevronDownIcon className="size-3 opacity-70" />
+            <GlobeIcon className="size-3.5 opacity-80" />
+            <span>{isZh ? "中文" : "EN"}</span>
+            <ChevronDownIcon className="size-3 opacity-60" />
           </MenuTrigger>
           <MenuPopup align="end">
             <MenuLinkItem
@@ -112,50 +109,36 @@ export function HeaderUtilityMenus({
         </Menu>
       </div>
 
-      {/* Official coss Menu: 3-Mode Theme Dropdown */}
-      <Menu>
-        <MenuTrigger
-          render={
-            <Button
-              aria-label={
-                isZh
-                  ? "切换主题模式（浅色 / 深色 / 跟随系统）"
-                  : "Switch theme (Light / Dark / System)"
-              }
-              size="sm"
-              variant="outline"
-            />
-          }
-        >
-          <ThemeIcon className="size-3.5" />
-          <ChevronDownIcon className="size-3 opacity-70" />
-        </MenuTrigger>
-        <MenuPopup align="end">
-          <MenuRadioGroup
-            onValueChange={(val) => applyTheme(val as SchemePref, true)}
-            value={pref}
-          >
-            <MenuRadioItem closeOnClick value="light">
-              <span className="inline-flex items-center gap-2">
-                <SunIcon className="size-3.5" />
-                <span>{isZh ? "浅色模式" : "Light"}</span>
-              </span>
-            </MenuRadioItem>
-            <MenuRadioItem closeOnClick value="dark">
-              <span className="inline-flex items-center gap-2">
-                <MoonIcon className="size-3.5" />
-                <span>{isZh ? "深色模式" : "Dark"}</span>
-              </span>
-            </MenuRadioItem>
-            <MenuRadioItem closeOnClick value="system">
-              <span className="inline-flex items-center gap-2">
-                <MonitorIcon className="size-3.5" />
-                <span>{isZh ? "跟随系统" : "System"}</span>
-              </span>
-            </MenuRadioItem>
-          </MenuRadioGroup>
-        </MenuPopup>
-      </Menu>
+      {/* Borderless 1-Click Theme Toggle (Zero box, zero dropdown) */}
+      <button
+        aria-label={
+          isZh
+            ? isDark
+              ? "切换为浅色模式"
+              : "切换为深色模式"
+            : isDark
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+        }
+        className="inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        onClick={toggleTheme}
+        title={
+          isZh
+            ? isDark
+              ? "切换为浅色模式"
+              : "切换为深色模式"
+            : isDark
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+        }
+        type="button"
+      >
+        {isDark ? (
+          <SunIcon className="size-4" />
+        ) : (
+          <MoonIcon className="size-4" />
+        )}
+      </button>
     </div>
   );
 }
