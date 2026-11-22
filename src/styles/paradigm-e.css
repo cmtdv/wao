@@ -621,14 +621,19 @@
   flex: 1 1 auto;
   min-width: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
+  box-shadow: none;
   font-size: var(--text-md);
   color: var(--ink-primary);
   padding: 0.25rem 0;
 }
 
+.pe-cmd-input:focus,
 .pe-cmd-input:focus-visible {
   outline: none;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 .pe-cmd-results {
