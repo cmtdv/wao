@@ -37,7 +37,6 @@ const year = new Date().getFullYear();
         {roots.map((cat) => (
           <li><a href={lp(categoryPath(cat.slug))}>{cat.label}</a></li>
         ))}
-        <li><a href={lp('/topics/')}>{isZh ? '全部栏目索引' : 'All Topics'}</a></li>
       </ul>
     </div>
 

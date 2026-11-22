@@ -17,14 +17,13 @@ import PostCard from '@site/PostCard.astro';
 import Icon from '@site/Icon.astro';
 import { getPublicPosts, publicContext } from '@lib/cms';
 import { categoryPath, tagPath } from '@lib/format';
-import { getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
 import { buildOrgPublisher } from '@lib/seo-geo';
 import '../styles/home.css';
 import '../styles/topic.css';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
-const strings = getStrings(locale);
 const lp = (path: string) => localePath(path, locale);
 
 const [settings, postsResult, catPrimary, tagPrimary] = await Promise.all([
@@ -105,22 +104,6 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <div id="front-edition" class="container home-shell" style="padding-top: var(--space-5); padding-bottom: var(--space-8);">
-    {/* Compact Unboxed Editorial Masthead Bar */}
-    <div class="edition-bar" style="margin-bottom: var(--space-5);">
-      <p class="eyebrow eyebrow--accent">
-        {isZh ? 'ChinaWao 实证志刊' : 'ChinaWao Journal'}
-      </p>
-      <p class="edition-tagline">
-        {isZh
-          ? '基于官方一手信源与现场实测的中国实用指南与深度报道'
-          : (settings.tagline || strings.home.editionTagline)}
-      </p>
-      <a href={lp('/posts/')} class="editorial-link">
-        <span>{isZh ? `全部文章 (${allPosts.length})` : `All articles (${allPosts.length})`}</span>
-        <Icon name="arrow" size={14} />
-      </a>
-    </div>
-
     {/* SECTION 1: SINGLE PRIMARY FOCAL POINT — ASYMMETRIC LEAD STORY + FEATURED RAIL */}
     {leadPost ? (
       <AsymmetricHero
@@ -131,41 +114,21 @@ const jsonLd = {
       />
     ) : (
       <section class="empty-panel">
-        <p class="eyebrow eyebrow--accent">{isZh ? '编辑部' : 'Editorial Desk'}</p>
         <h1>{isZh ? '暂未发布文章。' : 'No articles published yet.'}</h1>
         <p>{isZh ? '可通过本地 Markdown 脚本或 /_emdash/admin 后台发布第一篇文章。' : 'Publish your first article via Markdown CLI or /_emdash/admin.'}</p>
       </section>
     )}
 
-    {/* SECTION 2: CATEGORY FILTER BAR + LATEST ARTICLES FEED */}
+    {/* SECTION 2: LATEST ARTICLES FEED */}
     {feedPosts.length > 0 && (
       <section class="section-block" aria-labelledby="latest-heading">
-        <div class="section-header" style="margin-bottom: var(--space-4);">
-          <div>
-            <p class="rail-heading">{isZh ? '最新归档' : 'Latest Dispatches'}</p>
-            <h2 id="latest-heading">{isZh ? '近期发布文章' : 'Recent articles'}</h2>
-          </div>
+        <div class="section-header" style="margin-bottom: var(--space-5);">
+          <h2 id="latest-heading">{isZh ? '最新文章' : 'Latest articles'}</h2>
           <a href={lp('/posts/')} class="editorial-link">
-            <span>{isZh ? '浏览全部文章' : 'Browse full archive'}</span>
+            <span>{isZh ? '全部文章' : 'All articles'}</span>
             <Icon name="arrow" size={15} />
           </a>
         </div>
-
-        {rootCategories.length > 0 && (
-          <nav class="pipe-bar" aria-label={isZh ? '按栏目浏览' : 'Browse by category'} style="margin-bottom: var(--space-5);">
-            <a href={lp('/posts/')} class="pipe-link" aria-current="page">
-              <span>{isZh ? '全部文章' : 'All'}</span>
-            </a>
-            {rootCategories.map((term) => (
-              <a href={lp(categoryPath(term.slug))} class="pipe-link">
-                <span>{term.label}</span>
-              </a>
-            ))}
-            <a href={lp('/topics/')} class="pipe-link">
-              <span>{isZh ? '更多栏目 →' : 'All Topics →'}</span>
-            </a>
-          </nav>
-        )}
 
         <div class="post-grid">
           {feedPosts.map((post) => (
@@ -181,12 +144,9 @@ const jsonLd = {
         {/* Left 7 cols: Unboxed Hairline-Divided Categories Ledger */}
         <div>
           <div class="section-header" style="margin-bottom: var(--space-4);">
-            <div>
-              <p class="rail-heading">{isZh ? '分类导航' : 'Editorial Sections'}</p>
-              <h2 id="topics-directory-heading">{isZh ? '按栏目探索' : 'Explore by topic'}</h2>
-            </div>
+            <h2 id="topics-directory-heading">{isZh ? '按栏目浏览' : 'Explore by topic'}</h2>
             <a href={lp('/topics/')} class="editorial-link">
-              <span>{isZh ? '完整栏目目录' : 'Full topics index'}</span>
+              <span>{isZh ? '全部栏目' : 'All topics'}</span>
               <Icon name="arrow" size={15} />
             </a>
           </div>

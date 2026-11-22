@@ -140,16 +140,6 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
         <section id="core-module" style="margin-top: var(--space-5);">
           {guide.archetype === 'playbook' && guide.steps && (
             <div>
-              <ol class="cw-stepper-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;list-style:none;padding:0;margin-bottom:var(--space-5);">
-                {guide.steps.map((s) => (
-                  <li>
-                    <a href={`#step-${s.number}`} class="pe-mega-chip">
-                      {s.title.length > 28 ? `${s.title.slice(0, 28)}…` : s.title}
-                    </a>
-                  </li>
-                ))}
-              </ol>
-
               {guide.steps.map((step) => (
                 <section id={`step-${step.number}`} class="pe-step-card">
                   <h2 style="font-size:1.35rem;">{step.title}</h2>
@@ -340,9 +330,8 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
         </div>
 
         <div class="pe-rail-group">
-          <span class="pe-mega-col-title">{isZh ? '数据与接口' : 'Markdown & API'}</span>
+          <span class="pe-mega-col-title">{isZh ? '数据接口' : 'Developer API'}</span>
           <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
-            <a href={mdHref} class="pe-mega-chip">{isZh ? '查看 Markdown' : 'View .md'}</a>
             <a href={lp('/portals/#mcp-setup')} class="pe-mega-chip">{isZh ? 'MCP 接入' : 'MCP Setup'}</a>
           </div>
         </div>
