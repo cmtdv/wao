@@ -12,6 +12,7 @@ import Button from '@ui/actions/Button.astro';
 import { COMPARISONS } from '@data/paradigm-e/collections';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildComparisonJsonLd } from '@lib/seo-geo';
 
 const slug = Astro.params.slug || '';
 const item = COMPARISONS.find((c) => c.slug === slug);
@@ -21,12 +22,14 @@ const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 const pillar = PILLAR_BY_ID[item.pillar];
+const jsonLd = buildComparisonJsonLd(item, Astro.url.origin, locale);
 ---
 <BaseShell
   title={isZh ? item.titleZh : item.title}
   description={`Choose ${item.optionA} vs ${item.optionB}: verified verdict & specs.`}
   activePillar={item.pillar}
   persona="analyst"
+  jsonLd={jsonLd}
 >
   <div class="container" style="padding-bottom:var(--space-8);max-width:64rem;">
     <ResponsiveBreadcrumb

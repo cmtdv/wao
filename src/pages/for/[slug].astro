@@ -10,6 +10,7 @@ import Button from '@ui/actions/Button.astro';
 import { PERSONA_LANDINGS } from '@data/paradigm-e/collections';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildPersonaJsonLd } from '@lib/seo-geo';
 
 const slug = Astro.params.slug || '';
 const landing = PERSONA_LANDINGS.find((p) => p.slug === slug);
@@ -19,12 +20,14 @@ const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 const pillar = PILLAR_BY_ID[landing.pillar];
+const jsonLd = buildPersonaJsonLd(landing, Astro.url.origin, locale);
 ---
 <BaseShell
   title={isZh ? landing.titleZh : landing.title}
   description={landing.lead}
   activePillar={landing.pillar}
   persona={pillar.persona}
+  jsonLd={jsonLd}
 >
   <div class="container" style="padding-bottom:var(--space-8);max-width:62rem;">
     <ResponsiveBreadcrumb

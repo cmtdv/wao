@@ -11,10 +11,12 @@ import Button from '@ui/actions/Button.astro';
 import { GOV_PORTALS } from '@data/paradigm-e/collections';
 import { PORTAL_ACCESS_ZH, PORTAL_DOMAIN_ZH, PORTAL_LEVEL_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildPortalsCatalogJsonLd } from '@lib/seo-geo';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
+const jsonLd = buildPortalsCatalogJsonLd(Astro.url.origin, locale);
 
 const mcpUrl = `${Astro.url.origin}/mcp`;
 const mcpConfigJson = JSON.stringify(
@@ -35,6 +37,7 @@ const mcpConfigJson = JSON.stringify(
   title={isZh ? '政务公开数据源与 MCP 接入' : 'Government Open Data Portals & MCP'}
   description={isZh ? '汇总中国国家部委与省市公开数据门户，并提供 Claude 与 Cursor 只读 MCP 配置。' : 'Audited Chinese government open-data registry and read-only ChinaWao MCP server configuration.'}
   persona="legal"
+  jsonLd={jsonLd}
 >
   <div class="container" style="padding-bottom:var(--space-8);" data-pe-portals-root>
     <ResponsiveBreadcrumb
@@ -73,6 +76,9 @@ const mcpConfigJson = JSON.stringify(
           <Button href="/llms.txt" variant="ghost" size="sm">
             llms.txt
           </Button>
+          <Button href="/llms-full.txt" variant="ghost" size="sm">
+            llms-full.txt
+          </Button>
         </div>
       </div>
 
@@ -81,9 +87,10 @@ const mcpConfigJson = JSON.stringify(
         <div style="display:grid;gap:0.5rem;align-content:start;">
           <span class="pe-mega-col-title">{isZh ? '只读查询接口' : 'Read-Only Tools'}</span>
           <ul style="list-style:none;padding:0;margin:0;display:grid;gap:0.45rem;font-size:var(--text-xs);">
-            <li><code>search_chinawao</code> — {isZh ? '跨全站指南与城市词条检索事实与链接' : 'Search guides and city entries with canonical URLs'}</li>
-            <li><code>get_guide</code> — {isZh ? '按路径返回纯净 Markdown 文本' : 'Return clean Markdown for any guide'}</li>
-            <li><code>check_visa_240h</code> — {isZh ? '查询 30 天免签与 240h 过境规则' : 'Check 30-day visa-free and 240h transit rules'}</li>
+            <li><code>search_chinawao</code> — {isZh ? '跨全站指南、城市图谱与字卡检索事实与链接' : 'Search guides, city graph nodes, and cards with canonical URLs'}</li>
+            <li><code>get_guide</code> — {isZh ? '返回指南核心事实、权威来源链接与 Markdown 镜像' : 'Return verified facts with traceable source URLs and Markdown mirror'}</li>
+            <li><code>get_city_graph</code> — {isZh ? '按城市返回行政区划码、经纬度、口岸、高校与涉外医院图谱' : 'Return structured city graph (GB/T 2260, Wikidata, WGS-84, ports, universities, hospitals)'}</li>
+            <li><code>check_visa_240h</code> — {isZh ? '查询 30 天免签与 240h 过境规则及移民局信源' : 'Check 30-day visa-free and 240h transit rules with NIA provenance'}</li>
             <li><code>list_gov_portals</code> — {isZh ? '按层级与领域筛选官方政务数据源' : 'Filter ministry and municipal open-data portals'}</li>
           </ul>
         </div>

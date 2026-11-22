@@ -11,6 +11,7 @@ import Badge from '@ui/data-display/Badge.astro';
 import Button from '@ui/actions/Button.astro';
 import { ROUTES } from '@data/paradigm-e/collections';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildRouteJsonLd } from '@lib/seo-geo';
 
 const slug = Astro.params.slug || '';
 const route = ROUTES.find((r) => r.slug === slug);
@@ -21,12 +22,14 @@ const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 
 const maxMins = Math.max(...route.modes.map((m) => m.doorToDoorMinutes), 1);
+const jsonLd = buildRouteJsonLd(route, Astro.url.origin, locale);
 ---
 <BaseShell
   title={isZh ? route.titleZh : route.title}
   description={route.verdict}
   activePillar={route.pillar}
   persona="safety"
+  jsonLd={jsonLd}
 >
   <div class="container" style="padding-bottom:var(--space-8);max-width:62rem;">
     <ResponsiveBreadcrumb

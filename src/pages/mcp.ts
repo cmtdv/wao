@@ -1,26 +1,32 @@
 import type { APIRoute } from 'astro';
 import { GUIDES, GUIDE_BY_SLUG } from '@data/paradigm-e/guides';
-import { ENTITIES } from '@data/paradigm-e/entities';
+import { ENTITIES, getEntity } from '@data/paradigm-e/entities';
 import { GOV_PORTALS } from '@data/paradigm-e/collections';
+import {
+  SPATIAL_GRAPH_ANCHORS,
+  getEntityCitations,
+  getGuideCitations,
+  resolveAuthoritySource,
+} from '@lib/seo-geo';
 
 /**
  * ChinaWao Stateless Read-Only MCP Endpoint (/mcp)
- * Zero write paths. Serves pre-indexed guides, entities, visa checks & government portal registry.
+ * Zero write paths. Serves authoritative, multimodal, city-mapped, and source-traceable China data.
  */
 
 const TOOLS = [
   {
     name: 'search_chinawao',
-    description: 'Search ChinaWao 32 verified guides and programmatic China entities.',
+    description: 'Search ChinaWao verified guides, city graph nodes, multimodal show cards, and entities.',
     inputSchema: {
       type: 'object',
-      properties: { query: { type: 'string', description: 'Keyword or topic (e.g., 240h, USCC, Shanghai, WeChat)' } },
+      properties: { query: { type: 'string', description: 'Keyword or topic (e.g., 240h, USCC, Shanghai, WeChat, peanut)' } },
       required: ['query'],
     },
   },
   {
     name: 'get_guide',
-    description: 'Get verified hard facts and canonical Markdown URL for a ChinaWao guide by slug.',
+    description: 'Get verified facts with traceable authority source URLs and canonical Markdown URL for a ChinaWao guide.',
     inputSchema: {
       type: 'object',
       properties: { slug: { type: 'string' } },
@@ -28,8 +34,17 @@ const TOOLS = [
     },
   },
   {
+    name: 'get_city_graph',
+    description: 'Get structured City Knowledge Graph (GB/T 2260 MCA code, Wikidata, WGS-84, 240h ports, universities, hospitals, landmarks & sources).',
+    inputSchema: {
+      type: 'object',
+      properties: { city: { type: 'string', description: 'City slug: shanghai, beijing, chengdu, xian, or shenzhen' } },
+      required: ['city'],
+    },
+  },
+  {
     name: 'check_visa_240h',
-    description: 'Deterministic check for unilateral 30-day or 240h visa-free transit eligibility.',
+    description: 'Check unilateral 30-day or 240-hour cross-province visa-free transit eligibility with official NIA source.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -60,8 +75,17 @@ export const GET: APIRoute = ({ url }) => {
         status: 'ok',
         readOnly: true,
         protocol: 'JSON-RPC 2.0 (POST /mcp)',
+        corpusAttributes: [
+          'primary_gov_and_mainstream_media',
+          'multimodal_assets',
+          'curated_knowledge',
+          'city_knowledge_graph',
+          'fact_level_provenance',
+        ],
         serverCard: `${url.origin}/.well-known/mcp/server-card.json`,
         llmsTxt: `${url.origin}/llms.txt`,
+        llmsFullTxt: `${url.origin}/llms-full.txt`,
+        sitemap: `${url.origin}/sitemap.xml`,
         tools: TOOLS.map((t) => t.name),
       },
       null,
@@ -97,7 +121,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         result: {
           protocolVersion: '2025-03-26',
           capabilities: { tools: {} },
-          serverInfo: { name: 'chinawao-read-only-mcp', version: '1.0.0' },
+          serverInfo: { name: 'chinawao-read-only-mcp', version: '1.1.0' },
         },
       }),
       { status: 200, headers: { 'content-type': 'application/json; charset=utf-8' } },
@@ -123,7 +147,12 @@ export const POST: APIRoute = async ({ request, url }) => {
       const text = [
         `Search results for "${q}":`,
         ...matchedGuides.map((g) => `- [Guide] ${g.title} -> ${origin}/guides/${g.slug}.md (Verified ${g.lastVerified})`),
-        ...matchedEntities.map((e) => `- [${e.collection}] ${e.title} (${e.chineseName}) -> ${origin}/${e.collection}/${e.slug}/`),
+        ...matchedEntities.map(
+          (e) =>
+            `- [${e.collection}] ${e.title} (${e.chineseName}) -> ${origin}/${e.collection}/${e.slug}/ (md: ${
+              e.collection === 'cities' ? `${origin}/cities/${e.slug}.md` : `${origin}/entities/${e.collection}/${e.slug}.md`
+            })`,
+        ),
       ].join('\n');
       return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } }), {
         status: 200,
@@ -134,13 +163,75 @@ export const POST: APIRoute = async ({ request, url }) => {
     if (name === 'get_guide') {
       const slug = String(args.slug ?? '');
       const guide = GUIDE_BY_SLUG[slug];
-      const text = guide
-        ? `# ${guide.title}\nVerified: ${guide.lastVerified}\nCanonical: ${origin}/guides/${guide.slug}/\nMarkdown: ${origin}/guides/${guide.slug}.md\n\n${guide.leadHook}\n\nHard Facts:\n${guide.hardFacts.map((f) => `- ${f.label}: ${f.value}`).join('\n')}`
-        : `Guide "${slug}" not found.`;
+      if (!guide) {
+        return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: `Guide "${slug}" not found.` }] } }), {
+          status: 200,
+          headers: { 'content-type': 'application/json; charset=utf-8' },
+        });
+      }
+      const citations = getGuideCitations(guide);
+      const text = [
+        `# ${guide.title} (${guide.titleZh})`,
+        `Verified: ${guide.lastVerified}`,
+        `Canonical: ${origin}/guides/${guide.slug}/`,
+        `Markdown: ${origin}/guides/${guide.slug}.md`,
+        '',
+        guide.leadHook,
+        '',
+        'Verified Facts:',
+        ...guide.hardFacts.map((f) => {
+          const r = resolveAuthoritySource(f.source, f.verifiedDate);
+          return `- ${f.label}: ${f.value} [Source: ${r.name} <${r.url}>, ${r.kind}, ${f.verifiedDate}]`;
+        }),
+        '',
+        'Primary Sources:',
+        ...citations.map((c) => `- ${c.name} (${c.kind}): ${c.url}`),
+      ].join('\n');
       return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } }), {
         status: 200,
         headers: { 'content-type': 'application/json; charset=utf-8' },
       });
+    }
+
+    if (name === 'get_city_graph') {
+      const slug = String(args.city ?? '').trim().toLowerCase();
+      const city = getEntity('cities', slug);
+      if (!city || !city.cityData) {
+        return new Response(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id,
+            result: { content: [{ type: 'text', text: `City "${slug}" not found. Available: shanghai, beijing, chengdu, xian, shenzhen.` }] },
+          }),
+          { status: 200, headers: { 'content-type': 'application/json; charset=utf-8' } },
+        );
+      }
+      const anchor = SPATIAL_GRAPH_ANCHORS[city.slug];
+      const citations = getEntityCitations(city);
+      const graphPayload = {
+        entity_id: `${origin}/cities/${city.slug}/#entity`,
+        name: city.title,
+        chinese_name: city.chineseName,
+        pinyin: city.pinyin,
+        mca_code_gbt2260: anchor?.mcaCode ?? city.cityData.mcaCode,
+        wikidata: anchor?.wikidata ?? null,
+        geo_wgs84: anchor ? { lat: anchor.lat, lng: anchor.lng } : null,
+        ports_240h: city.cityData.ports240h,
+        universities: city.cityData.universities,
+        international_hospitals: city.cityData.intlHospitals,
+        contained_places: city.cityData.mashup,
+        canonical_url: `${origin}/cities/${city.slug}/`,
+        markdown_url: `${origin}/cities/${city.slug}.md`,
+        provenance: citations.map((c) => ({ name: c.name, kind: c.kind, url: c.url, verified_date: c.verifiedDate })),
+      };
+      return new Response(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          id,
+          result: { content: [{ type: 'text', text: JSON.stringify(graphPayload, null, 2) }] },
+        }),
+        { status: 200, headers: { 'content-type': 'application/json; charset=utf-8' } },
+      );
     }
 
     if (name === 'check_visa_240h') {
@@ -155,7 +246,12 @@ export const POST: APIRoute = async ({ request, url }) => {
       } else if (transit55.has(cc) && days <= 10 && hasTicket) {
         verdict = `240-Hour (10-Day) Cross-Province Visa-Free Transit Eligible across 60 ports (${cc}, confirmed A->China->C onward ticket required).`;
       }
-      return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: `${verdict}\nSource: ${origin}/guides/240h-visa-free-transit/` }] } }), {
+      const text = [
+        verdict,
+        `Guide: ${origin}/guides/240h-visa-free-transit/`,
+        'Primary Authority: National Immigration Administration (NIA 12367) <https://en.nia.gov.cn/> (gov_official)',
+      ].join('\n');
+      return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } }), {
         status: 200,
         headers: { 'content-type': 'application/json; charset=utf-8' },
       });
@@ -164,7 +260,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     if (name === 'list_gov_portals') {
       const access = String(args.access ?? 'all');
       const list = GOV_PORTALS.filter((p) => access === 'all' || p.access === access);
-      const text = list.map((p) => `- ${p.name} (${p.chineseName}) [${p.accessDetail}] -> ${p.url}`).join('\n');
+      const text = list.map((p) => `- ${p.name} (${p.chineseName}) [${p.level} · ${p.domain} · ${p.access}] -> ${p.url}`).join('\n');
       return new Response(JSON.stringify({ jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } }), {
         status: 200,
         headers: { 'content-type': 'application/json; charset=utf-8' },

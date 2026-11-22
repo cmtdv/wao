@@ -20,6 +20,7 @@ import { getGuidesByPillar, type GuideDefinition } from '@data/paradigm-e/guides
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { RESCUE_FILTER_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildGuideJsonLd } from '@lib/seo-geo';
 
 interface Props {
   guide: GuideDefinition;
@@ -42,14 +43,12 @@ const tocItems = guide.archetype === 'playbook' && guide.steps
       { id: 'ground-pulse', label: isZh ? '现场实测' : 'Field Reports' },
     ];
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: guide.title,
-  description: guide.leadHook,
-  dateModified: guide.lastVerified,
-  publisher: { '@type': 'Organization', name: 'ChinaWao' },
-};
+const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
+  { name: isZh ? '首页' : 'Home', url: lp('/') },
+  { name: isZh ? pillar.nameZh : pillar.name, url: lp(`/${pillar.id}/`) },
+  { name: isZh ? '深度指南' : 'Guides', url: lp('/guides/') },
+  { name: isZh ? guide.titleZh : guide.title, url: lp(`/guides/${guide.slug}/`) },
+]);
 ---
 <BaseShell
   title={isZh ? guide.titleZh : guide.title}

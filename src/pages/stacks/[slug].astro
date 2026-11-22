@@ -12,6 +12,7 @@ import { STACKS } from '@data/paradigm-e/collections';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { STACK_CAT_ZH } from '@data/paradigm-e/i18n-zh';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildStackJsonLd } from '@lib/seo-geo';
 
 const slug = Astro.params.slug || '';
 const stack = STACKS.find((s) => s.slug === slug);
@@ -22,12 +23,14 @@ const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 const pillar = PILLAR_BY_ID[stack.pillar];
 const shareUrl = Astro.url.href;
+const jsonLd = buildStackJsonLd(stack, Astro.url.origin, locale);
 ---
 <BaseShell
   title={isZh ? stack.titleZh : stack.title}
   description={stack.tagline}
   activePillar={stack.pillar}
   persona="safety"
+  jsonLd={jsonLd}
 >
   <div class="container" style="padding-bottom:var(--space-8);max-width:60rem;" data-pe-stack-root={stack.slug}>
     <ResponsiveBreadcrumb

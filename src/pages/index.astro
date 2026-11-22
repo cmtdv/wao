@@ -21,6 +21,7 @@ import { PULSE_STATUS_LABELS, PULSE_ZH_MAP } from '@data/paradigm-e/i18n-zh';
 import { getPublicPosts } from '@lib/cms';
 import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildOrgPublisher } from '@lib/seo-geo';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
@@ -40,15 +41,25 @@ const mostViewedWeek = [
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'ChinaWao',
-  url: Astro.url.origin,
-  description: 'Everything About China, Decoded & Verified.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${Astro.url.origin}/search/?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
+  '@graph': [
+    buildOrgPublisher(Astro.url.origin),
+    {
+      '@type': 'WebSite',
+      '@id': `${Astro.url.origin}/#website`,
+      name: 'ChinaWao',
+      url: Astro.url.origin,
+      inLanguage: ['en', 'zh-CN'],
+      publisher: { '@id': `${Astro.url.origin}/#organization` },
+      description: isZh
+        ? '汇聚权威媒体与政府公开数据，经多模态加工与城市图谱串联的现代中国实用指南与公开数据门户。'
+        : 'Authoritative, multimodal, city-mapped, and source-traceable China reference portal and public data hub.',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${Astro.url.origin}/search/?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
 };
 ---
 <BaseShell

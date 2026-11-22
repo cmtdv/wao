@@ -20,6 +20,7 @@ import Alert from '@ui/feedback/Alert.astro';
 import type { EntityProfile } from '@data/paradigm-e/entities';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import { buildEntityGraphJsonLd } from '@lib/seo-geo';
 
 interface Props {
   entity: EntityProfile;
@@ -68,13 +69,15 @@ const collectionLabel = COLLECTION_LABELS[entity.collection]
 
 const showMobileBar = ['attractions', 'errors', 'documents', 'how-to-use', 'cards', 'cities'].includes(entity.collection);
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': entity.collection === 'cities' ? 'City' : entity.collection === 'attractions' ? 'TouristAttraction' : 'WebPage',
-  name: `${entity.title} (${entity.chineseName})`,
-  description: entity.tagline,
-  dateModified: entity.lastVerified,
-};
+const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
+  { name: isZh ? '首页' : 'Home', url: lp('/') },
+  { name: isZh ? pillar.nameZh : pillar.name, url: lp(`/${pillar.id}/`) },
+  { name: collectionLabel, url: lp(entity.collection === 'cards' ? '/cards/' : '/explore/') },
+  {
+    name: isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title),
+    url: lp(`/${entity.collection}/${entity.slug}/`),
+  },
+]);
 ---
 <BaseShell
   title={`${entity.title} (${entity.chineseName})`}
