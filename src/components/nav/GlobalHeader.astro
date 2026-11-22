@@ -1,8 +1,8 @@
 ---
 /**
- * Global Sticky Header — Minimal Content Editorial MVP
- * - Pure content navigation: All Articles, Dynamic Root Categories, Topics Index, Tags Index, Search (⌘K)
- * - Zero tools workbench, map, or placeholder mega-menus
+ * Global Two-Tier Sticky Header (Wise Blog Architecture)
+ * - Row 1 (.cw-nav-top): Brand on left; global destinations (Articles / Topics / Tags) + Search + Language/Theme on right
+ * - Row 2 (.cw-nav-sub): Editorial channel anchor ("志刊 / Blog") + dynamic EmDash categories with subtopic dropdowns
  */
 import type { getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
@@ -16,6 +16,7 @@ type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][nu
 interface Props {
   siteTitle?: string;
   roots?: Term[];
+  terms?: Term[];
   locale?: Locale;
   originalPathname?: string;
   activePillar?: string;
@@ -24,6 +25,7 @@ interface Props {
 const {
   siteTitle = 'ChinaWao',
   roots = [],
+  terms = [],
   locale = 'en',
   originalPathname,
 } = Astro.props;
@@ -34,107 +36,166 @@ const pathname = stripLocalePrefix(originalPathname ?? Astro.url.pathname);
 const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
 const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
 
-const navCategories = roots.slice(0, 5);
+const flatten = (items: Term[]): Term[] =>
+  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
+const allTerms = flatten(terms.length > 0 ? terms : roots);
+
+function getChildren(root: Term): Term[] {
+  return root.children?.length
+    ? root.children
+    : allTerms.filter((t) => t.parentId === root.id);
+}
+
+const channelCategories = roots.slice(0, 7);
 ---
-<header class="pe-header" data-pe-header>
-  <div class="container pe-header-inner">
-    <a href={lp('/')} class="pe-brand" aria-label={`${siteTitle} ${isZh ? '首页' : 'Home'}`}>
-      <BrandSeal />
-      <span>{siteTitle}<span class="brand-period">.</span></span>
-    </a>
+<header class="pe-header cw-header-two-tier" data-pe-header>
+  {/* ROW 1: Global Site & Utility Bar */}
+  <div class="cw-nav-top">
+    <div class="container cw-nav-top-inner">
+      <a href={lp('/')} class="pe-brand" aria-label={`${siteTitle} ${isZh ? '首页' : 'Home'}`}>
+        <BrandSeal />
+        <span>{siteTitle}<span class="brand-period">.</span></span>
+      </a>
 
-    <button
-      type="button"
-      class="pe-mobile-search-bar"
-      commandfor="pe-cmd-dialog"
-      command="show-modal"
-      aria-label={isZh ? '打开全站搜索' : 'Open search'}
-    >
-      <Icon name="search" size={15} />
-      <span>{isZh ? '搜索文章、高铁、免签、退税…' : 'Search articles, rail, visa, tax refund…'}</span>
-    </button>
-
-    <nav class="pe-pillar-nav" aria-label={isZh ? '主导航' : 'Primary navigation'}>
-      <ul class="pe-pillar-list">
-        <li class="pe-pillar-item">
-          <a
-            href={lp('/posts/')}
-            class="pe-pillar-link"
-            aria-current={pathname === '/posts/' || pathname.startsWith('/posts/') ? 'page' : undefined}
-          >
-            <span>{isZh ? '全部文章' : 'Articles'}</span>
-          </a>
-        </li>
-
-        {navCategories.map((cat) => {
-          const catHref = lp(categoryPath(cat.slug));
-          const isCurrent = pathname === categoryPath(cat.slug) || pathname === `${categoryPath(cat.slug)}/`;
-          return (
-            <li class="pe-pillar-item">
-              <a
-                href={catHref}
-                class="pe-pillar-link"
-                aria-current={isCurrent ? 'page' : undefined}
-              >
-                <span>{cat.label}</span>
-              </a>
-            </li>
-          );
-        })}
-
-        <li class="pe-pillar-item">
-          <a
-            href={lp('/topics/')}
-            class="pe-pillar-link"
-            aria-current={pathname.startsWith('/topics') ? 'page' : undefined}
-          >
-            <span>{isZh ? '栏目' : 'Topics'}</span>
-          </a>
-        </li>
-
-        <li class="pe-pillar-item">
-          <a
-            href={lp('/tags/')}
-            class="pe-pillar-link"
-            aria-current={pathname.startsWith('/tags') || pathname.startsWith('/tag/') ? 'page' : undefined}
-          >
-            <span>{isZh ? '标签' : 'Tags'}</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="pe-dock">
       <button
         type="button"
-        class="pe-cmd-trigger"
+        class="pe-mobile-search-bar"
         commandfor="pe-cmd-dialog"
         command="show-modal"
         aria-label={isZh ? '打开全站搜索' : 'Open search'}
       >
-        <Icon name="search" size={14} />
-        <span style="font-size:var(--text-xs);color:var(--muted-foreground);">{isZh ? '搜索' : 'Search'}</span>
-        <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
+        <Icon name="search" size={15} />
+        <span>{isZh ? '搜索文章、高铁、免签…' : 'Search articles, rail, visa…'}</span>
       </button>
 
-      <HeaderUtilityMenus
-        client:load
-        locale={locale}
-        enHref={enHref}
-        zhHref={zhHref}
-      />
+      <div class="cw-nav-top-right">
+        <nav class="cw-top-links" aria-label={isZh ? '站点导航' : 'Site navigation'}>
+          <a
+            href={lp('/posts/')}
+            class="cw-top-link"
+            aria-current={pathname === '/posts/' || pathname.startsWith('/posts/') ? 'page' : undefined}
+          >
+            {isZh ? '全部文章' : 'Articles'}
+          </a>
+          <a
+            href={lp('/topics/')}
+            class="cw-top-link"
+            aria-current={pathname.startsWith('/topics') ? 'page' : undefined}
+          >
+            {isZh ? '栏目' : 'Topics'}
+          </a>
+          <a
+            href={lp('/tags/')}
+            class="cw-top-link"
+            aria-current={pathname.startsWith('/tags') || pathname.startsWith('/tag/') ? 'page' : undefined}
+          >
+            {isZh ? '标签' : 'Tags'}
+          </a>
+        </nav>
 
-      <button
-        type="button"
-        class="icon-btn pe-mobile-menu-btn"
-        commandfor="mobile-drawer"
-        command="show-modal"
-        aria-label={isZh ? '打开菜单' : 'Open menu'}
-      >
-        <Icon name="menu" size={20} />
-      </button>
+        <div class="pe-dock">
+          <button
+            type="button"
+            class="pe-cmd-trigger"
+            commandfor="pe-cmd-dialog"
+            command="show-modal"
+            aria-label={isZh ? '打开全站搜索' : 'Open search'}
+          >
+            <Icon name="search" size={14} />
+            <span class="cw-search-label">{isZh ? '搜索' : 'Search'}</span>
+            <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
+          </button>
+
+          <HeaderUtilityMenus
+            client:load
+            locale={locale}
+            enHref={enHref}
+            zhHref={zhHref}
+          />
+
+          <button
+            type="button"
+            class="icon-btn pe-mobile-menu-btn"
+            commandfor="mobile-drawer"
+            command="show-modal"
+            aria-label={isZh ? '打开菜单' : 'Open menu'}
+          >
+            <Icon name="menu" size={20} />
+          </button>
+        </div>
+      </div>
     </div>
   </div>
+
+  {/* ROW 2: Editorial Channel & Category Sub-Navigation Bar */}
+  {channelCategories.length > 0 && (
+    <div class="cw-nav-sub">
+      <div class="container cw-nav-sub-inner">
+        <a
+          href={lp('/posts/')}
+          class="cw-sub-brand"
+          aria-current={pathname === '/posts/' ? 'page' : undefined}
+        >
+          {isZh ? '志刊' : 'Blog'}
+        </a>
+
+        <nav class="cw-sub-nav" aria-label={isZh ? '文章分类导航' : 'Editorial categories'}>
+          <ul class="cw-sub-list">
+            {channelCategories.map((cat) => {
+              const children = getChildren(cat);
+              const catPath = categoryPath(cat.slug);
+              const catHref = lp(catPath);
+              const isSelfActive = pathname === catPath || pathname === `${catPath}/`;
+              const isChildActive = children.some((c) => {
+                const cp = categoryPath(c.slug);
+                return pathname === cp || pathname === `${cp}/`;
+              });
+              const isActive = isSelfActive || isChildActive;
+
+              return (
+                <li class:list={['cw-sub-item', children.length > 0 && 'cw-sub-item--has-menu']}>
+                  <a
+                    href={catHref}
+                    class="cw-sub-link"
+                    aria-current={isActive ? 'true' : undefined}
+                  >
+                    <span>{cat.label}</span>
+                    {children.length > 0 && <Icon name="down" size={12} />}
+                  </a>
+
+                  {children.length > 0 && (
+                    <div class="cw-sub-dropdown" role="region" aria-label={cat.label}>
+                      <a href={catHref} class="cw-sub-dropdown-all">
+                        <span>{isZh ? `全部「${cat.label}」` : `All ${cat.label}`}</span>
+                        <Icon name="arrow" size={13} />
+                      </a>
+                      <ul class="cw-sub-dropdown-list">
+                        {children.map((sub) => {
+                          const subPath = categoryPath(sub.slug);
+                          const isSubCurrent = pathname === subPath || pathname === `${subPath}/`;
+                          return (
+                            <li>
+                              <a
+                                href={lp(subPath)}
+                                class="cw-sub-dropdown-link"
+                                aria-current={isSubCurrent ? 'page' : undefined}
+                              >
+                                {sub.label}
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  )}
 </header>
 
 <dialog id="mobile-drawer" closedby="any" class="mobile-drawer" aria-label={isZh ? '导航菜单' : 'Navigation menu'}>

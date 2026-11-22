@@ -142,7 +142,7 @@
   --container-max: 1280px;
   --gutter: clamp(1rem, 3.5vw, 2.5rem);
   --measure-prose: 66ch;
-  --header-height: 3.625rem; /* 58px */
+  --header-height: 6.375rem; /* 102px two-tier Wise-style header */
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
