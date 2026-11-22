@@ -167,10 +167,10 @@ kbd {
   box-shadow: 0 1px 0 0 rgb(0 0 0 / 0.05);
 }
 
-/* coss Default Native Form Elements */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
-select,
-textarea {
+/* coss Default Native Form Elements (excludes official @coss/* slotted primitives) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([data-slot]),
+select:not([data-slot]),
+textarea:not([data-slot]) {
   max-width: 100%;
   min-height: var(--control-h-md);
   padding: 0.42rem 0.75rem;
@@ -188,23 +188,23 @@ textarea {
     box-shadow var(--dur-fast) ease;
 }
 
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):hover:not(:disabled),
-select:hover:not(:disabled),
-textarea:hover:not(:disabled) {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):hover:not(:disabled),
+select:not([data-slot]):hover:not(:disabled),
+textarea:not([data-slot]):hover:not(:disabled) {
   border-color: var(--control-border-hover);
 }
 
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus-visible,
-select:focus-visible,
-textarea:focus-visible {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]):focus-visible,
+select:not([data-slot]):focus-visible,
+textarea:not([data-slot]):focus-visible {
   border-color: var(--control-border-focus);
   outline: none;
   box-shadow: 0 0 0 3px var(--focus-ring-soft);
 }
 
-input:disabled,
-select:disabled,
-textarea:disabled {
+input:not([data-slot]):disabled,
+select:not([data-slot]):disabled,
+textarea:not([data-slot]):disabled {
   background: var(--control-bg-disabled);
   color: var(--ink-tertiary);
   border-color: var(--border);
@@ -214,9 +214,9 @@ textarea:disabled {
 }
 
 @media (pointer: coarse) {
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  select,
-  textarea {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([data-slot]),
+  select:not([data-slot]),
+  textarea:not([data-slot]) {
     min-height: 2.75rem;
     font-size: 1rem;
   }

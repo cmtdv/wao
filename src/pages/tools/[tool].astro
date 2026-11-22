@@ -10,12 +10,12 @@ import AutoDisclaimer from '../../components/compliance/AutoDisclaimer.astro';
 import Button from '@ui/actions/Button.astro';
 import Select from '@ui/forms/Select.astro';
 import Input from '@ui/forms/Input.astro';
-import Checkbox from '@ui/forms/Checkbox.astro';
 import Slider from '@ui/forms/Slider.astro';
 import DateInput from '@ui/forms/DateInput.astro';
 import Frame from '@ui/coss/Frame.astro';
 import FramePanel from '@ui/coss/FramePanel.astro';
 import NumberField from '@ui/coss/NumberField.astro';
+import { VisaCheckerIsland } from '../../components/coss-islands/VisaCheckerIsland';
 import { UTILITY_TOOLS } from '@data/paradigm-e/pillars';
 import { getEntitiesByCollection } from '@data/paradigm-e/entities';
 import { getVisaProfiles } from '@data/mock-portal-zh';
@@ -33,17 +33,6 @@ const detTools = UTILITY_TOOLS.filter((t) => t.group === 'deterministic');
 const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
 const visaProfiles = getVisaProfiles(locale);
 const showCards = getEntitiesByCollection('cards');
-
-const countryOptions = visaProfiles.map((p) => ({
-  value: p.code,
-  label: p.country,
-  data: {
-    unilateral: p.unilateralDays,
-    mutual: p.mutualDays,
-    transit: p.transit240h,
-    note: p.note,
-  },
-}));
 
 const disclaimers = activeTool.slug === 'visa-checker'
   ? (['visa'] as const)
@@ -108,41 +97,15 @@ const webMcpAttrs = {
           </p>
         </header>
 
-        {/* VISA CHECKER */}
+        {/* VISA CHECKER (Official @base-ui/react + coss ui Island) */}
         {activeTool.slug === 'visa-checker' && (
-          <Frame>
-            <div class="visa-workbench" data-visa-checker {...webMcpAttrs}>
-              <FramePanel class="visa-form-card">
-                <form style="display:grid;gap:var(--space-4);" novalidate>
-                  <Select
-                    id="visa-country"
-                    name="country"
-                    label={isZh ? '所持普通护照国籍' : 'Ordinary Passport Nationality'}
-                    options={countryOptions}
-                    data-visa-country
-                  />
-                  <NumberField
-                    id="visa-days"
-                    name="days"
-                    label={isZh ? '计划在中国内地停留天数' : 'Planned Mainland Stay (Days)'}
-                    min={1}
-                    max={180}
-                    value={10}
-                    data-visa-days
-                  />
-                  <Checkbox id="visa-transit-check" name="transit" checked data-visa-transit>
-                    {isZh ? '持有第三国或港澳台联程确定客票（A → 中国 → C）' : 'Confirmed third-country/region onward ticket (A → China → C)'}
-                  </Checkbox>
-                </form>
-              </FramePanel>
-              <FramePanel class="visa-result-card" aria-live="polite" data-visa-result>
-                <span class="eyebrow eyebrow--accent">{isZh ? '判定结果' : 'Result'}</span>
-                <h2 data-visa-verdict style="margin-top:0.2rem;font-size:1.35rem;">{isZh ? '测算中…' : 'Evaluating…'}</h2>
-                <p data-visa-summary style="margin-top:0.35rem;font-size:var(--text-sm);color:var(--ink-secondary);"></p>
-                <p data-visa-note style="margin-top:0.35rem;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--muted-foreground);"></p>
-              </FramePanel>
-            </div>
-          </Frame>
+          <div {...webMcpAttrs}>
+            <VisaCheckerIsland
+              client:load
+              isZh={isZh}
+              profiles={visaProfiles}
+            />
+          </div>
         )}
 
         {/* SHOW-TO-LOCAL CARDS */}

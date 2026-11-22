@@ -564,12 +564,18 @@
 }
 
 .cw-input,
-[data-slot="input"] {
+[data-slot="input"]:not([data-slot="input-control"] *) {
   border-radius: var(--radius-lg);
   background-color: var(--control-bg);
   background-clip: padding-box;
   border: 1px solid var(--control-border);
   box-shadow: var(--coss-control-shadow);
+}
+
+[data-slot="input-control"] input {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 /* coss InputGroup (Icon / Prefix / Suffix / Inline Button) */

@@ -1,5 +1,6 @@
 import node from "@astrojs/node";
 import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import emdash, { local } from "emdash/astro";
 import { sqlite } from "emdash/db";
@@ -7,6 +8,9 @@ import { sqlite } from "emdash/db";
 export default defineConfig({
   output: "server",
   adapter: node({ mode: "standalone" }),
+  vite: {
+    plugins: [tailwindcss()],
+  },
   i18n: {
     defaultLocale: "en",
     locales: [

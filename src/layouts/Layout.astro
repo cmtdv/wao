@@ -139,6 +139,8 @@ const jsonLdList = props.jsonLd
         if (s === 'light' || s === 'dark') {
           document.querySelector('meta[name="color-scheme"]').content = s;
         }
+        var isDark = s === 'dark' || (s !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', isDark);
       } catch (e) {}
     </script>
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
@@ -164,29 +166,31 @@ const jsonLdList = props.jsonLd
       <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     ))}
   </head>
-  <body class:list={[props.mobileFieldBar && 'has-mobile-field-bar']}>
+  <body class:list={['relative font-sans', props.mobileFieldBar && 'has-mobile-field-bar']}>
     <EmDashBodyStart page={page} />
-    <a class="skip-link" href="#main-content">{strings.skipToContent}</a>
+    <div class="isolate relative flex min-h-svh flex-col">
+      <a class="skip-link" href="#main-content">{strings.skipToContent}</a>
 
-    <GlobalHeader
-      siteTitle={siteTitle}
-      locale={locale}
-      originalPathname={originalPathname}
-      activePillar={props.activePillar}
-    />
+      <GlobalHeader
+        siteTitle={siteTitle}
+        locale={locale}
+        originalPathname={originalPathname}
+        activePillar={props.activePillar}
+      />
 
-    <main id="main-content" tabindex="-1">
-      <slot />
-    </main>
+      <main id="main-content" class="flex-1" tabindex="-1">
+        <slot />
+      </main>
 
-    <SiteFooter
-      siteTitle={siteTitle}
-      tagline={locale === 'zh' ? strings.home.editionTagline : (site.tagline || 'Everything about China, decoded & source-verified.')}
-      roots={roots}
-      pages={pages.entries}
-      locale={locale}
-      originalPathname={originalPathname}
-    />
+      <SiteFooter
+        siteTitle={siteTitle}
+        tagline={locale === 'zh' ? strings.home.editionTagline : (site.tagline || 'Everything about China, decoded & source-verified.')}
+        roots={roots}
+        pages={pages.entries}
+        locale={locale}
+        originalPathname={originalPathname}
+      />
+    </div>
 
     <CommandPalette />
 

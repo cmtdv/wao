@@ -5,6 +5,8 @@
     "paths": {
       "@site/*": ["src/components/site/*"],
       "@ui/*": ["src/components/ui/*"],
+      "@coss/*": ["src/components/coss/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@layouts/*": ["src/layouts/*"],
       "@lib/*": ["src/lib/*"],
       "@data/*": ["src/data/*"],

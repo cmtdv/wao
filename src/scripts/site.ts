@@ -47,6 +47,7 @@ function applyScheme(pref: SchemePreference, persist: boolean): void {
 
 function syncThemeControls(pref: SchemePreference): void {
   const effective = getEffectiveScheme(pref);
+  document.documentElement.classList.toggle('dark', effective === 'dark');
   const systemScheme = getSystemScheme();
   const zh = isZhPage();
 
