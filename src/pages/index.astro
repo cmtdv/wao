@@ -241,7 +241,7 @@ const jsonLd = {
         {FEATURED_HOME_GUIDES.map((g) => (
           <a href={lp(`/guides/${g.slug}/`)} class="pe-feature-card">
             <div class="pe-feature-media">
-              <img src={g.heroImage ?? '/images/hero.webp'} alt={isZh ? g.titleZh : g.title} loading="lazy" />
+              <img src={g.heroImage ?? '/images/hero.webp'} alt="" loading="lazy" />
             </div>
             <div class="pe-feature-body">
               <span class="eyebrow eyebrow--accent">

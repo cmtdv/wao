@@ -48,8 +48,7 @@
   z-index: 40;
   background: var(--surface-overlay);
   backdrop-filter: blur(12px);
-  border-top: 3px solid var(--secondary-solid);
-  border-bottom: 1px solid var(--rule-subtle);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-inner {
@@ -184,8 +183,8 @@
 }
 
 .lang-switch-link[aria-current="true"] {
-  background: var(--secondary-solid);
-  color: var(--secondary-ink);
+  background: var(--primary);
+  color: var(--primary-foreground);
   font-weight: 600;
 }
 
@@ -404,12 +403,11 @@ dialog::backdrop {
   overflow-y: auto;
   scrollbar-width: thin;
   padding: var(--space-4) var(--space-5);
-  background-color: var(--surface-canvas);
-  color: var(--ink-primary);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
   border: 0;
-  border-inline-start: 1px solid var(--rule-strong);
-  border-top: 3px solid var(--secondary-solid);
-  box-shadow: var(--shadow-float);
+  border-inline-start: 1px solid var(--border-strong);
+  box-shadow: var(--coss-dialog-shadow);
 
   opacity: 0;
   transition-property: opacity, transform, display, overlay;

@@ -137,7 +137,7 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
     </nav>
 
     <div class="pe-dock">
-      <div class="pe-dock-desktop pe-dock">
+      <div class="pe-dock-desktop">
         <div class="pe-tools-wrap">
           <button
             type="button"
@@ -200,6 +200,17 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
         </a>
       </div>
 
+      <button
+        type="button"
+        class="pe-cmd-trigger"
+        commandfor="pe-cmd-dialog"
+        command="show-modal"
+        aria-label={isZh ? '打开全站搜索' : 'Open search'}
+      >
+        <Icon name="search" size={14} />
+        <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
+      </button>
+
       <div class="coss-menu-anchor pe-lang-dropdown-wrap">
         <button
           type="button"
@@ -244,17 +255,6 @@ const microTools = UTILITY_TOOLS.filter((t) => t.group === 'micro');
           </a>
         </div>
       </div>
-
-      <button
-        type="button"
-        class="pe-cmd-trigger"
-        commandfor="pe-cmd-dialog"
-        command="show-modal"
-        aria-label={isZh ? '打开全站搜索' : 'Open search'}
-      >
-        <Icon name="search" size={14} />
-        <kbd class="cw-kbd" data-pe-shortcut-label>⌘K</kbd>
-      </button>
 
       <ThemeToggle />
 
