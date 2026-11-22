@@ -71,25 +71,25 @@ const channelCategories = roots.slice(0, 7);
       <div class="cw-nav-top-right">
         <nav class="cw-top-links" aria-label={isZh ? '站点导航' : 'Site navigation'}>
           <a
-            href={lp('/posts/')}
-            class="cw-top-link"
-            aria-current={pathname === '/posts/' || pathname.startsWith('/posts/') ? 'page' : undefined}
-          >
-            {isZh ? '全部文章' : 'Articles'}
-          </a>
-          <a
-            href={lp('/topics/')}
-            class="cw-top-link"
-            aria-current={pathname.startsWith('/topics') ? 'page' : undefined}
-          >
-            {isZh ? '栏目' : 'Topics'}
-          </a>
-          <a
             href={lp('/tags/')}
             class="cw-top-link"
             aria-current={pathname.startsWith('/tags') || pathname.startsWith('/tag/') ? 'page' : undefined}
           >
             {isZh ? '标签' : 'Tags'}
+          </a>
+          <a
+            href={lp('/pages/editorial-standards')}
+            class="cw-top-link"
+            aria-current={pathname.startsWith('/pages/editorial-standards') ? 'page' : undefined}
+          >
+            {isZh ? '核验规范' : 'Standards'}
+          </a>
+          <a
+            href={lp('/pages/about-chinawao')}
+            class="cw-top-link"
+            aria-current={pathname.startsWith('/pages/about-chinawao') ? 'page' : undefined}
+          >
+            {isZh ? '关于' : 'About'}
           </a>
         </nav>
 
