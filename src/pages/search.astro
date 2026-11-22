@@ -57,11 +57,6 @@ const popularTags = (tagsRes.data ?? []).slice(0, 12);
   <div class="container">
     <div class="search-shell">
       <header class="search-header">
-        <nav class="breadcrumb" aria-label="Breadcrumb">
-          <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
-          <span class="breadcrumb-sep" aria-hidden="true">/</span>
-          <span aria-current="page">{isZh ? '搜索' : 'Search'}</span>
-        </nav>
         <h1>{isZh ? '全文检索' : 'Search'}</h1>
         <p class="archive-lead">
           {isZh ? '检索全部已发布的文章标题、正文与说明页面。' : 'Full-text search across all published articles and editorial pages.'}
