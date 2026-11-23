@@ -260,6 +260,24 @@
   --dur-slow: 360ms;
 }
 
+/* Optional Brand Palette: Han Purple (中国紫 / 汉紫, BaCuSi2O6 mineral violet) */
+:root[data-palette="han-purple"] {
+  --brand: light-dark(#5b3a8c, #9d7ce6);
+  --brand-hover: light-dark(#492d73, #b296f0);
+  --brand-foreground: #faf8fc;
+  --brand-text: light-dark(#523282, #b9a0f2);
+  --brand-soft: light-dark(rgb(91 58 140 / 0.08), rgb(157 124 230 / 0.16));
+  --brand-border: light-dark(rgb(91 58 140 / 0.26), rgb(185 160 242 / 0.3));
+  --accent-seal-on-dark: #faf8fc;
+  --accent-on-seal: #faf8fc;
+  --selection-bg: light-dark(rgb(91 58 140 / 0.16), rgb(157 124 230 / 0.3));
+  --grad-seal-btn: linear-gradient(180deg, light-dark(#6a46a1, #ac8df0) 0%, var(--brand) 100%);
+  --coss-brand-btn-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.2),
+    0 1px 2px 0 rgb(91 58 140 / 0.28);
+  --focus-ring-soft: light-dark(rgb(91 58 140 / 0.2), rgb(157 124 230 / 0.26));
+}
+
 /* Fallback for browsers without light-dark() support (modern-web-guidance: dark-mode) */
 @supports not (color: light-dark(white, black)) {
   :root {

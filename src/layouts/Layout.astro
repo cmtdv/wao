@@ -141,6 +141,17 @@ const jsonLdList = props.jsonLd
         }
         var isDark = s === 'dark' || (s !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', isDark);
+
+        var pq = new URLSearchParams(window.location.search).get('palette');
+        if (pq === 'purple' || pq === 'han-purple') {
+          sessionStorage.setItem('cw-palette', 'han-purple');
+        } else if (pq === 'vermilion' || pq === 'red' || pq === 'default') {
+          sessionStorage.removeItem('cw-palette');
+        }
+        var activePalette = sessionStorage.getItem('cw-palette');
+        if (activePalette) {
+          document.documentElement.dataset.palette = activePalette;
+        }
       } catch (e) {}
     </script>
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />

@@ -1914,7 +1914,7 @@ function initArticleReaderTools(): void {
   const audioBar = document.querySelector<HTMLElement>('[data-article-audio]');
   if (!audioBar) return;
 
-  const launchBtn = document.querySelector<HTMLButtonElement>('[data-audio-launch]');
+  const launchBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-audio-launch]'));
   const toggleBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-toggle]');
   const speedBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-speed]');
   const stopBtn = audioBar.querySelector<HTMLButtonElement>('[data-audio-stop]');
@@ -1963,7 +1963,7 @@ function initArticleReaderTools(): void {
     const isPlaying = state === 'playing';
     const isActive = state !== 'idle';
     audioBar.hidden = !isActive;
-    launchBtn?.setAttribute('aria-pressed', String(isActive));
+    launchBtns.forEach((btn) => btn.setAttribute('aria-pressed', String(isActive)));
     toggleBtn.dataset.playing = String(isPlaying);
     toggleBtn.setAttribute(
       'aria-label',
@@ -2069,7 +2069,7 @@ function initArticleReaderTools(): void {
   };
 
   toggleBtn.addEventListener('click', handleToggle);
-  launchBtn?.addEventListener('click', handleToggle);
+  launchBtns.forEach((btn) => btn.addEventListener('click', handleToggle));
 
   speedBtn?.addEventListener('click', () => {
     rateIdx = (rateIdx + 1) % rates.length;
@@ -2086,3 +2086,49 @@ function initArticleReaderTools(): void {
 }
 
 initArticleReaderTools();
+
+// Smart Reveal Header: hide on scroll down, reveal on scroll up
+function initSmartRevealHeader(): void {
+  const header = document.querySelector<HTMLElement>('[data-pe-header]');
+  if (!header) return;
+
+  const root = document.documentElement;
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  const sync = () => {
+    ticking = false;
+    const y = Math.max(0, window.scrollY);
+    const delta = y - lastY;
+    const scrolled = y > 8;
+    header.dataset.scrolled = String(scrolled);
+
+    if (y <= 16) {
+      header.dataset.scrollHidden = 'false';
+      root.dataset.headerRevealed = 'false';
+    } else if (delta > 8 && y > 80) {
+      header.dataset.scrollHidden = 'true';
+      root.dataset.headerRevealed = 'false';
+    } else if (delta < -8) {
+      header.dataset.scrollHidden = 'false';
+      root.dataset.headerRevealed = 'true';
+    }
+
+    lastY = y;
+  };
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(sync);
+      }
+    },
+    { passive: true },
+  );
+
+  sync();
+}
+
+initSmartRevealHeader();

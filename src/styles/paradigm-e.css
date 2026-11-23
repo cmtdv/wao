@@ -37,12 +37,29 @@
       NN/g Usability: Solid opaque background (no translucent blur bleed-through)
    -------------------------------------------------------------------------- */
 .pe-header {
-  position: relative;
+  position: sticky;
+  inset-block-start: 0;
   z-index: 60;
   background-color: var(--background);
   border-top: 0;
   border-bottom: 1px solid var(--border);
   min-block-size: 64px;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
+  will-change: transform;
+}
+
+.pe-header[data-scroll-hidden="true"]:not(:hover):not(:focus-within) {
+  transform: translateY(-100%);
+}
+
+.pe-header[data-scrolled="true"]:not([data-scroll-hidden="true"]) {
+  box-shadow: 0 6px 20px -14px rgba(0, 0, 0, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pe-header {
+    transition: none;
+  }
 }
 
 .cw-nav-inner {

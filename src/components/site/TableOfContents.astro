@@ -13,7 +13,9 @@ const isZh = getLocaleFromContext(Astro) === 'zh';
 ---
 {items.length > 0 && variant === 'desktop' && (
   <aside class="toc-rail" aria-label={isZh ? '本页目录' : 'On this page'}>
+    <slot name="top" />
     <div class="toc-sticky">
+      <slot name="sticky-top" />
       <p class="toc-title">{isZh ? '本页目录' : 'On this page'}</p>
       <ol class="toc-list">
         {items.map((item) => (
