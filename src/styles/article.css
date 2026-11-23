@@ -837,17 +837,18 @@
     gap: var(--space-3) var(--space-4);
   }
 
-  .article-footer-breadcrumb {
-    margin: 0;
+  .article-bottom-breadcrumb {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
     font-size: var(--text-xs);
     color: var(--ink-tertiary);
   }
 
-  .article-footer-breadcrumb a {
+  .article-bottom-breadcrumb a {
     color: var(--ink-secondary);
   }
 
-  .article-footer-breadcrumb a:hover {
+  .article-bottom-breadcrumb a:hover {
     color: var(--ink-primary);
   }
 
