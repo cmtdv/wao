@@ -95,7 +95,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/can-i-bring/",
           "/meds/"
         ],
-        "scopeZh": "单方面免签（唯一主页）、240h 过境免签及适用口岸、2027 延期追踪页、免费数字入境卡 CDAC、海关违禁品与充电宝 3C、常用西药、港澳台与陆路口岸通关规则（唯一主页）。"
+        "scopeZh": "单方面免签、240h 过境免签及适用口岸、2027 延期追踪页、免费数字入境卡 CDAC、海关违禁品与充电宝 3C、常用西药、港澳台与陆路口岸通关规则。"
       },
       {
         "code": "T2",
@@ -152,7 +152,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/airports/",
           "/airlines/"
         ],
-        "scopeZh": "高铁与 12306（唯一主页）、双城门到门比价、5 城地铁外卡直刷、机场过夜转机、中国及涉华航司实测（`/airlines/[slug]/`，如东航、国航、南航、春秋；受第二层数据结构差异化层管控）、打车与共享单车。"
+        "scopeZh": "高铁与 12306、双城门到门比价、5 城地铁外卡直刷、机场过夜转机、中国及涉华航司实测、打车与共享单车。"
       },
       {
         "code": "T5",
@@ -169,7 +169,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/hotel-chains/"
         ],
-        "scopeZh": "本土外宾友好连锁酒店（亚朵/全季等）、境外人员 24h 住宿登记（唯一主页，长居租房场景由 L8 链入）、Trip.com 预订避坑、民宿。"
+        "scopeZh": "本土外宾友好连锁酒店（亚朵/全季等）、境外人员 24h 住宿登记、Trip.com 预订避坑、民宿。"
       },
       {
         "code": "T6",
@@ -187,7 +187,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/attractions/",
           "/shows/"
         ],
-        "scopeZh": "实名抢票与放票时间（唯一主页）、博物馆与场馆预约动态（如上博东馆）、实景演出与乐园、节假日限流。"
+        "scopeZh": "实名抢票与放票时间、博物馆与场馆预约动态（如上博东馆）、实景演出与乐园、节假日限流。"
       },
       {
         "code": "T7",
@@ -205,7 +205,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/cards/",
           "/chains/"
         ],
-        "scopeZh": "过敏与忌口（唯一主页，含 GB/T 30240 亮屏卡）、扫码点餐、清真与素食、合餐礼仪、国民连锁点单暗号（品牌档案归 C4）。"
+        "scopeZh": "过敏与忌口、扫码点餐、清真与素食、合餐礼仪、国民连锁点单暗号。"
       },
       {
         "code": "T8",
@@ -225,7 +225,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/how-to-use/",
           "/cards/"
         ],
-        "scopeZh": "紧急电话（唯一主页）、常见骗局、官方表格红框标注、全中文设备按钮图解（洗衣机/快递柜/遥控器）、急诊速查与旅行保险（就医流程归 L5）。"
+        "scopeZh": "紧急电话、常见骗局、官方表格红框标注、全中文设备按钮图解（洗衣机/快递柜/遥控器）、急诊速查与旅行保险。"
       },
       {
         "code": "T9",
@@ -245,7 +245,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/compare/",
           "/guides/"
         ],
-        "scopeZh": "抄作业清单包（Stacks）、8 类特殊人群定制（女性独行/银发/无障碍等）、高意图横评、经典路线、最佳季节（辅引用 G1 的城市 × 月份数据）与法定调休（日历数据取 `/calendar/`）。"
+        "scopeZh": "抄作业清单包（Stacks）、8 类特殊人群定制（女性独行/银发/无障碍等）、高意图横评、经典路线、最佳季节与法定调休。"
       },
       {
         "code": "T10",
@@ -262,7 +262,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/buy-in-china/"
         ],
-        "scopeZh": "中国买数码/特产差价与红线（国行 iPhone/大疆）、离境即买即退、免税店、市场议价与邮寄（集运评测归 B5）。"
+        "scopeZh": "中国买数码/特产差价与红线（国行 iPhone/大疆）、离境即买即退、免税店、市场议价与邮寄。"
       },
       {
         "code": "T11",
@@ -279,7 +279,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/institutions/"
         ],
-        "scopeZh": "博鳌乐城、跨境体检/牙科/眼科医疗旅游实战指南（补齐 SSOT 盲区；医院国际部挂号归 L5）。"
+        "scopeZh": "博鳌乐城、跨境体检/牙科/眼科医疗旅游实战指南。"
       }
     ]
   },
@@ -326,7 +326,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "工作/学习/团聚居留续签、五星卡永居（唯一主页）、数字游民与低成本旅居指南。"
+        "scopeZh": "工作/学习/团聚居留续签、五星卡永居、数字游民与低成本旅居指南。"
       },
       {
         "code": "L3",
@@ -344,7 +344,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/universities/",
           "/degrees/"
         ],
-        "scopeZh": "150 所英文授课名校与高校名录（唯一主页）、MBBS/MBA/CS 热门专业、CSC 奖学金、X 签、语言学校（学中文方法归 C2）。"
+        "scopeZh": "150 所英文授课名校与高校名录、MBBS/MBA/CS 热门专业、CSC 奖学金、X 签、语言学校。"
       },
       {
         "code": "L4",
@@ -378,7 +378,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/institutions/"
         ],
-        "scopeZh": "涉外医院与三甲国际部选择及挂号流程（唯一主页）、商业医保、药店购药、常规体检。"
+        "scopeZh": "涉外医院与三甲国际部选择及挂号流程、商业医保、药店购药、常规体检。"
       },
       {
         "code": "L6",
@@ -412,7 +412,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/jobs/"
         ],
-        "scopeZh": "外籍典型职业薪资门槛、劳动合同、工时休假、五险一金与公积金（唯一主页）、劳动争议。"
+        "scopeZh": "外籍典型职业薪资门槛、劳动合同、工时休假、五险一金与公积金、劳动争议。"
       },
       {
         "code": "L8",
@@ -429,7 +429,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/prices/"
         ],
-        "scopeZh": "租房合同与中介避坑、水电网开通、70 年产权购房限制、50+ 城生活物价锚点（住宿登记链入 T5）。"
+        "scopeZh": "租房合同与中介避坑、水电网开通、70 年产权购房限制、50+ 城生活物价锚点。"
       },
       {
         "code": "L9",
@@ -446,7 +446,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/for/"
         ],
-        "scopeZh": "国际学校与公立入学、跨国婚恋登记与 Q1/Q2 探亲、带外籍伴侣回乡、宠物入境检疫（唯一主页）。"
+        "scopeZh": "国际学校与公立入学、跨国婚恋登记与 Q1/Q2 探亲、带外籍伴侣回乡、宠物入境检疫。"
       },
       {
         "code": "L10",
@@ -493,7 +493,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "外资负面清单（唯一主页）、鼓励目录、WFOE/代表处/合资、公司注册与企业开户。"
+        "scopeZh": "外资负面清单、鼓励目录、WFOE/代表处/合资、公司注册与企业开户。"
       },
       {
         "code": "B2",
@@ -511,7 +511,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/compliance/",
           "/certifications/"
         ],
-        "scopeZh": "2,913 项外文 GB 国标（唯一归口）、电池 3C 新标（GB 47372-2026）、海关 280 号令食品标准（唯一主页）、NMPA、SRRC 12 位码、两用物项出口管制。"
+        "scopeZh": "2,913 项外文 GB 国标、电池 3C 新标（GB 47372-2026）、海关 280 号令食品标准、NMPA、SRRC 12 位码、两用物项出口管制。"
       },
       {
         "code": "B3",
@@ -562,7 +562,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/couriers/"
         ],
-        "scopeZh": "报关单证、原产地证、中欧班列（唯一主页）、海运空运与海外仓、淘宝/1688/闲鱼个人反向海淘与集运商评测（唯一主页）。"
+        "scopeZh": "报关单证、原产地证、中欧班列、海运空运与海外仓、淘宝/1688/闲鱼个人反向海淘与集运商评测。"
       },
       {
         "code": "B6",
@@ -579,7 +579,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "增值税、发票 Fapiao（唯一主页）、企业所得税、跨境收付（含 Wise 企业账户）与结汇。"
+        "scopeZh": "增值税、发票 Fapiao、企业所得税、跨境收付（含 Wise 企业账户）与结汇。"
       },
       {
         "code": "B7",
@@ -695,7 +695,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/cities/",
           "/cities/[city]/in-[month]/"
         ],
-        "scopeZh": "首访核心城市中枢索引（北上广深成渝杭西等），正文落地 `/cities/[slug]/` 并按 `city_id` 横向织网；城市 × 月份气候与避峰页（30 城 × 12 月 = 360 页，高危笛卡尔积，受第三层名录隔离防火墙管控，首年 0 独立索引页，数据先以城市页模块呈现）。"
+        "scopeZh": "首访核心城市指南（北上广深成渝杭西等），涵盖口岸交通、街区漫步、四季气候与避峰出行建议。"
       },
       {
         "code": "G2",
@@ -712,7 +712,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/attractions/"
         ],
-        "scopeZh": "顶流 150–300 景点、中国全部世遗名录（唯一主页，截至 2026-07 共 61 处，数值走事实槽）、博物馆名录（唯一主页）与古镇精选；长尾万级名录沉淀为城市页 `#` 锚点筛选表（防索引膨胀）。"
+        "scopeZh": "中国代表性热门景点、世界文化遗产名录、国家一级博物馆与历史古镇精选指南。"
       },
       {
         "code": "G3",
@@ -833,7 +833,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/cities/",
           "/borders/"
         ],
-        "scopeZh": "香港、澳门、台湾目的地及内地联动跨境线路（通关规则归 T1；保留 v3 原口径，上线前确认措辞）。"
+        "scopeZh": "香港、澳门、台湾目的地及内地联动跨境线路。"
       }
     ]
   },
@@ -883,7 +883,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/decode/",
           "/chengyu/"
         ],
-        "scopeZh": "汉字与拼音、学中文与 HSK（唯一主页）、方言；难读地名/品牌真人发音、社会热词解码、成语故事卡。"
+        "scopeZh": "汉字与拼音、学中文与 HSK、方言；难读地名/品牌真人发音、社会热词解码、成语故事卡。"
       },
       {
         "code": "C3",
@@ -904,7 +904,7 @@ export const V32_PILLARS: V32Pillar[] = [
           "/deities-myths/",
           "/symbols-omens/"
         ],
-        "scopeZh": "传统节日习俗（唯一主页）、24 节气、12 生肖、宗教寺观、民间神祇/《山海经》、数字与吉祥禁忌（`/calendar/` 严控仅当年+次年，不在防火墙内，T9 调休引用）。"
+        "scopeZh": "传统节日习俗、24 节气、12 生肖、宗教寺观、民间神祇/《山海经》、数字与吉祥禁忌。"
       },
       {
         "code": "C4",
@@ -921,7 +921,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/chains/"
         ],
-        "scopeZh": "瑞幸、蜜雪冰城、霸王茶姬、海底捞、胖东来、盒马等本土连锁品牌档案（唯一主页）与新零售文化（补齐 SSOT 盲区）。"
+        "scopeZh": "瑞幸、蜜雪冰城、霸王茶姬、海底捞、胖东来、盒马等本土连锁品牌档案与新零售文化。"
       },
       {
         "code": "C5",
@@ -997,7 +997,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "电影与作者影像、陆剧、当代独立音乐、国产 3A 游戏与国漫（补齐 SSOT 盲区）。"
+        "scopeZh": "电影与作者影像、陆剧、当代独立音乐、国产 3A 游戏与国漫。"
       },
       {
         "code": "C9",
@@ -1014,7 +1014,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "748 座滑雪场与冰雪经济、现代体育、中国电竞生态（武术归 C5，露营路线归 G3）。"
+        "scopeZh": "748 座滑雪场与冰雪经济、现代体育、中国电竞生态。"
       }
     ]
   },
@@ -1079,7 +1079,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/timeline/"
         ],
-        "scopeZh": "五千年史与中西平行年表、近现代史、考古发现、历代人物谱、遗产与古建园林的历史解读、丝路与大运河（世遗与博物馆名录归 G2）。"
+        "scopeZh": "五千年史与中西平行年表、近现代史、考古发现、历代人物谱、遗产与古建园林的历史解读、丝路与大运河。"
       },
       {
         "code": "A4",
@@ -1096,7 +1096,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/china-ai/"
         ],
-        "scopeZh": "中国 AI 模型与 API 全球接入（DeepSeek/Qwen/Kling 等）、机器人、半导体芯片、航天与大科学装置（唯一主页）、基础科研体系、生物医药（纠偏归位）、云计算与开源。"
+        "scopeZh": "中国 AI 模型与 API 全球接入（DeepSeek/Qwen/Kling 等）、机器人、半导体芯片、航天与大科学装置、基础科研体系、生物医药、云计算与开源。"
       },
       {
         "code": "A5",
@@ -1113,7 +1113,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "国家机构与“十五五”、五级政区（唯一主页）、法律体系（民法典与四级法院）、税种概览（企业税链入 B6、个税链入 L4）、外交使领、国防维和与一带一路。"
+        "scopeZh": "国家机构与“十五五”、五级政区、法律体系（民法典与四级法院）、税种概览、外交使领、国防维和与一带一路。"
       },
       {
         "code": "A6",
@@ -1130,7 +1130,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/guides/"
         ],
-        "scopeZh": "人口数据与银发社会、56 民族、教育体制概览（高校名录归 L3）、公共医疗体制、户籍、社会治安、人情面子与侨乡寻根。"
+        "scopeZh": "人口数据与银发社会、56 民族、教育体制概览、公共医疗体制、户籍、社会治安、人情面子与侨乡寻根。"
       },
       {
         "code": "A7",
@@ -1181,7 +1181,7 @@ export const V32_PILLARS: V32Pillar[] = [
         "ssotRoutes": [
           "/chinese-brands/"
         ],
-        "scopeZh": "超级应用与数字生活、数字政务、传媒与互联网、全球出海中国品牌档案（大疆/比亚迪/泡泡玛特/拓竹/宇树等；国内连锁归 C4）。"
+        "scopeZh": "超级应用与数字生活、数字政务、传媒与互联网、全球出海中国品牌档案。"
       }
     ]
   }
