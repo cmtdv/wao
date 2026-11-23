@@ -29,16 +29,6 @@ const geminiHref = `https://gemini.google.com/app?q=${encodeURIComponent(aiPromp
 ---
 <aside class="toc-rail supabase-rail" aria-label={isZh ? '文章导览与 AI 入口' : 'Article navigation and AI links'}>
   <div class="toc-sticky supabase-rail-inner">
-    {tags.length > 0 && (
-      <div class="rail-tags" aria-label={isZh ? '文章标签' : 'Article tags'}>
-        {tags.map((term) => (
-          <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
-            #{term.label}
-          </a>
-        ))}
-      </div>
-    )}
-
     {tocItems.length > 0 && (
       <nav class="rail-section" aria-label={isZh ? '本页目录' : 'On this page'}>
         <p class="rail-heading">{isZh ? '本页目录' : 'ON THIS PAGE'}</p>
@@ -86,5 +76,15 @@ const geminiHref = `https://gemini.google.com/app?q=${encodeURIComponent(aiPromp
         </li>
       </ul>
     </section>
+
+    {tags.length > 0 && (
+      <div class="rail-tags" aria-label={isZh ? '文章标签' : 'Article tags'}>
+        {tags.map((term) => (
+          <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
+            #{term.label}
+          </a>
+        ))}
+      </div>
+    )}
   </div>
 </aside>
