@@ -1,0 +1,562 @@
+/* ==========================================================================
+   ChinaWao Editorial Decision Guide Architecture (/guides/[slug]/)
+   Inspired by NYT Wirecutter (Visual Pick Cards + Bottom Line KPIs)
+   × Stripe Docs (Scannable 8:4 Reading Flow) × Michelin Guide (Hero + Whitespace)
+   ========================================================================== */
+
+@layer pages {
+  .guide-shell {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  /* 1. Full Inner-Width Visual Hero Banner */
+  .guide-hero-banner {
+    margin: 0 0 var(--space-6);
+  }
+
+  .guide-hero-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+
+  .guide-hero-frame img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 8;
+    max-height: 24rem;
+    object-fit: cover;
+  }
+
+  /* 2. Unboxed Editorial Header + Single Primary CTA */
+  .guide-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  .guide-header-copy {
+    flex: 1 1 34rem;
+    min-width: 0;
+  }
+
+  .guide-header h1 {
+    margin: 0;
+    font-size: clamp(2rem, 1.5rem + 1.6vw, 2.75rem);
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+    text-wrap: balance;
+  }
+
+  .guide-dek {
+    margin: var(--space-3) 0 0;
+    max-width: 46rem;
+    font-size: var(--text-lg);
+    line-height: 1.65;
+    color: var(--ink-secondary);
+  }
+
+  .guide-meta-line {
+    margin: var(--space-3) 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guide-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .guide-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 2.35rem;
+    padding-inline: 1rem;
+    border-radius: var(--radius-lg);
+    background: var(--ink-primary);
+    color: var(--background);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  .guide-primary-btn:hover {
+    opacity: 0.9;
+  }
+
+  .guide-primary-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* 3. Wirecutter / Stripe Horizontal KPI Facts Strip (Unboxed, Hairline) */
+  .guide-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--space-4) var(--space-6);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--rule-subtle);
+    border-bottom: 1px solid var(--rule-subtle);
+    margin-bottom: var(--space-7);
+  }
+
+  .guide-kpi-item {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .guide-kpi-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.03em;
+  }
+
+  .guide-kpi-value {
+    font-size: var(--text-lg);
+    font-weight: 650;
+    line-height: 1.3;
+    color: var(--ink-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guide-kpi-src {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-tertiary);
+  }
+
+  /* 4. Asymmetric 8:4 Body (No cramped 3rd column) */
+  .guide-body-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 15.5rem;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .guide-main {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .guide-section {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .guide-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .guide-section h2 {
+    margin: 0;
+    font-size: clamp(1.3rem, 1.15rem + 0.45vw, 1.55rem);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--ink-primary);
+  }
+
+  /* Wirecutter-Style Visual Decision Pick Cards (Replaces cramped 5-col text table) */
+  .guide-picks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .guide-pick-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-raised);
+    transition: border-color var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  .guide-pick-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .guide-pick-top {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .guide-pick-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem 0.75rem;
+  }
+
+  .guide-pick-title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 650;
+    line-height: 1.3;
+    color: var(--ink-primary);
+  }
+
+  .guide-pick-cost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.18rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--surface-sunken);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    color: var(--ink-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guide-pick-points {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+  }
+
+  .guide-pick-point {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    gap: 0.45rem;
+    align-items: baseline;
+  }
+
+  .guide-pick-icon {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .guide-pick-icon--pro {
+    color: var(--status-verified-ink, #166534);
+  }
+
+  .guide-pick-icon--warn {
+    color: var(--accent-seal-text);
+  }
+
+  .guide-pick-icon--skip {
+    color: var(--ink-tertiary);
+  }
+
+  .guide-pick-point strong {
+    color: var(--ink-primary);
+    font-weight: 500;
+  }
+
+  .guide-pick-point span {
+    color: var(--ink-secondary);
+  }
+
+  .guide-pick-foot {
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--rule-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .guide-pick-link {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .guide-pick-link:hover {
+    color: var(--link-hover);
+  }
+
+  /* Optional Collapsible Compact Matrix Details */
+  .guide-matrix-details {
+    border-top: 1px solid var(--rule-subtle);
+    padding-top: var(--space-3);
+  }
+
+  .guide-matrix-details summary {
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
+    color: var(--ink-secondary);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .guide-matrix-details summary:hover {
+    color: var(--ink-primary);
+  }
+
+  /* Playbook Visual Stepper (Unboxed Timeline) */
+  .guide-stepper {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .guide-step-row {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .guide-step-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .guide-step-num {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--ink-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guide-step-body {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .guide-step-body h3 {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 650;
+    line-height: 1.3;
+    color: var(--ink-primary);
+  }
+
+  .guide-step-callout {
+    padding: 0.7rem 1rem;
+    border-inline-start: 3px solid var(--accent-seal);
+    background: var(--surface-sunken);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-size: var(--text-sm);
+    color: var(--ink-primary);
+    line-height: 1.55;
+  }
+
+  .guide-step-summary {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--ink-secondary);
+  }
+
+  .guide-step-list {
+    margin: 0;
+    padding-inline-start: 1.2rem;
+    display: grid;
+    gap: 0.45rem;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ink-secondary);
+  }
+
+  /* Rescue & Editorial 2-Column Visual Grid */
+  .guide-visual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .guide-visual-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-raised);
+  }
+
+  .guide-visual-card h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .guide-visual-card h3 a {
+    color: var(--ink-primary);
+    text-decoration: none;
+  }
+
+  .guide-visual-card h3 a:hover {
+    color: var(--link);
+  }
+
+  .guide-signal-quote {
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-sunken);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent-seal-text);
+  }
+
+  /* Related 2-Column Clean Link Row Grid */
+  .guide-related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .guide-related-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+    text-decoration: none;
+    color: var(--ink-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: background-color var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  .guide-related-card:hover {
+    color: var(--link);
+  }
+
+  .guide-related-card:active {
+    transform: scale(0.985);
+  }
+
+  /* Visual Field Reports (#ground-pulse) with Ratio Bar */
+  .guide-pulse-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 9999px;
+    overflow: hidden;
+    background: var(--surface-sunken);
+    gap: 2px;
+  }
+
+  .guide-pulse-seg--worked { background: #16a34a; }
+  .guide-pulse-seg--partial { background: #d97706; }
+  .guide-pulse-seg--failed { background: #dc2626; }
+
+  .guide-pulse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-3);
+  }
+
+  .guide-pulse-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+
+  .guide-pulse-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+  }
+
+  .guide-pulse-card-ctx {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--ink-primary);
+  }
+
+  .guide-pulse-card-detail {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-secondary);
+  }
+
+  /* Weightless Sticky Right Rail */
+  .guide-rail {
+    position: sticky;
+    inset-block-start: var(--space-6);
+    display: grid;
+    gap: 1.75rem;
+    transition: inset-block-start 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html[data-header-revealed="true"] .guide-rail {
+    inset-block-start: calc(4rem + var(--space-5));
+  }
+
+  @media (max-width: 960px) {
+    .guide-body-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .guide-rail {
+      position: static;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .guide-hero-frame img {
+      aspect-ratio: 16 / 9;
+      max-height: 16rem;
+    }
+
+    .guide-picks-grid,
+    .guide-visual-grid,
+    .guide-related-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .guide-step-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+}
