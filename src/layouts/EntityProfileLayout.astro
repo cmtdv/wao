@@ -648,7 +648,7 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
           <div class="rail-tags" aria-label={isZh ? '档案标签' : 'Dossier tags'}>
             {railTags.map((term) => (
               <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
-                #{term.label}
+                {term.label}
               </a>
             ))}
           </div>

@@ -359,7 +359,7 @@ const jsonLd = {
             <div class="rail-tags article-body-tags" aria-label={isZh ? '文章标签' : 'Article tags'}>
               {tags.map((term) => (
                 <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
-                  #{term.label}
+                  {term.label}
                 </a>
               ))}
             </div>
