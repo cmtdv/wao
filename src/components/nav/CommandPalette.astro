@@ -58,10 +58,10 @@ const posts = postsRes.entries ?? [];
   >
     <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
       <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
-        {isZh ? '六大主柱与工具坞' : '6 Pillars & Utility Dock'}
+        {isZh ? '核心频道与工具' : 'Topics & Tools'}
       </span>
       <a href={lp('/atlas/#topic-index')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
-        {isZh ? '59 栏目全景 →' : 'All 59 Hubs →'}
+        {isZh ? '全部主题 →' : 'All Topics →'}
       </a>
     </div>
     <div class="pe-mega-chips">
@@ -90,9 +90,8 @@ const posts = postsRes.entries ?? [];
       >
         <div>
           <span class="pe-cmd-row-title">{isZh ? d.nameZh : d.nameEn}</span>
-          <span class="pe-cmd-row-sub">{d.routes}</span>
         </div>
-        <Badge tone="verified">{d.code}</Badge>
+        <Badge tone="verified">{isZh ? '工具' : 'Tool'}</Badge>
       </a>
     ))}
 
@@ -133,9 +132,9 @@ const posts = postsRes.entries ?? [];
         >
           <div>
             <span class="pe-cmd-row-title">{isZh ? sec.navZh : sec.navEn}</span>
-            <span class="pe-cmd-row-sub">{isZh ? sec.scopeZh : `${sec.code} · ${sec.ssotRoutes.join(' ')}`}</span>
+            <span class="pe-cmd-row-sub">{isZh ? sec.scopeZh : sec.navEn}</span>
           </div>
-          <Badge tone="neutral">{sec.code}</Badge>
+          <Badge tone="neutral">{isZh ? '主题' : 'Topic'}</Badge>
         </a>
       );
     })}
@@ -148,7 +147,7 @@ const posts = postsRes.entries ?? [];
   <form action={lp('/search/')} method="get" class="pe-cmd-foot" data-pe-cmd-fallback-form>
     <input type="hidden" name="q" value="" data-pe-cmd-hidden-q />
     <span class="cw-hint" style="font-size:var(--text-2xs);">
-      {isZh ? '覆盖 6 主柱 · 59 栏目 · 工具坞 · 全站文章' : '6 Pillars · 59 Hubs · Utility Dock · Dispatches'}
+      {isZh ? '支持检索全站主题、实用工具与深度文章' : 'Search topics, tools, and editorial dispatches'}
     </span>
     <button type="submit" class="text-link" style="border:0;background:transparent;font-size:var(--text-xs);cursor:pointer;">
       {isZh ? '全文检索 →' : 'Full Search →'}

@@ -33,7 +33,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '六大内容主柱' : 'Content Pillars'}</h2>
+      <h2>{isZh ? '核心频道' : 'Explore'}</h2>
       <ul class="footer-links">
         {V32_PILLARS.map((p) => (
           <li><a href={lp(p.path)}>{isZh ? p.navZh : p.navEn}</a></li>
@@ -42,7 +42,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '工具坞与频道' : 'Utility Dock'}</h2>
+      <h2>{isZh ? '实用工具' : 'Tools'}</h2>
       <ul class="footer-links">
         <li><a href={lp('/tools/visa-checker/')}>{isZh ? '240h 免签判定器' : '240h Visa Checker'}</a></li>
         <li><a href={lp('/tools/')}>{isZh ? '实用工具与计算器' : 'Tools & Calculators'}</a></li>
@@ -57,7 +57,7 @@ const year = new Date().getFullYear();
       <h2>{isZh ? '志刊与编辑部' : 'Editorial'}</h2>
       <ul class="footer-links">
         <li><a href={lp('/posts/')}>{isZh ? '全部深度文章' : 'All Articles'}</a></li>
-        <li><a href={lp('/atlas/#topic-index')}>{isZh ? '59 栏目全景索引' : '59-Hub Index'}</a></li>
+        <li><a href={lp('/atlas/#topic-index')}>{isZh ? '全站主题索引' : 'All Topics'}</a></li>
         {pages.slice(0, 3).map((entry) => (
           <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
         ))}
@@ -74,7 +74,7 @@ const year = new Date().getFullYear();
   <div class="container footer-bottom">
     <div class="footer-colophon">
       <span>© {year} {siteTitle}</span>
-      <span>{isZh ? '经一手信源核验的中国实用指南与深度志刊 · IA v3.2' : 'Source-verified practical guides and dispatches on China · IA v3.2'}</span>
+      <span>{isZh ? '经一手信源核验的中国实用指南与深度志刊' : 'Source-verified practical guides and dispatches on China'}</span>
     </div>
 
     <button

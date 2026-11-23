@@ -93,7 +93,6 @@ const normalizedActive = activePillar === 'visit' ? 'travel' : activePillar;
         ) : (
           V32_PILLARS.map((pillar) => {
             const dropdownChildren = pillar.children.filter((c) => c.inDropdown).slice(0, 9);
-            const hubOnlyCount = pillar.children.length - dropdownChildren.length;
             const pillarHref = lp(pillar.path);
             const isActive =
               normalizedActive === pillar.id ||
@@ -119,11 +118,7 @@ const normalizedActive = activePillar === 'visit' ? 'travel' : activePillar;
                   aria-label={isZh ? pillar.navZh : pillar.navEn}
                 >
                   <a href={pillarHref} class="cw-sub-dropdown-all">
-                    <span>
-                      {isZh
-                        ? `${pillar.navZh}枢纽${hubOnlyCount > 0 ? `（含 +${hubOnlyCount} 枢纽专题）` : ''}`
-                        : `${pillar.navEn} Hub${hubOnlyCount > 0 ? ` (+${hubOnlyCount} more)` : ''}`}
-                    </span>
+                    <span>{isZh ? `全部「${pillar.navZh}」` : `All ${pillar.navEn}`}</span>
                     <Icon name="arrow" size={13} />
                   </a>
                   <ul class="cw-sub-dropdown-list">

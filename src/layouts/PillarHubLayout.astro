@@ -45,13 +45,6 @@ const cmsEntries = cmsFeed.entries ?? [];
   <div class="container">
     <div class="v32-shell">
       <header class="v32-header">
-        <p class="v32-eyebrow">
-          <span class="v32-code">{v32Pillar.idx}</span>
-          <span>·</span>
-          <span>{isZh ? v32Pillar.intentZh : v32Pillar.navEn}</span>
-          <span>·</span>
-          <span>{isZh ? v32Pillar.personaZh : v32Pillar.personaEn}</span>
-        </p>
         <h1>{isZh ? pillar.h1Zh : pillar.h1}</h1>
         <p class="v32-lead">{isZh ? pillar.leadZh : pillar.lead}</p>
       </header>
@@ -59,53 +52,41 @@ const cmsEntries = cmsFeed.entries ?? [];
       {/* Main 8:4 Body */}
       <div class="v32-body-grid">
         <div class="v32-main">
-          {/* v3.2 Complete Secondary Hubs Directory (9 Navigation Sections) */}
+          {/* Core Sections Directory */}
           <section class="v32-section-block" aria-labelledby="v32-nav-sections-h">
             <h2 id="v32-nav-sections-h">
-              {isZh ? `核心二级栏目（${navSections.length}）` : `Core Sections (${navSections.length})`}
+              {isZh ? '精选主题' : 'Core Topics'}
             </h2>
-            <p class="v32-section-sub">
-              {isZh
-                ? '严格按 P0 → P1 → P2 优先级排列，点击进入对应二级枢纽着陆页。'
-                : 'Ordered strictly by P0 → P1 → P2 priority. Select any hub to explore guides, tools, and entities.'}
-            </p>
             <ul class="v32-dir-list">
               {navSections.map((sec) => (
                 <li class="v32-dir-item">
-                  <a href={lp(sec.hubPath)} class="v32-dir-link">
-                    <span class="v32-dir-code">{sec.code}</span>
+                  <a href={lp(sec.hubPath)} class="v32-dir-link v32-dir-link--clean">
                     <span>
                       <span class="v32-dir-title">{isZh ? sec.navZh : sec.navEn}</span>
-                      <span class="v32-dir-desc">{isZh ? sec.scopeZh : `${sec.navZh} · ${sec.ssotRoutes.join(' ')}`}</span>
+                      <span class="v32-dir-desc">{isZh ? sec.scopeZh : sec.navEn}</span>
                     </span>
-                    <span class="v32-dir-meta">{sec.priority} · {sec.phase}</span>
+                    <span class="v32-dir-meta">→</span>
                   </a>
                 </li>
               ))}
             </ul>
           </section>
 
-          {/* Hub-Only Secondary Sections (e.g. T10-T11, L10, B10-B11) */}
+          {/* Extended Topics (hub-only sections) */}
           {hubOnlySections.length > 0 && (
             <section class="v32-section-block" aria-labelledby="v32-hub-only-h">
               <h2 id="v32-hub-only-h">
-                {isZh ? `延伸枢纽专题（${hubOnlySections.length}）` : `Extended Hub Topics (${hubOnlySections.length})`}
+                {isZh ? '延伸专题' : 'More Topics'}
               </h2>
-              <p class="v32-section-sub">
-                {isZh
-                  ? '根据 v3.2 导航封顶 9 项规则，以下高价值延伸栏目沉淀在本一级枢纽页直达。'
-                  : 'Curated extended hubs hosted directly on this pillar page to keep top navigation focused.'}
-              </p>
               <ul class="v32-dir-list">
                 {hubOnlySections.map((sec) => (
                   <li class="v32-dir-item">
-                    <a href={lp(sec.hubPath)} class="v32-dir-link">
-                      <span class="v32-dir-code">{sec.code}</span>
+                    <a href={lp(sec.hubPath)} class="v32-dir-link v32-dir-link--clean">
                       <span>
                         <span class="v32-dir-title">{isZh ? sec.navZh : sec.navEn}</span>
-                        <span class="v32-dir-desc">{isZh ? sec.scopeZh : `${sec.navZh} · ${sec.ssotRoutes.join(' ')}`}</span>
+                        <span class="v32-dir-desc">{isZh ? sec.scopeZh : sec.navEn}</span>
                       </span>
-                      <span class="v32-dir-meta">{sec.priority} · {sec.phase}</span>
+                      <span class="v32-dir-meta">→</span>
                     </a>
                   </li>
                 ))}

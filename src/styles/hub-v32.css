@@ -183,6 +183,10 @@
     transition: background-color var(--dur-fast) ease;
   }
 
+  .v32-dir-link--clean {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .v32-dir-link:hover .v32-dir-title {
     color: var(--link);
   }
