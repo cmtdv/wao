@@ -900,11 +900,39 @@
    Persistent Toast Notifications (modern-web-guidance: persistent-toast-notifications)
    - popover="manual" with explicit dismiss button & dedicated region landmark
    -------------------------------------------------------------------------- */
-.cw-toast-region {
+.cw-toast-region,
+[popover="manual"].cw-toast-region {
   position: fixed;
   inset: auto var(--space-5) var(--space-5) auto;
   z-index: 90;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
   pointer-events: none;
+}
+
+[popover="manual"].cw-toast-region:popover-open {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.cw-toast-region .cw-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: min(24rem, calc(100dvw - 2rem));
+  padding: 0.65rem 0.85rem;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--coss-popover-shadow);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  pointer-events: auto;
 }
 
 [popover="manual"].cw-toast {
@@ -952,21 +980,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2rem;
-  min-height: 1.85rem;
-  padding: 0.25rem 0.6rem;
-  border: 1px solid var(--control-border);
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0;
+  border: 0;
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--foreground);
-  background: var(--control-bg);
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--ink-tertiary);
+  background: transparent;
+  flex-shrink: 0;
   cursor: pointer;
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease;
 }
 
 .cw-toast-close:hover {
-  background: var(--accent);
+  background: var(--surface-sunken);
+  color: var(--ink-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {

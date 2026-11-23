@@ -25,13 +25,15 @@ function showToast(message: string): void {
   const item = document.createElement('div');
   item.className = 'cw-toast';
   item.innerHTML = `<span>${message.replace(/</g, '&lt;')}</span><button type="button" class="cw-toast-close" aria-label="Dismiss">×</button>`;
-  item.querySelector('button')?.addEventListener('click', () => {
+  const dismiss = () => {
     item.remove();
     if (!region.children.length && region.matches(':popover-open')) {
       try { (region as HTMLElement & { hidePopover?: () => void }).hidePopover?.(); } catch {}
     }
-  });
+  };
+  item.querySelector('button')?.addEventListener('click', dismiss);
   region.appendChild(item);
+  window.setTimeout(dismiss, 3500);
   try {
     if (!region.matches(':popover-open')) {
       (region as HTMLElement & { showPopover?: () => void }).showPopover?.();
