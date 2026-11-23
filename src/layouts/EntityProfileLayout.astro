@@ -11,6 +11,7 @@
  */
 import BaseShell from './BaseShell.astro';
 import AutoDisclaimer from '../components/compliance/AutoDisclaimer.astro';
+import EntityHeroGallery from '../components/entity/EntityHeroGallery.astro';
 import GroundPulsePanel from '../components/entity/GroundPulsePanel.astro';
 import InteractiveHotspot from '../components/entity/InteractiveHotspot.astro';
 import NearbyMesh from '../components/entity/NearbyMesh.astro';
@@ -44,44 +45,70 @@ const canonicalUrl = `${Astro.url.origin}${lp(`/${entity.collection}/${entity.sl
 const displayTitle = isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title);
 const secondaryName = isZh ? entity.title : entity.chineseName;
 
-const ENTITY_HERO_MAP: Record<string, { src: string; altEn: string; altZh: string }> = {
-  'forbidden-city': {
-    src: '/images/beijing.webp',
-    altEn: 'Morning light across the historic palace roofs of Beijing',
-    altZh: '晨光映照下的北京故宫古建屋脊',
-  },
-  'canton-fair': {
-    src: '/images/shanghai.webp',
-    altEn: 'Modern trade and exhibition skyline in China',
-    altZh: '中国现代化国际会展与商贸枢纽天际线',
-  },
-  beijing: {
-    src: '/images/beijing.webp',
-    altEn: 'Historic imperial roofs in Beijing at sunrise',
-    altZh: '北京古建天际线与晨光',
-  },
-  shanghai: {
-    src: '/images/shanghai.webp',
-    altEn: 'Huangpu River and Shanghai skyline at dusk',
-    altZh: '黄浦江与上海外滩暮色天际线',
-  },
-  chengdu: {
-    src: '/images/chengdu.webp',
-    altEn: 'Giant panda resting amid bamboo in Chengdu, Sichuan',
-    altZh: '四川成都竹林中休憩的大熊猫',
-  },
-  xian: {
-    src: '/images/town.webp',
-    altEn: 'Historic Chinese architecture and water courtyard',
-    altZh: '古韵建筑与水景庭院',
-  },
-  shenzhen: {
-    src: '/images/technology.webp',
-    altEn: 'Modern skyline and innovation hub in Shenzhen',
-    altZh: '深圳现代都市与科创地标',
-  },
+interface RawGallerySlide {
+  src: string;
+  altEn: string;
+  altZh: string;
+}
+
+const ENTITY_GALLERY_MAP: Record<string, RawGallerySlide[]> = {
+  beijing: [
+    { src: '/images/beijing.webp', altEn: 'Beijing · Temple of Heaven & Imperial Roofs', altZh: '北京 · 祈年殿与古建天际线' },
+    { src: '/images/rail.webp', altEn: 'Beijing Rail Hubs · Fuxing High-Speed Trains', altZh: '北京高铁枢纽 · 复兴号双列站台' },
+    { src: '/images/food.webp', altEn: 'Beijing Culinary · Time-Honored Dining & Alley Bites', altZh: '北京风味 · 老字号与胡同烟火' },
+    { src: '/images/craft.webp', altEn: 'Beijing Heritage · Traditional Craftsmanship & Museums', altZh: '北京非遗 · 传统工艺与馆藏文化' },
+  ],
+  shanghai: [
+    { src: '/images/shanghai.webp', altEn: 'Shanghai · Huangpu River & Pudong Dusk Skyline', altZh: '上海 · 黄浦江与陆家嘴暮色天际线' },
+    { src: '/images/rail.webp', altEn: 'Hongqiao Hub · High-Speed Rail & Maglev Gateway', altZh: '虹桥枢纽 · 高铁与磁悬浮国际门户' },
+    { src: '/images/technology.webp', altEn: 'Shanghai Metro & Digital Infrastructure', altZh: '上海都市 · 现代交通与数字便利' },
+    { src: '/images/tea.webp', altEn: 'Former French Concession · Cafes & Teahouses', altZh: '梧桐街区 · 历史风貌与茶饮空间' },
+  ],
+  'forbidden-city': [
+    { src: '/images/beijing.webp', altEn: 'Forbidden City · Imperial Palace Roofs in Morning Light', altZh: '故宫博物院 · 晨光映照下的皇家古建屋脊' },
+    { src: '/images/craft.webp', altEn: 'Palace Museum · Treasure Gallery & Imperial Artifacts', altZh: '故宫珍宝馆 · 宫廷器物与传统工艺' },
+    { src: '/images/tea.webp', altEn: 'Donghuamen & Jingshan · Post-Visit Teahouse & Viewpoint', altZh: '东华门与景山 · 出园观景与茶歇动线' },
+  ],
+  'canton-fair': [
+    { src: '/images/shanghai.webp', altEn: 'Canton Fair · Modern International Trade & Exhibition Hub', altZh: '广交会 · 现代化国际会展与商贸枢纽' },
+    { src: '/images/technology.webp', altEn: 'Phase 1 Halls · Electronics, Machinery & Smart Hardware', altZh: '一期展馆 · 消费电子、机械与智能制造' },
+    { src: '/images/rail.webp', altEn: 'Greater Bay Rail · Direct HSR to Shenzhen & Hong Kong', altZh: '大湾区高铁 · 直连深圳与香港西九龙' },
+  ],
+  chengdu: [
+    { src: '/images/chengdu.webp', altEn: 'Chengdu · Giant Panda in Bamboo Grove', altZh: '四川成都 · 竹林中休憩的大熊猫' },
+    { src: '/images/tea.webp', altEn: 'People’s Park · Classic Bamboo-Chair Teahouse Culture', altZh: '人民公园 · 百年盖碗茶与慢生活' },
+    { src: '/images/food.webp', altEn: 'Sichuan Gastronomy · Hotpot & Alley Noodles', altZh: '川菜之都 · 社区老火锅与街头小吃' },
+  ],
+  xian: [
+    { src: '/images/town.webp', altEn: 'Xi’an · Historic Architecture & Courtyard Heritage', altZh: '西安 · 古都建筑与历史街区肌理' },
+    { src: '/images/craft.webp', altEn: 'Silk Road Heritage · Museums & Craftsmanship', altZh: '丝路起点 · 博物院馆藏与传统工艺' },
+    { src: '/images/food.webp', altEn: 'Sajinqiao Alley · Authentic Local Lamb Paomo & Noodles', altZh: '洒金桥碳水江湖 · 地道泡馍与面食' },
+  ],
+  shenzhen: [
+    { src: '/images/technology.webp', altEn: 'Shenzhen · Hardware Prototyping & Innovation Skyline', altZh: '深圳 · 全球硬件创新与科创地标' },
+    { src: '/images/rail.webp', altEn: 'Futian Station · 14-Minute HSR to Hong Kong West Kowloon', altZh: '福田站 · 14 分钟直达香港西九龙高铁' },
+    { src: '/images/shanghai.webp', altEn: 'Greater Bay Area · Modern Waterfront & Commercial Hub', altZh: '大湾区 · 现代滨海与跨境商贸核心' },
+  ],
+  'mutianyu-great-wall': [
+    { src: '/images/beijing.webp', altEn: 'Northern Beijing · Historic Imperial Defense Heritage', altZh: '京郊古建 · 雄伟明代边关建筑' },
+    { src: '/images/hero.webp', altEn: 'Mountain Panorama · Ridge Views & Clear Air', altZh: '山脊远眺 · 壮阔自然风光' },
+  ],
+  'chengdu-panda-base': [
+    { src: '/images/chengdu.webp', altEn: 'Chengdu Panda Base · Morning Bamboo Feeding', altZh: '成都大熊猫基地 · 晨间竹林投喂' },
+    { src: '/images/tea.webp', altEn: 'Chengdu Afternoon · Teahouses & Relaxed Pace', altZh: '成都午后 · 竹林茶歇与慢节奏' },
+  ],
+  'terracotta-warriors': [
+    { src: '/images/town.webp', altEn: 'Xi’an Heritage · Ancient Imperial Architecture', altZh: '西安古迹 · 历史建筑与遗址风貌' },
+    { src: '/images/craft.webp', altEn: 'Imperial Craftsmanship · Archaeological Treasures', altZh: '古代工艺 · 考古珍品与历史细节' },
+  ],
 };
-const heroMedia = !entity.cardData && !entity.hotspotData ? ENTITY_HERO_MAP[entity.slug] : undefined;
+
+const rawGallery = !entity.cardData && !entity.hotspotData ? ENTITY_GALLERY_MAP[entity.slug] : undefined;
+const galleryPhotos = rawGallery?.map((slide) => ({
+  src: slide.src,
+  alt: isZh ? slide.altZh : slide.altEn,
+  caption: isZh ? slide.altZh : slide.altEn,
+}));
 
 const cardExportPayload = entity.cardData
   ? JSON.stringify({
@@ -154,18 +181,9 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
 >
   <div class="container">
     <div class="entity-shell">
-      {/* PART 1A: Michelin-Grade Generous Full Inner-Width Hero Photo */}
-      {heroMedia && (
-        <figure class="entity-hero-banner">
-          <div class="entity-hero-frame">
-            <img
-              src={heroMedia.src}
-              alt={isZh ? heroMedia.altZh : heroMedia.altEn}
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-        </figure>
+      {/* PART 1A: Embla Carousel + PhotoSwipe Fullscreen Zoom Hero Gallery */}
+      {galleryPhotos && galleryPhotos.length > 0 && (
+        <EntityHeroGallery photos={galleryPhotos} locale={locale} />
       )}
 
       {/* PART 1B: Unboxed Identity & Single Primary CTA Header */}

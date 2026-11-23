@@ -7,7 +7,7 @@ import TableOfContents from '@site/TableOfContents.astro';
 import ArticleRightRail from '@site/ArticleRightRail.astro';
 import Alert from '@ui/feedback/Alert.astro';
 import { getPublicPost, getPublicPosts, publicContext } from '@lib/cms';
-import { categoryPath } from '@lib/format';
+import { categoryPath, tagPath } from '@lib/format';
 import { estimateReadingMinutes, extractToc } from '@lib/portable-text';
 import { buildOrgPublisher } from '@lib/seo-geo';
 import { formatLocalizedDate, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
@@ -396,13 +396,22 @@ const jsonLd = {
                   )}
                 </div>
               </div>
+
+              {tags.length > 0 && (
+                <div class="rail-tags article-footer-tags" aria-label={isZh ? '文章标签' : 'Article tags'}>
+                  {tags.map((term) => (
+                    <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
+                      #{term.label}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </footer>
         </article>
 
         <ArticleRightRail
           locale={locale}
-          tags={tags}
           tocItems={tocItems}
           canonicalUrl={canonicalUrl}
         />

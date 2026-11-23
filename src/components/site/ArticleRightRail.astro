@@ -1,23 +1,15 @@
 ---
 import type { TocItem } from '@lib/portable-text';
-import { tagPath } from '@lib/format';
-import { localePath, type Locale } from '@i18n/ui';
-
-interface TagItem {
-  slug: string;
-  label: string;
-}
+import type { Locale } from '@i18n/ui';
 
 interface Props {
   locale: Locale;
-  tags: TagItem[];
   tocItems: TocItem[];
   canonicalUrl: string;
 }
 
-const { locale, tags, tocItems, canonicalUrl } = Astro.props;
+const { locale, tocItems, canonicalUrl } = Astro.props;
 const isZh = locale === 'zh';
-const lp = (path: string) => localePath(path, locale);
 
 const aiPrompt = isZh
   ? `请阅读并总结这篇文章的关键实操步骤，并回答我接下来的问题：${canonicalUrl}`
@@ -76,15 +68,5 @@ const geminiHref = `https://gemini.google.com/app?q=${encodeURIComponent(aiPromp
         </li>
       </ul>
     </section>
-
-    {tags.length > 0 && (
-      <div class="rail-tags" aria-label={isZh ? '文章标签' : 'Article tags'}>
-        {tags.map((term) => (
-          <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
-            #{term.label}
-          </a>
-        ))}
-      </div>
-    )}
   </div>
 </aside>

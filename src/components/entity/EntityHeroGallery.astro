@@ -1,0 +1,359 @@
+---
+import type { Locale } from '@i18n/ui';
+import 'photoswipe/style.css';
+
+export interface GalleryPhoto {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+interface Props {
+  photos: GalleryPhoto[];
+  locale: Locale;
+}
+
+const { photos, locale } = Astro.props;
+const isZh = locale === 'zh';
+const isMulti = photos.length > 1;
+---
+{photos.length > 0 && (
+  <div class="entity-gallery" data-entity-gallery data-multi={isMulti ? 'true' : 'false'}>
+    <div class="entity-gallery-stage">
+      <div class="entity-gallery-viewport" data-gallery-viewport>
+        <div class="entity-gallery-container" data-gallery-pswp>
+          {photos.map((photo, idx) => (
+            <figure class="entity-gallery-slide">
+              <a
+                href={photo.src}
+                class="entity-gallery-link"
+                data-pswp-width="1600"
+                data-pswp-height="1000"
+                data-gallery-slide-link
+                aria-label={isZh ? `放大查看：${photo.alt}` : `Zoom photo: ${photo.alt}`}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </a>
+              {(photo.caption || photo.alt) && (
+                <figcaption class="entity-gallery-caption">{photo.caption ?? photo.alt}</figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      </div>
+
+      {isMulti && (
+        <>
+          <button
+            type="button"
+            class="entity-gallery-nav entity-gallery-prev"
+            data-gallery-prev
+            aria-label={isZh ? '上一张' : 'Previous photo'}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="entity-gallery-nav entity-gallery-next"
+            data-gallery-next
+            aria-label={isZh ? '下一张' : 'Next photo'}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+          <span class="entity-gallery-counter" data-gallery-counter aria-live="polite">
+            1 / {photos.length}
+          </span>
+        </>
+      )}
+    </div>
+
+    {isMulti && (
+      <div class="entity-gallery-thumbs" role="tablist" aria-label={isZh ? '图片缩略图' : 'Photo thumbnails'}>
+        {photos.map((photo, idx) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={idx === 0 ? 'true' : 'false'}
+            class:list={['entity-gallery-thumb', idx === 0 && 'is-active']}
+            data-gallery-thumb={idx}
+            aria-label={photo.caption ?? photo.alt}
+          >
+            <img src={photo.src} alt="" loading="lazy" decoding="async" />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
+<script>
+  import EmblaCarousel from 'embla-carousel';
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+
+  const initEntityGalleries = () => {
+    const roots = document.querySelectorAll<HTMLElement>('[data-entity-gallery]:not([data-gallery-bound])');
+    roots.forEach((root) => {
+      root.dataset.galleryBound = 'true';
+      const viewport = root.querySelector<HTMLElement>('[data-gallery-viewport]');
+      const pswpContainer = root.querySelector<HTMLElement>('[data-gallery-pswp]');
+      const isMulti = root.dataset.multi === 'true';
+
+      if (viewport && isMulti) {
+        const prevBtn = root.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+        const nextBtn = root.querySelector<HTMLButtonElement>('[data-gallery-next]');
+        const counter = root.querySelector<HTMLElement>('[data-gallery-counter]');
+        const thumbs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-gallery-thumb]'));
+
+        const embla = EmblaCarousel(viewport, { loop: true, align: 'start' });
+        const sync = () => {
+          const idx = embla.selectedScrollSnap();
+          thumbs.forEach((btn, i) => {
+            const active = i === idx;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          if (counter) counter.textContent = `${idx + 1} / ${thumbs.length}`;
+        };
+
+        embla.on('select', sync);
+        prevBtn?.addEventListener('click', () => embla.scrollPrev());
+        nextBtn?.addEventListener('click', () => embla.scrollNext());
+        thumbs.forEach((btn, i) => btn.addEventListener('click', () => embla.scrollTo(i)));
+        sync();
+      }
+
+      if (pswpContainer) {
+        const links = Array.from(pswpContainer.querySelectorAll<HTMLAnchorElement>('[data-gallery-slide-link]'));
+        let pointerDownX = 0;
+        let isDragging = false;
+
+        links.forEach((a) => {
+          const img = a.querySelector('img');
+          const syncDim = () => {
+            if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+              a.dataset.pswpWidth = String(img.naturalWidth);
+              a.dataset.pswpHeight = String(img.naturalHeight);
+            }
+          };
+          if (img?.complete) syncDim();
+          else img?.addEventListener('load', syncDim, { once: true });
+
+          a.addEventListener('pointerdown', (e) => {
+            pointerDownX = e.clientX;
+            isDragging = false;
+          });
+          a.addEventListener('pointermove', (e) => {
+            if (Math.abs(e.clientX - pointerDownX) > 6) isDragging = true;
+          });
+          a.addEventListener(
+            'click',
+            (e) => {
+              if (isDragging) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            },
+            true,
+          );
+        });
+
+        const lightbox = new PhotoSwipeLightbox({
+          gallery: pswpContainer,
+          children: 'a[data-gallery-slide-link]',
+          pswpModule: () => import('photoswipe'),
+        });
+        lightbox.init();
+      }
+    });
+  };
+
+  initEntityGalleries();
+  document.addEventListener('astro:page-load', initEntityGalleries);
+</script>
+
+<style>
+  .entity-gallery {
+    margin: 0 0 var(--space-6);
+  }
+
+  .entity-gallery-stage {
+    position: relative;
+  }
+
+  .entity-gallery-viewport {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+
+  .entity-gallery[data-multi="true"] .entity-gallery-viewport {
+    cursor: grab;
+  }
+
+  .entity-gallery[data-multi="true"] .entity-gallery-viewport:active {
+    cursor: grabbing;
+  }
+
+  .entity-gallery-container {
+    display: flex;
+  }
+
+  .entity-gallery-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    margin: 0;
+    position: relative;
+  }
+
+  .entity-gallery-link {
+    display: block;
+    cursor: zoom-in;
+  }
+
+  .entity-gallery-slide img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    max-height: 29rem;
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .entity-gallery-caption {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 1.75rem 5.5rem var(--space-4) var(--space-5);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.58), transparent);
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 450;
+    line-height: 1.45;
+    pointer-events: none;
+  }
+
+  .entity-gallery-nav {
+    position: absolute;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(20, 20, 20, 0.54);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 120ms ease-out;
+  }
+
+  .entity-gallery-nav:hover {
+    background: rgba(20, 20, 20, 0.78);
+  }
+
+  .entity-gallery-nav:active {
+    transform: translateY(-50%) scale(0.94);
+  }
+
+  .entity-gallery-prev {
+    inset-inline-start: 0.9rem;
+  }
+
+  .entity-gallery-next {
+    inset-inline-end: 0.9rem;
+  }
+
+  .entity-gallery-counter {
+    position: absolute;
+    inset-inline-end: 1rem;
+    inset-block-end: 0.85rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 9999px;
+    background: rgba(20, 20, 20, 0.58);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+  }
+
+  .entity-gallery-thumbs {
+    display: flex;
+    gap: 0.55rem;
+    margin-top: 0.65rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scrollbar-width: thin;
+  }
+
+  .entity-gallery-thumb {
+    flex: 0 0 6.25rem;
+    height: 3.85rem;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface-sunken);
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 150ms ease, border-color 150ms ease, transform 120ms ease-out;
+  }
+
+  .entity-gallery-thumb:hover {
+    opacity: 0.88;
+  }
+
+  .entity-gallery-thumb.is-active {
+    opacity: 1;
+    border-color: var(--ink-primary);
+  }
+
+  .entity-gallery-thumb:active {
+    transform: scale(0.97);
+  }
+
+  .entity-gallery-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 640px) {
+    .entity-gallery-slide img {
+      aspect-ratio: 16 / 9;
+      max-height: 18rem;
+    }
+
+    .entity-gallery-caption {
+      padding: 1.25rem 4.25rem var(--space-3) var(--space-4);
+      font-size: var(--text-xs);
+    }
+
+    .entity-gallery-nav {
+      width: 2.15rem;
+      height: 2.15rem;
+    }
+
+    .entity-gallery-thumb {
+      flex: 0 0 5rem;
+      height: 3.15rem;
+    }
+  }
+</style>
