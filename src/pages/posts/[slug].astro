@@ -4,9 +4,10 @@ import { Image, PortableText } from 'emdash/ui';
 import Layout from '@layouts/Layout.astro';
 import PostCard from '@site/PostCard.astro';
 import TableOfContents from '@site/TableOfContents.astro';
+import ArticleRightRail from '@site/ArticleRightRail.astro';
 import Alert from '@ui/feedback/Alert.astro';
 import { getPublicPost, getPublicPosts, publicContext } from '@lib/cms';
-import { categoryPath, tagPath } from '@lib/format';
+import { categoryPath } from '@lib/format';
 import { estimateReadingMinutes, extractToc } from '@lib/portable-text';
 import { buildOrgPublisher } from '@lib/seo-geo';
 import { formatLocalizedDate, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
@@ -109,8 +110,7 @@ const formatAudioTime = (sec: number) => {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 };
 const tocItems = extractToc(post.data.content);
-const hasToc = tocItems.length >= 4;
-const addToGoogleHref = 'https://www.google.com/preferences/source?q=chinawao.com';
+const hasToc = tocItems.length > 0;
 
 // Fetch up to 3 related/recent dispatches (preferring primary category)
 const relatedResult = await getPublicPosts({
@@ -187,7 +187,7 @@ const jsonLd = {
   <div class="reading-progress" aria-hidden="true"></div>
 
   <div class="container">
-    <div class:list={['article-shell', !hasToc && 'article-shell--single']}>
+    <div class="article-shell">
       {post.data.featured_image && (
         <figure class="article-figure article-figure--hero">
           <div class="article-figure-frame">
@@ -204,7 +204,7 @@ const jsonLd = {
         </figure>
       )}
 
-      <div class:list={['article-grid', hasToc && 'article-grid--with-toc']}>
+      <div class="article-grid article-grid--with-toc">
         <article class="article-main">
           <header class="article-header">
             {isFallbackEnglish && (
@@ -241,22 +241,18 @@ const jsonLd = {
               </div>
 
               <div class="article-utility-strip" role="group" aria-label={isZh ? '文章操作' : 'Article actions'}>
-                {!hasToc && (
-                  <>
-                    <button
-                      type="button"
-                      class="article-util-btn"
-                      aria-pressed="false"
-                      data-audio-launch
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
-                      </svg>
-                      <span>{isZh ? '朗读' : 'Listen'}</span>
-                    </button>
-                    <span class="article-util-sep" aria-hidden="true"></span>
-                  </>
-                )}
+                <button
+                  type="button"
+                  class="article-util-btn"
+                  aria-pressed="false"
+                  data-audio-launch
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+                  </svg>
+                  <span>{isZh ? '朗读' : 'Listen'}</span>
+                </button>
+                <span class="article-util-sep" aria-hidden="true"></span>
                 <button
                   type="button"
                   class="article-util-btn"
@@ -286,36 +282,21 @@ const jsonLd = {
                   </svg>
                   <span data-save-label>{isZh ? '收藏' : 'Save'}</span>
                 </button>
-                <span class="article-util-sep" aria-hidden="true"></span>
-                <a
-                  href={addToGoogleHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="article-util-btn"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="3" width="14" height="14" rx="2" />
-                    <path d="M10 7v6M7 10h6" />
-                    <path d="M21 9v10a2 2 0 0 1-2 2H9" />
-                  </svg>
-                  <span>{isZh ? '添加到 Google' : 'Add to Google'}</span>
-                </a>
               </div>
             </div>
           </header>
 
-          {/* Compact On-Demand coss Toolbar Audio Mini-Player (fallback in left column when no TOC rail) */}
-          {!hasToc && (
-            <div
-              role="toolbar"
-              data-slot="toolbar"
-              class="article-audio-toolbar"
-              aria-label={isZh ? '语音朗读控制' : 'Audio playback controls'}
-              data-article-audio
-              data-audio-lang={isZh ? 'zh-CN' : 'en-US'}
-              data-audio-est-sec={String(estimatedSeconds)}
-              hidden
-            >
+          {/* Compact On-Demand coss Toolbar Audio Mini-Player */}
+          <div
+            role="toolbar"
+            data-slot="toolbar"
+            class="article-audio-toolbar"
+            aria-label={isZh ? '语音朗读控制' : 'Audio playback controls'}
+            data-article-audio
+            data-audio-lang={isZh ? 'zh-CN' : 'en-US'}
+            data-audio-est-sec={String(estimatedSeconds)}
+            hidden
+          >
               <button
                 type="button"
                 class="audio-play-btn"
@@ -361,7 +342,6 @@ const jsonLd = {
                 </svg>
               </button>
             </div>
-          )}
 
           {hasToc && <TableOfContents items={tocItems} variant="mobile" />}
 
@@ -417,14 +397,6 @@ const jsonLd = {
             </div>
 
             <div class="article-footer-bottom">
-              {tags.length > 0 ? (
-                <div class="term-list" aria-label={isZh ? '文章标签' : 'Article tags'}>
-                  {tags.map((term) => (
-                    <a href={lp(tagPath(term.slug))} class="term-pill">#{term.label}</a>
-                  ))}
-                </div>
-              ) : <span />}
-
               <div class="article-footer-actions">
                 <a href={lp('/pages/corrections-updates')} class="article-action-btn">
                   {isZh ? '反馈规则变动' : 'Report update'}
@@ -434,81 +406,13 @@ const jsonLd = {
           </footer>
         </article>
 
-        {hasToc && (
-          <TableOfContents items={tocItems} variant="desktop">
-          <div slot="sticky-top" class="rail-actions-block">
-            <div class="article-utility-strip rail-utility-strip" role="group" aria-label={isZh ? '语音朗读' : 'Listen to article'}>
-              <button
-                type="button"
-                class="article-util-btn"
-                aria-pressed="false"
-                data-audio-launch
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
-                </svg>
-                <span>{isZh ? '朗读本文' : 'Listen'}</span>
-              </button>
-            </div>
-
-            <div
-              role="toolbar"
-              data-slot="toolbar"
-              class="article-audio-toolbar article-audio-toolbar--rail"
-              aria-label={isZh ? '语音朗读控制' : 'Audio playback controls'}
-              data-article-audio
-              data-audio-lang={isZh ? 'zh-CN' : 'en-US'}
-              data-audio-est-sec={String(estimatedSeconds)}
-              hidden
-            >
-              <button
-                type="button"
-                class="audio-play-btn"
-                aria-label={isZh ? '播放本文语音朗读' : 'Play article audio'}
-                data-audio-toggle
-              >
-                <svg class="icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <polygon points="6 4 20 12 6 20 6 4" />
-                </svg>
-                <svg class="icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <rect x="6" y="4" width="4" height="16" rx="1" />
-                  <rect x="14" y="4" width="4" height="16" rx="1" />
-                </svg>
-              </button>
-
-              <span class="audio-time">
-                <span data-audio-current>00:00</span>
-                <span aria-hidden="true">/</span>
-                <span data-audio-duration>{formatAudioTime(estimatedSeconds)}</span>
-              </span>
-
-              <div class="audio-track" aria-hidden="true">
-                <div class="audio-progress" data-audio-progress style="width: 0%;"></div>
-              </div>
-
-              <button
-                type="button"
-                class="audio-speed-btn"
-                aria-label={isZh ? '切换朗读倍速' : 'Change playback speed'}
-                data-audio-speed
-              >
-                1x
-              </button>
-
-              <button
-                type="button"
-                class="audio-stop-btn"
-                aria-label={isZh ? '停止并收起朗读' : 'Stop and close audio'}
-                data-audio-stop
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          </TableOfContents>
-        )}
+        <ArticleRightRail
+          locale={locale}
+          tags={tags}
+          tocItems={tocItems}
+          title={post.data.title}
+          canonicalUrl={canonicalUrl}
+        />
       </div>
 
       {relatedPosts.length > 0 && (

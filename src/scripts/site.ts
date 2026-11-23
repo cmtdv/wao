@@ -2132,3 +2132,50 @@ function initSmartRevealHeader(): void {
 }
 
 initSmartRevealHeader();
+
+// Copy Article as Markdown (Supabase-style AI Tools rail)
+function initCopyMarkdown(): void {
+  const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy-markdown]'));
+  if (btns.length === 0) return;
+
+  const zh = isZhPage();
+  const proseEl = document.querySelector<HTMLElement>('[data-article-prose]');
+
+  const buildMarkdown = (title: string, url: string): string => {
+    const lines: string[] = [`# ${title}`, '', `Source: ${url}`, ''];
+    if (!proseEl) return lines.join('\n');
+
+    const nodes = Array.from(proseEl.querySelectorAll<HTMLElement>('h2, h3, h4, p, li, blockquote'));
+    const seen = new Set<HTMLElement>();
+    for (const el of nodes) {
+      if (el.closest('blockquote') && el.tagName === 'P') continue;
+      if (seen.has(el)) continue;
+      seen.add(el);
+      const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) continue;
+      if (el.tagName === 'H2') lines.push(`## ${text}`, '');
+      else if (el.tagName === 'H3') lines.push(`### ${text}`, '');
+      else if (el.tagName === 'H4') lines.push(`#### ${text}`, '');
+      else if (el.tagName === 'LI') lines.push(`- ${text}`);
+      else if (el.tagName === 'BLOCKQUOTE') lines.push(`> ${text}`, '');
+      else lines.push(text, '');
+    }
+    return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  };
+
+  btns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const title = btn.dataset.mdTitle || document.title;
+      const url = btn.dataset.mdUrl || window.location.href;
+      const md = buildMarkdown(title, url);
+      try {
+        await navigator.clipboard.writeText(md);
+        showSiteToast(zh ? '已复制全文为 Markdown' : 'Copied article as Markdown');
+      } catch {
+        showSiteToast(zh ? '复制失败，请手动复制' : 'Could not copy Markdown');
+      }
+    });
+  });
+}
+
+initCopyMarkdown();
