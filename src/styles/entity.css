@@ -12,10 +12,10 @@
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* 1. Asymmetric 7:5 Hero Dossier Header */
+  /* 1. Asymmetric 5:7 Hero Dossier Header (generous 620px+ scene photo on desktop) */
   .entity-hero {
     display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     align-items: center;
     gap: clamp(1.75rem, 3.5vw, 3rem);
     padding-bottom: var(--space-7);

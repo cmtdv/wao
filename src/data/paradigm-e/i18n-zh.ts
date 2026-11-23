@@ -200,6 +200,9 @@ export const NEARBY_CAT_ZH: Record<string, string> = {
   'Free Museum': '免费文博',
   '24h Bathhouse': '24h 汤泉',
   'Tax-Free Shop': '离境退税店',
+  'Metro Hub': '地铁直达',
+  'Business Dining': '商务餐饮',
+  'Rail Hub': '高铁枢纽',
 };
 
 export function tLocale<T>(locale: Locale, en: T, zh: T): T {
