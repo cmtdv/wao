@@ -2050,7 +2050,10 @@ function initArticleReaderTools(): void {
     }
   };
 
+  let speakGen = 0;
+
   const stopAll = () => {
+    speakGen += 1;
     clearTimer();
     try {
       window.speechSynthesis?.cancel();
@@ -2073,11 +2076,12 @@ function initArticleReaderTools(): void {
       stopAll();
       return;
     }
+    const gen = ++speakGen;
     const utter = new SpeechSynthesisUtterance(chunks[chunkIdx]);
     utter.lang = lang;
     utter.rate = rates[rateIdx];
     utter.onend = () => {
-      if (state !== 'playing') return;
+      if (gen !== speakGen || state !== 'playing') return;
       chunkIdx += 1;
       updateUi();
       if (chunkIdx < chunks.length) {
@@ -2086,7 +2090,9 @@ function initArticleReaderTools(): void {
         stopAll();
       }
     };
-    utter.onerror = () => {
+    utter.onerror = (ev) => {
+      if (gen !== speakGen) return;
+      if (ev.error === 'canceled' || ev.error === 'interrupted') return;
       if (state === 'playing') stopAll();
     };
     window.speechSynthesis.speak(utter);
@@ -2131,6 +2137,7 @@ function initArticleReaderTools(): void {
     rateIdx = (rateIdx + 1) % rates.length;
     speedBtn.textContent = `${rates[rateIdx]}x`;
     if (state === 'playing') {
+      speakGen += 1;
       window.speechSynthesis.cancel();
       speakCurrentChunk();
     }
