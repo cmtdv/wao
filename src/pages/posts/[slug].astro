@@ -356,33 +356,45 @@ const jsonLd = {
 
           <footer class="article-footer">
             <div class="article-footer-meta">
-              <a
-                href={authorHref}
-                class="byline-author"
-                target={isExternalAuthorLink ? '_blank' : undefined}
-                rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
-              >
-                {authorAvatarSrc ? (
-                  <img
-                    src={authorAvatarSrc}
-                    alt={primaryByline?.avatarAlt || authorName}
-                    class="byline-avatar"
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                  />
-                ) : (
-                  <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">
-                    {authorInitial}
-                  </span>
-                )}
-                <span class="byline-author-name">{authorName}</span>
-              </a>
-              {publishedDateLabel && (
-                <time class="article-byline" datetime={pubDate?.toISOString()}>
-                  {isZh ? `发布于 ${publishedDateLabel}` : `Published ${publishedDateLabel}`}
-                </time>
-              )}
+              <div class="byline-author-card">
+                <a
+                  href={authorHref}
+                  class="byline-avatar-link"
+                  target={isExternalAuthorLink ? '_blank' : undefined}
+                  rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
+                  aria-label={authorName}
+                >
+                  {authorAvatarSrc ? (
+                    <img
+                      src={authorAvatarSrc}
+                      alt={primaryByline?.avatarAlt || authorName}
+                      class="byline-avatar"
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">
+                      {authorInitial}
+                    </span>
+                  )}
+                </a>
+                <div class="byline-author-info">
+                  <a
+                    href={authorHref}
+                    class="byline-author-name"
+                    target={isExternalAuthorLink ? '_blank' : undefined}
+                    rel={isExternalAuthorLink ? 'noopener noreferrer' : undefined}
+                  >
+                    {authorName}
+                  </a>
+                  {publishedDateLabel && (
+                    <time class="byline-author-sub" datetime={pubDate?.toISOString()}>
+                      {isZh ? `发布于 ${publishedDateLabel}` : `Published ${publishedDateLabel}`}
+                    </time>
+                  )}
+                </div>
+              </div>
             </div>
           </footer>
         </article>
