@@ -71,5 +71,67 @@ const year = new Date().getFullYear();
       <span>© {year} {siteTitle}</span>
       <span>{isZh ? '经一手信源核验的中国实用指南与深度志刊' : 'Source-verified practical guides and dispatches on China'}</span>
     </div>
+
+    <button
+      type="button"
+      class="footer-theme-toggle"
+      data-footer-theme-toggle
+      aria-label={isZh ? '切换深浅色模式' : 'Toggle color theme'}
+      title={isZh ? '切换深浅色模式' : 'Toggle color theme'}
+    >
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
+      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+      </svg>
+    </button>
   </div>
 </footer>
+
+<style>
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .footer-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  .footer-theme-toggle:hover {
+    background: var(--surface-sunken);
+    color: var(--ink-primary);
+  }
+
+  .footer-theme-toggle:active {
+    transform: scale(0.97);
+  }
+
+  .footer-theme-toggle .icon-sun {
+    display: none;
+  }
+
+  :global(html.dark) .footer-theme-toggle .icon-moon {
+    display: none;
+  }
+
+  :global(html.dark) .footer-theme-toggle .icon-sun {
+    display: block;
+  }
+</style>

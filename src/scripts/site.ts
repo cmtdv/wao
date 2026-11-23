@@ -2242,3 +2242,41 @@ function initCopyMarkdown(): void {
 }
 
 initCopyMarkdown();
+
+// Footer Light/Dark Theme Toggle
+function initFooterThemeToggle(): void {
+  const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-footer-theme-toggle]'));
+  if (btns.length === 0) return;
+
+  const zh = isZhPage();
+  const syncLabels = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    const label = zh
+      ? isDark ? '切换为浅色模式' : '切换为深色模式'
+      : isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    btns.forEach((btn) => {
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
+    });
+  };
+
+  btns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const nextDark = !document.documentElement.classList.contains('dark');
+      const nextMode = nextDark ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', nextDark);
+      const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+      if (meta) meta.content = nextMode;
+      try {
+        localStorage.setItem('color-scheme', nextMode);
+      } catch {
+        // Ignore storage errors
+      }
+      syncLabels();
+    });
+  });
+
+  syncLabels();
+}
+
+initFooterThemeToggle();
