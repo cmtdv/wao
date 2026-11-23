@@ -1,14 +1,13 @@
 ---
 /**
- * Redesigned Primary Pillar Hub Layout (/travel/, /live/, /business/, /places/, /culture/, /atlas/)
- * - Unified 64rem canvas + 2:1 Hero Banner (1:1 aligned with Article, Guide, and Entity heroes)
- * - Alternating visual rhythm:
- *   1. Full-width 2:1 Hero Banner + Unboxed Title & Single Primary CTA
- *   2. 3-Card Photo Spotlight Grid (breaks wall-of-text immediately)
- *   3. Open 2-Column Hairline Topic Directory (all 9 nav sections) + Tinted Extended Topics Strip
- *   4. Pillar-Specific Visual Module (<slot />, e.g. ChinaLayerMap on /places/, Topic Index on /atlas/)
- *   5. 8:4 Asymmetric Reading Split (Curated Guides & Dispatches | Weightless Right Rail)
- *   6. Apple-style Bottom Breadcrumb
+ * 6 Bespoke Primary Pillar Hub Layouts (/travel/, /live/, /business/, /places/, /culture/, /atlas/)
+ * Each pillar has its own distinctive, benchmark-modeled layout architecture:
+ * - /travel/   : GOV.UK 4-Stage Chronological Arrival Matrix + High-Contrast Show-to-Local SOS Strip + 3-Card Survival Deck
+ * - /live/     : Stripe Atlas 3-Track Persona Pathways + Nomad List 4-City Cost & Livability Matrix
+ * - /business/ : Bloomberg/Sift 4-Desk Regulatory Bar + 7:5 Canton Fair Feature & 4-Step Sourcing Protocol
+ * - /places/   : Lonely Planet 5-City Asymmetric Bento Photo Grid + Interactive Layer Map + 5 Macro-Regions Strip
+ * - /culture/  : Monocle/Artikle 7:5 Magazine Feature Spread + Interactive Mandarin Audio Soundboard Strip
+ * - /atlas/    : The Economist 4-KPI Macro Briefing Deck + Myths vs. Verified Reality Dual-Column Decoder + Master Index
  */
 import BaseShell from './BaseShell.astro';
 import Badge from '@ui/data-display/Badge.astro';
@@ -23,6 +22,7 @@ import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import '../styles/article.css';
 import '../styles/hub-v32.css';
+import '../styles/pillars-bespoke.css';
 
 interface Props {
   pillar: PillarConfig;
@@ -52,7 +52,7 @@ const cmsEntries = cmsFeed.entries ?? [];
 >
   <div class="container">
     <div class="v32-shell">
-      {/* 1. Unified 2:1 Hero Banner */}
+      {/* Unified 2:1 Hero Banner */}
       <figure class="v32-hero-banner">
         <div class="v32-hero-frame">
           <img
@@ -64,7 +64,7 @@ const cmsEntries = cmsFeed.entries ?? [];
         </div>
       </figure>
 
-      {/* 2. Unboxed Editorial Header + Single Primary CTA */}
+      {/* Unboxed Editorial Header + Single Primary CTA */}
       <header class="v32-pillar-head">
         <div class="v32-pillar-copy">
           <h1>{isZh ? visual.h1Zh : visual.h1En}</h1>
@@ -77,40 +77,594 @@ const cmsEntries = cmsFeed.entries ?? [];
         </div>
       </header>
 
-      {/* 3. Visual Featured Spotlight (3-Card Photo Strip) */}
-      <section class="v32-spotlight-section" aria-labelledby="pillar-spotlight-h">
-        <div class="v32-block-head">
-          <h2 id="pillar-spotlight-h">{isZh ? '精选必读' : 'Featured Guides'}</h2>
-          <a href={lp('/guides/')} class="v32-more-link">
-            {isZh ? '全部指南 →' : 'All guides →'}
-          </a>
-        </div>
+      {/* ====================================================================
+          BESPOKE LAYOUT 01: /travel/ (GOV.UK 4-Stage Timeline + Dark SOS Strip)
+          ==================================================================== */}
+      {v32Id === 'travel' && (
+        <>
+          <section class="p-travel-stages" aria-labelledby="travel-stages-h">
+            <div class="v32-block-head">
+              <h2 id="travel-stages-h">{isZh ? '按行程阶段通关' : 'Step-by-Step by Trip Stage'}</h2>
+              <a href={lp('/journeys/')} class="v32-more-link">
+                {isZh ? '打开 7 步交互清单 →' : 'Interactive 7-step checklist →'}
+              </a>
+            </div>
 
-        <div class="v32-spotlight-grid">
-          {visual.spotlights.map((card) => (
-            <a href={lp(card.href)} class="v32-spot-card">
-              <div class="v32-spot-media">
-                <img
-                  src={card.image}
-                  alt={isZh ? card.titleZh : card.titleEn}
-                  loading="lazy"
-                  decoding="async"
-                />
+            <div class="p-travel-stage-grid">
+              <div class="p-travel-stage-card">
+                <div>
+                  <span class="p-travel-stage-num">{isZh ? '阶段 01 · 起飞前 72h' : 'STAGE 01 · 72H PRE-FLIGHT'}</span>
+                  <h3 class="p-travel-stage-title">{isZh ? '免签、绑卡与联网' : 'Visa, Pay & eSIM'}</h3>
+                  <p class="p-travel-stage-sub">
+                    {isZh ? '出发前完成护照免签核对、支付宝/微信绑外卡与漫游 eSIM 激活。' : 'Confirm visa-free eligibility, bind foreign Visa/MC, and install roaming eSIM.'}
+                  </p>
+                </div>
+                <ul class="p-travel-stage-links">
+                  <li><a href={lp('/travel/visas-entry/')}><span>{isZh ? '签证与入境' : 'Visas & Entry'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/payments-money/')}><span>{isZh ? '支付与货币' : 'Payments & Money'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/esim-apps-fixes/')}><span>{isZh ? '联网、App 与报错' : 'eSIM, Apps & Fixes'}</span><span>→</span></a></li>
+                </ul>
               </div>
-              <div class="v32-spot-body">
-                <span class="v32-spot-tag">{isZh ? card.tagZh : card.tagEn}</span>
-                <h3 class="v32-spot-title">{isZh ? card.titleZh : card.titleEn}</h3>
-                <p class="v32-spot-desc">{isZh ? card.descZh : card.descEn}</p>
+
+              <div class="p-travel-stage-card">
+                <div>
+                  <span class="p-travel-stage-num">{isZh ? '阶段 02 · 落地首日' : 'STAGE 02 · DAY 1 ARRIVAL'}</span>
+                  <h3 class="p-travel-stage-title">{isZh ? '通关、进城与入住' : 'Entry, Rail & Hotel'}</h3>
+                  <p class="p-travel-stage-sub">
+                    {isZh ? '填写数字入境卡、刷外卡进地铁，并在入住 24 小时内完成住宿登记。' : 'Fill arrival card, tap into airport metro, and complete 24h hotel registration.'}
+                  </p>
+                </div>
+                <ul class="p-travel-stage-links">
+                  <li><a href={lp('/documents/arrival-card/')}><span>{isZh ? '入境卡逐栏图解' : 'Arrival Card Guide'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/hotels-stays/')}><span>{isZh ? '酒店与 24h 住宿登记' : 'Hotels & Registration'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/getting-around/')}><span>{isZh ? '机场快轨与市内交通' : 'Airport & Metro'}</span><span>→</span></a></li>
+                </ul>
+              </div>
+
+              <div class="p-travel-stage-card">
+                <div>
+                  <span class="p-travel-stage-num">{isZh ? '阶段 03 · 在途探索' : 'STAGE 03 · ON THE GROUND'}</span>
+                  <h3 class="p-travel-stage-title">{isZh ? '高铁、抢票与餐饮' : 'HSR, Tickets & Dining'}</h3>
+                  <p class="p-travel-stage-sub">
+                    {isZh ? '12306 护照直刷进站、热门场馆提前 7 天预约与餐厅扫码点单防过敏。' : 'Board HSR with passport, book museums 7 days ahead, and order safely.'}
+                  </p>
+                </div>
+                <ul class="p-travel-stage-links">
+                  <li><a href={lp('/travel/tickets-bookings/')}><span>{isZh ? '门票与场馆预约' : 'Tickets & Bookings'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/eating-out-dietary/')}><span>{isZh ? '外出就餐与忌口' : 'Eating Out & Dietary'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/trip-plans-stacks/')}><span>{isZh ? '行程、清单与横评' : 'Trip Plans & Stacks'}</span><span>→</span></a></li>
+                </ul>
+              </div>
+
+              <div class="p-travel-stage-card">
+                <div>
+                  <span class="p-travel-stage-num">{isZh ? '阶段 04 · 救急与返程' : 'STAGE 04 · RESCUE & EXIT'}</span>
+                  <h3 class="p-travel-stage-title">{isZh ? '报错救火与离境退税' : 'Fixes & Tax Refund'}</h3>
+                  <p class="p-travel-stage-sub">
+                    {isZh ? '微信受限解封、全中文设备按键图解、满 ¥200 即买即退与跨境看牙体检。' : 'Unfreeze WeChat, decode Chinese appliances, and claim 11% VAT refunds.'}
+                  </p>
+                </div>
+                <ul class="p-travel-stage-links">
+                  <li><a href={lp('/travel/safety-forms-how-to/')}><span>{isZh ? '安全、单据与设备图解' : 'Safety & Device Guides'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/shopping-tax-refund/')}><span>{isZh ? '购物、数码与退税' : 'Shopping & Tax Refund'}</span><span>→</span></a></li>
+                  <li><a href={lp('/travel/medical-dental-trips/')}><span>{isZh ? '入境医疗与体检旅游' : 'Medical & Dental Trips'}</span><span>→</span></a></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* 3-Card Photo Survival Deck */}
+          <section class="v32-spotlight-section" aria-labelledby="travel-spot-h">
+            <div class="v32-block-head">
+              <h2 id="travel-spot-h">{isZh ? '行前必读三大通关剧本' : 'Essential Travel Playbooks'}</h2>
+            </div>
+            <div class="v32-spotlight-grid">
+              {visual.spotlights.map((card) => (
+                <a href={lp(card.href)} class="v32-spot-card">
+                  <div class="v32-spot-media">
+                    <img src={card.image} alt={isZh ? card.titleZh : card.titleEn} loading="lazy" decoding="async" />
+                  </div>
+                  <div class="v32-spot-body">
+                    <span class="v32-spot-tag">{isZh ? card.tagZh : card.tagEn}</span>
+                    <h3 class="v32-spot-title">{isZh ? card.titleZh : card.titleEn}</h3>
+                    <p class="v32-spot-desc">{isZh ? card.descZh : card.descEn}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          {/* High-Contrast Show-to-Local Emergency Cards Strip */}
+          <section class="p-travel-sos-band" aria-labelledby="travel-sos-h">
+            <div class="p-travel-sos-head">
+              <h2 id="travel-sos-h">{isZh ? '现场救火 · 全屏出示给司机、前台与后厨' : 'Show-to-Local Fullscreen Emergency Cards'}</h2>
+              <a href={lp('/cards/')}>{isZh ? '全部亮屏字卡 →' : 'All fullscreen cards →'}</a>
+            </div>
+            <div class="p-travel-sos-grid">
+              <a href={lp('/cards/peanut-allergy-sos/')} class="p-travel-sos-card">
+                <span class="p-travel-sos-hanzi">我对花生严重过敏</span>
+                <span class="p-travel-sos-en">{isZh ? '后厨防花生油亮屏卡 →' : 'Severe Peanut Allergy SOS →'}</span>
+              </a>
+              <a href={lp('/cards/taxi-beijing-qinghe/')} class="p-travel-sos-card">
+                <span class="p-travel-sos-hanzi">请去北京清河站</span>
+                <span class="p-travel-sos-en">{isZh ? '高铁站防走错打车卡 →' : 'Railway Station Taxi Card →'}</span>
+              </a>
+              <a href={lp('/cards/hotel-checkin-passport/')} class="p-travel-sos-card">
+                <span class="p-travel-sos-hanzi">持外国护照办理入住</span>
+                <span class="p-travel-sos-en">{isZh ? '酒店前台外宾登记卡 →' : 'Hotel Passport Check-In →'}</span>
+              </a>
+              <a href={lp('/cards/medical-emergency-120/')} class="p-travel-sos-card">
+                <span class="p-travel-sos-hanzi">请送三甲医院国际部</span>
+                <span class="p-travel-sos-en">{isZh ? '120 急诊就医沟通卡 →' : 'Emergency Hospital Card →'}</span>
+              </a>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ====================================================================
+          BESPOKE LAYOUT 02: /live/ (Stripe Atlas 3-Track + Nomad List City Table)
+          ==================================================================== */}
+      {v32Id === 'live' && (
+        <>
+          <section class="p-live-tracks" aria-label={isZh ? '三大长居身份路径' : 'Three Expat Pathways'}>
+            <div class="p-live-track-card">
+              <div>
+                <span class="p-live-track-kicker">{isZh ? '路径 A · 职场与外派' : 'TRACK A · PROFESSIONALS'}</span>
+                <h2 class="p-live-track-title">{isZh ? '外籍雇员与工作许可' : 'Working Expats & Permits'}</h2>
+                <p class="p-live-track-desc">
+                  {isZh ? '从 A/B/C 工作许可积分、Z 签证入境，到 183 天个税津贴与五险一金合规。' : 'Navigate Category A/B/C scoring, Z-visas, 183-day IIT rules, and social insurance.'}
+                </p>
+              </div>
+              <ul class="p-live-track-list">
+                <li><a href={lp('/live/work-permits-visas/')}><span>{isZh ? '工作许可与签证' : 'Work Permits & Visas'}</span><span>→</span></a></li>
+                <li><a href={lp('/live/banking-personal-tax/')}><span>{isZh ? '银行开户与个人所得税' : 'Banking & Personal Tax'}</span><span>→</span></a></li>
+                <li><a href={lp('/live/jobs-social-insurance/')}><span>{isZh ? '就业合同与五险一金' : 'Jobs & Social Insurance'}</span><span>→</span></a></li>
+              </ul>
+            </div>
+
+            <div class="p-live-track-card">
+              <div>
+                <span class="p-live-track-kicker">{isZh ? '路径 B · 留学与深造' : 'TRACK B · STUDENTS'}</span>
+                <h2 class="p-live-track-title">{isZh ? '来华留学与高校申请' : 'Study in China & Degrees'}</h2>
+                <p class="p-live-track-desc">
+                  {isZh ? '150 所英文授课高校、MBBS/CS 热门学位、CSC 奖学金与 X1/X2 居留转换。' : '150 English-taught universities, CSC scholarships, and student residence permits.'}
+                </p>
+              </div>
+              <ul class="p-live-track-list">
+                <li><a href={lp('/live/study-in-china/')}><span>{isZh ? '来华留学与名校名录' : 'Universities & Scholarships'}</span><span>→</span></a></li>
+                <li><a href={lp('/live/residence-pr-nomads/')}><span>{isZh ? '居留许可与五星卡永居' : 'Residence & Five-Star PR'}</span><span>→</span></a></li>
+                <li><a href={lp('/guides/study-work-residence/')}><span>{isZh ? '留学转工签全流程' : 'Study-to-Work Playbook'}</span><span>→</span></a></li>
+              </ul>
+            </div>
+
+            <div class="p-live-track-card">
+              <div>
+                <span class="p-live-track-kicker">{isZh ? '路径 C · 旅居与家庭' : 'TRACK C · NOMADS & FAMILIES'}</span>
+                <h2 class="p-live-track-title">{isZh ? '数字游民、安家与收尾' : 'Nomads, Family & Clean Exit'}</h2>
+                <p class="p-live-track-desc">
+                  {isZh ? '低成本宜居城市租房、三甲国际部就医、临时驾照换领、携宠检疫与离境退保。' : 'Apartment leasing, international hospitals, driver licenses, pets, and pension refunds.'}
+                </p>
+              </div>
+              <ul class="p-live-track-list">
+                <li><a href={lp('/live/housing-cost-of-living/')}><span>{isZh ? '租房、买房与生活成本' : 'Housing & Cost of Living'}</span><span>→</span></a></li>
+                <li><a href={lp('/live/healthcare/')}><span>{isZh ? '涉外就医与商业医保' : 'Healthcare & Intl Clinics'}</span><span>→</span></a></li>
+                <li><a href={lp('/live/leaving-china/')}><span>{isZh ? '离境退保与海牙认证清单' : 'Leaving China Closeout'}</span><span>→</span></a></li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Nomad List Style 4-City Livability & Cost Matrix */}
+          <section class="p-live-cities" aria-labelledby="live-cities-h">
+            <div class="v32-block-head">
+              <h2 id="live-cities-h">{isZh ? '热门长居与旅居城市生活基准对比' : 'Expat & Nomad City Livability Matrix'}</h2>
+              <a href={lp('/guides/digital-nomad-china/')} class="v32-more-link">
+                {isZh ? '数字游民完整报告 →' : 'Full nomad report →'}
+              </a>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="p-live-city-table">
+                <thead>
+                  <tr>
+                    <th>{isZh ? '城市中枢' : 'City Hub'}</th>
+                    <th>{isZh ? '月均生活成本锚点' : 'Monthly Cost Anchor'}</th>
+                    <th>{isZh ? '代表涉外国际医疗' : 'Flagship Intl Hospital'}</th>
+                    <th>{isZh ? '英文授课代表高校' : 'Top Universities'}</th>
+                    <th>{isZh ? '长居定位' : 'Best For'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href={lp('/cities/shanghai/')}>{isZh ? '上海 Shanghai' : 'Shanghai'}</a></td>
+                    <td>¥14,000 – ¥24,000</td>
+                    <td>{isZh ? '华山医院国际部 · 上海和睦家' : 'Huashan Worldwide · United Family'}</td>
+                    <td>{isZh ? '复旦 · 上海交大 · 上海纽大' : 'Fudan · SJTU · NYU Shanghai'}</td>
+                    <td>{isZh ? '跨国企业总部与金融外派首选' : 'Multinational HQ & finance expats'}</td>
+                  </tr>
+                  <tr>
+                    <td><a href={lp('/cities/chengdu/')}>{isZh ? '成都 Chengdu' : 'Chengdu'}</a></td>
+                    <td>¥7,500 – ¥11,500</td>
+                    <td>{isZh ? '川大华西医院国际医疗中心' : 'West China Hospital Intl Wing'}</td>
+                    <td>{isZh ? '四川大学 · 电子科大' : 'Sichuan Univ. · UESTC'}</td>
+                    <td>{isZh ? '高性价比数字游民与慢生活之都' : 'Top value digital nomad & cafe hub'}</td>
+                  </tr>
+                  <tr>
+                    <td><a href={lp('/cities/beijing/')}>{isZh ? '北京 Beijing' : 'Beijing'}</a></td>
+                    <td>¥13,500 – ¥23,000</td>
+                    <td>{isZh ? '北京协和国际部 · 北京和睦家' : 'PUMCH Intl · Beijing United Family'}</td>
+                    <td>{isZh ? '清华大学 · 北京大学' : 'Tsinghua · Peking University'}</td>
+                    <td>{isZh ? '高校学者、驻华机构与科技研发' : 'Academics, embassies & AI R&D'}</td>
+                  </tr>
+                  <tr>
+                    <td><a href={lp('/cities/shenzhen/')}>{isZh ? '深圳 Shenzhen' : 'Shenzhen'}</a></td>
+                    <td>¥11,000 – ¥18,500</td>
+                    <td>{isZh ? '香港大学深圳医院国际医疗中心' : 'HKU-Shenzhen Hospital IMC'}</td>
+                    <td>{isZh ? '南方科大 · 港中大（深圳）' : 'SUSTech · CUHK-Shenzhen'}</td>
+                    <td>{isZh ? '硬件创业者与 14 分钟跨境香港' : 'Hardware founders & 14m HK rail link'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ====================================================================
+          BESPOKE LAYOUT 03: /business/ (Regulatory Bar + 7:5 Fair & Protocol)
+          ==================================================================== */}
+      {v32Id === 'business' && (
+        <>
+          <section class="p-biz-desks" aria-label={isZh ? '四大官方合规核验台' : 'Official Compliance Verification Desks'}>
+            <a href={lp('/compliance/uscc-gsxt-lookup/')} class="p-biz-desk-item">
+              <span class="p-biz-desk-code">GB 32100-2015</span>
+              <strong class="p-biz-desk-title">{isZh ? '18 位信用代码与企信网尽调' : '18-Digit USCC & GSXT Lookup'}</strong>
+              <span class="p-biz-desk-sub">{isZh ? '打样付款前核验工厂营业执照、实缴资本与行政处罚。' : 'Verify supplier registration, paid-in capital, and litigation.'}</span>
+            </a>
+            <a href={lp('/business/standards-compliance/')} class="p-biz-desk-item">
+              <span class="p-biz-desk-code">CCC · GB 47372-2026</span>
+              <strong class="p-biz-desk-title">{isZh ? '3C 强制认证与外文版国标' : 'CCC & 2,913 Translated GB Standards'}</strong>
+              <span class="p-biz-desk-sub">{isZh ? '查询 2,913 项外文版国标目录、电池 3C 新规与 SRRC 核准码。' : 'Check compulsory product certificates and translated national standards.'}</span>
+            </a>
+            <a href={lp('/business/market-entry/')} class="p-biz-desk-item">
+              <span class="p-biz-desk-code">MOFCOM · WFOE</span>
+              <strong class="p-biz-desk-title">{isZh ? '外资准入负面清单与设企' : 'Negative List & WFOE Setup'}</strong>
+              <span class="p-biz-desk-sub">{isZh ? '核对外商投资准入负面清单、鼓励目录与外资企业开户流程。' : 'Review foreign investment negative lists and WFOE incorporation.'}</span>
+            </a>
+            <a href={lp('/business/tax-invoicing-fx/')} class="p-biz-desk-item">
+              <span class="p-biz-desk-code">STA · SAFE</span>
+              <strong class="p-biz-desk-title">{isZh ? '增值税发票与跨境收结汇' : 'Fapiao Invoicing & Cross-Border FX'}</strong>
+              <span class="p-biz-desk-sub">{isZh ? '数电发票合规校验、出口退税链路与跨境贸易结算规则。' : 'Digital Fapiao verification, export VAT rebates, and FX settlement.'}</span>
+            </a>
+          </section>
+
+          <section class="p-biz-split" aria-label={isZh ? '旗舰展会与源头验厂流程' : 'Flagship Trade Fair & Sourcing Protocol'}>
+            <a href={lp('/attractions/canton-fair/')} class="p-biz-fair-lead">
+              <div class="p-biz-fair-media">
+                <img src="/images/technology.webp" alt={isZh ? '广州广交会琶洲展馆' : 'Canton Fair Pazhou Complex'} loading="lazy" decoding="async" />
+              </div>
+              <div>
+                <span class="v32-spot-tag">{isZh ? '旗舰展会实操档案 · 广州琶洲' : 'FLAGSHIP TRADE FAIR · GUANGZHOU PAZHOU'}</span>
+                <h2 style="margin:0.25rem 0 0;font-size:1.5rem;font-weight:650;color:var(--ink-primary);">
+                  {isZh ? '中国进出口商品交易会（广交会）境外采购商全攻略' : 'Canton Fair (Phase 1–3) Overseas Buyer Playbook'}
+                </h2>
+                <p style="margin:0.4rem 0 0;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
+                  {isZh
+                    ? '白云机场落地免费领证免排 90 分钟长队、琶洲 A/B/C/D 四区地铁动线，以及从广州直连深圳华强北与义乌产业带的选品路线。'
+                    : 'Skip 90-minute Pazhou badge queues by printing at Baiyun Airport T1/T2, navigate Areas A–D via Line 8, and connect to Shenzhen & Yiwu.'}
+                </p>
               </div>
             </a>
-          ))}
-        </div>
-      </section>
 
-      {/* 4. Open 2-Column Hairline Topic Directory (Alternates rhythm: zero boxed cards) */}
+            <div class="p-biz-protocol">
+              <h3>{isZh ? '源头工厂采购四步防坑铁律' : '4-Step Supplier Due Diligence Protocol'}</h3>
+              <ol class="p-biz-protocol-list">
+                <li class="p-biz-protocol-step">
+                  <span class="p-biz-protocol-num">01</span>
+                  <div>
+                    <strong>{isZh ? '核验 18 位信用代码：' : 'Verify 18-Digit USCC: '}</strong>
+                    <span>{isZh ? '要求提供中文营业执照原件，核对「生产/制造」经营范围，过滤纯贸易皮包公司。' : 'Confirm manufacturing scope on the official Chinese business license.'}</span>
+                  </div>
+                </li>
+                <li class="p-biz-protocol-step">
+                  <span class="p-biz-protocol-num">02</span>
+                  <div>
+                    <strong>{isZh ? '公章高于签字：' : 'Company Chop Over Signature: '}</strong>
+                    <span>{isZh ? '中英文双语合同必须加盖备案红色公章或合同专用章，签署 NNN 保密协议。' : 'Contracts require the registered red company seal (chop) and an NNN agreement.'}</span>
+                  </div>
+                </li>
+                <li class="p-biz-protocol-step">
+                  <span class="p-biz-protocol-num">03</span>
+                  <div>
+                    <strong>{isZh ? '百件打样与第三方验厂：' : 'Small-Batch & 3P Audit: '}</strong>
+                    <span>{isZh ? '尾款汇出前委托 QIMA / V-Trust 执行产中与出货前抽检。' : 'Book QIMA or V-Trust pre-shipment inspection before wiring final balance.'}</span>
+                  </div>
+                </li>
+                <li class="p-biz-protocol-step">
+                  <span class="p-biz-protocol-num">04</span>
+                  <div>
+                    <strong>{isZh ? '同名对公账户收汇：' : 'Matching Beneficiary Account: '}</strong>
+                    <span>{isZh ? '严禁向个人或第三方地下账户打款，确保报关单与收汇主体一致。' : 'Never wire deposits to personal or mismatched offshore accounts.'}</span>
+                  </div>
+                </li>
+              </ol>
+              <a href={lp('/guides/factory-sourcing-due-diligence/')} class="v32-more-link">
+                {isZh ? '阅读完整验厂与合同防坑指南 →' : 'Read full sourcing due diligence guide →'}
+              </a>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ====================================================================
+          BESPOKE LAYOUT 04: /places/ (Lonely Planet City Bento + Map + 5 Regions)
+          ==================================================================== */}
+      {v32Id === 'places' && (
+        <>
+          <section aria-labelledby="places-bento-h" style="margin-top:var(--space-8);">
+            <div class="v32-block-head">
+              <h2 id="places-bento-h">{isZh ? '五大首访核心城市中枢' : 'Flagship Entry City Hubs'}</h2>
+              <a href={lp('/places/top-cities/')} class="v32-more-link">
+                {isZh ? '全部热门城市 →' : 'All top cities →'}
+              </a>
+            </div>
+
+            <div class="p-places-bento">
+              <a href={lp('/cities/beijing/')} class="p-places-tile p-places-tile--lead">
+                <img src="/images/beijing.webp" alt={isZh ? '北京古建与天际线' : 'Beijing Imperial Roofs'} loading="lazy" decoding="async" />
+                <div class="p-places-tile-overlay">
+                  <span class="p-places-tile-port">PEK · PKX · 240H TRANSIT</span>
+                  <h3 class="p-places-tile-name">{isZh ? '北京 Beijing' : 'Beijing'}</h3>
+                  <p class="p-places-tile-sub">{isZh ? '中轴线古都、故宫 7 天放票规律、万里长城与 7 大火车站防走错指南' : 'Imperial axis, Forbidden City 7-day drops, Great Wall & 7 rail stations'}</p>
+                </div>
+              </a>
+
+              <a href={lp('/cities/shanghai/')} class="p-places-tile">
+                <img src="/images/shanghai.webp" alt={isZh ? '上海外滩与陆家嘴' : 'Shanghai Skyline'} loading="lazy" decoding="async" />
+                <div class="p-places-tile-overlay">
+                  <span class="p-places-tile-port">PVG · SHA · CRUISE</span>
+                  <h3 class="p-places-tile-name">{isZh ? '上海 Shanghai' : 'Shanghai'}</h3>
+                  <p class="p-places-tile-sub">{isZh ? '外卡最友好的国际门户与梧桐历史街区' : 'Most frictionless gateway & Art Deco walks'}</p>
+                </div>
+              </a>
+
+              <a href={lp('/cities/chengdu/')} class="p-places-tile">
+                <img src="/images/chengdu.webp" alt={isZh ? '成都大熊猫基地' : 'Chengdu Giant Panda'} loading="lazy" decoding="async" />
+                <div class="p-places-tile-overlay">
+                  <span class="p-places-tile-port">TFU · CTU · SOUTHWEST</span>
+                  <h3 class="p-places-tile-name">{isZh ? '成都 Chengdu' : 'Chengdu'}</h3>
+                  <p class="p-places-tile-sub">{isZh ? '早 7:30 熊猫基地、盖碗茶馆与川味江湖' : '07:30 panda feeding, teahouses & Sichuan spice'}</p>
+                </div>
+              </a>
+
+              <a href={lp('/cities/xian/')} class="p-places-tile">
+                <img src="/images/town.webp" alt={isZh ? '西安古都风貌' : 'Xi’an Heritage'} loading="lazy" decoding="async" />
+                <div class="p-places-tile-overlay">
+                  <span class="p-places-tile-port">XIY · SILK ROAD</span>
+                  <h3 class="p-places-tile-name">{isZh ? '西安 Xi’an' : 'Xi’an'}</h3>
+                  <p class="p-places-tile-sub">{isZh ? '秦兵马俑、明城墙日落骑行与洒金桥夜市' : 'Terracotta Army, Ming City Wall & noodle alleys'}</p>
+                </div>
+              </a>
+
+              <a href={lp('/cities/shenzhen/')} class="p-places-tile">
+                <img src="/images/technology.webp" alt={isZh ? '深圳现代都市' : 'Shenzhen Skyline'} loading="lazy" decoding="async" />
+                <div class="p-places-tile-overlay">
+                  <span class="p-places-tile-port">SZX · 14M HSR TO HK</span>
+                  <h3 class="p-places-tile-name">{isZh ? '深圳 Shenzhen' : 'Shenzhen'}</h3>
+                  <p class="p-places-tile-sub">{isZh ? '华强北硬件极客圣地与 14 分钟直达香港' : 'Huaqiangbei electronics & 14-min rail to HK'}</p>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          {/* Interactive Spatial Map Slot */}
+          <div class="v32-slot-wrap">
+            <slot />
+          </div>
+
+          {/* 5 Macro-Regions Corridors Strip */}
+          <section aria-labelledby="places-regions-h" style="margin-top:var(--space-8);">
+            <div class="v32-block-head">
+              <h2 id="places-regions-h">{isZh ? '五大地理与文化片区（覆盖 34 省级行政区）' : 'Five Regional Corridors Across 34 Provinces'}</h2>
+            </div>
+            <div class="p-places-regions" style="margin-top:var(--space-3);">
+              <a href={lp('/places/east-south-china/')} class="p-places-region-card">
+                <strong>{isZh ? '华东与华南' : 'East & South China'}</strong>
+                <span>{isZh ? '沪苏浙皖闽赣鲁 + 粤桂琼：江南水乡与岭南商贸走廊' : 'Jiangnan water towns, Huangshan & Cantonese coast'}</span>
+              </a>
+              <a href={lp('/places/north-northeast-china/')} class="p-places-region-card">
+                <strong>{isZh ? '华北与东北' : 'North & Northeast'}</strong>
+                <span>{isZh ? '京津冀晋蒙 + 辽吉黑：山西木构古建、草原与哈尔滨冰雪' : 'Beijing-Shanxi timber temples, steppes & Harbin ice'}</span>
+              </a>
+              <a href={lp('/places/central-southwest-china/')} class="p-places-region-card">
+                <strong>{isZh ? '华中与西南' : 'Central & Southwest'}</strong>
+                <span>{isZh ? '豫鄂湘 + 渝川贵云藏：张家界、巴蜀盆地与云贵川藏高原' : 'Zhangjiajie peaks, Sichuan basin, Yunnan & Tibet'}</span>
+              </a>
+              <a href={lp('/places/northwest-silk-road/')} class="p-places-region-card">
+                <strong>{isZh ? '西北与丝路' : 'Northwest & Silk Road'}</strong>
+                <span>{isZh ? '陕甘青宁新：河西走廊、敦煌石窟与天山环线' : 'Hexi Corridor, Dunhuang caves & Xinjiang Silk Road'}</span>
+              </a>
+              <a href={lp('/places/hk-macao-taiwan/')} class="p-places-region-card">
+                <strong>{isZh ? '港澳台与跨境' : 'HK, Macao & Taiwan'}</strong>
+                <span>{isZh ? '大湾区西九龙高铁联动、港珠澳大桥与跨境行程' : 'Greater Bay HSR links, bridge crossings & itineraries'}</span>
+              </a>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ====================================================================
+          BESPOKE LAYOUT 05: /culture/ (Monocle 7:5 Spread + Mandarin Audio Strip)
+          ==================================================================== */}
+      {v32Id === 'culture' && (
+        <>
+          <section class="p-culture-spread" aria-label={isZh ? '饮食人文专题封面' : 'Culture Feature Spread'}>
+            <a href={lp('/guides/chinese-tea-6-types/')} class="p-culture-feature">
+              <div class="p-culture-feature-media">
+                <img src="/images/food.webp" alt={isZh ? '中华饮食与六大茶类' : 'Chinese Cuisines & Six Teas'} loading="lazy" decoding="async" />
+              </div>
+              <div>
+                <span class="v32-spot-tag">{isZh ? '封面专题 · 饮食与茶酒' : 'COVER ESSAY · FOOD & SIX TEAS'}</span>
+                <h2>{isZh ? '一片树叶的六种演化：八大菜系风味地图与六大茶类全图鉴' : 'From One Leaf to Six Tea Classes: China’s 8 Regional Flavor Maps'}</h2>
+                <p style="margin:0.4rem 0 0;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
+                  {isZh
+                    ? '为什么中文里的「红茶」在英文里叫 Black Tea？川菜除了麻辣还有哪 24 种复合味型？从杭州梅家坞明前龙井到成都人民公园竹椅盖碗茶，一次读懂中国餐桌与茶席。'
+                    : 'Why Chinese “Red Tea” is Western Black Tea, how Sichuan’s 24 compound flavors work beyond heat, and how to order like a local from Hangzhou tea hills to Chengdu bamboo courtyards.'}
+                </p>
+              </div>
+            </a>
+
+            <div class="p-culture-essays">
+              <a href={lp('/guides/tcm-wellness-bathhouses/')} class="p-culture-essay-item">
+                <span class="v32-spot-tag">{isZh ? '市井与养生' : 'WELLNESS & SPAS'}</span>
+                <strong>{isZh ? '读懂「上火与祛湿」：24 小时城市豪华汤泉洗浴全流程' : '“Shanghuo”, Dampness & China’s 24-Hour Urban Bathhouses'}</strong>
+                <p>{isZh ? '从为什么中国人爱喝热水，到集泡汤、无限畅吃车厘子、头疗与过夜于一体的现代汤泉文化。' : 'Why hot water rules daily life, plus how to spend 18 relaxing hours inside a modern Chinese bathhouse.'}</p>
+              </a>
+
+              <a href={lp('/guides/living-folk-arts/')} class="p-culture-essay-item">
+                <span class="v32-spot-tag">{isZh ? '活态民俗大秀' : 'FOLK SPECTACLES'}</span>
+                <strong>{isZh ? '1600°C 铁水流星：打铁花、潮汕英歌舞与活态民间艺术' : '1600°C Molten Iron Flowers, Yingge Dance & Living Folk Arts'}</strong>
+                <p>{isZh ? '走出玻璃展柜的千年非遗现场：河南打铁花、广东潮汕英歌舞与山西古建木构巡礼。' : 'Where to witness molten-iron fireworks, street martial dances, and timber-frame temples live.'}</p>
+              </a>
+
+              <a href={lp('/culture/chains-retail-culture/')} class="p-culture-essay-item">
+                <span class="v32-spot-tag">{isZh ? '国民新消费' : 'NEW RETAIL CHAINS'}</span>
+                <strong>{isZh ? '瑞幸、蜜雪冰城、霸王茶姬与海底捞：中国街头连锁点单密码' : 'Luckin, Mixue, Chagee & Haidilao: China’s Street Retail Culture'}</strong>
+                <p>{isZh ? '如何用小程序免排队点一杯「伯牙绝弦」或体验海底捞变脸与免费美甲服务。' : 'How to order half-sugar milk teas and navigate China’s hyper-efficient food and beverage chains.'}</p>
+              </a>
+            </div>
+          </section>
+
+          {/* Interactive Mandarin Audio Soundboard Strip */}
+          <section class="p-culture-audio-strip" aria-labelledby="culture-audio-h">
+            <div class="v32-block-head">
+              <h2 id="culture-audio-h">{isZh ? '餐厅与茶馆高频中文即点即读（点击发声）' : 'Tap-to-Speak Mandarin Dining & Teahouse Phrases'}</h2>
+              <a href={lp('/culture/language-pronunciation-slang/')} class="v32-more-link">
+                {isZh ? '更多发音与热词 →' : 'More pronunciation & slang →'}
+              </a>
+            </div>
+            <div class="p-culture-audio-grid">
+              <button type="button" class="p-culture-audio-btn" data-pe-speak="微辣，不要香菜">
+                <span class="p-culture-audio-hanzi"><span>微辣，不要香菜</span><span>🔊</span></span>
+                <span class="p-culture-audio-pinyin">Wēi là, bú yào xiāngcài</span>
+                <span class="p-culture-audio-meaning">{isZh ? '川湘餐厅点单救命短语' : 'Mild spice, no cilantro'}</span>
+              </button>
+              <button type="button" class="p-culture-audio-btn" data-pe-speak="你好，服务员，买单">
+                <span class="p-culture-audio-hanzi"><span>服务员，买单</span><span>🔊</span></span>
+                <span class="p-culture-audio-pinyin">Fúwùyuán, mǎidān</span>
+                <span class="p-culture-audio-meaning">{isZh ? '用餐结束呼叫结账' : 'Excuse me, check please'}</span>
+              </button>
+              <button type="button" class="p-culture-audio-btn" data-pe-speak="请不要放花生和坚果">
+                <span class="p-culture-audio-hanzi"><span>不要放花生和坚果</span><span>🔊</span></span>
+                <span class="p-culture-audio-pinyin">Bú yào fàng huāshēng hé jiānguǒ</span>
+                <span class="p-culture-audio-meaning">{isZh ? '坚果过敏后厨叮嘱' : 'No peanuts or tree nuts'}</span>
+              </button>
+              <button type="button" class="p-culture-audio-btn" data-pe-speak="老板，来一碗盖碗茶">
+                <span class="p-culture-audio-hanzi"><span>老板，来一碗盖碗茶</span><span>🔊</span></span>
+                <span class="p-culture-audio-pinyin">Lǎobǎn, lái yì wǎn gàiwǎn chá</span>
+                <span class="p-culture-audio-meaning">{isZh ? '成都露天茶社点茶' : 'One lidded-bowl tea, please'}</span>
+              </button>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ====================================================================
+          BESPOKE LAYOUT 06: /atlas/ (The Economist Macro Deck + Myths vs Facts)
+          ==================================================================== */}
+      {v32Id === 'atlas' && (
+        <>
+          <section class="p-atlas-kpis" aria-label={isZh ? '中国核心宏观基线数据' : 'China Macro Baseline Indicators'}>
+            <div class="p-atlas-kpi">
+              <span class="p-atlas-kpi-num">45,000+ km</span>
+              <span class="p-atlas-kpi-label">{isZh ? '高速铁路营业里程' : 'High-Speed Rail Network'}</span>
+              <span class="p-atlas-kpi-src">{isZh ? '最高运营时速 350 km/h · 国铁集团' : '350 km/h top operating speed · China Railway'}</span>
+            </div>
+            <div class="p-atlas-kpi">
+              <span class="p-atlas-kpi-num">61</span>
+              <span class="p-atlas-kpi-label">{isZh ? 'UNESCO 世界遗产总数' : 'UNESCO World Heritage Sites'}</span>
+              <span class="p-atlas-kpi-src">{isZh ? '截至 2026-07 · 文化与自然双遗产' : 'As of July 2026 · Cultural & natural'}</span>
+            </div>
+            <div class="p-atlas-kpi">
+              <span class="p-atlas-kpi-num">34 / 5 级</span>
+              <span class="p-atlas-kpi-label">{isZh ? '省级政区与五级治理架构' : 'Provincial Divisions & 5 Tiers'}</span>
+              <span class="p-atlas-kpi-src">{isZh ? '6 位 MCA 行政区划代码 · 民政部' : '6-digit MCA admin codes · Civil Affairs'}</span>
+            </div>
+            <div class="p-atlas-kpi">
+              <span class="p-atlas-kpi-num">240h</span>
+              <span class="p-atlas-kpi-label">{isZh ? '跨省过境免签停留窗口' : 'Cross-Province Transit Window'}</span>
+              <span class="p-atlas-kpi-src">{isZh ? '叠加多国 30 天单方面免签 · 国家移民局' : 'Plus 30-day unilateral visa-free · NIA'}</span>
+            </div>
+          </section>
+
+          <section class="p-atlas-myths" aria-labelledby="atlas-myths-h">
+            <div class="v32-block-head">
+              <h2 id="atlas-myths-h">{isZh ? '常见认知偏差与实地核验事实' : 'Common Misconceptions vs. Verified Reality'}</h2>
+              <a href={lp('/guides/myths-vs-facts/')} class="v32-more-link">
+                {isZh ? '阅读完整十条核查报告 →' : 'Read all 10 fact checks →'}
+              </a>
+            </div>
+
+            <div>
+              <div class="p-atlas-myth-row">
+                <div class="p-atlas-myth-claim">
+                  <span class="p-atlas-myth-tag">{isZh ? '常见误解 01' : 'COMMON MYTH 01'}</span>
+                  <strong>{isZh ? '“没有中国内地银行卡和 +86 手机号，外国人寸步难行？”' : '“Foreigners cannot pay or ride subways without a Chinese bank account?”'}</strong>
+                </div>
+                <div class="p-atlas-myth-fact">
+                  <span class="p-atlas-myth-fact-tag">{isZh ? '2026 实测事实' : 'VERIFIED REALITY'}</span>
+                  <p>
+                    {isZh
+                      ? '支付宝与微信支付已全面支持境外 Visa / Mastercard 直绑（单笔 ≤ ¥200 免收 3% 手续费，年额度 $50,000），且北京、上海等重点城市地铁闸机已支持境外非接银行卡直刷过闸。'
+                      : 'Alipay and WeChat Pay bind foreign Visa/Mastercard directly (0% fee ≤ ¥200, $50,000 annual cap), and Beijing/Shanghai metro turnstiles accept direct contactless foreign card taps.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="p-atlas-myth-row">
+                <div class="p-atlas-myth-claim">
+                  <span class="p-atlas-myth-tag">{isZh ? '常见误解 02' : 'COMMON MYTH 02'}</span>
+                  <strong>{isZh ? '“跨城超过 1000 公里坐飞机一定比坐高铁快？”' : '“Domestic flights always beat high-speed rail over 1,000 km?”'}</strong>
+                </div>
+                <div class="p-atlas-myth-fact">
+                  <span class="p-atlas-myth-fact-tag">{isZh ? '2026 实测事实' : 'VERIFIED REALITY'}</span>
+                  <p>
+                    {isZh
+                      ? '以北京至上海（1,318 公里）为例，复兴号标杆车次市中心到市中心仅需 4 小时 18 分，准点率超 98%，综合安检与远郊机场通勤耗时，4.5 小时内高铁门到门全面胜出。'
+                      : 'On the 1,318 km Beijing–Shanghai corridor, G-series express trains take 4h 18m city-center to city-center with >98% punctuality—beating flights door-to-door on any route under 4.5 hours.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="p-atlas-myth-row">
+                <div class="p-atlas-myth-claim">
+                  <span class="p-atlas-myth-tag">{isZh ? '常见误解 03' : 'COMMON MYTH 03'}</span>
+                  <strong>{isZh ? '“中国制造业还停留在低端代工，缺乏开源与硬科技创新？”' : '“China’s tech ecosystem is closed and focused only on low-end assembly?”'}</strong>
+                </div>
+                <div class="p-atlas-myth-fact">
+                  <span class="p-atlas-myth-fact-tag">{isZh ? '2026 实测事实' : 'VERIFIED REALITY'}</span>
+                  <p>
+                    {isZh
+                      ? '从 DeepSeek、Qwen 等全球顶流开源大模型，到大疆无人机、拓竹 3D 打印机、宇树机器人及占全球过半产能的新能源智能电车，开源 AI 与敏捷硬件供应链已成为核心引擎。'
+                      : 'From globally adopted open-weight models (DeepSeek, Qwen) to DJI drones, Bambu Lab 3D printers, Unitree robotics, and smart EVs, open AI meets rapid hardware iteration.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Complete Master Topic Index Slot (#topic-index) */}
+          <div class="v32-slot-wrap">
+            <slot />
+          </div>
+        </>
+      )}
+
+      {/* Shared Clean 2-Column Topic Directory (All Secondary Hubs in this Pillar) */}
       <section class="v32-topics-section" aria-labelledby="pillar-topics-h">
         <div class="v32-block-head">
-          <h2 id="pillar-topics-h">{isZh ? '按主题浏览' : 'Browse by Topic'}</h2>
+          <h2 id="pillar-topics-h">
+            {isZh ? `${visual.h1Zh}全部分类` : `All ${visual.h1En} Topics`}
+          </h2>
         </div>
 
         <ul class="v32-topic-grid">
@@ -129,7 +683,7 @@ const cmsEntries = cmsFeed.entries ?? [];
 
         {hubOnlySections.length > 0 && (
           <div class="v32-extended-band">
-            <span class="v32-extended-label">{isZh ? '延伸专题' : 'MORE TOPICS'}</span>
+            <span class="v32-extended-label">{isZh ? '延伸专题' : 'EXTENDED TOPICS'}</span>
             <div class="v32-extended-list">
               {hubOnlySections.map((sec) => (
                 <a href={lp(sec.hubPath)} class="v32-extended-item">
@@ -142,19 +696,14 @@ const cmsEntries = cmsFeed.entries ?? [];
         )}
       </section>
 
-      {/* 5. Pillar-Specific Visual Module (ChinaLayerMap on /places/, 59-Hub Index on /atlas/) */}
-      <div class="v32-slot-wrap">
-        <slot />
-      </div>
-
-      {/* 6. Asymmetric 8:4 Reading Split */}
+      {/* Bottom 8:4 Asymmetric Reading Split (Curated Playbooks + Latest Dispatches | Sticky Right Rail) */}
       <div class="v32-body-grid">
         <div class="v32-main">
           {pillarGuides.length > 0 && (
             <section class="v32-section-block" aria-labelledby="pillar-guides-h">
               <div class="v32-block-head">
                 <h2 id="pillar-guides-h">
-                  {isZh ? `${visual.h1Zh}实操手册` : `${visual.h1En} Playbooks`}
+                  {isZh ? `${visual.h1Zh}深度指南` : `${visual.h1En} Deep Guides`}
                 </h2>
               </div>
               <div class="v32-item-list">
@@ -174,7 +723,7 @@ const cmsEntries = cmsFeed.entries ?? [];
           {cmsEntries.length > 0 && (
             <section class="v32-section-block" aria-labelledby="pillar-cms-h">
               <div class="v32-block-head">
-                <h2 id="pillar-cms-h">{isZh ? '最新编辑部文章' : 'Latest Dispatches'}</h2>
+                <h2 id="pillar-cms-h">{isZh ? '编辑部最新志刊' : 'Latest Dispatches'}</h2>
                 <a href={lp('/posts/')} class="v32-more-link">
                   {isZh ? '全部文章 →' : 'All articles →'}
                 </a>
@@ -194,7 +743,6 @@ const cmsEntries = cmsFeed.entries ?? [];
           )}
         </div>
 
-        {/* Weightless Sticky Right Rail */}
         <aside class="v32-rail" aria-label={isZh ? '常看与现场实测' : 'Most viewed and field reports'}>
           <div class="v32-rail-group">
             <p class="v32-rail-heading">{isZh ? '常看直达' : 'MOST VIEWED'}</p>
@@ -238,7 +786,7 @@ const cmsEntries = cmsFeed.entries ?? [];
         </aside>
       </div>
 
-      {/* 7. Apple-Style Bottom Breadcrumb */}
+      {/* Apple-Style Bottom Breadcrumb */}
       <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
         <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
         <span class="breadcrumb-sep" aria-hidden="true">/</span>
