@@ -90,7 +90,7 @@ export function HeaderUtilityMenus({
   }, []);
 
   return (
-    <div className="inline-flex items-center gap-1">
+    <div className="inline-flex items-center gap-2.5">
       {/* Compact Flag + Short Code Language Switcher (No Chevron, Non-Modal so scrollbar never jumps) */}
       <div className="pe-lang-dropdown-wrap">
         <Menu modal={false}>
