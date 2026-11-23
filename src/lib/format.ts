@@ -38,7 +38,7 @@ export function tagPath(slug: string): string {
   return `/tag/${encodeURIComponent(slug)}/`;
 }
 
-/** Map ChinaWao 12x97 category/subtopic slugs to contemporary Chinese cultural line icons. */
+/** Map ChinaWao v3.2 category/subtopic slugs to contemporary Chinese cultural line icons. */
 export function topicIconName(slug: string): string {
   const s = slug.toLowerCase();
   if (s.includes('rail') || s.includes('train') || s.includes('transport') || s.includes('driver')) {

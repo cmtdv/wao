@@ -1,16 +1,18 @@
 ---
 /**
- * Global Single-Row Header (Wise-Inspired Merged Navigation)
- * - Non-sticky (scrolls naturally away so long-form articles get 100% viewport height)
- * - Desktop: Brand (left) + EmDash Categories with hover/focus subtopic dropdowns + Search/Lang/Theme (right)
- * - Mobile (< 960px): Single 56px bar; categories & subtopics live inside the slide-out drawer as accordions
+ * Global Single-Row Header — ChinaWao IA Spec v3.2 (6 Pillars × 9 Dropdowns + Utility Dock)
+ * - Smart-reveal sticky 64px header (hides on scroll down, reveals smoothly on scroll up)
+ * - Exact v3.2 pillar order: Travel → Live & Work → Business → Places → Culture & Life → China Atlas
+ * - Each dropdown strictly capped at 9 items (54 dropdown + 5 hub-only on pillar pages = 59 total)
+ * - Supports ?nav=phase1 preview for v3.2 Chapter 3 single-pillar flat fallback
+ * - Right Utility Dock (D1 Tools/Cards, D2 Data/MCP, D3 Pulse, D4 ⌘K Search) + 1-click US/中文 toggle
  */
 import type { getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
 import Icon from '@site/Icon.astro';
 import cnFlagUrl from 'circle-flags/flags/cn.svg?url';
 import usFlagUrl from 'circle-flags/flags/us.svg?url';
-import { categoryPath } from '@lib/format';
+import { V32_PILLARS, getPhase1FlatSections } from '@data/taxonomy-v32';
 import { localePath, stripLocalePrefix, switchLocaleHref, type Locale } from '@i18n/ui';
 
 type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
@@ -26,10 +28,9 @@ interface Props {
 
 const {
   siteTitle = 'ChinaWao',
-  roots = [],
-  terms = [],
   locale = 'en',
   originalPathname,
+  activePillar,
 } = Astro.props;
 
 const isZh = locale === 'zh';
@@ -38,18 +39,21 @@ const pathname = stripLocalePrefix(originalPathname ?? Astro.url.pathname);
 const enHref = switchLocaleHref(Astro.url, 'en', originalPathname);
 const zhHref = switchLocaleHref(Astro.url, 'zh', originalPathname);
 
-const flatten = (items: Term[]): Term[] =>
-  items.flatMap((item) => [item, ...flatten(item.children ?? [])]);
-const allTerms = flatten(terms.length > 0 ? terms : roots);
+// v3.2 Chapter 3: support ?nav=phase1 flat-fallback preview
+const isPhase1Mode = Astro.url.searchParams.get('nav') === 'phase1';
+const phase1Sections = isPhase1Mode ? getPhase1FlatSections() : [];
 
-function getChildren(root: Term): Term[] {
-  return root.children?.length
-    ? root.children
-    : allTerms.filter((t) => t.parentId === root.id);
-}
+// Compact top-bar labels so 6 pillars + Utility Dock fit on a single spacious row
+const COMPACT_NAV_LABELS: Record<string, { zh: string; en: string }> = {
+  travel: { zh: '旅行', en: 'Travel' },
+  live: { zh: '长居', en: 'Live' },
+  business: { zh: '商务', en: 'Business' },
+  places: { zh: '地点', en: 'Places' },
+  culture: { zh: '文化', en: 'Culture' },
+  atlas: { zh: '读懂中国', en: 'Atlas' },
+};
 
-const navCategories = roots.slice(0, 6);
-const extraCategories = roots.slice(6);
+const normalizedActive = activePillar === 'visit' ? 'travel' : activePillar;
 ---
 <header class="pe-header cw-header-single" data-pe-header>
   <div class="container cw-nav-inner">
@@ -66,145 +70,127 @@ const extraCategories = roots.slice(6);
       aria-label={isZh ? '打开全站搜索' : 'Open search'}
     >
       <Icon name="search" size={15} />
-      <span>{isZh ? '搜索文章、高铁、免签…' : 'Search articles, rail, visa…'}</span>
+      <span>{isZh ? '搜索栏目、城市、免签、工具…' : 'Search hubs, cities, visa, tools…'}</span>
     </button>
 
-    <nav class="cw-main-nav" aria-label={isZh ? '文章分类导航' : 'Primary navigation'}>
+    <nav class="cw-main-nav" aria-label={isZh ? '主导航（v3.2 六大主柱）' : 'Primary navigation'}>
       <ul class="cw-sub-list">
-        {navCategories.map((cat) => {
-          const children = getChildren(cat);
-          const catPath = categoryPath(cat.slug);
-          const catHref = lp(catPath);
-          const isSelfActive = pathname === catPath || pathname === `${catPath}/`;
-          const isChildActive = children.some((c) => {
-            const cp = categoryPath(c.slug);
-            return pathname === cp || pathname === `${cp}/`;
-          });
-          const isActive = isSelfActive || isChildActive;
+        {isPhase1Mode ? (
+          phase1Sections.map((sec) => {
+            const isSecActive = pathname === sec.hubPath || pathname === sec.hubPath.replace(/\/$/, '');
+            return (
+              <li class="cw-sub-item">
+                <a
+                  href={lp(sec.hubPath)}
+                  class="cw-sub-link"
+                  aria-current={isSecActive ? 'page' : undefined}
+                >
+                  <span>{isZh ? sec.navZh : sec.navEn}</span>
+                </a>
+              </li>
+            );
+          })
+        ) : (
+          V32_PILLARS.map((pillar) => {
+            const dropdownChildren = pillar.children.filter((c) => c.inDropdown).slice(0, 9);
+            const hubOnlyCount = pillar.children.length - dropdownChildren.length;
+            const pillarHref = lp(pillar.path);
+            const isActive =
+              normalizedActive === pillar.id ||
+              pathname === pillar.path ||
+              pathname.startsWith(`/${pillar.id}/`);
+            const compactLabel = COMPACT_NAV_LABELS[pillar.id] ?? { zh: pillar.navZh, en: pillar.navEn };
 
-          return (
-            <li class:list={['cw-sub-item', children.length > 0 && 'cw-sub-item--has-menu']}>
-              <a
-                href={catHref}
-                class="cw-sub-link"
-                aria-current={isActive ? 'true' : undefined}
-              >
-                <span>{cat.label}</span>
-                {children.length > 0 && <Icon name="down" size={12} />}
-              </a>
+            return (
+              <li class="cw-sub-item cw-sub-item--has-menu">
+                <a
+                  href={pillarHref}
+                  class="cw-sub-link"
+                  aria-current={isActive ? 'true' : undefined}
+                  title={isZh ? `${pillar.navZh} · ${pillar.intentZh}` : pillar.navEn}
+                >
+                  <span>{isZh ? compactLabel.zh : compactLabel.en}</span>
+                  <Icon name="down" size={12} />
+                </a>
 
-              {children.length > 0 && (
-                <div class="cw-sub-dropdown" role="region" aria-label={cat.label}>
-                  <a href={catHref} class="cw-sub-dropdown-all">
-                    <span>{isZh ? `全部「${cat.label}」` : `All ${cat.label}`}</span>
+                <div
+                  class="cw-sub-dropdown cw-sub-dropdown--v32"
+                  role="region"
+                  aria-label={isZh ? pillar.navZh : pillar.navEn}
+                >
+                  <a href={pillarHref} class="cw-sub-dropdown-all">
+                    <span>
+                      {isZh
+                        ? `${pillar.navZh}枢纽${hubOnlyCount > 0 ? `（含 +${hubOnlyCount} 枢纽专题）` : ''}`
+                        : `${pillar.navEn} Hub${hubOnlyCount > 0 ? ` (+${hubOnlyCount} more)` : ''}`}
+                    </span>
                     <Icon name="arrow" size={13} />
                   </a>
                   <ul class="cw-sub-dropdown-list">
-                    {children.map((sub) => {
-                      const subPath = categoryPath(sub.slug);
-                      const isSubCurrent = pathname === subPath || pathname === `${subPath}/`;
+                    {dropdownChildren.map((sec) => {
+                      const isSecCurrent =
+                        pathname === sec.hubPath || pathname === sec.hubPath.replace(/\/$/, '');
                       return (
                         <li>
                           <a
-                            href={lp(subPath)}
+                            href={lp(sec.hubPath)}
                             class="cw-sub-dropdown-link"
-                            aria-current={isSubCurrent ? 'page' : undefined}
+                            aria-current={isSecCurrent ? 'page' : undefined}
                           >
-                            {sub.label}
+                            <span>{isZh ? sec.navZh : sec.navEn}</span>
                           </a>
                         </li>
                       );
                     })}
                   </ul>
                 </div>
-              )}
-            </li>
-          );
-        })}
-
-        {extraCategories.length > 0 && (
-          <li class="cw-sub-item cw-sub-item--has-menu">
-            <a
-              href={lp('/topics/')}
-              class="cw-sub-link"
-              aria-current={pathname.startsWith('/topics') || pathname.startsWith('/tags') ? 'true' : undefined}
-            >
-              <span>{isZh ? '更多' : 'More'}</span>
-              <Icon name="down" size={12} />
-            </a>
-            <div class="cw-sub-dropdown" role="region" aria-label={isZh ? '更多栏目与索引' : 'More topics and indexes'}>
-              <ul class="cw-sub-dropdown-list">
-                {extraCategories.map((cat) => (
-                  <li>
-                    <a href={lp(categoryPath(cat.slug))} class="cw-sub-dropdown-link">
-                      {cat.label}
-                    </a>
-                  </li>
-                ))}
-                <li>
-                  <a href={lp('/posts/')} class="cw-sub-dropdown-link">
-                    {isZh ? '全部文章' : 'All Articles'}
-                  </a>
-                </li>
-                <li>
-                  <a href={lp('/topics/')} class="cw-sub-dropdown-link">
-                    {isZh ? '全部栏目索引' : 'All Topics'}
-                  </a>
-                </li>
-                <li>
-                  <a href={lp('/tags/')} class="cw-sub-dropdown-link">
-                    {isZh ? '主题标签' : 'Tags'}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
+              </li>
+            );
+          })
         )}
       </ul>
     </nav>
 
+    {/* Right Utility Dock (v3.2 D1 Tools/Cards · D2 Data/MCP · D3 Pulse · D4 Search) */}
     <div class="pe-dock">
-      <div class="cw-media-links" aria-label={isZh ? '视听频道' : 'Watch and Listen'}>
-        <a
-          href={lp('/watch/')}
-          class="cw-media-link"
-          aria-current={pathname.startsWith('/watch') ? 'page' : undefined}
-        >
-          <svg
-            aria-hidden="true"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+      <div class="cw-utility-links" aria-label={isZh ? '实用工具坞' : 'Utility Dock'}>
+        <div class="cw-sub-item cw-sub-item--has-menu">
+          <a
+            href={lp('/tools/')}
+            class="cw-dock-link"
+            aria-current={pathname.startsWith('/tools') || pathname.startsWith('/cards') ? 'page' : undefined}
           >
-            <rect x="2.5" y="4" width="19" height="16" rx="3" />
-            <polygon points="10.2 8.75 15.8 12 10.2 15.25 10.2 8.75" fill="currentColor" stroke="none" />
-          </svg>
-          <span>{isZh ? '看' : 'Watch'}</span>
+            <span>{isZh ? '工具' : 'Tools'}</span>
+            <Icon name="down" size={11} />
+          </a>
+          <div class="cw-sub-dropdown cw-sub-dropdown--right" role="region" aria-label={isZh ? '工具与字卡' : 'Tools and Cards'}>
+            <a href={lp('/tools/visa-checker/')} class="cw-sub-dropdown-all">
+              <span>{isZh ? '240h 免签判定器' : 'Visa-Free Check'}</span>
+              <Icon name="arrow" size={13} />
+            </a>
+            <ul class="cw-sub-dropdown-list">
+              <li><a href={lp('/cards/')} class="cw-sub-dropdown-link">{isZh ? '离线亮屏字卡库' : 'Show-to-Local Cards'}</a></li>
+              <li><a href={lp('/tools/ticket-calendar/')} class="cw-sub-dropdown-link">{isZh ? '跨时区放票日历' : 'Ticket Drop Calendar'}</a></li>
+              <li><a href={lp('/tools/tax-points-calc/')} class="cw-sub-dropdown-link">{isZh ? '工签积分与个税算' : 'Work Points & IIT Calc'}</a></li>
+              <li><a href={lp('/tools/')} class="cw-sub-dropdown-link">{isZh ? '全部实用工具 →' : 'All Tools →'}</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <a
+          href={lp('/portals/')}
+          class="cw-dock-link"
+          aria-current={pathname.startsWith('/portals') ? 'page' : undefined}
+        >
+          <span>{isZh ? '数据' : 'Data'}</span>
         </a>
+
         <a
-          href={lp('/listen/')}
-          class="cw-media-link"
-          aria-current={pathname.startsWith('/listen') ? 'page' : undefined}
+          href={lp('/pulse/')}
+          class="cw-dock-link"
+          aria-current={pathname.startsWith('/pulse') ? 'page' : undefined}
         >
-          <svg
-            aria-hidden="true"
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
-          </svg>
-          <span>{isZh ? '听' : 'Listen'}</span>
+          <span>{isZh ? '实测' : 'Pulse'}</span>
         </a>
       </div>
 
@@ -216,7 +202,7 @@ const extraCategories = roots.slice(6);
         commandfor="pe-cmd-dialog"
         command="show-modal"
         aria-label={isZh ? '打开全站搜索' : 'Open search'}
-        title={isZh ? '搜索 (Ctrl+K)' : 'Search (Ctrl+K)'}
+        title={isZh ? '全站检索 (Ctrl+K)' : 'Search (Ctrl+K)'}
       >
         <Icon name="search" size={16} />
       </button>
@@ -278,90 +264,45 @@ const extraCategories = roots.slice(6);
     </nav>
   </div>
 
-  {/* Wise-style mobile drawer: Watch/Listen + Category accordions on top */}
-  <nav aria-label={isZh ? '文章分类' : 'Categories'}>
+  {/* v3.2 6 Pillars Accordion */}
+  <nav aria-label={isZh ? '六大主柱' : '6 Content Pillars'}>
     <ul class="drawer-links">
-      <li>
-        <a href={lp('/watch/')} class="cw-drawer-media-link" aria-current={pathname.startsWith('/watch') ? 'page' : undefined}>
-          <svg
-            aria-hidden="true"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="2.5" y="4" width="19" height="16" rx="3" />
-            <polygon points="10.2 8.75 15.8 12 10.2 15.25 10.2 8.75" fill="currentColor" stroke="none" />
-          </svg>
-          <span>{isZh ? '看' : 'Watch'}</span>
-        </a>
-      </li>
-      <li>
-        <a href={lp('/listen/')} class="cw-drawer-media-link" aria-current={pathname.startsWith('/listen') ? 'page' : undefined}>
-          <svg
-            aria-hidden="true"
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.9"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
-          </svg>
-          <span>{isZh ? '听' : 'Listen'}</span>
-        </a>
-      </li>
-      <li>
-        <a href={lp('/posts/')} aria-current={pathname === '/posts/' ? 'page' : undefined}>
-          {isZh ? '全部文章' : 'All Articles'}
-        </a>
-      </li>
-      {roots.map((cat) => {
-        const children = getChildren(cat);
-        return (
-          <li>
-            {children.length > 0 ? (
-              <details class="cw-drawer-accordion">
-                <summary>
-                  <span>{cat.label}</span>
-                  <Icon name="down" size={14} />
-                </summary>
-                <ul class="cw-drawer-sublist">
-                  <li>
-                    <a href={lp(categoryPath(cat.slug))}>
-                      {isZh ? `全部「${cat.label}」` : `All ${cat.label}`}
-                    </a>
-                  </li>
-                  {children.map((sub) => (
-                    <li>
-                      <a href={lp(categoryPath(sub.slug))}>{sub.label}</a>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            ) : (
-              <a href={lp(categoryPath(cat.slug))}>{cat.label}</a>
-            )}
-          </li>
-        );
-      })}
+      {V32_PILLARS.map((pillar) => (
+        <li>
+          <details class="cw-drawer-accordion" open={normalizedActive === pillar.id}>
+            <summary>
+              <span>{isZh ? pillar.navZh : pillar.navEn}</span>
+              <Icon name="down" size={14} />
+            </summary>
+            <ul class="cw-drawer-sublist">
+              <li>
+                <a href={lp(pillar.path)}>
+                  {isZh ? `全部「${pillar.navZh}」枢纽 →` : `All ${pillar.navEn} Hub →`}
+                </a>
+              </li>
+              {pillar.children.map((sec) => (
+                <li>
+                  <a href={lp(sec.hubPath)}>{isZh ? sec.navZh : sec.navEn}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+      ))}
     </ul>
   </nav>
 
-  <nav aria-label={isZh ? '站内索引' : 'Site links'}>
+  {/* Utility Dock + Media + Archive */}
+  <nav aria-label={isZh ? '实用工具坞与频道' : 'Utility Dock & Channels'}>
     <ul class="drawer-links">
-      <li><a href={lp('/topics/')}>{isZh ? '栏目总索引' : 'Topics Index'}</a></li>
-      <li><a href={lp('/tags/')}>{isZh ? '主题标签' : 'Tags'}</a></li>
-      <li><a href={lp('/search/')}>{isZh ? '全文检索' : 'Search'}</a></li>
-      <li><a href={lp('/pages/editorial-standards')}>{isZh ? '核验规范' : 'Standards'}</a></li>
-      <li><a href={lp('/pages/about-chinawao')}>{isZh ? '关于 ChinaWao' : 'About'}</a></li>
+      <li><a href={lp('/tools/visa-checker/')}>{isZh ? '240h 免签判定器' : 'Visa-Free Check'}</a></li>
+      <li><a href={lp('/tools/')}>{isZh ? '工具与字卡' : 'Tools & Cards'}</a></li>
+      <li><a href={lp('/cards/')}>{isZh ? '离线亮屏字卡' : 'Show-to-Local Cards'}</a></li>
+      <li><a href={lp('/portals/')}>{isZh ? '开放数据 / MCP' : 'Open Data / MCP'}</a></li>
+      <li><a href={lp('/pulse/')}>{isZh ? '现场实测 Pulse' : 'Field Reports (Pulse)'}</a></li>
+      <li><a href={lp('/posts/')}>{isZh ? '深度文章' : 'All Articles'}</a></li>
+      <li><a href={lp('/watch/')}>{isZh ? '看（视频）' : 'Watch'}</a></li>
+      <li><a href={lp('/listen/')}>{isZh ? '听（播客）' : 'Listen'}</a></li>
     </ul>
   </nav>
 </dialog>

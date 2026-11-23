@@ -1,0 +1,401 @@
+---
+/**
+ * ChinaWao IA v3.2 — 59 Canonical Secondary Hub Landing Pages
+ * Routes: /<pillar>/<section>/ (and /zh/<pillar>/<section>/)
+ * Covers T1–T11, L1–L10, B1–B11, G1–G9, C1–C9, A1–A9 (54 nav dropdown + 5 hub-only = 59)
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import {
+  V32_PILLAR_BY_ID,
+  SECTION_TOOL_EMBEDS,
+  getV32Section,
+} from '@data/taxonomy-v32';
+import { getGuidesByPillar, GUIDES } from '@data/paradigm-e/guides';
+import { ENTITIES } from '@data/paradigm-e/entities';
+import { localizeEntity } from '@data/paradigm-e/entities-zh';
+import {
+  COMPARISONS,
+  ROUTES,
+  STACKS,
+  PERSONA_LANDINGS,
+} from '@data/paradigm-e/collections';
+import { ARCHETYPE_LABELS } from '@data/paradigm-e/i18n-zh';
+import { getPublicPosts } from '@lib/cms';
+import { postPath } from '@lib/format';
+import { buildOrgPublisher } from '@lib/seo-geo';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+
+const rawPillar = (Astro.params.pillar || '').toLowerCase();
+const rawSection = (Astro.params.section || '').toLowerCase();
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+
+if (rawPillar === 'visit') {
+  return Astro.redirect(lp(`/travel/${rawSection}/`), 301);
+}
+
+const section = getV32Section(rawPillar, rawSection);
+if (!section) {
+  return new Response('Not Found', { status: 404 });
+}
+
+const pillar = V32_PILLAR_BY_ID[section.pillarId];
+const toolEmbed = SECTION_TOOL_EMBEDS[section.code];
+const canonicalUrl = `${Astro.url.origin}${lp(section.hubPath)}`;
+
+// Map mounted SSOT flat routes to real existing entities/collections/guides
+interface CuratedEntry {
+  href: string;
+  title: string;
+  sub: string;
+  tag: string;
+}
+
+const curatedEntities: CuratedEntry[] = [];
+const seenHrefs = new Set<string>();
+const pushUnique = (list: CuratedEntry[], item: CuratedEntry) => {
+  if (!seenHrefs.has(item.href)) {
+    seenHrefs.add(item.href);
+    list.push(item);
+  }
+};
+
+// 1. Match entities by mounted SSOT route prefixes (e.g., /cities/, /attractions/, /in-china/, /errors/, /documents/, /how-to-use/, /cards/, /compliance/)
+const routeCollectionMap: Record<string, string> = {
+  '/cities/': 'cities',
+  '/attractions/': 'attractions',
+  '/in-china/': 'in-china',
+  '/errors/': 'errors',
+  '/documents/': 'documents',
+  '/how-to-use/': 'how-to-use',
+  '/cards/': 'cards',
+  '/compliance/': 'compliance',
+};
+
+const matchedCollections = new Set<string>();
+for (const r of section.ssotRoutes) {
+  const col = routeCollectionMap[r];
+  if (col) matchedCollections.add(col);
+}
+
+for (const rawEnt of ENTITIES) {
+  if (!matchedCollections.has(rawEnt.collection)) continue;
+  // Filter cards by scenario for T7 vs T8
+  if (rawEnt.collection === 'cards' && section.code === 'T7' && rawEnt.cardData?.category !== 'allergy') continue;
+  if (rawEnt.collection === 'cards' && section.code === 'T8' && rawEnt.cardData?.category === 'allergy') continue;
+  const ent = localizeEntity(rawEnt, locale);
+  pushUnique(curatedEntities, {
+    href: `/${ent.collection}/${ent.slug}/`,
+    title: isZh ? `${ent.chineseName}（${ent.title}）` : `${ent.title} (${ent.chineseName})`,
+    sub: isZh ? ent.taglineZh : ent.tagline,
+    tag: ent.collection.toUpperCase(),
+  });
+}
+
+// 2. Match collections (/routes/, /compare/, /stacks/, /for/)
+if (section.ssotRoutes.includes('/routes/')) {
+  for (const r of ROUTES) {
+    pushUnique(curatedEntities, {
+      href: `/routes/${r.slug}/`,
+      title: isZh ? r.titleZh : r.title,
+      sub: r.verdict,
+      tag: isZh ? '双城路线' : 'ROUTE',
+    });
+  }
+}
+if (section.ssotRoutes.includes('/compare/')) {
+  for (const c of COMPARISONS) {
+    if (section.code === 'T2' && !c.slug.includes('alipay')) continue;
+    pushUnique(curatedEntities, {
+      href: `/compare/${c.slug}/`,
+      title: isZh ? c.titleZh : c.title,
+      sub: `${c.optionA} vs ${c.optionB} — ${c.chooseAIf}`,
+      tag: isZh ? '横评对比' : 'COMPARE',
+    });
+  }
+}
+if (section.ssotRoutes.includes('/stacks/')) {
+  for (const st of STACKS) {
+    pushUnique(curatedEntities, {
+      href: `/stacks/${st.slug}/`,
+      title: isZh ? st.titleZh : st.title,
+      sub: st.tagline,
+      tag: isZh ? '行程清单' : 'STACK',
+    });
+  }
+}
+if (section.ssotRoutes.includes('/for/')) {
+  for (const au of PERSONA_LANDINGS) {
+    pushUnique(curatedEntities, {
+      href: `/for/${au.slug}/`,
+      title: isZh ? au.titleZh : au.title,
+      sub: au.lead,
+      tag: isZh ? '人群定制' : 'AUDIENCE',
+    });
+  }
+}
+
+// 3. Curated guides for this pillar (prioritize keyword overlap with section, fallback to pillar top guides)
+const pillarGuides = getGuidesByPillar(section.pillarId);
+const keywords = `${section.slug} ${section.navEn} ${section.navZh}`
+  .toLowerCase()
+  .split(/[^a-z0-9\u4e00-\u9fa5]+/)
+  .filter((w) => w.length >= 2);
+
+const scoredGuides = [...pillarGuides].sort((a, b) => {
+  const hayA = `${a.slug} ${a.title} ${a.titleZh} ${a.leadHook} ${a.leadHookZh}`.toLowerCase();
+  const hayB = `${b.slug} ${b.title} ${b.titleZh} ${b.leadHook} ${b.leadHookZh}`.toLowerCase();
+  const scoreA = keywords.reduce((n, k) => n + (hayA.includes(k) ? 1 : 0), 0);
+  const scoreB = keywords.reduce((n, k) => n + (hayB.includes(k) ? 1 : 0), 0);
+  return scoreB - scoreA;
+});
+
+const sectionGuides = (scoredGuides.length > 0 ? scoredGuides : GUIDES).slice(0, 6);
+
+// 4. Live EmDash dispatches
+const cmsFeed = await getPublicPosts({ limit: 3, locale }).catch(() => ({ entries: [] as never[] }));
+const cmsEntries = cmsFeed.entries ?? [];
+
+// Clickable SSOT route root destinations (where an index page exists)
+const ROUTE_LINK_MAP: Record<string, string> = {
+  '/cards/': '/cards/',
+  '/guides/': '/guides/',
+  '/cities/': '/cities/beijing/',
+  '/attractions/': '/attractions/forbidden-city/',
+  '/in-china/': '/in-china/google-maps/',
+  '/errors/': '/errors/wechat-restricted/',
+  '/documents/': '/documents/arrival-card/',
+  '/how-to-use/': '/how-to-use/hotel-washing-machine/',
+  '/compliance/': '/compliance/uscc-gsxt-lookup/',
+  '/routes/': '/routes/beijing-to-shanghai/',
+  '/compare/': '/compare/alipay-vs-wechat-pay/',
+  '/stacks/': '/stacks/first-time-china-10-day/',
+  '/for/': '/for/solo-female/',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    buildOrgPublisher(Astro.url.origin),
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: isZh ? '首页' : 'Home', item: `${Astro.url.origin}${lp('/')}` },
+        { '@type': 'ListItem', position: 2, name: isZh ? pillar.navZh : pillar.navEn, item: `${Astro.url.origin}${lp(pillar.path)}` },
+        { '@type': 'ListItem', position: 3, name: isZh ? section.navZh : section.navEn, item: canonicalUrl },
+      ],
+    },
+    {
+      '@type': 'CollectionPage',
+      '@id': `${canonicalUrl}#collection`,
+      name: isZh ? `${section.navZh} — ${pillar.navZh}` : `${section.navEn} — ${pillar.navEn}`,
+      description: section.scopeZh,
+      url: canonicalUrl,
+      inLanguage: isZh ? 'zh-CN' : 'en',
+    },
+  ],
+};
+---
+<BaseShell
+  title={isZh ? `${section.navZh} · ${pillar.navZh}` : `${section.navEn} · ${pillar.navEn}`}
+  description={section.scopeZh}
+  activePillar={pillar.id}
+  persona={pillar.persona}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <div class="v32-shell">
+      <header class="v32-header">
+        <p class="v32-eyebrow">
+          <span class="v32-code">{section.code}</span>
+          <span>·</span>
+          <a href={lp(pillar.path)} style="color:inherit;text-decoration:none;">
+            {isZh ? pillar.navZh : pillar.navEn}
+          </a>
+          <span>·</span>
+          <span>{section.priority}</span>
+          <span>·</span>
+          <span>{section.phase}</span>
+          <span>·</span>
+          <span>{isZh ? pillar.personaZh : pillar.personaEn}</span>
+        </p>
+        <h1>{isZh ? section.navZh : section.navEn}</h1>
+        <p class="v32-lead">{section.scopeZh}</p>
+      </header>
+
+      {/* Contextual D1 Utility Dock Tool Embed (v3.2: embedded at top of relevant hubs) */}
+      {toolEmbed && (
+        <section class="v32-tool-band" aria-label={isZh ? '上下文实用工具' : 'Contextual Utility Tool'}>
+          <div class="v32-tool-copy">
+            <span class="v32-tool-kicker">{isZh ? toolEmbed.kickerZh : toolEmbed.kickerEn}</span>
+            <h2 class="v32-tool-title">{isZh ? toolEmbed.titleZh : toolEmbed.titleEn}</h2>
+            <p class="v32-tool-desc">{isZh ? toolEmbed.descZh : toolEmbed.descEn}</p>
+          </div>
+          <a href={lp(toolEmbed.href)} class="v32-tool-cta">
+            {isZh ? toolEmbed.ctaZh : toolEmbed.ctaEn}
+          </a>
+        </section>
+      )}
+
+      {/* 8:4 Asymmetric Body */}
+      <div class="v32-body-grid">
+        <div class="v32-main">
+          {/* Index Firewall Notice for Phase 4* Culture / Language hubs */}
+          {section.isFirewall && (
+            <div class="v32-firewall-note" role="note">
+              <strong>{isZh ? 'SSOT 第三层索引防火墙说明：' : 'SSOT Layer-3 Index Firewall Notice: '}</strong>
+              {isZh
+                ? '本栏目下的细分实体词条在首年先通过深度策展专题承载，防止站内索引膨胀；待整站权重稳固后再按需开放独立程序化实体页。'
+                : 'Granular entity entries under this hub are first curated as editorial guides during Year 1 to protect crawl budget and domain authority.'}
+            </div>
+          )}
+
+          {/* Mounted Entities / Routes / Comparisons / Cards */}
+          {curatedEntities.length > 0 && (
+            <section class="v32-section-block" aria-labelledby="v32-entities-h">
+              <h2 id="v32-entities-h">
+                {isZh ? '已上线实体档案与实操模块' : 'Live Entity Dossiers & Modules'}
+              </h2>
+              <div class="v32-item-list">
+                {curatedEntities.map((item) => (
+                  <a href={lp(item.href)} class="v32-item-row">
+                    <span>
+                      <span class="v32-item-title">{item.title}</span>
+                      <span class="v32-item-sub">{item.sub}</span>
+                    </span>
+                    <span class="v32-item-tag">{item.tag}</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Curated Playbooks / Guides */}
+          <section class="v32-section-block" aria-labelledby="v32-guides-h">
+            <h2 id="v32-guides-h">
+              {isZh ? '关联深度实操指南' : 'Related Playbooks & Guides'}
+            </h2>
+            <div class="v32-item-list">
+              {sectionGuides.map((g) => (
+                <a href={lp(`/guides/${g.slug}/`)} class="v32-item-row">
+                  <span>
+                    <span class="v32-item-title">{isZh ? g.titleZh : g.title}</span>
+                    <span class="v32-item-sub">{isZh ? g.leadHookZh : g.leadHook}</span>
+                  </span>
+                  <span class="v32-item-tag">{ARCHETYPE_LABELS[locale][g.archetype] ?? g.archetype}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          {/* Mounted SSOT Canonical Flat Routes */}
+          <section class="v32-section-block" aria-labelledby="v32-ssot-h">
+            <h2 id="v32-ssot-h">
+              {isZh ? '挂接 SSOT 扁平规范路由' : 'Mounted SSOT Canonical Routes'}
+            </h2>
+            <p class="v32-section-sub">
+              {isZh
+                ? '底层程序化实体单页强制使用扁平规范短链作为唯一 canonical，调整菜单时实体页零 301。'
+                : 'Underlying programmatic entities use flat canonical routes so menu reorganizations require zero 301 redirects.'}
+            </p>
+            <div class="v32-route-strip">
+              {section.ssotRoutes.map((route) => {
+                const target = ROUTE_LINK_MAP[route];
+                return target ? (
+                  <a href={lp(target)} class="v32-route-code">
+                    {route} ↗
+                  </a>
+                ) : (
+                  <span class="v32-route-code">{route}</span>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Latest Editorial Dispatches */}
+          {cmsEntries.length > 0 && (
+            <section class="v32-section-block" aria-labelledby="v32-posts-h">
+              <h2 id="v32-posts-h">{isZh ? '编辑部最新志刊' : 'Latest Editorial Dispatches'}</h2>
+              <div class="v32-item-list">
+                {cmsEntries.map((entry) => (
+                  <a href={lp(postPath(entry.data.slug || entry.id))} class="v32-item-row">
+                    <span>
+                      <span class="v32-item-title">{entry.data.title}</span>
+                      {entry.data.excerpt && <span class="v32-item-sub">{entry.data.excerpt}</span>}
+                    </span>
+                    <span class="v32-item-tag">→</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Weightless Sticky Right Rail: Sibling Sections in Same Pillar */}
+        <aside class="v32-rail" aria-label={isZh ? '同柱二级栏目导航' : 'Sibling hub navigation'}>
+          <div class="v32-rail-group">
+            <p class="v32-rail-heading">
+              {isZh ? `${pillar.navZh}全部栏目（${pillar.children.length}）` : `${pillar.navEn} HUBS (${pillar.children.length})`}
+            </p>
+            <ul class="v32-rail-nav">
+              {pillar.children.map((sib) => (
+                <li>
+                  <a
+                    href={lp(sib.hubPath)}
+                    class="v32-rail-link"
+                    aria-current={sib.slug === section.slug ? 'page' : undefined}
+                  >
+                    <span>{isZh ? sib.navZh : sib.navEn}</span>
+                    <span class="v32-rail-code">{sib.code}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="v32-rail-group">
+            <p class="v32-rail-heading">{isZh ? '实用工具坞' : 'UTILITY DOCK'}</p>
+            <ul class="v32-rail-nav">
+              <li>
+                <a href={lp('/tools/visa-checker/')} class="v32-rail-link">
+                  <span>{isZh ? '240h 免签判定器' : 'Visa-Free Check'}</span>
+                  <span class="v32-rail-code">D1</span>
+                </a>
+              </li>
+              <li>
+                <a href={lp('/cards/')} class="v32-rail-link">
+                  <span>{isZh ? '离线亮屏字卡库' : 'Show Cards'}</span>
+                  <span class="v32-rail-code">D1</span>
+                </a>
+              </li>
+              <li>
+                <a href={lp('/portals/')} class="v32-rail-link">
+                  <span>{isZh ? '开放数据与 MCP' : 'Open Data / MCP'}</span>
+                  <span class="v32-rail-code">D2</span>
+                </a>
+              </li>
+              <li>
+                <a href={lp('/pulse/')} class="v32-rail-link">
+                  <span>{isZh ? '现场实测 Pulse' : 'Field Pulse'}</span>
+                  <span class="v32-rail-code">D3</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      {/* Apple-style bottom breadcrumb */}
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <a href={lp(pillar.path)}>{isZh ? pillar.navZh : pillar.navEn}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? section.navZh : section.navEn}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>

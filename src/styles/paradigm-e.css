@@ -205,6 +205,45 @@
   font-weight: 500;
 }
 
+.cw-sub-dropdown--right {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  transform-origin: top right;
+}
+
+.cw-utility-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.cw-dock-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  height: 2rem;
+  padding-inline: 0.5rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--ink-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+}
+
+.cw-dock-link:hover,
+.cw-dock-link[aria-current="page"] {
+  color: var(--ink-primary);
+  background-color: var(--surface-sunken);
+}
+
+@media (max-width: 1080px) {
+  .cw-utility-links {
+    display: none;
+  }
+}
+
 /* Mobile Drawer Category Accordions */
 .cw-drawer-accordion summary {
   display: flex;

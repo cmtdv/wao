@@ -871,8 +871,8 @@ export function CossOfficialShowcase({
                     <div className="flex items-center justify-between">
                       <ProgressLabel>
                         {isZh
-                          ? "12×97 全景专题核验进度（Progress）"
-                          : "12×97 Topic Verification Progress (Progress)"}
+                          ? "全站专题核验进度（Progress）"
+                          : "Topic Verification Progress (Progress)"}
                       </ProgressLabel>
                       <ProgressValue />
                     </div>

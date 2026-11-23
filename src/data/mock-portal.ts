@@ -1,6 +1,6 @@
 /**
  * Self-contained Mock Portal Data for ChinaWao Specialty Pages
- * - ATLAS_PILLARS: Authoritative 12 x 97 taxonomy map (synced with taxonomy/chinawao-12x97.json)
+ * - ATLAS_PILLARS: Authoritative 6 x 59 v3.2 taxonomy map (synced with taxonomy/chinawao-taxonomy.json)
  * - JOURNEY_STEPS: GOV.UK Step-by-Step inspired 7-step First Trip to China interactive workflow
  * - DIRECTORY_ENTRIES: Sift Directory inspired official public service & open-data registry (sourced from okf/entries/)
  * - VISA_PROFILES & FLASHCARDS: Interactive mock workbenches for Tools 12.1, 12.2 & 12.4

@@ -1,27 +1,20 @@
 ---
 /**
- * Editorial Command Palette (⌘K / Ctrl+K) — Live EmDash Articles, Topics & Tags Search
+ * Global Command Palette (⌘K / Ctrl+K) — v3.2 6 Pillars + 59 Hubs + Utility Dock + Live EmDash Articles
  */
-import { getTaxonomyTermsWithCacheHint } from 'emdash';
 import Icon from '@site/Icon.astro';
 import Badge from '@ui/data-display/Badge.astro';
-import { getPublicPosts, publicContext } from '@lib/cms';
-import { categoryPath, postPath, tagPath } from '@lib/format';
+import { V32_PILLARS, V32_ALL_SECTIONS, V32_UTILITY_DOCK } from '@data/taxonomy-v32';
+import { getPublicPosts } from '@lib/cms';
+import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
 
-const [postsRes, catsRes, tagsRes] = await Promise.all([
-  getPublicPosts({ limit: 16, locale }).catch(() => ({ entries: [] as never[] })),
-  publicContext(() => getTaxonomyTermsWithCacheHint('category', { includeCounts: false, locale })).catch(() => ({ data: [] as never[] })),
-  publicContext(() => getTaxonomyTermsWithCacheHint('tag', { includeCounts: false, locale })).catch(() => ({ data: [] as never[] })),
-]);
-
+const postsRes = await getPublicPosts({ limit: 12, locale }).catch(() => ({ entries: [] as never[] }));
 const posts = postsRes.entries ?? [];
-const rootCats = (catsRes.data ?? []).filter((t) => !t.parentId).slice(0, 6);
-const topTags = (tagsRes.data ?? []).slice(0, 8);
 ---
 <dialog
   id="pe-cmd-dialog"
@@ -33,13 +26,13 @@ const topTags = (tagsRes.data ?? []).slice(0, 8);
   <div class="pe-cmd-top">
     <Icon name="search" size={18} />
     <label id="pe-cmd-title" for="pe-cmd-input" class="visually-hidden">
-      {isZh ? '输入关键词检索文章、栏目或标签' : 'Search ChinaWao articles, categories, and tags'}
+      {isZh ? '输入关键词检索 6 大主柱、59 个二级栏目、工具或文章' : 'Search ChinaWao pillars, 59 hubs, tools, and articles'}
     </label>
     <input
       id="pe-cmd-input"
       type="search"
       class="pe-cmd-input"
-      placeholder={isZh ? '搜索文章，如："12306"、"240 小时免签"、"退税"、"支付宝"…' : 'Search articles, e.g. "12306", "240-hour visa", "tax refund", "Alipay"…'}
+      placeholder={isZh ? '搜索栏目、工具或文章，如："免签"、"支付"、"广交会"、"故宫"、"USCC"…' : 'Search hubs, tools, or articles, e.g. "visa", "Alipay", "Canton Fair", "USCC"…'}
       autocomplete="off"
       autocorrect="off"
       autocapitalize="none"
@@ -58,36 +51,52 @@ const topTags = (tagsRes.data ?? []).slice(0, 8);
     </button>
   </div>
 
-  {/* Quick Categories & Tags Strip */}
-  {rootCats.length > 0 && (
-    <div
-      style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border);background:var(--surface-sunken);"
-      data-pe-cmd-quick-cards
-    >
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
-        <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
-          {isZh ? '栏目分类' : 'Categories'}
-        </span>
-        <a href={lp('/topics/')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
-          {isZh ? '全部栏目 →' : 'All Topics →'}
-        </a>
-      </div>
-      <div class="pe-mega-chips">
-        {rootCats.map((cat) => (
-          <a href={lp(categoryPath(cat.slug))} class="pe-mega-chip">
-            {cat.label}
-          </a>
-        ))}
-        {topTags.slice(0, 4).map((tag) => (
-          <a href={lp(tagPath(tag.slug))} class="pe-mega-chip">
-            #{tag.label}
-          </a>
-        ))}
-      </div>
+  {/* Quick 6 Pillars + Utility Dock Strip */}
+  <div
+    style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border);background:var(--surface-sunken);"
+    data-pe-cmd-quick-cards
+  >
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.45rem;">
+      <span style="font-family:var(--font-mono);font-size:var(--text-2xs);font-weight:500;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.06em;">
+        {isZh ? '六大主柱与工具坞' : '6 Pillars & Utility Dock'}
+      </span>
+      <a href={lp('/atlas/#topic-index')} class="text-link" style="font-size:var(--text-2xs);font-family:var(--font-mono);">
+        {isZh ? '59 栏目全景 →' : 'All 59 Hubs →'}
+      </a>
     </div>
-  )}
+    <div class="pe-mega-chips">
+      {V32_PILLARS.map((p) => (
+        <a href={lp(p.path)} class="pe-mega-chip">
+          {isZh ? p.navZh : p.navEn}
+        </a>
+      ))}
+      <a href={lp('/tools/visa-checker/')} class="pe-mega-chip">
+        {isZh ? '240h 免签判定' : 'Visa-Free Check'}
+      </a>
+      <a href={lp('/cards/')} class="pe-mega-chip">
+        {isZh ? '亮屏字卡' : 'Show Cards'}
+      </a>
+    </div>
+  </div>
 
-  <div class="pe-cmd-results" role="region" aria-label={isZh ? '文章匹配结果' : 'Article matches'} data-pe-cmd-results>
+  <div class="pe-cmd-results" role="region" aria-label={isZh ? '检索匹配结果' : 'Search matches'} data-pe-cmd-results>
+    {/* Utility Dock Direct Hits */}
+    {V32_UTILITY_DOCK.filter((d) => d.code !== 'D4').map((d) => (
+      <a
+        href={lp(d.href)}
+        class="pe-cmd-row"
+        data-pe-cmd-item
+        data-search={`${d.code} ${d.nameZh} ${d.nameEn} ${d.routes}`.toLowerCase()}
+      >
+        <div>
+          <span class="pe-cmd-row-title">{isZh ? d.nameZh : d.nameEn}</span>
+          <span class="pe-cmd-row-sub">{d.routes}</span>
+        </div>
+        <Badge tone="verified">{d.code}</Badge>
+      </a>
+    ))}
+
+    {/* Live EmDash Dispatches */}
     {posts.map((post) => {
       const slug = post.data.slug || post.id;
       const href = lp(postPath(slug));
@@ -111,6 +120,26 @@ const topTags = (tagsRes.data ?? []).slice(0, 8);
         </a>
       );
     })}
+
+    {/* All 59 v3.2 Secondary Hubs */}
+    {V32_ALL_SECTIONS.map((sec) => {
+      const searchStr = `${sec.code} ${sec.navZh} ${sec.navEn} ${sec.slug} ${sec.scopeZh} ${sec.ssotRoutes.join(' ')}`.toLowerCase();
+      return (
+        <a
+          href={lp(sec.hubPath)}
+          class="pe-cmd-row"
+          data-pe-cmd-item
+          data-search={searchStr}
+        >
+          <div>
+            <span class="pe-cmd-row-title">{isZh ? sec.navZh : sec.navEn}</span>
+            <span class="pe-cmd-row-sub">{isZh ? sec.scopeZh : `${sec.code} · ${sec.ssotRoutes.join(' ')}`}</span>
+          </div>
+          <Badge tone="neutral">{sec.code}</Badge>
+        </a>
+      );
+    })}
+
     <p class="cw-hint" data-pe-cmd-empty hidden style="padding: var(--space-4); text-align: center;">
       {isZh ? '未找到直接匹配，按回车执行全文检索。' : 'No direct match—press Enter to run a full archive search.'}
     </p>
@@ -118,14 +147,11 @@ const topTags = (tagsRes.data ?? []).slice(0, 8);
 
   <form action={lp('/search/')} method="get" class="pe-cmd-foot" data-pe-cmd-fallback-form>
     <input type="hidden" name="q" value="" data-pe-cmd-hidden-q />
-    <span>
-      {isZh ? '按回车执行全文检索' : 'Press Enter for full-text search'}
+    <span class="cw-hint" style="font-size:var(--text-2xs);">
+      {isZh ? '覆盖 6 主柱 · 59 栏目 · 工具坞 · 全站文章' : '6 Pillars · 59 Hubs · Utility Dock · Dispatches'}
     </span>
-    <div style="display:flex;align-items:center;gap:var(--space-3);">
-      <button type="submit" class="btn btn--sm">
-        {isZh ? '全文检索' : 'Full Search'}
-      </button>
-      <span><kbd class="cw-kbd">Esc</kbd> {isZh ? '关闭' : 'Close'}</span>
-    </div>
+    <button type="submit" class="text-link" style="border:0;background:transparent;font-size:var(--text-xs);cursor:pointer;">
+      {isZh ? '全文检索 →' : 'Full Search →'}
+    </button>
   </form>
 </dialog>

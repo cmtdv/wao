@@ -1,7 +1,8 @@
 ---
 import type { getEmDashCollection, getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
-import { categoryPath, pagePath } from '@lib/format';
+import { V32_PILLARS } from '@data/taxonomy-v32';
+import { pagePath } from '@lib/format';
 import { localePath, type Locale } from '@i18n/ui';
 
 type Term = Awaited<ReturnType<typeof getTaxonomyTermsWithCacheHint>>['data'][number];
@@ -16,7 +17,7 @@ interface Props {
   originalPathname?: string;
 }
 
-const { siteTitle, tagline, roots = [], pages = [], locale = 'en' } = Astro.props;
+const { siteTitle, tagline, pages = [], locale = 'en' } = Astro.props;
 const isZh = locale === 'zh';
 const lp = (path: string) => localePath(path, locale);
 const year = new Date().getFullYear();
@@ -32,31 +33,35 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '栏目分类' : 'Categories'}</h2>
+      <h2>{isZh ? '六大内容主柱' : 'Content Pillars'}</h2>
       <ul class="footer-links">
-        {roots.map((cat) => (
-          <li><a href={lp(categoryPath(cat.slug))}>{cat.label}</a></li>
+        {V32_PILLARS.map((p) => (
+          <li><a href={lp(p.path)}>{isZh ? p.navZh : p.navEn}</a></li>
         ))}
       </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '文章与索引' : 'Archive'}</h2>
+      <h2>{isZh ? '工具坞与频道' : 'Utility Dock'}</h2>
       <ul class="footer-links">
-        <li><a href={lp('/posts/')}>{isZh ? '全部文章' : 'All Articles'}</a></li>
-        <li><a href={lp('/topics/')}>{isZh ? '栏目目录' : 'Topics Directory'}</a></li>
-        <li><a href={lp('/tags/')}>{isZh ? '主题标签' : 'Tags Index'}</a></li>
-        <li><a href={lp('/search/')}>{isZh ? '全文检索' : 'Full-Text Search'}</a></li>
-        <li><a href="/rss.xml">{isZh ? 'RSS 订阅' : 'RSS Feed'}</a></li>
+        <li><a href={lp('/tools/visa-checker/')}>{isZh ? '240h 免签判定器' : '240h Visa Checker'}</a></li>
+        <li><a href={lp('/tools/')}>{isZh ? '实用工具与计算器' : 'Tools & Calculators'}</a></li>
+        <li><a href={lp('/cards/')}>{isZh ? '离线亮屏字卡库' : 'Show-to-Local Cards'}</a></li>
+        <li><a href={lp('/portals/')}>{isZh ? '开放数据与 MCP' : 'Open Data & MCP'}</a></li>
+        <li><a href={lp('/pulse/')}>{isZh ? '现场实测 Pulse' : 'Field Reports (Pulse)'}</a></li>
+        <li><a href={lp('/watch/')}>{isZh ? '看（视频）' : 'Watch'}</a> · <a href={lp('/listen/')}>{isZh ? '听（播客）' : 'Listen'}</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
-      <h2>{isZh ? '关于与编辑部' : 'Editorial'}</h2>
+      <h2>{isZh ? '志刊与编辑部' : 'Editorial'}</h2>
       <ul class="footer-links">
-        {pages.slice(0, 4).map((entry) => (
+        <li><a href={lp('/posts/')}>{isZh ? '全部深度文章' : 'All Articles'}</a></li>
+        <li><a href={lp('/atlas/#topic-index')}>{isZh ? '59 栏目全景索引' : '59-Hub Index'}</a></li>
+        {pages.slice(0, 3).map((entry) => (
           <li><a href={lp(pagePath(entry.data.slug || entry.id))}>{entry.data.title}</a></li>
         ))}
+        <li><a href="/rss.xml">{isZh ? 'RSS 订阅' : 'RSS Feed'}</a></li>
         <li>
           <a href={import.meta.env.DEV ? '/_emdash/api/setup/dev-bypass?content=0&redirect=/_emdash/admin' : '/_emdash/admin'}>
             {isZh ? '文章发布后台' : 'CMS Admin'}
@@ -69,7 +74,7 @@ const year = new Date().getFullYear();
   <div class="container footer-bottom">
     <div class="footer-colophon">
       <span>© {year} {siteTitle}</span>
-      <span>{isZh ? '经一手信源核验的中国实用指南与深度志刊' : 'Source-verified practical guides and dispatches on China'}</span>
+      <span>{isZh ? '经一手信源核验的中国实用指南与深度志刊 · IA v3.2' : 'Source-verified practical guides and dispatches on China · IA v3.2'}</span>
     </div>
 
     <button

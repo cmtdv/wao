@@ -3,7 +3,7 @@
  */
 
 export type PersonaType = 'editorial' | 'analyst' | 'safety' | 'legal';
-export type PillarId = 'atlas' | 'places' | 'culture' | 'visit' | 'live' | 'business';
+export type PillarId = 'travel' | 'live' | 'business' | 'places' | 'culture' | 'atlas' | 'visit';
 
 export interface NavLinkItem {
   label: string;
@@ -87,7 +87,7 @@ export const PILLARS: PillarConfig[] = [
         { label: 'Modern China 24h Infrastructure', labelZh: '当代中国 24 小时科技奇观', href: '/guides/modern-china-24h/' },
         { label: 'Myths vs. Verified Facts', labelZh: '关于中国的常见误解与事实', href: '/guides/myths-vs-facts/' },
         { label: 'AI, Robotics & Open-Source Stack', labelZh: '硬件极客与开源 AI 工具栈', href: '/guides/hardware-open-ai-stack/' },
-        { label: 'Full Topic Index', labelZh: '全站主题索引', href: '/atlas/#taxonomy-12x97' },
+        { label: 'Full Topic Index', labelZh: '全站主题索引', href: '/atlas/#topic-index' },
       ],
       mostViewedTitle: 'Most Viewed',
       mostViewedTitleZh: '常看内容',
@@ -396,13 +396,13 @@ export const PILLARS: PillarConfig[] = [
     ],
   },
   {
-    id: 'visit',
-    name: 'Visit',
-    nameZh: '来华旅行',
+    id: 'travel',
+    name: 'Travel',
+    nameZh: '旅行',
     shortDesc: '240h visa, payments, eSIM, 12306 & app rescue',
     shortDescZh: '240h 免签、支付绑卡、高铁抢票与现场报错救火',
-    h1: 'Visit China — Pre-Flight Checklist & On-the-Ground Playbook',
-    h1Zh: '来华旅行 — 行前准备与落地实操手册',
+    h1: 'Travel — Pre-Flight Checklist & On-the-Ground Playbook',
+    h1Zh: '旅行 — 怎么来与怎么玩：行前准备与落地实操手册',
     lead: 'Clear, step-by-step guidance for every travel hurdle: 240-hour visa-free transit rules, Alipay/WeChat foreign card limits, blocked-app substitutes, Railway 12306, and instant error fixes.',
     leadZh: '涵盖 240 小时过境免签、外卡 200 元免手续费红线、高铁防走错站、体检看牙与常见应用报错图解处理。',
     persona: 'safety',
@@ -729,9 +729,12 @@ export const PILLARS: PillarConfig[] = [
   },
 ];
 
-export const PILLAR_BY_ID: Record<PillarId, PillarConfig> = Object.fromEntries(
+const pillarEntries = Object.fromEntries(
   PILLARS.map((p) => [p.id, p]),
 ) as Record<PillarId, PillarConfig>;
+pillarEntries.visit = pillarEntries.travel;
+
+export const PILLAR_BY_ID: Record<PillarId, PillarConfig> = pillarEntries;
 
 export interface ToolDockItem {
   slug: string;

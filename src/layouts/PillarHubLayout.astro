@@ -1,20 +1,21 @@
 ---
 /**
- * Mother Template 2: 6 Pillar Hub Landing Layout (GOV.UK List Architecture)
- * - Fully bilingual (EN default / Simplified Chinese /zh/*)
- * - Integrates live EmDash multi-locale CMS dispatches via getPublicPosts({ locale })
+ * Mother Template 2: v3.2 6 Pillar Hub Landing Layout
+ * - Renders ALL v3.2 secondary hubs (9 dropdown + hub-only sections like T10–T11, L10, B10–B11)
+ * - Clean unboxed editorial hierarchy + 8:4 body + weightless right rail + Apple-style bottom breadcrumb
  */
 import BaseShell from './BaseShell.astro';
-import ResponsiveBreadcrumb from '../components/nav/ResponsiveBreadcrumb.astro';
 import Badge from '@ui/data-display/Badge.astro';
-import Button from '@ui/actions/Button.astro';
 import type { PillarConfig } from '@data/paradigm-e/pillars';
+import { V32_PILLAR_BY_ID, type V32PillarId } from '@data/taxonomy-v32';
 import { LIVE_PULSE_REPORTS } from '@data/paradigm-e/collections';
 import { getGuidesByPillar } from '@data/paradigm-e/guides';
 import { ARCHETYPE_LABELS, PULSE_STATUS_LABELS, PULSE_ZH_MAP } from '@data/paradigm-e/i18n-zh';
 import { getPublicPosts } from '@lib/cms';
 import { postPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../styles/article.css';
+import '../styles/hub-v32.css';
 
 interface Props {
   pillar: PillarConfig;
@@ -25,180 +26,198 @@ const locale = getLocaleFromContext(Astro);
 const isZh = locale === 'zh';
 const lp = (p: string) => localePath(p, locale);
 
+const v32Id: V32PillarId = pillar.id === 'visit' ? 'travel' : (pillar.id as V32PillarId);
+const v32Pillar = V32_PILLAR_BY_ID[v32Id];
+const navSections = v32Pillar.children.filter((c) => c.inDropdown);
+const hubOnlySections = v32Pillar.children.filter((c) => !c.inDropdown);
+
 const pillarGuides = getGuidesByPillar(pillar.id);
 const recentPulse = LIVE_PULSE_REPORTS.slice(0, 3);
-const cmsFeed = await getPublicPosts({ limit: 3, locale }).catch(() => ({ entries: [] as never[] }));
+const cmsFeed = await getPublicPosts({ limit: 4, locale }).catch(() => ({ entries: [] as never[] }));
 const cmsEntries = cmsFeed.entries ?? [];
 ---
 <BaseShell
-  title={isZh ? pillar.nameZh : pillar.name}
+  title={isZh ? v32Pillar.navZh : v32Pillar.navEn}
   description={isZh ? pillar.leadZh : pillar.lead}
-  activePillar={pillar.id}
-  persona={pillar.persona}
+  activePillar={v32Pillar.id}
+  persona={v32Pillar.persona}
 >
-  <div class="container" style="padding-bottom: var(--space-8);">
-    <ResponsiveBreadcrumb
-      items={[
-        { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? pillar.nameZh : pillar.name },
-      ]}
-      mobileBackHref={lp('/')}
-      mobileBackLabel={isZh ? '返回首页' : 'Home'}
-    />
+  <div class="container">
+    <div class="v32-shell">
+      <header class="v32-header">
+        <p class="v32-eyebrow">
+          <span class="v32-code">{v32Pillar.idx}</span>
+          <span>·</span>
+          <span>{isZh ? v32Pillar.intentZh : v32Pillar.navEn}</span>
+          <span>·</span>
+          <span>{isZh ? v32Pillar.personaZh : v32Pillar.personaEn}</span>
+        </p>
+        <h1>{isZh ? pillar.h1Zh : pillar.h1}</h1>
+        <p class="v32-lead">{isZh ? pillar.leadZh : pillar.lead}</p>
+      </header>
 
-    <header style="max-width: 56rem;">
-      <h1>{isZh ? pillar.h1Zh : pillar.h1}</h1>
-      <p class="archive-lead" style="margin-top:var(--space-3);">
-        {isZh ? pillar.leadZh : pillar.lead}
-      </p>
-    </header>
-
-    {/* Pinned Top: Most Viewed in Pillar */}
-    <section class="pe-most-viewed-box" aria-labelledby="pillar-most-viewed-h">
-      <h2 id="pillar-most-viewed-h" style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);margin-bottom:var(--space-3);">
-        {isZh ? '常看内容' : `Most Viewed in ${pillar.name}`}
-      </h2>
-      <ul class="pe-most-viewed-grid">
-        {pillar.mostViewedTop.map((item) => (
-          <li>
-            <a href={lp(item.href)}>
-              {isZh ? item.labelZh : item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    {/* Main Body: 8:4 Split */}
-    <div class="pe-pillar-body">
-      <div>
-        {pillar.topicGroups.map((group) => (
-          <section class="pe-topic-group">
-            <h2 style="font-size:1.35rem;">
-              {isZh ? group.titleZh : group.title}
+      {/* Main 8:4 Body */}
+      <div class="v32-body-grid">
+        <div class="v32-main">
+          {/* v3.2 Complete Secondary Hubs Directory (9 Navigation Sections) */}
+          <section class="v32-section-block" aria-labelledby="v32-nav-sections-h">
+            <h2 id="v32-nav-sections-h">
+              {isZh ? `核心二级栏目（${navSections.length}）` : `Core Sections (${navSections.length})`}
             </h2>
-            <p style="margin-top:0.35rem;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
-              {isZh ? group.summaryZh : group.summary}
+            <p class="v32-section-sub">
+              {isZh
+                ? '严格按 P0 → P1 → P2 优先级排列，点击进入对应二级枢纽着陆页。'
+                : 'Ordered strictly by P0 → P1 → P2 priority. Select any hub to explore guides, tools, and entities.'}
             </p>
-            <ul class="pe-topic-sublinks">
-              {group.links.map((link) => (
-                <li>
-                  <a href={lp(link.href)}>› {isZh ? link.labelZh : link.label}</a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-
-        {/* Pillar Feature Guides List */}
-        {pillarGuides.length > 0 && (
-          <section class="pe-topic-group" aria-labelledby="pillar-guides-h">
-            <h2 id="pillar-guides-h" style="font-size:1.35rem;">
-              {isZh ? `${pillar.nameZh}深度指南` : `${pillar.name} Guides`}
-            </h2>
-            <ul class="pe-gov-list">
-              {pillarGuides.map((g) => (
-                <li>
-                  <a href={lp(`/guides/${g.slug}/`)}>
-                    <span>{isZh ? g.titleZh : g.title}</span>
-                    <Badge tone="neutral">{ARCHETYPE_LABELS[locale][g.archetype] ?? g.archetype}</Badge>
+            <ul class="v32-dir-list">
+              {navSections.map((sec) => (
+                <li class="v32-dir-item">
+                  <a href={lp(sec.hubPath)} class="v32-dir-link">
+                    <span class="v32-dir-code">{sec.code}</span>
+                    <span>
+                      <span class="v32-dir-title">{isZh ? sec.navZh : sec.navEn}</span>
+                      <span class="v32-dir-desc">{isZh ? sec.scopeZh : `${sec.navZh} · ${sec.ssotRoutes.join(' ')}`}</span>
+                    </span>
+                    <span class="v32-dir-meta">{sec.priority} · {sec.phase}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </section>
-        )}
 
-        {/* Latest Dispatches Feed */}
-        {cmsEntries.length > 0 && (
-          <section class="pe-topic-group" aria-labelledby="pillar-cms-h">
-            <h2 id="pillar-cms-h" style="font-size:1.25rem;">
-              {isZh ? '最新深度文章' : 'Latest Dispatches'}
-            </h2>
-            <ul class="pe-gov-list">
-              {cmsEntries.map((entry) => (
+          {/* Hub-Only Secondary Sections (e.g. T10-T11, L10, B10-B11) */}
+          {hubOnlySections.length > 0 && (
+            <section class="v32-section-block" aria-labelledby="v32-hub-only-h">
+              <h2 id="v32-hub-only-h">
+                {isZh ? `延伸枢纽专题（${hubOnlySections.length}）` : `Extended Hub Topics (${hubOnlySections.length})`}
+              </h2>
+              <p class="v32-section-sub">
+                {isZh
+                  ? '根据 v3.2 导航封顶 9 项规则，以下高价值延伸栏目沉淀在本一级枢纽页直达。'
+                  : 'Curated extended hubs hosted directly on this pillar page to keep top navigation focused.'}
+              </p>
+              <ul class="v32-dir-list">
+                {hubOnlySections.map((sec) => (
+                  <li class="v32-dir-item">
+                    <a href={lp(sec.hubPath)} class="v32-dir-link">
+                      <span class="v32-dir-code">{sec.code}</span>
+                      <span>
+                        <span class="v32-dir-title">{isZh ? sec.navZh : sec.navEn}</span>
+                        <span class="v32-dir-desc">{isZh ? sec.scopeZh : `${sec.navZh} · ${sec.ssotRoutes.join(' ')}`}</span>
+                      </span>
+                      <span class="v32-dir-meta">{sec.priority} · {sec.phase}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Slot for pillar-specific modules (e.g., ChinaLayerMap on /places/, 59-Hub Index on /atlas/) */}
+          <slot />
+
+          {/* Featured Guides in this Pillar */}
+          {pillarGuides.length > 0 && (
+            <section class="v32-section-block" aria-labelledby="pillar-guides-h">
+              <h2 id="pillar-guides-h">
+                {isZh ? `${v32Pillar.navZh}深度实操指南` : `${v32Pillar.navEn} Playbooks`}
+              </h2>
+              <div class="v32-item-list">
+                {pillarGuides.map((g) => (
+                  <a href={lp(`/guides/${g.slug}/`)} class="v32-item-row">
+                    <span>
+                      <span class="v32-item-title">{isZh ? g.titleZh : g.title}</span>
+                      <span class="v32-item-sub">{isZh ? g.leadHookZh : g.leadHook}</span>
+                    </span>
+                    <span class="v32-item-tag">{ARCHETYPE_LABELS[locale][g.archetype] ?? g.archetype}</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Live EmDash Dispatches */}
+          {cmsEntries.length > 0 && (
+            <section class="v32-section-block" aria-labelledby="pillar-cms-h">
+              <h2 id="pillar-cms-h">{isZh ? '最新编辑部文章' : 'Latest Editorial Dispatches'}</h2>
+              <div class="v32-item-list">
+                {cmsEntries.map((entry) => (
+                  <a href={lp(postPath(entry.data.slug || entry.id))} class="v32-item-row">
+                    <span>
+                      <span class="v32-item-title">{entry.data.title}</span>
+                      {entry.data.excerpt && <span class="v32-item-sub">{entry.data.excerpt}</span>}
+                    </span>
+                    <span class="v32-item-tag">→</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Weightless Right Rail */}
+        <aside class="v32-rail" aria-label={isZh ? '工具与快捷入口' : 'Tools and quick links'}>
+          <div class="v32-rail-group">
+            <p class="v32-rail-heading">{isZh ? pillar.sidebarTool.kickerZh : pillar.sidebarTool.kicker}</p>
+            <strong style="font-size:var(--text-sm);color:var(--ink-primary);line-height:1.4;">
+              {isZh ? pillar.sidebarTool.titleZh : pillar.sidebarTool.title}
+            </strong>
+            <p style="margin:0.25rem 0 0.65rem;font-size:var(--text-xs);color:var(--ink-secondary);line-height:1.55;">
+              {isZh ? pillar.sidebarTool.descZh : pillar.sidebarTool.desc}
+            </p>
+            <a href={lp(pillar.sidebarTool.href)} class="v32-tool-cta" style="justify-content:center;">
+              {isZh ? pillar.sidebarTool.ctaLabelZh : pillar.sidebarTool.ctaLabel}
+            </a>
+          </div>
+
+          <div class="v32-rail-group">
+            <p class="v32-rail-heading">{isZh ? '常看直达' : 'MOST VIEWED'}</p>
+            <ul class="v32-rail-nav">
+              {pillar.mostViewedTop.slice(0, 5).map((item) => (
                 <li>
-                  <a href={lp(postPath(entry.data.slug || entry.id))}>
-                    <span>{entry.data.title}</span>
-                    <span>→</span>
+                  <a href={lp(item.href)} class="v32-rail-link">
+                    <span>{isZh ? item.labelZh : item.label}</span>
+                    <span class="v32-rail-code">→</span>
                   </a>
                 </li>
               ))}
             </ul>
-          </section>
-        )}
+          </div>
 
-        {/* Slot for pillar-specific extras */}
-        <slot />
+          <div class="v32-rail-group">
+            <p class="v32-rail-heading">{isZh ? '近期现场实测' : 'FIELD PULSE'}</p>
+            <ul class="pe-pulse-list">
+              {recentPulse.map((p) => {
+                const zhP = PULSE_ZH_MAP[p.id];
+                return (
+                  <li class="pe-pulse-row">
+                    <Badge tone={p.status === 'worked' ? 'verified' : p.status === 'partial' ? 'standby' : 'danger'}>
+                      {PULSE_STATUS_LABELS[locale][p.status]}
+                    </Badge>
+                    <div style="font-size:var(--text-xs);">
+                      <strong>{isZh && zhP ? zhP.location : p.location}</strong>
+                      <p style="color:var(--ink-secondary);margin-top:0.15rem;">
+                        {isZh && zhP ? zhP.summary : p.summary}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <a href={lp('/pulse/')} class="v32-rail-link" style="margin-top:0.35rem;">
+              <span>{isZh ? '查看全部实测' : 'All Field Reports'}</span>
+              <span class="v32-rail-code">→</span>
+            </a>
+          </div>
+        </aside>
       </div>
 
-      {/* Right Rail: Pillar-Exclusive Tool + Kits + Recent Field Reports */}
-      <aside class="pe-sidebar-stack" aria-label={isZh ? '实用工具与清单' : 'Tools & Kits'}>
-        <div class="pe-side-card">
-          <h3 style="font-size:1.1rem;">
-            {isZh ? pillar.sidebarTool.titleZh : pillar.sidebarTool.title}
-          </h3>
-          <p style="margin-block:0.5rem var(--space-4);font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.55;">
-            {isZh ? pillar.sidebarTool.descZh : pillar.sidebarTool.desc}
-          </p>
-          <Button href={lp(pillar.sidebarTool.href)} variant="primary" size="sm">
-            {isZh ? pillar.sidebarTool.ctaLabelZh : pillar.sidebarTool.ctaLabel}
-          </Button>
-        </div>
-
-        <div class="pe-rail-group">
-          <span class="pe-mega-col-title">{isZh ? '场景清单' : 'Recommended Kits'}</span>
-          <ul class="pe-mega-links">
-            {pillar.sidebarStacks.map((st) => (
-              <li>
-                <a href={lp(st.href)}>
-                  <span>{isZh ? st.labelZh : st.label}</span>
-                  <span>→</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div class="pe-rail-group">
-          <span class="pe-mega-col-title">{isZh ? '近期现场实测' : 'Recent Field Reports'}</span>
-          <ul class="pe-pulse-list">
-            {recentPulse.map((p) => {
-              const zhP = PULSE_ZH_MAP[p.id];
-              return (
-                <li class="pe-pulse-row">
-                  <Badge tone={p.status === 'worked' ? 'verified' : p.status === 'partial' ? 'standby' : 'danger'}>
-                    {PULSE_STATUS_LABELS[locale][p.status]}
-                  </Badge>
-                  <div style="font-size:var(--text-xs);">
-                    <strong>{isZh && zhP ? zhP.location : p.location}</strong>
-                    <p style="color:var(--ink-secondary);margin-top:0.15rem;">
-                      {isZh && zhP ? zhP.summary : p.summary}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-          <a href={lp('/pulse/')} class="editorial-link" style="margin-top:var(--space-3);display:inline-flex;font-size:var(--text-xs);">
-            {isZh ? '查看全部实测 →' : 'All Field Reports →'}
-          </a>
-        </div>
-      </aside>
+      {/* Apple-style bottom breadcrumb */}
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? v32Pillar.navZh : v32Pillar.navEn}</span>
+      </nav>
     </div>
-
-    {/* Bottom Related Collections Bar */}
-    <section style="margin-top:var(--space-7);padding-top:var(--space-5);border-top:1.5px solid var(--rule-strong);">
-      <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
-        {isZh ? '相关入口' : 'Related Collections'}
-      </h2>
-      <div class="pe-mega-chips" style="margin-top:var(--space-3);">
-        {pillar.databases.map((db) => (
-          <a href={lp(db.href)} class="pe-mega-chip">
-            {isZh ? db.labelZh : db.label}
-          </a>
-        ))}
-      </div>
-    </section>
   </div>
 </BaseShell>

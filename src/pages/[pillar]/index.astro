@@ -1,18 +1,40 @@
 ---
 /**
- * Mother Template 2: Remaining 5 Pillar Hub Landing Pages
- * Routes: /places/ /culture/ /visit/ /live/ /business/
+ * Mother Template 2: v3.2 Primary Pillar Hub Landing Pages
+ * Routes: /travel/ /live/ /business/ /places/ /culture/ (+ 301 /visit/ -> /travel/)
  */
 import PillarHubLayout from '@layouts/PillarHubLayout.astro';
+import ChinaLayerMap from '../../components/maps/ChinaLayerMap.astro';
 import { PILLAR_BY_ID, type PillarId } from '@data/paradigm-e/pillars';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
 
-const rawPillar = (Astro.params.pillar || '').toLowerCase() as PillarId;
-const validDynamicPillars: PillarId[] = ['places', 'culture', 'visit', 'live', 'business'];
+const rawPillar = (Astro.params.pillar || '').toLowerCase();
+const locale = getLocaleFromContext(Astro);
 
-if (!validDynamicPillars.includes(rawPillar)) {
+if (rawPillar === 'visit') {
+  return Astro.redirect(localePath('/travel/', locale), 301);
+}
+
+const validDynamicPillars: PillarId[] = ['travel', 'live', 'business', 'places', 'culture'];
+
+if (!validDynamicPillars.includes(rawPillar as PillarId)) {
   return new Response('Not Found', { status: 404 });
 }
 
-const pillar = PILLAR_BY_ID[rawPillar];
+const pillar = PILLAR_BY_ID[rawPillar as PillarId];
 ---
-<PillarHubLayout pillar={pillar} />
+<PillarHubLayout pillar={pillar}>
+  {rawPillar === 'places' && (
+    <section class="v32-section-block" aria-labelledby="places-layer-map-h">
+      <h2 id="places-layer-map-h">
+        {locale === 'zh' ? '中国地理图层与城市中枢地图' : 'Interactive China Layer & City Hub Map'}
+      </h2>
+      <p class="v32-section-sub">
+        {locale === 'zh'
+          ? '按高铁网络、风味版图、产业带与世遗图层快速筛选重点城市中枢。'
+          : 'Filter flagship city hubs by rail network, culinary regions, industrial belts, and UNESCO heritage.'}
+      </p>
+      <ChinaLayerMap locale={locale} />
+    </section>
+  )}
+</PillarHubLayout>

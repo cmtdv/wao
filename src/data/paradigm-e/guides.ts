@@ -1327,6 +1327,9 @@ export const GUIDE_BY_SLUG: Record<string, GuideDefinition> = Object.fromEntries
 );
 
 export function getGuidesByPillar(pillar: PillarId): GuideDefinition[] {
+  if (pillar === 'travel' || pillar === 'visit') {
+    return GUIDES.filter((g) => g.pillar === 'travel' || g.pillar === 'visit');
+  }
   return GUIDES.filter((g) => g.pillar === pillar);
 }
 
