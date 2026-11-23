@@ -8,7 +8,8 @@
 import type { getTaxonomyTermsWithCacheHint } from 'emdash';
 import BrandSeal from '@site/BrandSeal.astro';
 import Icon from '@site/Icon.astro';
-import { HeaderUtilityMenus } from '../coss-islands/HeaderUtilityMenus';
+import cnFlagUrl from 'circle-flags/flags/cn.svg?url';
+import usFlagUrl from 'circle-flags/flags/us.svg?url';
 import { categoryPath } from '@lib/format';
 import { localePath, stripLocalePrefix, switchLocaleHref, type Locale } from '@i18n/ui';
 
@@ -220,12 +221,24 @@ const extraCategories = roots.slice(6);
         <Icon name="search" size={16} />
       </button>
 
-      <HeaderUtilityMenus
-        client:load
-        locale={locale}
-        enHref={enHref}
-        zhHref={zhHref}
-      />
+      <a
+        href={isZh ? enHref : zhHref}
+        hreflang={isZh ? 'en' : 'zh-CN'}
+        class="cw-lang-toggle"
+        aria-label={isZh ? 'Switch to English' : '切换为简体中文'}
+        title={isZh ? 'Switch to English' : '切换为简体中文'}
+      >
+        <img
+          src={isZh ? usFlagUrl : cnFlagUrl}
+          alt=""
+          aria-hidden="true"
+          width="16"
+          height="16"
+          decoding="async"
+          class="cw-lang-flag"
+        />
+        <span>{isZh ? 'US' : '中文'}</span>
+      </a>
 
       <button
         type="button"
