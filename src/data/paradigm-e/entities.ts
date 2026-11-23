@@ -35,7 +35,15 @@ export interface QuickSpecItem {
 }
 
 export interface NearbyMeshItem {
-  category: 'City Walk' | 'Time-Honored Brand' | 'Free Museum' | '24h Bathhouse' | 'Tax-Free Shop';
+  category:
+    | 'City Walk'
+    | 'Time-Honored Brand'
+    | 'Free Museum'
+    | '24h Bathhouse'
+    | 'Tax-Free Shop'
+    | 'Metro Hub'
+    | 'Business Dining'
+    | 'Rail Hub';
   name: string;
   chineseName: string;
   distance: string;
@@ -581,6 +589,71 @@ export const ENTITIES: EntityProfile[] = [
         { label: 'Donghuamen Roast Duck', chineseQuery: '东华门 烤鸭' },
         { label: 'Hutong Specialty Coffee', chineseQuery: '五道营胡同 咖啡' },
         { label: '24h Spa Near Wangfujing', chineseQuery: '东城区 汤泉 24小时' },
+      ],
+    },
+  },
+  {
+    collection: 'attractions',
+    slug: 'canton-fair',
+    pillar: 'business',
+    persona: 'analyst',
+    title: 'Canton Fair (China Import and Export Fair)',
+    chineseName: '中国进出口商品交易会（广交会）',
+    pinyin: 'Guǎngjiāohuì',
+    tagline: 'China’s flagship biannual trade fair in Guangzhou—3 phases across Pazhou Complex with free pre-registered overseas buyer badges.',
+    taglineZh: '中国规模最大的春秋两季进出口贸易盛会：广州琶洲展馆分三期举办，境外采购商线上预登记免费领证。',
+    lastVerified: '2026-11-23',
+    tier: 'Tier-A Official + Field',
+    statusBadges: [
+      { label: 'Free Overseas Buyer Badge', tone: 'verified' },
+      { label: '3 Phases · Apr & Oct', tone: 'standby' },
+      { label: 'Passport Required', tone: 'verified' },
+    ],
+    primaryAmapTerm: '广交会展馆A区',
+    officialUrl: 'https://buyer.cantonfair.org.cn/',
+    officialLabel: 'Canton Fair Official Buyer Portal',
+    cardSlug: 'canton-fair-pazhou',
+    quickSpecs: [
+      { label: 'Spring & Autumn Dates', value: 'Apr 15–May 5 · Oct 15–Nov 4 (3 Phases)', mono: true },
+      { label: 'Venue Complex', value: 'Pazhou Complex Areas A, B, C & D (琶洲展馆)' },
+      { label: 'Metro Access', value: 'Line 8 Xingangdong (新港东 · Area A) / Pazhou (琶洲 · B/C)' },
+      { label: 'Overseas Buyer Badge', value: 'Free with pre-registration (valid multi-session)' },
+      { label: 'City Hub', value: 'Guangzhou (440100)', mono: true },
+    ],
+    whatNobodyTellsYou: 'Do NOT wait until Day 1 morning at Pazhou Complex to print your buyer badge—queues exceed 90 minutes. Pick up your badge for free right at Guangzhou Baiyun Airport (T1/T2) upon landing or at designated Canton Fair partner hotels the evening before.',
+    checklist: [
+      'Pre-register online at buyer.cantonfair.org.cn at least 3 days before arrival to get your invitation QR code and waive onsite processing fees.',
+      'Bring your physical passport + 1 business card; keep your badge after the fair—it remains valid for future Canton Fair sessions.',
+      'Book Pazhou / Zhujiang New Town hotels 60+ days ahead, or stay near Guangzhou East Station (广州东站) for direct metro & HK high-speed rail.',
+    ],
+    alternatives: [
+      { name: 'Canton Fair Buyer Stack', verdict: 'Complete sourcing toolkit: USCC checks, WeChat factory vetting & payment limits', href: '/stacks/canton-fair-buyer-kit/' },
+      { name: 'Hong Kong → Guangzhou Rail', verdict: '47-min West Kowloon to Guangzhou South or direct to Guangzhou East', href: '/routes/hong-kong-to-guangzhou/' },
+      { name: 'Shenzhen City Hub', verdict: '1-hour rail south for Huaqiangbei electronics & hardware factories', href: '/cities/shenzhen/' },
+    ],
+    pulseStats: { worked: 38, partial: 5, failed: 1 },
+    pulseFeed: [
+      { status: 'worked', context: 'EU Buyer · Phase 1', detail: 'Printed buyer badge at Baiyun T2 counter in 6 minutes after landing; walked straight into Area A at 09:15.', ago: '2d ago' },
+    ],
+    disclaimers: [],
+    attractionData: {
+      releaseDaysAhead: 30,
+      releaseBjtHour: 9,
+      releaseBjtMinute: 0,
+      mondayClosed: false,
+      wrongStationAlert: 'Between 17:30–19:00, taxi pick-up right outside Pazhou gates is gridlocked. Walk 1 stop or take Metro Line 8 (新港东 / 琶洲) to Kecun or Zhujiang New Town before hailing Didi.',
+      staminaRating: 'High · 18,000–25,000 indoor hall steps per day',
+      nearbyMesh: [
+        { category: 'Metro Hub', name: 'Xingangdong Metro Exit A (Area A)', chineseName: '地铁新港东站 A 口', distance: '120m to Area A', note: 'Fastest entry for Phase 1 electronics & machinery halls.', amapQuery: '新港东地铁站' },
+        { category: 'Metro Hub', name: 'Pazhou Metro Exit A/B (Areas B & C)', chineseName: '地铁琶洲站 A/B 口', distance: '150m to Area B', note: 'Direct underground passage to Area B & C registration.', amapQuery: '琶洲地铁站' },
+        { category: 'Business Dining', name: 'Party Pier & Zhujiang New Town', chineseName: '琶醍啤酒文化创意艺术区', distance: '2.1km West', note: 'Riverside dining & buyer networking after 18:00 close.', amapQuery: '珠江琶醍' },
+        { category: 'Rail Hub', name: 'Guangzhou East Railway Station', chineseName: '广州东站', distance: '8.5km NW', note: 'Best rail hub for Shenzhen & Hong Kong intercity trains.', amapQuery: '广州东站' },
+      ],
+      amapSearchChips: [
+        { label: 'Pazhou Area A', chineseQuery: '广交会展馆A区' },
+        { label: 'Pazhou Area B', chineseQuery: '广交会展馆B区' },
+        { label: 'Zhujiang New Town', chineseQuery: '珠江新城' },
+        { label: 'Baiyun Airport T2', chineseQuery: '白云机场T2航站楼' },
       ],
     },
   },
