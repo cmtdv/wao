@@ -32,6 +32,12 @@
   --radius-2xl: 1rem; /* 16px - Card / Frame / Dialog / Sheet / Command */
   --radius-pill: 9999px;
 
+  /* Unified Hero Media Aspect Ratio (Article page 2:1 default; proportional scaling only) */
+  --hero-ratio-desktop: 2 / 1;
+  --hero-max-h-desktop: 32rem;
+  --hero-ratio-mobile: 16 / 9;
+  --hero-max-h-mobile: 18rem;
+
   --background: light-dark(#ffffff, #141414);
   --foreground: light-dark(#171717, #f5f5f5);
 

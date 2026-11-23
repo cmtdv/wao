@@ -6,12 +6,12 @@
 
 @layer pages {
   .guide-shell {
-    max-width: 68rem;
+    max-width: 64rem;
     margin-inline: auto;
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* 1. Full Inner-Width Visual Hero Banner */
+  /* 1. Full Inner-Width Visual Hero Banner (Unified 2:1 article default) */
   .guide-hero-banner {
     margin: 0 0 var(--space-6);
   }
@@ -28,8 +28,8 @@
   .guide-hero-frame img {
     display: block;
     width: 100%;
-    aspect-ratio: 21 / 8;
-    max-height: 24rem;
+    aspect-ratio: var(--hero-ratio-desktop);
+    max-height: var(--hero-max-h-desktop);
     object-fit: cover;
   }
 
@@ -574,10 +574,10 @@
     }
   }
 
-  @media (max-width: 680px) {
+  @media (max-width: 768px) {
     .guide-hero-frame img {
-      aspect-ratio: 16 / 9;
-      max-height: 16rem;
+      aspect-ratio: var(--hero-ratio-mobile);
+      max-height: var(--hero-max-h-mobile);
     }
 
     .guide-picks-grid,

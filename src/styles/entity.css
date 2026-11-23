@@ -6,12 +6,12 @@
 
 @layer pages {
   .entity-shell {
-    max-width: 68rem; /* 1088px dossier canvas */
+    max-width: 64rem; /* Unified 1024px editorial canvas matching article hero */
     margin-inline: auto;
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* 1. Michelin-Grade Full Inner-Width Hero Photo */
+  /* 1. Full Inner-Width Hero Photo (Unified 2:1 article default) */
   .entity-hero-banner {
     margin: 0 0 var(--space-6);
   }
@@ -27,8 +27,8 @@
   .entity-hero-frame img {
     display: block;
     width: 100%;
-    aspect-ratio: 21 / 9;
-    max-height: 29rem;
+    aspect-ratio: var(--hero-ratio-desktop);
+    max-height: var(--hero-max-h-desktop);
     object-fit: cover;
   }
 

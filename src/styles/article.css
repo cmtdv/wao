@@ -486,14 +486,14 @@
   }
 
   .article-figure--hero .article-figure-frame :is(picture, .emdash-image-media, img) {
-    aspect-ratio: 2 / 1;
-    max-height: 32rem;
+    aspect-ratio: var(--hero-ratio-desktop);
+    max-height: var(--hero-max-h-desktop);
   }
 
   @media (max-width: 768px) {
     .article-figure--hero .article-figure-frame :is(picture, .emdash-image-media, img) {
-      aspect-ratio: 16 / 9;
-      max-height: 18rem;
+      aspect-ratio: var(--hero-ratio-mobile);
+      max-height: var(--hero-max-h-mobile);
     }
   }
 

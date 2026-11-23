@@ -223,8 +223,8 @@ const isMulti = photos.length > 1;
   .entity-gallery-slide img {
     display: block;
     width: 100%;
-    aspect-ratio: 21 / 9;
-    max-height: 29rem;
+    aspect-ratio: var(--hero-ratio-desktop);
+    max-height: var(--hero-max-h-desktop);
     object-fit: cover;
     user-select: none;
     -webkit-user-drag: none;
@@ -335,10 +335,10 @@ const isMulti = photos.length > 1;
     object-fit: cover;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .entity-gallery-slide img {
-      aspect-ratio: 16 / 9;
-      max-height: 18rem;
+      aspect-ratio: var(--hero-ratio-mobile);
+      max-height: var(--hero-max-h-mobile);
     }
 
     .entity-gallery-caption {
