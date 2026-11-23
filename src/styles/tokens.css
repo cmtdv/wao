@@ -73,6 +73,8 @@
   --destructive-foreground: light-dark(#b91c1c, #f87171);
   --info: light-dark(#2563eb, #3b82f6);
   --info-foreground: light-dark(#1d4ed8, #60a5fa);
+  --link: light-dark(#1e56a0, #7ab3f0);
+  --link-hover: light-dark(#153e75, #9cc7f5);
   --success: light-dark(#059669, #10b981);
   --success-foreground: light-dark(#047857, #34d399);
   --warning: light-dark(#d97706, #f59e0b);
