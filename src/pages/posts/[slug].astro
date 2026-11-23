@@ -99,6 +99,7 @@ const updDate = post.data.updatedAt;
 const isUpdated =
   Boolean(pubDate && updDate) &&
   pubDate!.toISOString().slice(0, 10) !== updDate!.toISOString().slice(0, 10);
+const publishedDateLabel = formatLocalizedDate(pubDate, locale);
 const displayDate = formatLocalizedDate(isUpdated ? updDate : pubDate, locale);
 const displayDateIso = (isUpdated ? updDate : pubDate)?.toISOString();
 
@@ -377,6 +378,11 @@ const jsonLd = {
                 )}
                 <span class="byline-author-name">{authorName}</span>
               </a>
+              {publishedDateLabel && (
+                <time class="article-byline" datetime={pubDate?.toISOString()}>
+                  {isZh ? `发布于 ${publishedDateLabel}` : `Published ${publishedDateLabel}`}
+                </time>
+              )}
             </div>
           </footer>
         </article>
