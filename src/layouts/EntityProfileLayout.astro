@@ -1,11 +1,13 @@
 ---
 /**
- * Entity Dossier Layout (Attractions like Forbidden City, Trade Fairs like Canton Fair, Cities, etc.)
- * Purpose-built for 0.5s fact verification & field execution — NOT a blog article template:
- * 1. Asymmetric 7:5 Hero (Identity + Pronunciation + 1 Primary CTA + Compact 16:10 Scene Photo)
- * 2. Unboxed Horizontal Quick-Facts Strip (tabular-nums, live BJT->Local time conversion)
- * 3. Asymmetric 8:4 Body (Left: Alerts, Field Notes, Spatial/City Modules, Alternatives, Pulse | Right: Sticky Field Action Rail + Minimal AI Links + Borderless Tags)
- * 4. Quiet Provenance Strip (NO blog author card) + Apple-style Bottom Breadcrumb
+ * Entity Dossier Layout — Michelin Guide × Japan-Guide × Atlas Obscura × Lonely Planet
+ * 1. Generous full inner-width hero photo (21:9 desktop / 16:9 mobile) + unboxed Identity & Verdict row
+ * 2. Japan-Guide unboxed horizontal Quick-Facts Strip (tabular-nums + live BJT->Local time)
+ * 3. Differentiated 8:4 Body:
+ *    - POI / Event (Forbidden City, Canton Fair): dedicated "Getting There" access module -> Verdict & Checklist -> 1-3km Nearby Mesh -> Alternatives -> Ground Pulse
+ *    - City Hub (Beijing, Shanghai): 2-column Landmark Discovery Hub -> Arrival & Transit Notes -> Universities & Intl Hospitals -> Alternatives -> Ground Pulse
+ *    - Right Weightless Sticky Rail (zero duplicate buttons, zero boxes): Map pin / Show Card / Calendar + Google/ChatGPT/Gemini + borderless #tags
+ * 4. Quiet Provenance Strip (no blog author card) + Apple-style bottom breadcrumb
  */
 import BaseShell from './BaseShell.astro';
 import AutoDisclaimer from '../components/compliance/AutoDisclaimer.astro';
@@ -98,8 +100,8 @@ const cardExportPayload = entity.cardData
   : undefined;
 
 const COLLECTION_LABELS: Record<string, { en: string; zh: string }> = {
-  cities: { en: 'Cities', zh: '城市档案' },
-  attractions: { en: 'Places & Events', zh: '地标与展会' },
+  cities: { en: 'City Hub', zh: '城市枢纽' },
+  attractions: { en: 'Place & Event Dossier', zh: '地标与展会档案' },
   'in-china': { en: 'Apps in China', zh: '应用替代' },
   errors: { en: 'Error Rescue', zh: '报错排查' },
   documents: { en: 'Official Forms', zh: '官方表格' },
@@ -152,9 +154,23 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
 >
   <div class="container">
     <div class="entity-shell">
-      {/* PART 1: Asymmetric 7:5 Entity Dossier Hero */}
-      <header class:list={['entity-hero', !heroMedia && 'entity-hero--no-media']}>
-        <div>
+      {/* PART 1A: Michelin-Grade Generous Full Inner-Width Hero Photo */}
+      {heroMedia && (
+        <figure class="entity-hero-banner">
+          <div class="entity-hero-frame">
+            <img
+              src={heroMedia.src}
+              alt={isZh ? heroMedia.altZh : heroMedia.altEn}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        </figure>
+      )}
+
+      {/* PART 1B: Unboxed Identity & Single Primary CTA Header */}
+      <header class="entity-header">
+        <div class="entity-header-copy">
           <p class="entity-eyebrow">
             {collectionLabel} · {isZh ? `核验于 ${entity.lastVerified}` : `Verified ${entity.lastVerified}`}
           </p>
@@ -180,79 +196,60 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
           </div>
 
           <p class="entity-dek">{isZh ? entity.taglineZh : entity.tagline}</p>
-
-          <div class="entity-cta-row">
-            {entity.primaryAmapTerm ? (
-              <button
-                type="button"
-                class="entity-primary-btn"
-                data-pe-copy={entity.primaryAmapTerm}
-                data-pe-copy-toast={isZh ? `已复制高德中文名：${entity.primaryAmapTerm}` : `Copied Amap name: ${entity.primaryAmapTerm}`}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span>{isZh ? `复制高德名：${entity.primaryAmapTerm}` : `Copy Amap: ${entity.primaryAmapTerm}`}</span>
-              </button>
-            ) : entity.officialUrl ? (
-              <a
-                href={entity.officialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="entity-primary-btn"
-              >
-                <span>{entity.officialLabel ?? (isZh ? '前往官方入口 ↗' : 'Official Portal ↗')}</span>
-              </a>
-            ) : null}
-
-            <div class="entity-icon-actions" role="group" aria-label={isZh ? '页面操作' : 'Page actions'}>
-              <button
-                type="button"
-                class="entity-icon-btn"
-                aria-label={isZh ? '分享档案' : 'Share dossier'}
-                title={isZh ? '分享' : 'Share'}
-                data-article-share
-                data-share-title={displayTitle}
-                data-share-url={canonicalUrl}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                  <polyline points="16 6 12 2 8 6" />
-                  <line x1="12" y1="2" x2="12" y2="15" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                class="entity-icon-btn"
-                aria-pressed="false"
-                aria-label={isZh ? '收藏档案' : 'Save dossier'}
-                title={isZh ? '收藏' : 'Save'}
-                data-article-save
-                data-save-slug={`${entity.collection}-${entity.slug}`}
-                data-save-title={displayTitle}
-                data-save-url={canonicalUrl}
-              >
-                <svg class="icon-bookmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
 
-        {heroMedia && (
-          <figure class="entity-hero-media">
-            <div class="entity-hero-frame">
-              <img
-                src={heroMedia.src}
-                alt={isZh ? heroMedia.altZh : heroMedia.altEn}
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-          </figure>
-        )}
+        <div class="entity-header-actions">
+          {entity.officialUrl ? (
+            <a
+              href={entity.officialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="entity-primary-btn"
+            >
+              <span>{isZh ? '前往官方入口 ↗' : (entity.officialLabel ? `${entity.officialLabel} ↗` : 'Official Portal ↗')}</span>
+            </a>
+          ) : entity.primaryAmapTerm ? (
+            <button
+              type="button"
+              class="entity-primary-btn"
+              data-pe-copy={entity.primaryAmapTerm}
+              data-pe-copy-toast={isZh ? `已复制高德中文名：${entity.primaryAmapTerm}` : `Copied Amap name: ${entity.primaryAmapTerm}`}
+            >
+              <span>{isZh ? `复制高德名：${entity.primaryAmapTerm}` : `Copy Amap: ${entity.primaryAmapTerm}`}</span>
+            </button>
+          ) : null}
+
+          <button
+            type="button"
+            class="entity-icon-btn"
+            aria-label={isZh ? '分享档案' : 'Share dossier'}
+            title={isZh ? '分享' : 'Share'}
+            data-article-share
+            data-share-title={displayTitle}
+            data-share-url={canonicalUrl}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="entity-icon-btn"
+            aria-pressed="false"
+            aria-label={isZh ? '收藏档案' : 'Save dossier'}
+            title={isZh ? '收藏' : 'Save'}
+            data-article-save
+            data-save-slug={`${entity.collection}-${entity.slug}`}
+            data-save-title={displayTitle}
+            data-save-url={canonicalUrl}
+          >
+            <svg class="icon-bookmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {/* INTERACTIVE SHOW CARD HERO (/cards/) */}
@@ -347,7 +344,7 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
         </div>
       )}
 
-      {/* PART 2: Unboxed Horizontal Quick-Facts Strip */}
+      {/* PART 2: Japan-Guide Unboxed Horizontal Quick-Facts Strip */}
       {(entity.quickSpecs.length > 0 || entity.attractionData) && (
         <section class="entity-facts-strip" aria-label={isZh ? '核心硬参数' : 'Quick Facts'}>
           {entity.quickSpecs.map((spec) => (
@@ -378,18 +375,72 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
         </section>
       )}
 
-      {/* PART 3: Asymmetric 8:4 Body (Left Task Flow + Right Sticky Field Action Rail) */}
+      {/* PART 3: Differentiated 8:4 Body (POI vs City Hub + Weightless Sticky Rail) */}
       <div class="entity-body-grid">
         <div class="entity-main-col">
+          {/* POI / EVENT MODULE 1: Japan-Guide "Getting There" Access Breakdown */}
           {entity.attractionData && (
-            <Alert tone="danger" title={isZh ? '入场与落客红线' : 'Gate & Drop-Off Alert'}>
-              {entity.attractionData.wrongStationAlert}
-            </Alert>
+            <section class="entity-block" aria-labelledby="entity-access-h">
+              <h2 id="entity-access-h">{isZh ? '到达与入场动线' : 'Getting There & Access'}</h2>
+              <Alert tone="danger" title={isZh ? '落客与进门避坑' : 'Drop-Off & Gate Alert'}>
+                {entity.attractionData.wrongStationAlert}
+              </Alert>
+              <div class="entity-access-grid">
+                {entity.primaryAmapTerm && (
+                  <div class="entity-access-row">
+                    <span class="entity-access-label">{isZh ? '打车/高德定位' : 'Amap / Didi Pin'}</span>
+                    <span class="entity-access-val"><strong>{entity.primaryAmapTerm}</strong></span>
+                    <button
+                      type="button"
+                      class="entity-copy-inline"
+                      data-pe-copy={entity.primaryAmapTerm}
+                      data-pe-copy-toast={isZh ? `已复制高德定位：${entity.primaryAmapTerm}` : `Copied Amap pin: ${entity.primaryAmapTerm}`}
+                    >
+                      {isZh ? '复制定位词' : 'Copy pin'}
+                    </button>
+                  </div>
+                )}
+                <div class="entity-access-row">
+                  <span class="entity-access-label">{isZh ? '步行与体力' : 'Stamina & Time'}</span>
+                  <span class="entity-access-val">{entity.attractionData.staminaRating}</span>
+                </div>
+              </div>
+            </section>
           )}
 
-          {/* Field Notes & Action Checklist */}
+          {/* CITY HUB MODULE 1: Lonely Planet Visual Discovery Grid (for Cities like Beijing/Shanghai) */}
+          {entity.cityData && (
+            <section class="entity-block" aria-labelledby="entity-city-hub-h">
+              <h2 id="entity-city-hub-h">{isZh ? `${entity.chineseName}必去地标与核心速览` : `Top Places & Highlights in ${entity.title}`}</h2>
+              <div class="city-hub-grid">
+                {entity.cityData.mashup.flatMap((sec) =>
+                  sec.items.map((item) =>
+                    item.href ? (
+                      <a href={lp(item.href)} class="city-hub-card">
+                        <span class="city-hub-cat">{sec.categoryLabel}</span>
+                        <span class="city-hub-name">{isZh ? item.chineseName : item.name}</span>
+                        <span class="city-hub-meta">{isZh ? item.meta : `${item.chineseName} · ${item.meta}`}</span>
+                      </a>
+                    ) : (
+                      <div class="city-hub-card">
+                        <span class="city-hub-cat">{sec.categoryLabel}</span>
+                        <span class="city-hub-name">{isZh ? item.chineseName : item.name}</span>
+                        <span class="city-hub-meta">{isZh ? item.meta : `${item.chineseName} · ${item.meta}`}</span>
+                      </div>
+                    ),
+                  ),
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Michelin Inspector Verdict + Field Checklist */}
           <section class="entity-block" aria-labelledby="entity-notes-h">
-            <h2 id="entity-notes-h">{isZh ? '实测避坑与行前清单' : 'Field Notes & Checklist'}</h2>
+            <h2 id="entity-notes-h">
+              {entity.cityData
+                ? (isZh ? '抵达避坑与行前清单' : 'Arrival Traps & Checklist')
+                : (isZh ? '核验官实测与行前清单' : 'Field Verdict & Checklist')}
+            </h2>
             <p class="entity-callout">{entity.whatNobodyTellsYou}</p>
             <ul class="entity-checklist">
               {entity.checklist.map((c) => (
@@ -446,34 +497,12 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
             </section>
           )}
 
-          {/* City Local Directory (Unboxed) */}
+          {/* City Hub Infrastructure: Universities & Intl Hospitals */}
           {entity.cityData && (
-            <section class="entity-block" aria-labelledby="entity-city-h">
-              <h2 id="entity-city-h">{isZh ? '本地速览与配套' : 'Local Directory'}</h2>
-              {entity.cityData.mashup.map((sec) => (
-                <div>
-                  <h3>{sec.categoryLabel}</h3>
-                  <ul class="entity-clean-list">
-                    {sec.items.map((item) => (
-                      <li class="entity-clean-row">
-                        <div>
-                          {item.href ? (
-                            <a href={lp(item.href)}>{isZh ? item.chineseName : item.name}</a>
-                          ) : (
-                            <strong>{isZh ? item.chineseName : item.name}</strong>
-                          )}
-                          <span class="entity-row-muted">
-                            {' '}— {isZh ? item.meta : `${item.chineseName} · ${item.meta}`}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-
+            <section class="entity-block" aria-labelledby="entity-infra-h">
+              <h2 id="entity-infra-h">{isZh ? '高校与涉外国际医院' : 'Universities & International Hospitals'}</h2>
               <div>
-                <h3 id="universities">{isZh ? `${entity.chineseName}留学高校` : `${entity.title} Top Universities`}</h3>
+                <h3 id="universities">{isZh ? `${entity.chineseName}代表高校` : `${entity.title} Top Universities`}</h3>
                 <ul class="entity-clean-list">
                   {entity.cityData.universities.map((u) => (
                     <li class="entity-clean-row">
@@ -531,7 +560,7 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
             </section>
           )}
 
-          {/* Ground Pulse & Statutory Disclaimers */}
+          {/* Atlas Obscura-Style Field Reports (Ground Pulse) */}
           {entity.pulseFeed.length > 0 && (
             <GroundPulsePanel stats={entity.pulseStats} items={entity.pulseFeed} locale={locale} />
           )}
@@ -539,50 +568,36 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
           <AutoDisclaimer kinds={entity.disclaimers} locale={locale} />
         </div>
 
-        {/* Right Sticky Field Action Rail (Purpose-Built for Entities) */}
-        <aside class="entity-rail" aria-label={isZh ? '现场行动栏' : 'Field Action Rail'}>
-          <div class="entity-action-panel">
-            <p class="entity-action-heading">{isZh ? '现场快捷操作' : 'Field Actions'}</p>
-
-            {entity.primaryAmapTerm && (
-              <button
-                type="button"
-                class="entity-rail-action"
-                data-pe-copy={entity.primaryAmapTerm}
-                data-pe-copy-toast={isZh ? `已复制高德中文名：${entity.primaryAmapTerm}` : `Copied Amap name: ${entity.primaryAmapTerm}`}
-              >
-                <span>{isZh ? '复制高德中文名' : 'Copy Amap Name'}</span>
-                <span class="entity-rail-action-sub">{entity.primaryAmapTerm}</span>
-              </button>
-            )}
-
-            {entity.cardSlug && !entity.cardData && (
-              <a href={lp(`/cards/${entity.cardSlug}/`)} class="entity-rail-action">
-                <span>{isZh ? '全屏出示司机字卡' : 'Fullscreen Show Card'}</span>
-                <span class="entity-rail-action-sub">→</span>
-              </a>
-            )}
-
-            {entity.officialUrl && (
-              <a href={entity.officialUrl} target="_blank" rel="noopener noreferrer" class="entity-rail-action">
-                <span>{isZh ? '官方预约 / 核验入口' : 'Official Portal'}</span>
-                <span class="entity-rail-action-sub">↗</span>
-              </a>
-            )}
-
-            {entity.attractionData && (
-              <a href={lp('/tools/ticket-calendar/')} class="entity-rail-action">
-                <span>{isZh ? '放票 / 展期日历换算' : 'Drop & Date Calendar'}</span>
-                <span class="entity-rail-action-sub">→</span>
-              </a>
-            )}
-
-            {entity.attractionData && (
-              <p class="entity-rail-meta">
-                {isZh ? `体力强度：${entity.attractionData.staminaRating}` : entity.attractionData.staminaRating}
-              </p>
-            )}
-          </div>
+        {/* Weightless Michelin-Style Sticky Right Rail (Zero duplicate primary CTA, zero boxes) */}
+        <aside class="entity-rail" aria-label={isZh ? '实用工具与快捷入口' : 'Utilities and AI links'}>
+          {(entity.primaryAmapTerm || (entity.cardSlug && !entity.cardData) || entity.attractionData) && (
+            <div class="entity-rail-group">
+              <p class="entity-rail-title">{isZh ? '现场工具' : 'FIELD TOOLS'}</p>
+              {entity.primaryAmapTerm && (
+                <button
+                  type="button"
+                  class="entity-rail-link"
+                  data-pe-copy={entity.primaryAmapTerm}
+                  data-pe-copy-toast={isZh ? `已复制高德定位：${entity.primaryAmapTerm}` : `Copied Amap pin: ${entity.primaryAmapTerm}`}
+                >
+                  <span>{isZh ? '复制高德定位' : 'Copy Amap Pin'}</span>
+                  <span class="entity-rail-link-code">{entity.primaryAmapTerm}</span>
+                </button>
+              )}
+              {entity.cardSlug && !entity.cardData && (
+                <a href={lp(`/cards/${entity.cardSlug}/`)} class="entity-rail-link">
+                  <span>{isZh ? '全屏出示司机字卡' : 'Fullscreen Show Card'}</span>
+                  <span class="entity-rail-link-code">→</span>
+                </a>
+              )}
+              {entity.attractionData && (
+                <a href={lp('/tools/ticket-calendar/')} class="entity-rail-link">
+                  <span>{isZh ? '放票 / 展期日历' : 'Drop Calendar'}</span>
+                  <span class="entity-rail-link-code">→</span>
+                </a>
+              )}
+            </div>
+          )}
 
           {/* Streamlined AI Quick Links (Google -> ChatGPT -> Gemini) */}
           <ul class="rail-ai-list">
@@ -622,7 +637,7 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
         </aside>
       </div>
 
-      {/* PART 4: Quiet Provenance Strip (NO blog author card) + Apple-Style Bottom Breadcrumb */}
+      {/* PART 4: Quiet Provenance Strip + Apple-Style Bottom Breadcrumb */}
       <div class="entity-provenance">
         <span>
           {isZh ? `${entity.tier} · 最后核验于 ${entity.lastVerified}` : `${entity.tier} · Last verified ${entity.lastVerified}`}

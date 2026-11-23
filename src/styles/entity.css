@@ -1,8 +1,7 @@
 /* ==========================================================================
-   ChinaWao Entity Dossier Architecture (Attractions, Cities, Trade Fairs, etc.)
-   - Distinct from linear blog articles: built for 0.5s fact lookup & field action
-   - Asymmetric 7:5 Hero + Unboxed Horizontal Quick-Facts Strip + 8:4 Action Body
-   - Zero nested cards, restrained dividers, calm indigo links, Apple bottom breadcrumb
+   ChinaWao Entity Dossier Architecture
+   Michelin Guide (whitespace & hero) × Japan-Guide (Getting There & Quick Facts)
+   × Atlas Obscura (coordinates & Ground Pulse) × Lonely Planet (City vs POI split)
    ========================================================================== */
 
 @layer pages {
@@ -12,18 +11,40 @@
     padding-block: var(--space-6) var(--space-8);
   }
 
-  /* 1. Asymmetric 5:7 Hero Dossier Header (generous 620px+ scene photo on desktop) */
-  .entity-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
-    gap: clamp(1.75rem, 3.5vw, 3rem);
-    padding-bottom: var(--space-7);
+  /* 1. Michelin-Grade Full Inner-Width Hero Photo */
+  .entity-hero-banner {
+    margin: 0 0 var(--space-6);
   }
 
-  .entity-hero--no-media {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 48rem;
+  .entity-hero-frame {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+
+  .entity-hero-frame img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    max-height: 29rem;
+    object-fit: cover;
+  }
+
+  /* Identity & Inspector Verdict Header (Zero box, single focal point) */
+  .entity-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  .entity-header-copy {
+    flex: 1 1 32rem;
+    min-width: 0;
   }
 
   .entity-eyebrow {
@@ -35,12 +56,12 @@
     color: var(--ink-tertiary);
   }
 
-  .entity-hero h1 {
+  .entity-header h1 {
     margin: 0;
-    font-size: clamp(1.9rem, 1.45rem + 1.5vw, 2.55rem);
+    font-size: clamp(2rem, 1.5rem + 1.6vw, 2.75rem);
     font-weight: 650;
-    line-height: 1.18;
-    letter-spacing: -0.022em;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
     color: var(--ink-primary);
     text-wrap: balance;
   }
@@ -81,17 +102,17 @@
 
   .entity-dek {
     margin: var(--space-3) 0 0;
-    font-size: var(--text-base);
-    line-height: 1.65;
+    max-width: 44rem;
+    font-size: var(--text-lg);
+    line-height: 1.62;
     color: var(--ink-secondary);
   }
 
-  .entity-cta-row {
-    margin-top: var(--space-5);
+  .entity-header-actions {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
+    flex-shrink: 0;
   }
 
   .entity-primary-btn {
@@ -108,6 +129,7 @@
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
+    white-space: nowrap;
     transition: opacity var(--dur-fast) ease, transform 120ms ease-out;
   }
 
@@ -119,18 +141,12 @@
     transform: scale(0.97);
   }
 
-  .entity-icon-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.2rem;
-  }
-
   .entity-icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0;
     border: 0;
     border-radius: var(--radius-md);
@@ -158,26 +174,7 @@
     fill: currentColor;
   }
 
-  .entity-hero-media {
-    margin: 0;
-  }
-
-  .entity-hero-frame {
-    width: 100%;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border);
-    background: var(--surface-sunken);
-  }
-
-  .entity-hero-frame img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-  }
-
-  /* 2. Unboxed Horizontal Quick-Facts Strip (Single top/bottom hairline, zero card boxes) */
+  /* 2. Japan-Guide Unboxed Horizontal Quick-Facts Strip */
   .entity-facts-strip {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
@@ -216,18 +213,18 @@
     font-size: var(--text-xs);
   }
 
-  /* 3. Asymmetric 8:4 Body (Left Task Flow + Right Sticky Field Action Rail) */
+  /* 3. Asymmetric 8:4 Body (Left Task/Hub Flow + Right Weightless Sticky Rail) */
   .entity-body-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 17rem;
-    gap: clamp(2.5rem, 4.5vw, 4rem);
+    grid-template-columns: minmax(0, 1fr) 15.5rem;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
     align-items: start;
   }
 
   .entity-main-col {
     min-width: 0;
     display: grid;
-    gap: var(--space-7);
+    gap: var(--space-8);
   }
 
   .entity-block {
@@ -249,6 +246,88 @@
     font-size: var(--text-base);
     font-weight: 600;
     color: var(--ink-primary);
+  }
+
+  /* Japan-Guide Getting There Block (Structured access lines, zero box clutter) */
+  .entity-access-grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .entity-access-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--rule-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .entity-access-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+    min-width: 6.5rem;
+  }
+
+  .entity-access-val {
+    flex: 1 1 16rem;
+    color: var(--ink-primary);
+  }
+
+  /* Lonely Planet City Hub Visual Cards (2-column open hub grid) */
+  .city-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+
+  .city-hub-card {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-raised);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  a.city-hub-card:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-sunken);
+  }
+
+  a.city-hub-card:active {
+    transform: scale(0.985);
+  }
+
+  .city-hub-cat {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+  }
+
+  .city-hub-name {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--ink-primary);
+    line-height: 1.35;
+  }
+
+  a.city-hub-card:hover .city-hub-name {
+    color: var(--link);
+  }
+
+  .city-hub-meta {
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    line-height: 1.5;
   }
 
   .entity-callout {
@@ -325,12 +404,12 @@
     transform: scale(0.97);
   }
 
-  /* Right Sticky Field Action Rail (NOT a blog TOC) */
+  /* Right Weightless Michelin-Style Sticky Rail (Zero duplicate primary button, zero box) */
   .entity-rail {
     position: sticky;
     inset-block-start: var(--space-6);
     display: grid;
-    gap: var(--space-6);
+    gap: 1.75rem;
     transition: inset-block-start 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -338,69 +417,53 @@
     inset-block-start: calc(4rem + var(--space-5));
   }
 
-  .entity-action-panel {
+  .entity-rail-group {
     display: grid;
-    gap: 0.65rem;
-    padding: var(--space-4);
-    border-radius: var(--radius-xl);
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
+    gap: 0.35rem;
   }
 
-  .entity-action-heading {
-    margin: 0 0 0.15rem;
+  .entity-rail-title {
+    margin: 0 0 0.25rem;
     font-family: var(--font-mono);
-    font-size: var(--text-2xs);
+    font-size: 0.6875rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-tertiary);
+    color: var(--ink-primary);
   }
 
-  .entity-rail-action {
-    display: flex;
+  .entity-rail-link {
+    display: inline-flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
     width: 100%;
-    padding: 0.5rem 0.65rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--background);
-    color: var(--ink-primary);
+    padding: 0.35rem 0;
+    border: 0;
+    background: transparent;
     font-size: var(--text-xs);
-    font-weight: 500;
+    color: var(--ink-secondary);
     text-decoration: none;
     text-align: start;
     cursor: pointer;
-    transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease, transform 120ms ease-out;
+    transition: color var(--dur-fast) ease, transform 120ms ease-out;
   }
 
-  .entity-rail-action:hover {
-    border-color: var(--border-strong);
-    background: var(--surface-raised);
+  .entity-rail-link:hover {
+    color: var(--ink-primary);
   }
 
-  .entity-rail-action:active {
+  .entity-rail-link:active {
     transform: scale(0.97);
   }
 
-  .entity-rail-action-sub {
+  .entity-rail-link-code {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     color: var(--ink-tertiary);
-    white-space: nowrap;
   }
 
-  .entity-rail-meta {
-    margin: 0.25rem 0 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    color: var(--ink-tertiary);
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* 4. Quiet Provenance Strip & Apple-style Bottom Breadcrumb */
+  /* 4. Quiet Provenance Strip & Apple-Style Bottom Breadcrumb */
   .entity-provenance {
     margin-top: var(--space-8);
     padding-top: var(--space-5);
@@ -426,11 +489,6 @@
   }
 
   @media (max-width: 960px) {
-    .entity-hero {
-      grid-template-columns: 1fr;
-      gap: var(--space-5);
-    }
-
     .entity-body-grid {
       grid-template-columns: 1fr;
       gap: var(--space-6);
@@ -443,6 +501,17 @@
     .entity-icon-btn {
       width: 2.5rem;
       height: 2.5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .entity-hero-frame img {
+      aspect-ratio: 16 / 9;
+      max-height: 18rem;
+    }
+
+    .city-hub-grid {
+      grid-template-columns: 1fr;
     }
   }
 }
