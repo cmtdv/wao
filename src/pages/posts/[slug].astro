@@ -109,7 +109,7 @@ const formatAudioTime = (sec: number) => {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 };
 const tocItems = extractToc(post.data.content);
-const hasToc = tocItems.length > 0;
+const hasToc = tocItems.length >= 4;
 const addToGoogleHref = 'https://www.google.com/preferences/source?q=chinawao.com';
 
 // Fetch up to 3 related/recent dispatches (preferring primary category)
@@ -363,7 +363,7 @@ const jsonLd = {
             </div>
           )}
 
-          <TableOfContents items={tocItems} variant="mobile" />
+          {hasToc && <TableOfContents items={tocItems} variant="mobile" />}
 
           <div class="prose" data-article-prose>
             {post.data.content?.length ? (
@@ -434,7 +434,8 @@ const jsonLd = {
           </footer>
         </article>
 
-        <TableOfContents items={tocItems} variant="desktop">
+        {hasToc && (
+          <TableOfContents items={tocItems} variant="desktop">
           <div slot="sticky-top" class="rail-actions-block">
             <div class="article-utility-strip rail-utility-strip" role="group" aria-label={isZh ? '语音朗读' : 'Listen to article'}>
               <button
@@ -506,7 +507,8 @@ const jsonLd = {
               </button>
             </div>
           </div>
-        </TableOfContents>
+          </TableOfContents>
+        )}
       </div>
 
       {relatedPosts.length > 0 && (

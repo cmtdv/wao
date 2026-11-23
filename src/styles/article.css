@@ -44,8 +44,13 @@
     padding-block: var(--space-6) var(--space-8);
   }
 
-  .article-shell--single {
-    max-width: 44rem; /* 704px centered when no TOC */
+  .article-shell--single .article-grid {
+    justify-items: center;
+  }
+
+  .article-shell--single .article-main {
+    width: 100%;
+    max-width: 46rem;
   }
 
   .article-grid {
@@ -68,9 +73,8 @@
      Clean Single-Pass Article Header (No duplicate eyebrows, pills, or grids)
      ------------------------------------------------------------------------ */
   .article-header {
-    padding-bottom: var(--space-5);
-    margin-bottom: var(--space-5);
-    border-bottom: 1px solid var(--rule-subtle);
+    padding-bottom: 0;
+    margin-bottom: var(--space-6);
   }
 
   .article-header .breadcrumb {
@@ -131,9 +135,7 @@
   .rail-actions-block {
     display: grid;
     gap: 0.55rem;
-    padding-bottom: var(--space-4);
-    margin-bottom: var(--space-4);
-    border-bottom: 1px solid var(--rule-subtle);
+    margin-bottom: var(--space-5);
   }
 
   .rail-meta-dates {
@@ -728,8 +730,6 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3) var(--space-4);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--rule-subtle);
   }
 
   .article-footer-breadcrumb {
@@ -805,9 +805,8 @@
   }
 
   .related-section {
-    margin-top: var(--space-8);
-    padding-top: var(--space-7);
-    border-top: 1px solid var(--rule-subtle);
+    margin-top: var(--space-9);
+    padding-top: var(--space-4);
   }
 
   .related-header {
