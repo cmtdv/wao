@@ -196,6 +196,52 @@ const normalizedActive = activePillar === 'visit' ? 'travel' : activePillar;
 
       <span class="cw-dock-sep" aria-hidden="true"></span>
 
+      <div class="cw-media-links" aria-label={isZh ? '视听频道' : 'Watch and Listen'}>
+        <a
+          href={lp('/watch/')}
+          class="cw-media-link"
+          aria-current={pathname.startsWith('/watch') ? 'page' : undefined}
+        >
+          <svg
+            aria-hidden="true"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2.5" y="4" width="19" height="16" rx="3" />
+            <polygon points="10.2 8.75 15.8 12 10.2 15.25 10.2 8.75" fill="currentColor" stroke="none" />
+          </svg>
+          <span>{isZh ? '看' : 'Watch'}</span>
+        </a>
+        <a
+          href={lp('/listen/')}
+          class="cw-media-link"
+          aria-current={pathname.startsWith('/listen') ? 'page' : undefined}
+        >
+          <svg
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+          </svg>
+          <span>{isZh ? '听' : 'Listen'}</span>
+        </a>
+      </div>
+
+      <span class="cw-dock-sep" aria-hidden="true"></span>
+
       <button
         type="button"
         class="pe-cmd-trigger"
