@@ -657,6 +657,16 @@
     color: var(--ink-primary);
   }
 
+  .rail-section .rail-heading {
+    display: block;
+    gap: 0;
+  }
+
+  .rail-section .rail-heading::before {
+    content: none;
+    display: none;
+  }
+
   .rail-ai-list {
     list-style: none;
     margin: 0;
