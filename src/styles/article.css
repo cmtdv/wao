@@ -355,6 +355,12 @@
     opacity: 0.55;
   }
 
+  .byline-read-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
   .byline-author {
     display: inline-flex;
     align-items: center;
@@ -395,6 +401,10 @@
   .byline-author:hover,
   .byline-topic-link:hover {
     color: var(--accent-seal-text);
+  }
+
+  .byline-author:hover .byline-author-name,
+  .byline-topic-link:hover {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
@@ -742,6 +752,26 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
+  }
+
+  .article-footer .term-list {
+    gap: var(--space-4);
+  }
+
+  .article-footer .term-pill {
+    border: 0;
+    background: transparent;
+    padding: 0.15rem 0;
+    min-height: auto;
+    border-radius: 0;
+    color: var(--ink-secondary);
+    box-shadow: none;
+  }
+
+  .article-footer .term-pill:hover {
+    border: 0;
+    background: transparent;
+    color: var(--ink-primary);
   }
 
   .article-footer-actions {

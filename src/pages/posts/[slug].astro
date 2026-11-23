@@ -9,7 +9,7 @@ import { getPublicPost, getPublicPosts, publicContext } from '@lib/cms';
 import { categoryPath, tagPath } from '@lib/format';
 import { estimateReadingMinutes, extractToc } from '@lib/portable-text';
 import { buildOrgPublisher } from '@lib/seo-geo';
-import { formatLocalizedDate, formatReadTime, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
+import { formatLocalizedDate, getLocaleFromContext, getStrings, localePath } from '@i18n/ui';
 import '../../styles/article.css';
 
 const locale = getLocaleFromContext(Astro);
@@ -229,7 +229,15 @@ const jsonLd = {
                   </time>
                 )}
                 {displayDate && readingMinutes && <span class="byline-sep" aria-hidden="true">·</span>}
-                {readingMinutes && <span>{formatReadTime(readingMinutes, locale)}</span>}
+                {readingMinutes && (
+                  <span class="byline-read-time">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>{isZh ? `${readingMinutes} 分钟` : `${readingMinutes} min`}</span>
+                  </span>
+                )}
               </div>
 
               <div class="article-utility-strip" role="group" aria-label={isZh ? '文章操作' : 'Article actions'}>
@@ -387,7 +395,7 @@ const jsonLd = {
                     {authorInitial}
                   </span>
                 )}
-                <span>{authorName}</span>
+                <span class="byline-author-name">{authorName}</span>
               </a>
 
               <nav class="breadcrumb article-footer-breadcrumb" aria-label="Breadcrumb">

@@ -574,13 +574,9 @@
 
 .post-card--text-only {
   background-color: var(--secondary-tint);
-  border-top: 1px solid var(--secondary-tint-border);
-  border-inline-start: 2px solid var(--secondary-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
   padding: var(--space-5);
-}
-
-.post-card--text-only:hover {
-  border-inline-start-color: var(--accent-seal);
 }
 
 .post-card-title {
