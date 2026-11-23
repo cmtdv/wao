@@ -1,0 +1,517 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { getLocaleFromContext } from '@i18n/ui';
+import '@splidejs/splide/dist/css/splide.min.css';
+import 'photoswipe/style.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+
+const photos = [
+  { src: '/images/beijing.webp', title: isZh ? '北京 · 祈年殿与古建天际线' : 'Beijing · Temple of Heaven & Imperial Roofs' },
+  { src: '/images/hero.webp', title: isZh ? '桂林阳朔 · 漓江喀斯特峰林航拍' : 'Yangshuo · Li River Karst Peaks' },
+  { src: '/images/shanghai.webp', title: isZh ? '上海 · 黄浦江与陆家嘴暮色' : 'Shanghai · Huangpu River & Pudong Dusk' },
+  { src: '/images/rail.webp', title: isZh ? '中国高铁 · 复兴号双列站台实拍' : 'China High-Speed Rail · Fuxing Trains' },
+  { src: '/images/chengdu.webp', title: isZh ? '四川成都 · 竹林大熊猫' : 'Chengdu · Giant Panda in Bamboo Grove' },
+  { src: '/images/town.webp', title: isZh ? '江南水乡 · 石拱桥与临水民居' : 'Jiangnan Water Town · Stone Bridge & Canals' },
+];
+---
+<Layout
+  title={isZh ? '多图切换组件实测对比（Embla / Splide / PhotoSwipe）' : 'Gallery Comparison (Embla / Splide / PhotoSwipe)'}
+  description={isZh ? '在同一页面实测 Embla Carousel、Splide 与 PhotoSwipe 三款 MIT 开源多图组件。' : 'Live side-by-side comparison of Embla Carousel, Splide, and PhotoSwipe.'}
+>
+  <div class="container gallery-demo-shell">
+    <header class="gallery-demo-head">
+      <p class="gallery-eyebrow">OPEN-SOURCE GALLERY BENCHMARK · MIT</p>
+      <h1>{isZh ? '多图切换组件同页实测' : 'Open-Source Gallery Comparison'}</h1>
+      <p class="gallery-lead">
+        {isZh
+          ? '用同一组 6 张站内实拍图，直接对比 Embla Carousel（~7KB 无头）、Splide（~25KB 开箱即用）与 PhotoSwipe（~12KB 全屏灯箱）的拖拽手感、缩略图联动与缩放体验。'
+          : 'Compare Embla Carousel, Splide, and PhotoSwipe live with the exact same 6 local photos.'}
+      </p>
+    </header>
+
+    {/* ===================== 1. EMBLA CAROUSEL ===================== */}
+    <section class="demo-section" aria-labelledby="demo-embla-h">
+      <div class="demo-section-head">
+        <div>
+          <span class="demo-badge">01 · EMBLA CAROUSEL · ~7 KB GZIP</span>
+          <h2 id="demo-embla-h">{isZh ? 'Embla Carousel（无头物理惯性 + 自定义缩略图）' : 'Embla Carousel (Headless + Thumbs)'}</h2>
+        </div>
+        <span class="demo-counter" data-embla-counter>1 / {photos.length}</span>
+      </div>
+
+      <div class="embla-wrap" data-embla-root>
+        <div class="embla-viewport" data-embla-viewport>
+          <div class="embla-container">
+            {photos.map((p, idx) => (
+              <figure class="embla-slide">
+                <img src={p.src} alt={p.title} loading={idx === 0 ? 'eager' : 'lazy'} />
+                <figcaption>{p.title}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+
+        <button type="button" class="embla-nav embla-prev" data-embla-prev aria-label={isZh ? '上一张' : 'Previous'}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        </button>
+        <button type="button" class="embla-nav embla-next" data-embla-next aria-label={isZh ? '下一张' : 'Next'}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
+
+        <div class="embla-thumbs" data-embla-thumbs>
+          {photos.map((p, idx) => (
+            <button
+              type="button"
+              class:list={['embla-thumb', idx === 0 && 'is-active']}
+              data-embla-thumb={idx}
+              aria-label={p.title}
+            >
+              <img src={p.src} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ===================== 2. SPLIDE ===================== */}
+    <section class="demo-section" aria-labelledby="demo-splide-h">
+      <div class="demo-section-head">
+        <div>
+          <span class="demo-badge">02 · SPLIDE · ~25 KB GZIP</span>
+          <h2 id="demo-splide-h">{isZh ? 'Splide（开箱即用双轨主图 + 底部缩略图同步）' : 'Splide (Synced Main + Thumbnail Track)'}</h2>
+        </div>
+        <span class="demo-hint">{isZh ? '自带箭头、分页点、无障碍焦点管理' : 'Built-in arrows, pagination & a11y'}</span>
+      </div>
+
+      <div id="splide-main" class="splide splide-main-box" aria-label="Splide Main Gallery">
+        <div class="splide__track">
+          <ul class="splide__list">
+            {photos.map((p) => (
+              <li class="splide__slide">
+                <figure class="splide-figure">
+                  <img src={p.src} alt={p.title} loading="lazy" />
+                  <figcaption>{p.title}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div id="splide-thumbs" class="splide splide-thumbs-box" aria-label="Splide Thumbnails">
+        <div class="splide__track">
+          <ul class="splide__list">
+            {photos.map((p) => (
+              <li class="splide__slide">
+                <img src={p.src} alt={p.title} loading="lazy" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ===================== 3. PHOTOSWIPE ===================== */}
+    <section class="demo-section" aria-labelledby="demo-pswp-h">
+      <div class="demo-section-head">
+        <div>
+          <span class="demo-badge">03 · PHOTOSWIPE · ~12 KB GZIP</span>
+          <h2 id="demo-pswp-h">{isZh ? 'PhotoSwipe（点击任意图片进入全屏高清缩放灯箱）' : 'PhotoSwipe (Click Any Photo for Zoomable Lightbox)'}</h2>
+        </div>
+        <span class="demo-hint">{isZh ? '支持滚轮/双指缩放、左右滑动与 Esc 关闭' : 'Supports zoom, swipe & Esc'}</span>
+      </div>
+
+      <div class="pswp-grid" id="pswp-demo-gallery">
+        {photos.map((p, idx) => (
+          <a
+            href={p.src}
+            class:list={['pswp-tile', idx === 0 && 'pswp-tile--lead']}
+            data-pswp-width="1600"
+            data-pswp-height="1000"
+            data-pswp-caption={p.title}
+            target="_blank"
+          >
+            <img src={p.src} alt={p.title} loading="lazy" />
+            <span class="pswp-tile-label">{p.title}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import EmblaCarousel from 'embla-carousel';
+  import Splide from '@splidejs/splide';
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+
+  // 1. Initialize Embla Carousel
+  const emblaRoot = document.querySelector<HTMLElement>('[data-embla-root]');
+  if (emblaRoot) {
+    const viewport = emblaRoot.querySelector<HTMLElement>('[data-embla-viewport]');
+    const prevBtn = emblaRoot.querySelector<HTMLButtonElement>('[data-embla-prev]');
+    const nextBtn = emblaRoot.querySelector<HTMLButtonElement>('[data-embla-next]');
+    const thumbs = Array.from(emblaRoot.querySelectorAll<HTMLButtonElement>('[data-embla-thumb]'));
+    const counter = document.querySelector<HTMLElement>('[data-embla-counter]');
+
+    if (viewport) {
+      const embla = EmblaCarousel(viewport, { loop: true, align: 'start' });
+      const syncEmbla = () => {
+        const idx = embla.selectedScrollSnap();
+        thumbs.forEach((btn, i) => btn.classList.toggle('is-active', i === idx));
+        if (counter) counter.textContent = `${idx + 1} / ${thumbs.length}`;
+      };
+      embla.on('select', syncEmbla);
+      prevBtn?.addEventListener('click', () => embla.scrollPrev());
+      nextBtn?.addEventListener('click', () => embla.scrollNext());
+      thumbs.forEach((btn, i) => btn.addEventListener('click', () => embla.scrollTo(i)));
+      syncEmbla();
+    }
+  }
+
+  // 2. Initialize Splide (Main + Thumbnails Sync)
+  const splideMainEl = document.querySelector<HTMLElement>('#splide-main');
+  const splideThumbsEl = document.querySelector<HTMLElement>('#splide-thumbs');
+  if (splideMainEl && splideThumbsEl) {
+    const main = new Splide(splideMainEl, {
+      type: 'fade',
+      rewind: true,
+      pagination: false,
+      arrows: true,
+    });
+    const thumbs = new Splide(splideThumbsEl, {
+      fixedWidth: 112,
+      fixedHeight: 68,
+      gap: 10,
+      rewind: true,
+      pagination: false,
+      isNavigation: true,
+      arrows: false,
+      breakpoints: {
+        640: { fixedWidth: 84, fixedHeight: 52 },
+      },
+    });
+    main.sync(thumbs);
+    main.mount();
+    thumbs.mount();
+  }
+
+  // 3. Initialize PhotoSwipe Lightbox (auto-hydrate exact natural dimensions)
+  const pswpGallery = document.querySelector<HTMLElement>('#pswp-demo-gallery');
+  if (pswpGallery) {
+    const anchors = Array.from(pswpGallery.querySelectorAll<HTMLAnchorElement>('a'));
+    anchors.forEach((a) => {
+      const img = a.querySelector('img');
+      const syncDim = () => {
+        if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+          a.dataset.pswpWidth = String(img.naturalWidth);
+          a.dataset.pswpHeight = String(img.naturalHeight);
+        }
+      };
+      if (img?.complete) syncDim();
+      else img?.addEventListener('load', syncDim, { once: true });
+    });
+
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: '#pswp-demo-gallery',
+      children: 'a',
+      pswpModule: () => import('photoswipe'),
+    });
+    lightbox.init();
+  }
+</script>
+
+<style>
+  .gallery-demo-shell {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-block: var(--space-7) var(--space-9);
+    display: grid;
+    gap: var(--space-9);
+  }
+
+  .gallery-eyebrow {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+    letter-spacing: 0.06em;
+  }
+
+  .gallery-demo-head h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 1.4rem + 1.5vw, 2.6rem);
+    font-weight: 650;
+    letter-spacing: -0.025em;
+  }
+
+  .gallery-lead {
+    margin: var(--space-3) 0 0;
+    max-width: 46rem;
+    color: var(--ink-secondary);
+    font-size: var(--text-base);
+    line-height: 1.65;
+  }
+
+  .demo-section {
+    display: grid;
+    gap: var(--space-4);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .demo-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .demo-badge {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--accent-seal-text);
+  }
+
+  .demo-section-head h2 {
+    margin: 0;
+    font-size: clamp(1.2rem, 1.05rem + 0.5vw, 1.45rem);
+    font-weight: 600;
+  }
+
+  .demo-counter,
+  .demo-hint {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 1. Embla Styles */
+  .embla-wrap {
+    position: relative;
+  }
+
+  .embla-viewport {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+    cursor: grab;
+  }
+
+  .embla-viewport:active {
+    cursor: grabbing;
+  }
+
+  .embla-container {
+    display: flex;
+  }
+
+  .embla-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    margin: 0;
+    position: relative;
+  }
+
+  .embla-slide img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    max-height: 29rem;
+    object-fit: cover;
+    user-select: none;
+  }
+
+  .embla-slide figcaption,
+  .splide-figure figcaption {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 1.5rem var(--space-5) var(--space-4);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.62), transparent);
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .embla-nav {
+    position: absolute;
+    inset-block-start: calc(50% - 2.6rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(20, 20, 20, 0.56);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 120ms ease-out;
+  }
+
+  .embla-nav:hover {
+    background: rgba(20, 20, 20, 0.8);
+  }
+
+  .embla-nav:active {
+    transform: scale(0.94);
+  }
+
+  .embla-prev {
+    inset-inline-start: 1rem;
+  }
+
+  .embla-next {
+    inset-inline-end: 1rem;
+  }
+
+  .embla-thumbs {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .embla-thumb {
+    flex: 0 0 6.8rem;
+    height: 4.2rem;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface-sunken);
+    opacity: 0.62;
+    cursor: pointer;
+    transition: opacity 150ms ease, border-color 150ms ease, transform 120ms ease-out;
+  }
+
+  .embla-thumb:hover {
+    opacity: 0.9;
+  }
+
+  .embla-thumb.is-active {
+    opacity: 1;
+    border-color: var(--ink-primary);
+  }
+
+  .embla-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 2. Splide Styles */
+  .splide-main-box {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .splide-figure {
+    margin: 0;
+    position: relative;
+  }
+
+  .splide-figure img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    max-height: 29rem;
+    object-fit: cover;
+  }
+
+  .splide-thumbs-box {
+    margin-top: 0.25rem;
+  }
+
+  .splide-thumbs-box .splide__slide {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    opacity: 0.6;
+    border: 2px solid transparent !important;
+    transition: opacity 150ms ease, border-color 150ms ease;
+  }
+
+  .splide-thumbs-box .splide__slide.is-active {
+    opacity: 1;
+    border-color: var(--ink-primary) !important;
+  }
+
+  .splide-thumbs-box .splide__slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 3. PhotoSwipe Grid Styles (Airbnb-style bento photo grid) */
+  .pswp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .pswp-tile {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+    aspect-ratio: 16 / 10;
+  }
+
+  .pswp-tile--lead {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+
+  .pswp-tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .pswp-tile:hover img {
+    transform: scale(1.03);
+  }
+
+  .pswp-tile-label {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 1.25rem 0.75rem 0.6rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.58), transparent);
+    color: #fff;
+    font-size: var(--text-xs);
+    line-height: 1.35;
+  }
+
+  @media (max-width: 768px) {
+    .embla-slide img,
+    .splide-figure img {
+      aspect-ratio: 16 / 9;
+      max-height: 18rem;
+    }
+
+    .pswp-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
