@@ -1,26 +1,29 @@
 ---
 /**
- * Mother Template 4: 5-Layer Programmatic Entity Profile Layout (Product Hunt Inspired)
- * Layer 1: Hero Identity Card (EN + Hanzi + Pinyin Audio + Status Traffic-Light Badges + Primary CTAs)
- * Layer 2: Deterministic Quick Specs Bar (Read-only JSON hard parameters)
- * Layer 3: 30% Human Field Notes ("What Nobody Tells You" + Checklist + Collection-Specific Slot)
- * Layer 4: Horizontal Alternatives & Cross-Domain Mesh (+ 1-3km Zero-Maintenance Mesh for Attractions)
- * Layer 5: Ground Pulse Live Reports (12.9) + Auto-Triggered Statutory Disclaimer
+ * Unified Minimal Editorial Entity Profile Layout
+ * Applies the exact article-page reading architecture to all entity profiles
+ * (Attractions like Forbidden City, Cities, Compliance, Cards, Hotspots):
+ * - Top inner-width 2:1 hero image (when applicable)
+ * - Centered 64rem 2-column grid (44rem main column + 14.5rem sticky ArticleRightRail)
+ * - Pure single-focal header + borderless icon-only utility actions (Speak / Copy Amap / Share / Save)
+ * - Unboxed hairline key-value specs & open editorial prose (zero nested cards)
+ * - 44px stacked author/verified footer + Apple-style bottom breadcrumb
  */
 import BaseShell from './BaseShell.astro';
-import ResponsiveBreadcrumb from '../components/nav/ResponsiveBreadcrumb.astro';
-import VerifyMetaBar from '../components/compliance/VerifyMetaBar.astro';
 import AutoDisclaimer from '../components/compliance/AutoDisclaimer.astro';
 import GroundPulsePanel from '../components/entity/GroundPulsePanel.astro';
 import InteractiveHotspot from '../components/entity/InteractiveHotspot.astro';
 import NearbyMesh from '../components/entity/NearbyMesh.astro';
-import Badge from '@ui/data-display/Badge.astro';
+import ArticleRightRail from '@site/ArticleRightRail.astro';
+import TableOfContents from '@site/TableOfContents.astro';
 import Button from '@ui/actions/Button.astro';
 import Alert from '@ui/feedback/Alert.astro';
 import type { EntityProfile } from '@data/paradigm-e/entities';
+import type { TocItem } from '@lib/portable-text';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import { buildEntityGraphJsonLd } from '@lib/seo-geo';
+import '../styles/article.css';
 
 interface Props {
   entity: EntityProfile;
@@ -35,6 +38,45 @@ const pillar = PILLAR_BY_ID[entity.pillar];
 const mdHref = entity.collection === 'cities'
   ? `/cities/${entity.slug}.md`
   : `/entities/${entity.collection}/${entity.slug}.md`;
+
+const canonicalUrl = `${Astro.url.origin}${lp(`/${entity.collection}/${entity.slug}/`)}`;
+const displayTitle = isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title);
+const secondaryName = isZh ? entity.title : entity.chineseName;
+
+// Map curated local editorial photography for place/attraction entities (skip for interactive card/hotspot heroes)
+const ENTITY_HERO_MAP: Record<string, { src: string; altEn: string; altZh: string }> = {
+  'forbidden-city': {
+    src: '/images/beijing.webp',
+    altEn: 'Morning light across the historic palace roofs of Beijing',
+    altZh: '晨光映照下的北京故宫古建屋脊',
+  },
+  beijing: {
+    src: '/images/beijing.webp',
+    altEn: 'Historic imperial roofs in Beijing at sunrise',
+    altZh: '北京古建天际线与晨光',
+  },
+  shanghai: {
+    src: '/images/shanghai.webp',
+    altEn: 'Huangpu River and Shanghai skyline at dusk',
+    altZh: '黄浦江与上海外滩暮色天际线',
+  },
+  chengdu: {
+    src: '/images/chengdu.webp',
+    altEn: 'Giant panda resting amid bamboo in Chengdu, Sichuan',
+    altZh: '四川成都竹林中休憩的大熊猫',
+  },
+  xian: {
+    src: '/images/town.webp',
+    altEn: 'Historic Chinese architecture and water courtyard',
+    altZh: '古韵建筑与水景庭院',
+  },
+  shenzhen: {
+    src: '/images/technology.webp',
+    altEn: 'Modern skyline and innovation hub in Shenzhen',
+    altZh: '深圳现代都市与科创地标',
+  },
+};
+const heroMedia = !entity.cardData && !entity.hotspotData ? ENTITY_HERO_MAP[entity.slug] : undefined;
 
 const cardExportPayload = entity.cardData
   ? JSON.stringify({
@@ -69,12 +111,39 @@ const collectionLabel = COLLECTION_LABELS[entity.collection]
 
 const showMobileBar = ['attractions', 'errors', 'documents', 'how-to-use', 'cards', 'cities'].includes(entity.collection);
 
+// Build dynamic On-This-Page TOC matching actual rendered sections
+const tocItems: TocItem[] = [];
+if (entity.quickSpecs.length > 0 || entity.attractionData) {
+  tocItems.push({ id: 'entity-specs', text: isZh ? '核心参数' : 'Key Specs', level: 2 });
+}
+if (entity.complianceData) {
+  tocItems.push({ id: 'entity-compliance', text: isZh ? '官方核验台' : 'Verification Desk', level: 2 });
+}
+tocItems.push({ id: 'entity-field-notes', text: isZh ? '实测避坑与清单' : 'Field Notes & Checklist', level: 2 });
+if (entity.cityData) {
+  tocItems.push({ id: 'entity-city-guide', text: isZh ? '本地速览与配套' : 'Local Directory', level: 2 });
+}
+if (entity.attractionData) {
+  tocItems.push({ id: 'entity-nearby', text: isZh ? '周边 1–3 公里联动' : '1–3km Nearby Mesh', level: 2 });
+}
+if (entity.alternatives.length > 0) {
+  tocItems.push({ id: 'entity-alternatives', text: isZh ? '替代与相关推荐' : 'Alternatives & Related', level: 2 });
+}
+if (entity.pulseFeed.length > 0) {
+  tocItems.push({ id: 'entity-pulse', text: isZh ? '实地状态反馈' : 'Ground Pulse', level: 2 });
+}
+
+const railTags = [
+  { slug: entity.pillar, label: isZh ? pillar.nameZh : pillar.name },
+  { slug: entity.collection, label: collectionLabel },
+];
+
 const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
   { name: isZh ? '首页' : 'Home', url: lp('/') },
   { name: isZh ? pillar.nameZh : pillar.name, url: lp(`/${pillar.id}/`) },
   { name: collectionLabel, url: lp(entity.collection === 'cards' ? '/cards/' : '/explore/') },
   {
-    name: isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title),
+    name: displayTitle,
     url: lp(`/${entity.collection}/${entity.slug}/`),
   },
 ]);
@@ -92,386 +161,479 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
     pulseHref: lp('/pulse/#submit-pulse'),
   } : undefined}
 >
-  <div class="container" style="padding-bottom: var(--space-8); max-width: 68rem;">
-    <ResponsiveBreadcrumb
-      items={[
-        { label: isZh ? '首页' : 'Home', href: lp('/') },
-        { label: isZh ? pillar.nameZh : pillar.name, href: lp(`/${pillar.id}/`) },
-        {
-          label: collectionLabel,
-          href: lp(entity.collection === 'cards' ? '/cards/' : '/explore/'),
-        },
-        { label: isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title) },
-      ]}
-      mobileBackHref={lp(entity.collection === 'cards' ? '/cards/' : `/${pillar.id}/`)}
-      mobileBackLabel={entity.collection === 'cards' ? (isZh ? '亮屏字卡库' : 'All Cards') : (isZh ? pillar.nameZh : pillar.name)}
-    >
-      <VerifyMetaBar
-        slot="meta"
-        lastVerified={entity.lastVerified}
-        tier={entity.tier}
-        mdHref={mdHref}
-        locale={locale}
-      />
-    </ResponsiveBreadcrumb>
+  <div class="reading-progress" aria-hidden="true"></div>
 
-    {/* LAYER 1: Hero Identity Card */}
-    <header class="pe-entity-hero">
-      <div class="pe-entity-name-row">
-        <h1>{isZh && entity.cardData ? entity.cardData.titleZh : (isZh ? entity.chineseName : entity.title)}</h1>
-        {!isZh && <span class="pe-entity-hanzi">{entity.chineseName}</span>}
-        {!entity.cardData && (
-          <button
-            type="button"
-            class="pe-mega-chip"
-            data-pe-speak={entity.chineseName}
-            aria-label={isZh ? `朗读 ${entity.chineseName}` : `Play pronunciation for ${entity.chineseName}`}
-          >
-            {isZh ? '朗读发音' : entity.pinyin}
-          </button>
-        )}
-      </div>
-
-      <p class="archive-lead" style="margin-top:var(--space-3);">
-        {isZh ? entity.taglineZh : entity.tagline}
-      </p>
-
-      <div style="display:flex;flex-wrap:wrap;gap:0.45rem;margin-top:var(--space-4);">
-        {entity.statusBadges.map((b) => (
-          <Badge tone={b.tone}>{b.label}</Badge>
-        ))}
-      </div>
-
-      {(entity.primaryAmapTerm || (entity.cardSlug && !entity.cardData) || entity.officialUrl) && (
-        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4);">
-          {entity.primaryAmapTerm && (
-            <Button
-              variant="primary"
-              size="sm"
-              data-pe-copy={entity.primaryAmapTerm}
-              data-pe-copy-toast={`Copied Amap name: ${entity.primaryAmapTerm}`}
-            >
-              {isZh ? `复制高德中文名 (${entity.primaryAmapTerm})` : `Copy Amap Name (${entity.primaryAmapTerm})`}
-            </Button>
-          )}
-          {entity.cardSlug && !entity.cardData && (
-            <Button href={lp(`/cards/${entity.cardSlug}/`)} variant="secondary" size="sm">
-              {isZh ? '全屏出示司机/字卡' : 'Fullscreen Show Card'}
-            </Button>
-          )}
-          {entity.officialUrl && (
-            <Button href={entity.officialUrl} target="_blank" rel="noopener noreferrer" variant="ghost" size="sm">
-              {entity.officialLabel ?? (isZh ? '前往官方核验页 ↗' : 'Official Portal ↗')}
-            </Button>
-          )}
-        </div>
+  <div class="container">
+    <div class="article-shell">
+      {heroMedia && (
+        <figure class="article-figure article-figure--hero">
+          <div class="article-figure-frame">
+            <img
+              src={heroMedia.src}
+              alt={isZh ? heroMedia.altZh : heroMedia.altEn}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <figcaption>{isZh ? heroMedia.altZh : heroMedia.altEn}</figcaption>
+        </figure>
       )}
-    </header>
 
-    {/* FIRST-EYE VISUAL ENHANCEMENT FOR /cards/ */}
-    {entity.cardData && (
-      <section
-        class={`pe-showcard-preview pe-showcard-preview--${entity.cardData.theme}`}
-        aria-label="Show-to-local card"
-        data-pe-track-card={cardExportPayload}
-      >
-        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
-          <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.08em;">
-            {entity.cardData.scenario}
-          </span>
-          <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
-            <Button variant="secondary" size="sm" data-pe-speak={entity.cardData.largeHanzi}>
-              🔊 {isZh ? '语音播报' : 'Speak Mandarin'}
-            </Button>
-            <Button variant="secondary" size="sm" data-pe-card-save-png={cardExportPayload}>
-              {isZh ? '📷 保存高清图到相册' : '📷 Save PNG to Photos'}
-            </Button>
-            <Button variant="primary" size="sm" commandfor="pe-fullscreen-card-dialog" command="show-modal">
-              {isZh ? '一键全屏亮屏出示' : 'Fullscreen Show-to-Local Mode'}
-            </Button>
-          </div>
-        </div>
-        <p class="pe-showcard-hanzi">{entity.cardData.largeHanzi}</p>
-        <p style="font-family:var(--font-mono);font-size:var(--text-sm);opacity:0.9;">{entity.cardData.pinyinLine}</p>
-        <p style="margin-top:var(--space-3);font-size:var(--text-sm);opacity:0.95;border-top:1px solid rgb(255 255 255 / 0.2);padding-top:var(--space-3);">
-          <strong>GB/T 30240 EN:</strong> {entity.cardData.gb30240En}
-        </p>
-        <p style="margin-top:0.35rem;font-size:var(--text-xs);opacity:0.85;">
-          {entity.cardData.subNoteChinese} · {entity.cardData.subNoteEn}
-        </p>
-
-        <dialog
-          id="pe-fullscreen-card-dialog"
-          closedby="any"
-          class={`pe-showcard-fullscreen-dialog pe-showcard-preview--${entity.cardData.theme}`}
-          aria-label="Fullscreen Show-to-Local Card"
-        >
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-            <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.1em;">
-              CHINAWAO · {entity.cardData.scenario}
-            </span>
-            <button
-              type="button"
-              class="btn btn--sm"
-              commandfor="pe-fullscreen-card-dialog"
-              command="close"
-              autofocus
-            >
-              {isZh ? '退出全屏 (Esc)' : 'Exit Fullscreen (Esc)'}
-            </button>
-          </div>
-          <div>
-            <p style="font-size:clamp(2.1rem, 4.5vw, 4.2rem);line-height:1.3;font-weight:800;">
-              {entity.cardData.largeHanzi}
-            </p>
-            <p style="margin-top:var(--space-4);font-family:var(--font-mono);font-size:clamp(1rem, 1.8vw, 1.35rem);">
-              {entity.cardData.pinyinLine}
-            </p>
-            <p style="margin-top:var(--space-3);font-size:var(--text-base);opacity:0.9;">
-              {entity.cardData.subNoteChinese}
-            </p>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid rgb(255 255 255 / 0.25);padding-top:var(--space-3);">
-            <span style="font-size:var(--text-sm);">{entity.cardData.gb30240En}</span>
-            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-              <button type="button" class="btn btn--secondary btn--sm" data-pe-card-save-png={cardExportPayload}>
-                {isZh ? '📷 存高清图' : '📷 Save PNG'}
-              </button>
-              <button type="button" class="btn btn--primary btn--sm" data-pe-speak={entity.cardData.largeHanzi}>
-                🔊 {isZh ? '朗读中文' : 'Play Audio'}
-              </button>
-            </div>
-          </div>
-        </dialog>
-      </section>
-    )}
-
-    {/* FIRST-EYE INTERACTIVE RED-BOX HOTSPOT SCREEN FOR /errors/ /documents/ /how-to-use/ */}
-    {entity.hotspotData && (
-      <InteractiveHotspot
-        canvasTitle={entity.hotspotData.canvasTitle}
-        screenHeaderChinese={entity.hotspotData.screenHeaderChinese}
-        screenLines={entity.hotspotData.screenLines}
-        hotspots={entity.hotspotData.hotspots}
-        locale={locale}
-      />
-    )}
-
-    {/* LAYER 2: Deterministic Quick Specs Bar (JSON Read-Only) */}
-    <section class="pe-specs-bar" aria-label={isZh ? '核心参数速览' : 'Quick Specs'}>
-      {entity.quickSpecs.map((spec) => (
-        <div class="pe-fact-slot">
-          <span class="pe-fact-slot-label">{spec.label}</span>
-          <strong class="pe-fact-slot-val" style={spec.mono ? 'font-family:var(--font-mono);' : undefined}>
-            {spec.value}
-          </strong>
-        </div>
-      ))}
-    </section>
-
-    {/* ATTRACTION ENHANCEMENT: Timezone Ticket Drop Capsule + Wrong-Station Alert */}
-    {entity.attractionData && (
-      <section style="display:grid;gap:var(--space-3);margin-bottom:var(--space-5);">
-        <div class="pe-side-card" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
-          <div>
-            <p style="font-size:var(--text-sm);">
-              {isZh ? (
-                <>
-                  提前 <strong>{entity.attractionData.releaseDaysAhead} 天 北京时间 {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')}</strong> 放票 → 您所在地时间：{' '}
-                </>
-              ) : (
-                <>
-                  Tickets release <strong>{entity.attractionData.releaseDaysAhead} days ahead at {String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:{String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} Beijing Time</strong> → Your local time:{' '}
-                </>
+      <div class="article-grid article-grid--with-toc">
+        <article class="article-main">
+          <header class="article-header">
+            <div class="entity-title-stack">
+              <h1>{displayTitle}</h1>
+              {secondaryName && secondaryName !== displayTitle && (
+                <p class="entity-subtitle">
+                  {secondaryName}{!isZh && entity.pinyin ? ` · ${entity.pinyin}` : ''}
+                </p>
               )}
-              <Badge tone="verified" data-pe-bjt-hour={entity.attractionData.releaseBjtHour} data-pe-bjt-minute={entity.attractionData.releaseBjtMinute}>
-                {isZh ? '换算中…' : 'Calculating…'}
-              </Badge>
-            </p>
-            <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.25rem;">
-              {isZh
-                ? `体力强度：${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? '周一闭馆' : '周一正常开放'}`
-                : `Stamina: ${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? 'Closed Mondays' : 'Open Mondays'}`}
-            </p>
-          </div>
-          <Button href={lp('/tools/ticket-calendar/')} variant="secondary" size="sm">
-            {isZh ? '放票日历' : 'Ticket Calendar'}
-          </Button>
-        </div>
-
-        <Alert tone="danger" title={isZh ? '车站与落客提醒' : 'Station & Drop-Off Alert'}>
-          {entity.attractionData.wrongStationAlert}
-        </Alert>
-      </section>
-    )}
-
-    {/* COMPLIANCE DUAL-COLUMN VERIFICATION DESK */}
-    {entity.complianceData && (
-      <section class="pe-dual-desk" aria-label={isZh ? '官方核验台' : 'Official Verification Desk'}>
-        <div class="pe-side-card" data-pe-uscc-root>
-          <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
-            {isZh ? '18 位 USCC 校验与中文检索词' : '18-Digit USCC Checksum & Chinese Regulatory Queries'}
-          </h2>
-          {entity.complianceData.sampleUscc && (
-            <div style="margin-bottom:var(--space-4);">
-              <label for="compliance-uscc" class="t-label" style="display:block;margin-bottom:0.35rem;">
-                {isZh ? '输入 18 位统一社会信用代码（GB 32100-2015）' : '18-Digit USCC (GB 32100-2015)'}
-              </label>
-              <input
-                id="compliance-uscc"
-                type="text"
-                class="cw-input"
-                maxlength="18"
-                value={entity.complianceData.sampleUscc}
-                style="font-family:var(--font-mono);width:100%;"
-                data-pe-uscc-input
-              />
-              <div data-pe-uscc-output style="margin-top:0.5rem;padding:0.65rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-sm);"></div>
             </div>
-          )}
-          <span class="pe-mega-col-title">{isZh ? '标准中文监管检索词' : 'Standard Chinese Regulatory Terms'}</span>
-          <div style="display:grid;gap:0.45rem;">
-            {entity.complianceData.termPresets.map((t) => (
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;padding:0.45rem 0.6rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);font-size:var(--text-xs);">
-                <div>
-                  <strong>{isZh ? t.zhQuery : t.en}</strong> {!isZh && <>→ <code>{t.zhQuery}</code></>} <span style="color:var(--ink-tertiary);">({t.gbCode})</span>
-                </div>
-                <button type="button" class="pe-mega-chip" style="padding:0.15rem 0.45rem;" data-pe-copy={t.zhQuery}>
-                  {isZh ? '复制' : 'Copy'}
+
+            <p class="article-dek">{isZh ? entity.taglineZh : entity.tagline}</p>
+
+            <div class="article-byline-row">
+              <div class="article-byline">
+                <time datetime={entity.lastVerified}>
+                  {isZh ? `核验于 ${entity.lastVerified}` : `Verified ${entity.lastVerified}`}
+                </time>
+                {entity.statusBadges[0] && (
+                  <>
+                    <span class="byline-sep" aria-hidden="true">·</span>
+                    <span>{entity.statusBadges[0].label}</span>
+                  </>
+                )}
+              </div>
+
+              <div class="article-utility-strip" role="group" aria-label={isZh ? '快捷操作' : 'Quick actions'}>
+                {!entity.cardData && (
+                  <button
+                    type="button"
+                    class="article-util-btn"
+                    data-pe-speak={entity.chineseName}
+                    aria-label={isZh ? `朗读 ${entity.chineseName}` : `Pronounce ${entity.chineseName}`}
+                    title={isZh ? `朗读 ${entity.chineseName}` : `Pronounce ${entity.chineseName}`}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </svg>
+                  </button>
+                )}
+                {entity.primaryAmapTerm && (
+                  <button
+                    type="button"
+                    class="article-util-btn"
+                    data-pe-copy={entity.primaryAmapTerm}
+                    data-pe-copy-toast={isZh ? `已复制高德中文名：${entity.primaryAmapTerm}` : `Copied Amap name: ${entity.primaryAmapTerm}`}
+                    aria-label={isZh ? `复制高德中文名 (${entity.primaryAmapTerm})` : `Copy Amap name (${entity.primaryAmapTerm})`}
+                    title={isZh ? `复制高德中文名：${entity.primaryAmapTerm}` : `Copy Amap name: ${entity.primaryAmapTerm}`}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  class="article-util-btn"
+                  aria-label={isZh ? '分享页面' : 'Share page'}
+                  title={isZh ? '分享' : 'Share'}
+                  data-article-share
+                  data-share-title={displayTitle}
+                  data-share-url={canonicalUrl}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                    <polyline points="16 6 12 2 8 6" />
+                    <line x1="12" y1="2" x2="12" y2="15" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="article-util-btn"
+                  aria-pressed="false"
+                  aria-label={isZh ? '收藏页面' : 'Save page'}
+                  title={isZh ? '收藏' : 'Save'}
+                  data-article-save
+                  data-save-slug={`${entity.collection}-${entity.slug}`}
+                  data-save-title={displayTitle}
+                  data-save-url={canonicalUrl}
+                >
+                  <svg class="icon-bookmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
                 </button>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div class="pe-side-card">
-          <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">{entity.complianceData.portalName}</h2>
-          <ol style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
-            {entity.complianceData.walkthroughSteps.map((s) => (
-              <li style="padding:0.6rem 0.75rem;background:var(--surface-canvas);border:1px solid var(--rule-subtle);">
-                <strong style="font-size:var(--text-xs);color:var(--accent-seal-text);">
-                  {s.title}
-                </strong>
-                <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.2rem;">{s.detail}</p>
-              </li>
-            ))}
-          </ol>
-          <div style="margin-top:var(--space-4);">
-            <Button href={entity.complianceData.portalUrl} target="_blank" rel="noopener noreferrer" variant="primary" size="sm">
-              {isZh ? '前往官方网站查询 ↗' : 'Open Official Portal ↗'}
-            </Button>
-          </div>
-        </div>
-      </section>
-    )}
+            {(entity.officialUrl || (entity.cardSlug && !entity.cardData) || entity.primaryAmapTerm) && (
+              <div class="entity-quick-links">
+                {entity.officialUrl && (
+                  <a href={entity.officialUrl} target="_blank" rel="noopener noreferrer" class="entity-inline-link">
+                    {entity.officialLabel ?? (isZh ? '前往官方核验入口 ↗' : 'Official Portal ↗')}
+                  </a>
+                )}
+                {entity.cardSlug && !entity.cardData && (
+                  <a href={lp(`/cards/${entity.cardSlug}/`)} class="entity-inline-link">
+                    {isZh ? '全屏出示字卡' : 'Fullscreen Show Card'}
+                  </a>
+                )}
+                {entity.attractionData && (
+                  <a href={lp('/tools/ticket-calendar/')} class="entity-inline-link">
+                    {isZh ? '放票日历换算' : 'Ticket Drop Calendar'}
+                  </a>
+                )}
+              </div>
+            )}
+          </header>
 
-    {/* LAYER 3: Field Notes + Checklist */}
-    <section class="pe-what-nobody" aria-labelledby="nobody-tells-h">
-      <h2 id="nobody-tells-h" class="pe-what-nobody-title">
-        {isZh ? '实测避坑提醒' : 'What Nobody Tells You'}
-      </h2>
-      <p style="font-size:var(--text-base);line-height:1.7;color:var(--ink-primary);">
-        {entity.whatNobodyTellsYou}
-      </p>
-      <ul style="margin-top:var(--space-3);padding-inline-start:1.25rem;display:grid;gap:0.4rem;font-size:var(--text-sm);color:var(--ink-secondary);">
-        {entity.checklist.map((c) => (
-          <li>{c}</li>
-        ))}
-      </ul>
-    </section>
+          {tocItems.length > 0 && <TableOfContents items={tocItems} variant="mobile" />}
 
-    {/* CITY HUB MULTI-SECTION MASHUP */}
-    {entity.cityData && (
-      <section style="display:grid;gap:var(--space-5);margin-bottom:var(--space-6);">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:var(--space-4);">
-          {entity.cityData.mashup.map((sec) => (
-            <div class="pe-side-card">
-              <span class="pe-mega-col-title">{sec.categoryLabel}</span>
-              <ul class="pe-mega-links">
-                {sec.items.map((item) => (
-                  <li style="padding-block:0.45rem;border-bottom:1px solid var(--rule-subtle);">
-                    {item.href ? (
-                      <a href={lp(item.href)} style="padding:0;">
-                        <strong>{isZh ? item.chineseName : item.name}</strong>
-                        <span>→</span>
-                      </a>
-                    ) : (
-                      <strong>{isZh ? item.chineseName : item.name}</strong>
-                    )}
-                    <div style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
-                      {isZh ? item.meta : `${item.chineseName} · ${item.meta}`}
+          {/* FIRST-EYE VISUAL ENHANCEMENT FOR /cards/ */}
+          {entity.cardData && (
+            <section
+              class={`pe-showcard-preview pe-showcard-preview--${entity.cardData.theme}`}
+              aria-label="Show-to-local card"
+              data-pe-track-card={cardExportPayload}
+            >
+              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-3);">
+                <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.08em;">
+                  {entity.cardData.scenario}
+                </span>
+                <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+                  <Button variant="secondary" size="sm" data-pe-speak={entity.cardData.largeHanzi}>
+                    🔊 {isZh ? '语音播报' : 'Speak Mandarin'}
+                  </Button>
+                  <Button variant="secondary" size="sm" data-pe-card-save-png={cardExportPayload}>
+                    {isZh ? '保存高清图' : 'Save PNG'}
+                  </Button>
+                  <Button variant="primary" size="sm" commandfor="pe-fullscreen-card-dialog" command="show-modal">
+                    {isZh ? '全屏亮屏出示' : 'Fullscreen Mode'}
+                  </Button>
+                </div>
+              </div>
+              <p class="pe-showcard-hanzi">{entity.cardData.largeHanzi}</p>
+              <p style="font-family:var(--font-mono);font-size:var(--text-sm);opacity:0.9;">{entity.cardData.pinyinLine}</p>
+              <p style="margin-top:var(--space-3);font-size:var(--text-sm);opacity:0.95;border-top:1px solid rgb(255 255 255 / 0.2);padding-top:var(--space-3);">
+                <strong>GB/T 30240 EN:</strong> {entity.cardData.gb30240En}
+              </p>
+              <p style="margin-top:0.35rem;font-size:var(--text-xs);opacity:0.85;">
+                {entity.cardData.subNoteChinese} · {entity.cardData.subNoteEn}
+              </p>
+
+              <dialog
+                id="pe-fullscreen-card-dialog"
+                closedby="any"
+                class={`pe-showcard-fullscreen-dialog pe-showcard-preview--${entity.cardData.theme}`}
+                aria-label="Fullscreen Show-to-Local Card"
+              >
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+                  <span style="font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:0.1em;">
+                    CHINAWAO · {entity.cardData.scenario}
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn--sm"
+                    commandfor="pe-fullscreen-card-dialog"
+                    command="close"
+                    autofocus
+                  >
+                    {isZh ? '退出全屏 (Esc)' : 'Exit Fullscreen (Esc)'}
+                  </button>
+                </div>
+                <div>
+                  <p style="font-size:clamp(2.1rem, 4.5vw, 4.2rem);line-height:1.3;font-weight:800;">
+                    {entity.cardData.largeHanzi}
+                  </p>
+                  <p style="margin-top:var(--space-4);font-family:var(--font-mono);font-size:clamp(1rem, 1.8vw, 1.35rem);">
+                    {entity.cardData.pinyinLine}
+                  </p>
+                  <p style="margin-top:var(--space-3);font-size:var(--text-base);opacity:0.9;">
+                    {entity.cardData.subNoteChinese}
+                  </p>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;border-top:1px solid rgb(255 255 255 / 0.25);padding-top:var(--space-3);">
+                  <span style="font-size:var(--text-sm);">{entity.cardData.gb30240En}</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                    <button type="button" class="btn btn--secondary btn--sm" data-pe-card-save-png={cardExportPayload}>
+                      {isZh ? '存高清图' : 'Save PNG'}
+                    </button>
+                    <button type="button" class="btn btn--primary btn--sm" data-pe-speak={entity.cardData.largeHanzi}>
+                      🔊 {isZh ? '朗读中文' : 'Play Audio'}
+                    </button>
+                  </div>
+                </div>
+              </dialog>
+            </section>
+          )}
+
+          {/* FIRST-EYE INTERACTIVE HOTSPOT SCREEN FOR /errors/ /documents/ /how-to-use/ */}
+          {entity.hotspotData && (
+            <InteractiveHotspot
+              canvasTitle={entity.hotspotData.canvasTitle}
+              screenHeaderChinese={entity.hotspotData.screenHeaderChinese}
+              screenLines={entity.hotspotData.screenLines}
+              hotspots={entity.hotspotData.hotspots}
+              locale={locale}
+            />
+          )}
+
+          <div class="prose entity-prose" data-article-prose>
+            {/* SECTION 1: Unboxed Hairline Key Specs */}
+            {(entity.quickSpecs.length > 0 || entity.attractionData) && (
+              <section class="entity-section" aria-labelledby="entity-specs">
+                <h2 id="entity-specs">{isZh ? '核心参数' : 'Key Specs'}</h2>
+                <dl class="entity-spec-list">
+                  {entity.quickSpecs.map((spec) => (
+                    <div class="entity-spec-row">
+                      <dt>{spec.label}</dt>
+                      <dd class:list={[spec.mono && 'is-mono']}>{spec.value}</dd>
                     </div>
-                  </li>
+                  ))}
+                  {entity.attractionData && (
+                    <>
+                      <div class="entity-spec-row">
+                        <dt>{isZh ? '放票与当地时间' : 'Ticket Drop'}</dt>
+                        <dd>
+                          {isZh
+                            ? `提前 ${entity.attractionData.releaseDaysAhead} 天 北京时间 ${String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:${String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} → 本地时间 `
+                            : `${entity.attractionData.releaseDaysAhead}d ahead at ${String(entity.attractionData.releaseBjtHour).padStart(2, '0')}:${String(entity.attractionData.releaseBjtMinute).padStart(2, '0')} BJT → Local `}
+                          <strong
+                            class="entity-local-time"
+                            data-pe-bjt-hour={entity.attractionData.releaseBjtHour}
+                            data-pe-bjt-minute={entity.attractionData.releaseBjtMinute}
+                          >
+                            {isZh ? '换算中…' : 'Calculating…'}
+                          </strong>
+                        </dd>
+                      </div>
+                      <div class="entity-spec-row">
+                        <dt>{isZh ? '体力与闭馆' : 'Stamina & Closures'}</dt>
+                        <dd>
+                          {isZh
+                            ? `${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? '周一闭馆' : '周一正常开放'}`
+                            : `${entity.attractionData.staminaRating} · ${entity.attractionData.mondayClosed ? 'Closed Mondays' : 'Open Mondays'}`}
+                        </dd>
+                      </div>
+                    </>
+                  )}
+                </dl>
+
+                {entity.attractionData && (
+                  <div style="margin-top: var(--space-5);">
+                    <Alert tone="danger" title={isZh ? '车站与落客提醒' : 'Station & Drop-Off Alert'}>
+                      {entity.attractionData.wrongStationAlert}
+                    </Alert>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* COMPLIANCE VERIFICATION DESK */}
+            {entity.complianceData && (
+              <section class="entity-section" aria-labelledby="entity-compliance">
+                <h2 id="entity-compliance">{isZh ? '官方核验台' : 'Official Verification Desk'}</h2>
+                <div class="entity-compliance-block" data-pe-uscc-root>
+                  {entity.complianceData.sampleUscc && (
+                    <div style="margin-bottom: var(--space-4);">
+                      <label for="compliance-uscc" class="t-label" style="display:block;margin-bottom:0.35rem;">
+                        {isZh ? '输入 18 位统一社会信用代码（GB 32100-2015）' : '18-Digit USCC (GB 32100-2015)'}
+                      </label>
+                      <input
+                        id="compliance-uscc"
+                        type="text"
+                        class="cw-input"
+                        maxlength="18"
+                        value={entity.complianceData.sampleUscc}
+                        style="font-family:var(--font-mono);width:100%;"
+                        data-pe-uscc-input
+                      />
+                      <div data-pe-uscc-output style="margin-top:0.5rem;font-size:var(--text-sm);"></div>
+                    </div>
+                  )}
+
+                  <h3>{isZh ? '标准中文监管检索词' : 'Standard Chinese Regulatory Terms'}</h3>
+                  <ul class="entity-clean-list">
+                    {entity.complianceData.termPresets.map((t) => (
+                      <li class="entity-clean-row">
+                        <span>
+                          <strong>{isZh ? t.zhQuery : t.en}</strong>
+                          {!isZh && <> → <code>{t.zhQuery}</code></>}
+                          {' '}
+                          <span class="entity-row-muted">({t.gbCode})</span>
+                        </span>
+                        <button type="button" class="entity-copy-btn" data-pe-copy={t.zhQuery}>
+                          {isZh ? '复制' : 'Copy'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <h3>{entity.complianceData.portalName}</h3>
+                  <ol>
+                    {entity.complianceData.walkthroughSteps.map((s) => (
+                      <li>
+                        <strong>{s.title}</strong>：{s.detail}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </section>
+            )}
+
+            {/* SECTION 2: Field Notes & Checklist (Open Editorial Prose) */}
+            <section class="entity-section" aria-labelledby="entity-field-notes">
+              <h2 id="entity-field-notes">{isZh ? '实测避坑与清单' : 'Field Notes & Checklist'}</h2>
+              <blockquote>
+                <p>{entity.whatNobodyTellsYou}</p>
+              </blockquote>
+              <ul>
+                {entity.checklist.map((c) => (
+                  <li>{c}</li>
                 ))}
               </ul>
-            </div>
-          ))}
-        </div>
+            </section>
 
-        <div class="pe-dual-desk">
-          <div id="universities" class="pe-side-card">
-            <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
-              {isZh ? `${entity.chineseName}留学高校` : `${entity.title} Top Universities`}
-            </h2>
-            <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
-              {entity.cityData.universities.map((u) => (
-                <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
-                  <strong>{isZh ? u.chineseName : u.name}</strong> {!isZh && <span style="color:var(--ink-secondary);">({u.chineseName})</span>}
-                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">{u.focus}</p>
-                </li>
-              ))}
-            </ul>
+            {/* SECTION 3A: City Directory (Unboxed Hairline Lists) */}
+            {entity.cityData && (
+              <section class="entity-section" aria-labelledby="entity-city-guide">
+                <h2 id="entity-city-guide">{isZh ? '本地速览与配套' : 'Local Directory'}</h2>
+                {entity.cityData.mashup.map((sec) => (
+                  <div class="entity-subblock">
+                    <h3>{sec.categoryLabel}</h3>
+                    <ul class="entity-clean-list">
+                      {sec.items.map((item) => (
+                        <li class="entity-clean-row">
+                          <div>
+                            {item.href ? (
+                              <a href={lp(item.href)}>{isZh ? item.chineseName : item.name}</a>
+                            ) : (
+                              <strong>{isZh ? item.chineseName : item.name}</strong>
+                            )}
+                            <span class="entity-row-muted">
+                              {' '}— {isZh ? item.meta : `${item.chineseName} · ${item.meta}`}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+
+                <div class="entity-subblock">
+                  <h3 id="universities">{isZh ? `${entity.chineseName}留学高校` : `${entity.title} Top Universities`}</h3>
+                  <ul class="entity-clean-list">
+                    {entity.cityData.universities.map((u) => (
+                      <li class="entity-clean-row">
+                        <div>
+                          <strong>{isZh ? u.chineseName : u.name}</strong>
+                          {!isZh && <span class="entity-row-muted"> ({u.chineseName})</span>}
+                          <span class="entity-row-muted"> — {u.focus}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div class="entity-subblock">
+                  <h3 id="hospitals">{isZh ? `${entity.chineseName}涉外国际医院` : `${entity.title} International Hospitals`}</h3>
+                  <ul class="entity-clean-list">
+                    {entity.cityData.intlHospitals.map((h) => (
+                      <li class="entity-clean-row">
+                        <div>
+                          <strong>{isZh ? h.chineseName : h.name}</strong>
+                          {!isZh && <span class="entity-row-muted"> ({h.chineseName})</span>}
+                          <span class="entity-row-muted"> — {h.dept} · </span>
+                          <code>{h.phone}</code>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {/* SECTION 3B: Attraction Nearby Mesh */}
+            {entity.attractionData && (
+              <section class="entity-section" aria-labelledby="entity-nearby">
+                <h2 id="entity-nearby">{isZh ? '周边 1–3 公里联动' : '1–3km Nearby Mesh'}</h2>
+                <NearbyMesh
+                  nearbyMesh={entity.attractionData.nearbyMesh}
+                  amapSearchChips={entity.attractionData.amapSearchChips}
+                  locale={locale}
+                />
+              </section>
+            )}
+
+            {/* SECTION 4: Alternatives & Related (Clean Unboxed List) */}
+            {entity.alternatives.length > 0 && (
+              <section class="entity-section" aria-labelledby="entity-alternatives">
+                <h2 id="entity-alternatives">{isZh ? '替代与相关推荐' : 'Alternatives & Related'}</h2>
+                <ul class="entity-clean-list">
+                  {entity.alternatives.map((alt) => (
+                    <li class="entity-clean-row">
+                      <div>
+                        {alt.href ? <a href={lp(alt.href)}>{alt.name}</a> : <strong>{alt.name}</strong>}
+                        <span class="entity-row-muted"> — {alt.verdict}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* SECTION 5: Ground Pulse + Conditional Statutory Disclaimers */}
+            {entity.pulseFeed.length > 0 && (
+              <section class="entity-section" aria-labelledby="entity-pulse">
+                <h2 id="entity-pulse">{isZh ? '实地状态反馈' : 'Ground Pulse'}</h2>
+                <GroundPulsePanel stats={entity.pulseStats} items={entity.pulseFeed} locale={locale} />
+              </section>
+            )}
           </div>
 
-          <div id="hospitals" class="pe-side-card">
-            <h2 style="font-size:1.2rem;margin-bottom:var(--space-3);">
-              {isZh ? `${entity.chineseName}涉外国际医院` : `${entity.title} International Hospitals`}
-            </h2>
-            <ul style="list-style:none;padding:0;margin:0;display:grid;gap:var(--space-3);">
-              {entity.cityData.intlHospitals.map((h) => (
-                <li style="padding-bottom:0.55rem;border-bottom:1px solid var(--rule-subtle);">
-                  <strong>{isZh ? h.chineseName : h.name}</strong> {!isZh && <span style="color:var(--ink-secondary);">({h.chineseName})</span>}
-                  <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.15rem;">
-                    {h.dept} · <code>{h.phone}</code>
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-    )}
+          <AutoDisclaimer kinds={entity.disclaimers} locale={locale} />
 
-    {/* ATTRACTION NEARBY MESH */}
-    {entity.attractionData && (
-      <NearbyMesh
-        nearbyMesh={entity.attractionData.nearbyMesh}
-        amapSearchChips={entity.attractionData.amapSearchChips}
-        locale={locale}
-      />
-    )}
-
-    {/* LAYER 4: Alternatives & Related */}
-    {entity.alternatives.length > 0 && (
-      <section style="margin-top:var(--space-6);">
-        <h2 style="font-size:var(--text-sm);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-secondary);">
-          {isZh ? '替代与相关推荐' : 'Alternatives & Related'}
-        </h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--space-3);margin-top:var(--space-3);">
-          {entity.alternatives.map((alt) => (
-            <div class="pe-side-card">
-              <strong style="font-size:var(--text-base);">
-                {alt.href ? <a href={lp(alt.href)} class="text-link">{alt.name} →</a> : alt.name}
-              </strong>
-              <p style="font-size:var(--text-xs);color:var(--ink-secondary);margin-top:0.25rem;">{alt.verdict}</p>
+          <footer class="article-footer">
+            <div class="article-footer-meta">
+              <div class="byline-author-card">
+                <a href={lp('/pages/editorial-standards')} class="byline-avatar-link" aria-label={isZh ? 'ChinaWao 编辑部' : 'ChinaWao Editorial'}>
+                  <span class="byline-avatar byline-avatar--fallback" aria-hidden="true">C</span>
+                </a>
+                <div class="byline-author-info">
+                  <a href={lp('/pages/editorial-standards')} class="byline-author-name">
+                    {isZh ? 'ChinaWao 编辑部' : 'ChinaWao Editorial'}
+                  </a>
+                  <time class="byline-author-sub" datetime={entity.lastVerified}>
+                    {isZh ? `核验于 ${entity.lastVerified}` : `Verified ${entity.lastVerified}`}
+                  </time>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-    )}
+          </footer>
+        </article>
 
-    {/* LAYER 5: Ground Pulse + Conditional Statutory Disclaimers */}
-    <GroundPulsePanel stats={entity.pulseStats} items={entity.pulseFeed} locale={locale} />
-    <AutoDisclaimer kinds={entity.disclaimers} locale={locale} />
+        <ArticleRightRail
+          locale={locale}
+          tags={railTags}
+          tocItems={tocItems}
+          canonicalUrl={canonicalUrl}
+        />
+      </div>
+
+      {/* Apple-style Bottom Breadcrumb (aligned with BreadcrumbList JSON-LD) */}
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <a href={lp(`/${pillar.id}/`)}>{isZh ? pillar.nameZh : pillar.name}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <a href={lp(entity.collection === 'cards' ? '/cards/' : '/explore/')}>{collectionLabel}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{displayTitle}</span>
+      </nav>
+    </div>
   </div>
 </BaseShell>
