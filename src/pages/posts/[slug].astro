@@ -395,14 +395,6 @@ const jsonLd = {
                 )}
               </nav>
             </div>
-
-            <div class="article-footer-bottom">
-              <div class="article-footer-actions">
-                <a href={lp('/pages/corrections-updates')} class="article-action-btn">
-                  {isZh ? '反馈规则变动' : 'Report update'}
-                </a>
-              </div>
-            </div>
           </footer>
         </article>
 
@@ -410,7 +402,6 @@ const jsonLd = {
           locale={locale}
           tags={tags}
           tocItems={tocItems}
-          title={post.data.title}
           canonicalUrl={canonicalUrl}
         />
       </div>
@@ -422,7 +413,7 @@ const jsonLd = {
           </div>
           <div class="post-grid">
             {relatedPosts.map((entry) => (
-              <PostCard post={entry} headingLevel="h3" showExcerpt={false} />
+              <PostCard post={entry} headingLevel="h3" showExcerpt={false} showReadTime={false} />
             ))}
           </div>
         </section>

@@ -12,9 +12,10 @@ interface Props {
   post: Post;
   headingLevel?: 'h2' | 'h3';
   showExcerpt?: boolean;
+  showReadTime?: boolean;
 }
 
-const { post, headingLevel = 'h2', showExcerpt = true } = Astro.props;
+const { post, headingLevel = 'h2', showExcerpt = true, showReadTime = true } = Astro.props;
 const locale = getLocaleFromContext(Astro);
 const slug = post.data.slug || post.id;
 const href = localePath(postPath(slug), locale);
@@ -56,7 +57,7 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
     ) : (
       <span>{locale === 'zh' ? '志刊' : 'Journal'}</span>
     )}
-    {readTimeText && <span>{readTimeText}</span>}
+    {showReadTime && readTimeText && <span>{readTimeText}</span>}
   </div>
 
   <Heading class="post-card-title">
