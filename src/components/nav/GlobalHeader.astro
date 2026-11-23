@@ -169,7 +169,20 @@ const extraCategories = roots.slice(6);
           class="cw-media-link"
           aria-current={pathname.startsWith('/watch') ? 'page' : undefined}
         >
-          <span class="cw-live-dot" aria-hidden="true"></span>
+          <svg
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9.5" />
+            <polygon points="10.2 8.5 16 12 10.2 15.5 10.2 8.5" fill="currentColor" stroke="none" />
+          </svg>
           <span>{isZh ? '看' : 'Watch'}</span>
         </a>
         <a
@@ -257,7 +270,20 @@ const extraCategories = roots.slice(6);
     <ul class="drawer-links">
       <li>
         <a href={lp('/watch/')} class="cw-drawer-media-link" aria-current={pathname.startsWith('/watch') ? 'page' : undefined}>
-          <span class="cw-live-dot" aria-hidden="true"></span>
+          <svg
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9.5" />
+            <polygon points="10.2 8.5 16 12 10.2 15.5 10.2 8.5" fill="currentColor" stroke="none" />
+          </svg>
           <span>{isZh ? '看' : 'Watch'}</span>
         </a>
       </li>
