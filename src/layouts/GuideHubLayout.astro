@@ -326,37 +326,51 @@ const jsonLd = buildGuideJsonLd(guide, Astro.url.origin, locale, [
               </div>
             )}
 
-            {/* VARIANT D: Editorial -> 2-Column Magazine Cards */}
+            {/* VARIANT D: Editorial -> 2-Column Magazine Photo Cards */}
             {guide.archetype === 'editorial' && guide.galleryItems && (
               <div class="guide-visual-grid">
-                {guide.galleryItems.map((card) => (
-                  <div class="guide-visual-card">
-                    <div style="display:grid;gap:0.45rem;">
-                      <h3>{card.title}</h3>
-                      <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
-                        {card.chineseName}
-                      </span>
-                      <p style="margin:0.25rem 0 0;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
-                        {card.summary}
-                      </p>
-                    </div>
-                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        data-pe-copy={card.copyTerm}
-                        data-pe-copy-toast={isZh ? `已复制中文名：${card.copyTerm}` : `Copied Chinese name: ${card.copyTerm}`}
-                      >
-                        {isZh ? `复制：${card.copyTerm}` : `Copy: ${card.copyTerm}`}
-                      </Button>
-                      {card.href && (
-                        <a href={lp(card.href)} class="guide-pick-link" style="align-self:center;">
-                          {isZh ? '详情 →' : 'Details →'}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                {guide.galleryItems.map((card, idx) => {
+                  const fallbackGalleryImgs = ['/images/tea.webp', '/images/food.webp', '/images/craft.webp', '/images/town.webp'];
+                  const cardImg = card.image || fallbackGalleryImgs[idx % fallbackGalleryImgs.length];
+                  return (
+                    <article class="guide-visual-card guide-visual-card--photo">
+                      <div class="guide-card-media">
+                        <img
+                          src={cardImg}
+                          alt={card.title}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                      <div class="guide-card-body">
+                        <div style="display:grid;gap:0.35rem;">
+                          <h3>{card.title}</h3>
+                          <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--ink-tertiary);">
+                            {card.chineseName}
+                          </span>
+                          <p style="margin:0.25rem 0 0;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
+                            {card.summary}
+                          </p>
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:var(--space-3);">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            data-pe-copy={card.copyTerm}
+                            data-pe-copy-toast={isZh ? `已复制中文名：${card.copyTerm}` : `Copied Chinese name: ${card.copyTerm}`}
+                          >
+                            {isZh ? `复制：${card.copyTerm}` : `Copy: ${card.copyTerm}`}
+                          </Button>
+                          {card.href && (
+                            <a href={lp(card.href)} class="guide-pick-link" style="align-self:center;">
+                              {isZh ? '详情 →' : 'Details →'}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>
