@@ -49,7 +49,12 @@ const displayPosts = visualPosts.length > 0 ? visualPosts : posts;
       </div>
     ) : (
       <div class="empty-state">
-        <p>{isZh ? '暂无影像内容，请稍后再访。' : 'No visual dispatches published yet.'}</p>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <polygon points="10 9 15 12 10 15 10 9" />
+        </svg>
+        <p>{isZh ? '暂无影像内容，实地短片正在陆续上线。' : 'No visual dispatches published yet — field videos are rolling out soon.'}</p>
+        <a href={lp('/posts/')} class="empty-state-btn">{isZh ? '浏览全部文章' : 'Browse all articles'}</a>
       </div>
     )}
   </div>

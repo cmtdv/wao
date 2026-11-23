@@ -98,7 +98,7 @@ export function HeaderUtilityMenus({
             render={
               <Button
                 aria-label={isZh ? "切换语言" : "Switch language"}
-                className="h-8 gap-1.5 px-2 text-xs font-medium"
+                className="h-8 gap-1.5 px-2 text-xs font-medium active:scale-[0.97] max-md:h-10"
                 size="sm"
                 variant="ghost"
               />
@@ -149,7 +149,7 @@ export function HeaderUtilityMenus({
               ? "Switch to light mode"
               : "Switch to dark mode"
         }
-        className="inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        className="inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground transition-[color,background-color,transform] duration-150 hover:bg-accent hover:text-foreground active:scale-[0.97] max-md:size-10"
         onClick={toggleTheme}
         title={
           isZh

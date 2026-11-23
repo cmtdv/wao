@@ -830,15 +830,32 @@ initBanners();
 
 // Persistent Toast Notifications (modern-web-guidance: persistent-toast-notifications)
 // Uses popover="manual" + ariaNotify() / live region fallback + modal-open suppression
-let showSiteToast: (msg: string, trigger?: HTMLElement | null) => void = () => {};
+interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+let showSiteToast: (msg: string, trigger?: HTMLElement | null, action?: ToastAction) => void = () => {};
 
 function initToasts(): void {
-  const toastEl = document.querySelector<HTMLElement & { showPopover?: () => void }>('[data-cw-toast]');
+  const toastEl = document.querySelector<HTMLElement & { showPopover?: () => void; hidePopover?: () => void }>('[data-cw-toast]');
   const textEl = document.querySelector<HTMLElement>('[data-cw-toast-text]');
   const liveEl = document.querySelector<HTMLElement>('#cw-toast-live');
   if (!toastEl || !textEl) return;
 
   let lastTrigger: HTMLElement | null = null;
+  let undoBtn: HTMLButtonElement | null = null;
+  let autoHideTimer: number | null = null;
+
+  const clearUndo = () => {
+    if (undoBtn) {
+      undoBtn.remove();
+      undoBtn = null;
+    }
+    if (autoHideTimer !== null) {
+      window.clearTimeout(autoHideTimer);
+      autoHideTimer = null;
+    }
+  };
 
   const announce = (msg: string) => {
     const docWithNotify = document as Document & { ariaNotify?: (text: string) => void };
@@ -852,11 +869,34 @@ function initToasts(): void {
     }
   };
 
-  showSiteToast = (msg: string, trigger?: HTMLElement | null) => {
+  showSiteToast = (msg: string, trigger?: HTMLElement | null, action?: ToastAction) => {
     // Do not surface toasts behind an open modal dialog
     if (document.querySelector('dialog[open]')) return;
     lastTrigger = trigger ?? (document.activeElement as HTMLElement | null);
+    clearUndo();
     textEl.textContent = msg;
+
+    if (action) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cw-toast-undo';
+      btn.textContent = action.label;
+      btn.addEventListener('click', () => {
+        clearUndo();
+        action.onClick();
+      });
+      textEl.insertAdjacentElement('afterend', btn);
+      undoBtn = btn;
+      autoHideTimer = window.setTimeout(() => {
+        clearUndo();
+        try {
+          toastEl.hidePopover?.();
+        } catch {
+          // Already closed
+        }
+      }, 5000);
+    }
+
     try {
       toastEl.showPopover?.();
     } catch {
@@ -1897,16 +1937,32 @@ function initArticleReaderTools(): void {
     btn.addEventListener('click', () => {
       const list = readSaved();
       const exists = list.some((item) => item.slug === slug);
-      const next = exists
-        ? list.filter((item) => item.slug !== slug)
-        : [{ slug, title, url, savedAt: new Date().toISOString() }, ...list];
-      writeSaved(next);
-      renderSavedState(!exists);
-      showSiteToast(
-        !exists
-          ? (zh ? '已收藏到本地阅读清单' : 'Saved to your reading list')
-          : (zh ? '已取消收藏' : 'Removed from saved'),
-      );
+      if (exists) {
+        const removedItem = list.find((item) => item.slug === slug);
+        writeSaved(list.filter((item) => item.slug !== slug));
+        renderSavedState(false);
+        showSiteToast(
+          zh ? '已取消收藏' : 'Removed from saved',
+          btn,
+          removedItem
+            ? {
+                label: zh ? '撤销' : 'Undo',
+                onClick: () => {
+                  const current = readSaved();
+                  if (!current.some((item) => item.slug === removedItem.slug)) {
+                    writeSaved([removedItem, ...current]);
+                  }
+                  renderSavedState(true);
+                  showSiteToast(zh ? '已恢复收藏' : 'Restored to saved', btn);
+                },
+              }
+            : undefined,
+        );
+      } else {
+        writeSaved([{ slug, title, url, savedAt: new Date().toISOString() }, ...list]);
+        renderSavedState(true);
+        showSiteToast(zh ? '已收藏到本地阅读清单' : 'Saved to your reading list', btn);
+      }
     });
   });
 
