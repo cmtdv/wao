@@ -610,8 +610,8 @@ export const ENTITIES: EntityProfile[] = [
       { label: 'Passport Required', tone: 'verified' },
     ],
     primaryAmapTerm: '广交会展馆A区',
-    officialUrl: 'https://buyer.cantonfair.org.cn/',
-    officialLabel: 'Canton Fair Official Buyer Portal',
+    officialUrl: 'https://www.cantonfair.org.cn/en-US',
+    officialLabel: 'Canton Fair Official Portal',
     cardSlug: 'canton-fair-pazhou',
     quickSpecs: [
       { label: 'Spring & Autumn Dates', value: 'Apr 15–May 5 · Oct 15–Nov 4 (3 Phases)', mono: true },
