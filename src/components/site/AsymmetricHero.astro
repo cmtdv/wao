@@ -96,15 +96,13 @@ const hasRail = railPosts.length > 0;
                 ) : (
                   <span>{isZh ? '志刊' : 'Journal'}</span>
                 )}
+                {itemDate && (
+                  <time datetime={item.data.publishedAt?.toISOString()}>{itemDate}</time>
+                )}
               </div>
               <h3 class="featured-rail-title">
                 <a href={itemHref}>{item.data.title}</a>
               </h3>
-              {itemDate && (
-                <p class="featured-rail-meta">
-                  <time datetime={item.data.publishedAt?.toISOString()}>{itemDate}</time>
-                </p>
-              )}
             </li>
           );
         })}

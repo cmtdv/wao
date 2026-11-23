@@ -1,10 +1,8 @@
 ---
 import { Image } from 'emdash/ui';
-import Icon from '@site/Icon.astro';
 import type { getPublicPost } from '@lib/cms';
 import { categoryPath, postPath } from '@lib/format';
-import { estimateReadingMinutes } from '@lib/portable-text';
-import { formatLocalizedDate, formatReadTime, getLocaleFromContext, localePath } from '@i18n/ui';
+import { formatLocalizedDate, getLocaleFromContext, localePath } from '@i18n/ui';
 
 type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
 
@@ -16,7 +14,7 @@ interface Props {
   showFooter?: boolean;
 }
 
-const { post, headingLevel = 'h2', showExcerpt = false, showReadTime = false, showFooter = true } = Astro.props;
+const { post, headingLevel = 'h2', showExcerpt = false, showFooter = true } = Astro.props;
 const locale = getLocaleFromContext(Astro);
 const slug = post.data.slug || post.id;
 const href = localePath(postPath(slug), locale);
@@ -24,8 +22,6 @@ const categories = post.data.terms?.category ?? [];
 const tags = post.data.terms?.tag ?? [];
 const primaryCategory = categories[0];
 const published = formatLocalizedDate(post.data.publishedAt, locale);
-const readingMinutes = estimateReadingMinutes(post.data.content);
-const readTimeText = readingMinutes ? formatReadTime(readingMinutes, locale) : '';
 const hasImage = Boolean(post.data.featured_image);
 const Heading = headingLevel;
 
@@ -58,7 +54,11 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
     ) : (
       <span>{locale === 'zh' ? '志刊' : 'Journal'}</span>
     )}
-    {showReadTime && readTimeText && <span>{readTimeText}</span>}
+    {showFooter && published && (
+      <time datetime={post.data.publishedAt?.toISOString()}>
+        {published}
+      </time>
+    )}
   </div>
 
   <Heading class="post-card-title">
@@ -67,21 +67,5 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
 
   {showExcerpt && post.data.excerpt && (
     <p class="post-card-excerpt">{post.data.excerpt}</p>
-  )}
-
-  {showFooter && (
-    <div class="post-card-foot">
-      {published ? (
-        <time class="meta-line" datetime={post.data.publishedAt?.toISOString()}>
-          {published}
-        </time>
-      ) : <span />}
-      {!hasImage && (
-        <a href={href} class="editorial-link">
-          <span>{locale === 'zh' ? '阅读全文' : 'Read essay'}</span>
-          <Icon name="arrow" size={14} />
-        </a>
-      )}
-    </div>
   )}
 </article>
