@@ -246,42 +246,43 @@ const jsonLd = {
                   type="button"
                   class="article-util-btn"
                   aria-pressed="false"
+                  aria-label={isZh ? '朗读本文' : 'Listen to article'}
+                  title={isZh ? '朗读本文' : 'Listen to article'}
                   data-audio-launch
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
                   </svg>
-                  <span>{isZh ? '朗读' : 'Listen'}</span>
                 </button>
-                <span class="article-util-sep" aria-hidden="true"></span>
                 <button
                   type="button"
                   class="article-util-btn"
+                  aria-label={isZh ? '分享文章' : 'Share article'}
+                  title={isZh ? '分享' : 'Share'}
                   data-article-share
                   data-share-title={post.data.title}
                   data-share-url={canonicalUrl}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                     <polyline points="16 6 12 2 8 6" />
                     <line x1="12" y1="2" x2="12" y2="15" />
                   </svg>
-                  <span>{isZh ? '分享' : 'Share'}</span>
                 </button>
-                <span class="article-util-sep" aria-hidden="true"></span>
                 <button
                   type="button"
                   class="article-util-btn"
                   aria-pressed="false"
+                  aria-label={isZh ? '收藏文章' : 'Save article'}
+                  title={isZh ? '收藏' : 'Save'}
                   data-article-save
                   data-save-slug={slug}
                   data-save-title={post.data.title}
                   data-save-url={canonicalUrl}
                 >
-                  <svg class="icon-bookmark" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <svg class="icon-bookmark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                   </svg>
-                  <span data-save-label>{isZh ? '收藏' : 'Save'}</span>
                 </button>
               </div>
             </div>
