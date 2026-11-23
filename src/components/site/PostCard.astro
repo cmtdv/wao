@@ -16,7 +16,7 @@ interface Props {
   showFooter?: boolean;
 }
 
-const { post, headingLevel = 'h2', showExcerpt = true, showReadTime = true, showFooter = true } = Astro.props;
+const { post, headingLevel = 'h2', showExcerpt = false, showReadTime = false, showFooter = true } = Astro.props;
 const locale = getLocaleFromContext(Astro);
 const slug = post.data.slug || post.id;
 const href = localePath(postPath(slug), locale);
