@@ -50,8 +50,9 @@ const totalCount =
     : result.entries.length;
 ---
 <Layout
-  title={`#${term.label}`}
-  description={term.description || (isZh ? `带有 #${term.label} 标签的全部文章` : `Articles tagged ${term.label}`)}
+  title={term.label}
+  description={term.description || (isZh ? `带有 ${term.label} 标签的全部文章` : `Articles tagged ${term.label}`)}
+  robots="noindex, follow"
 >
   <div class="container dossier-shell">
     <header class="dossier-header">

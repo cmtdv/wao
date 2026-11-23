@@ -20,7 +20,6 @@ import Alert from '@ui/feedback/Alert.astro';
 import type { EntityProfile } from '@data/paradigm-e/entities';
 import { localizeEntity } from '@data/paradigm-e/entities-zh';
 import { PILLAR_BY_ID } from '@data/paradigm-e/pillars';
-import { tagPath } from '@lib/format';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 import { buildEntityGraphJsonLd } from '@lib/seo-geo';
 import '../styles/article.css';
@@ -150,11 +149,6 @@ const aiPrompt = isZh
 const preferGoogleHref = 'https://www.google.com/preferences/source?q=chinawao.com';
 const chatGptHref = `https://chatgpt.com/?q=${encodeURIComponent(aiPrompt)}`;
 const geminiHref = `https://gemini.google.com/app?q=${encodeURIComponent(aiPrompt)}`;
-
-const railTags = [
-  { slug: entity.pillar, label: isZh ? pillar.nameZh : pillar.name },
-  { slug: entity.collection, label: collectionLabel },
-];
 
 const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
   { name: isZh ? '首页' : 'Home', url: lp('/') },
@@ -644,14 +638,6 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
               </a>
             </li>
           </ul>
-
-          <div class="rail-tags" aria-label={isZh ? '档案标签' : 'Dossier tags'}>
-            {railTags.map((term) => (
-              <a href={lp(tagPath(term.slug))} class="rail-tag-pill">
-                {term.label}
-              </a>
-            ))}
-          </div>
         </aside>
       </div>
 
