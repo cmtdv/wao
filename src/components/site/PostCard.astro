@@ -13,9 +13,10 @@ interface Props {
   headingLevel?: 'h2' | 'h3';
   showExcerpt?: boolean;
   showReadTime?: boolean;
+  showFooter?: boolean;
 }
 
-const { post, headingLevel = 'h2', showExcerpt = true, showReadTime = true } = Astro.props;
+const { post, headingLevel = 'h2', showExcerpt = true, showReadTime = true, showFooter = true } = Astro.props;
 const locale = getLocaleFromContext(Astro);
 const slug = post.data.slug || post.id;
 const href = localePath(postPath(slug), locale);
@@ -68,17 +69,19 @@ const searchable = `${post.data.title} ${post.data.excerpt ?? ''} ${categories.m
     <p class="post-card-excerpt">{post.data.excerpt}</p>
   )}
 
-  <div class="post-card-foot">
-    {published ? (
-      <time class="meta-line" datetime={post.data.publishedAt?.toISOString()}>
-        {published}
-      </time>
-    ) : <span />}
-    {!hasImage && (
-      <a href={href} class="editorial-link">
-        <span>{locale === 'zh' ? '阅读全文' : 'Read essay'}</span>
-        <Icon name="arrow" size={14} />
-      </a>
-    )}
-  </div>
+  {showFooter && (
+    <div class="post-card-foot">
+      {published ? (
+        <time class="meta-line" datetime={post.data.publishedAt?.toISOString()}>
+          {published}
+        </time>
+      ) : <span />}
+      {!hasImage && (
+        <a href={href} class="editorial-link">
+          <span>{locale === 'zh' ? '阅读全文' : 'Read essay'}</span>
+          <Icon name="arrow" size={14} />
+        </a>
+      )}
+    </div>
+  )}
 </article>
