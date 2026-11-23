@@ -3,8 +3,7 @@ import { Image } from 'emdash/ui';
 import Icon from '@site/Icon.astro';
 import type { getPublicPost } from '@lib/cms';
 import { categoryPath, postPath } from '@lib/format';
-import { estimateReadingMinutes } from '@lib/portable-text';
-import { formatLocalizedDate, formatReadTime, getLocaleFromContext, localePath } from '@i18n/ui';
+import { formatLocalizedDate, getLocaleFromContext, localePath } from '@i18n/ui';
 
 type Post = NonNullable<Awaited<ReturnType<typeof getPublicPost>>['entry']>;
 
@@ -29,8 +28,6 @@ const {
 const slug = lead.data.slug || lead.id;
 const href = lp(postPath(slug));
 const primaryCategory = lead.data.terms?.category?.[0];
-const published = formatLocalizedDate(lead.data.publishedAt, locale);
-const readingMinutes = estimateReadingMinutes(lead.data.content);
 const Heading = headingLevel;
 const hasRail = railPosts.length > 0;
 ---
@@ -43,7 +40,6 @@ const hasRail = railPosts.length > 0;
         ) : (
           <span>{isZh ? '精选实录' : 'Featured Dispatch'}</span>
         )}
-        {readingMinutes && <span>{formatReadTime(readingMinutes, locale)}</span>}
       </div>
 
       <Heading class="broadsheet-title">
@@ -56,11 +52,6 @@ const hasRail = railPosts.length > 0;
     </div>
 
     <div class="broadsheet-lead-foot">
-      {published && (
-        <time class="meta-line" datetime={lead.data.publishedAt?.toISOString()}>
-          {published}
-        </time>
-      )}
       <a href={href} class="btn btn--primary">
         <span>{isZh ? '阅读全文' : 'Read dispatch'}</span>
         <Icon name="arrow" size={16} />
@@ -97,7 +88,6 @@ const hasRail = railPosts.length > 0;
           const itemHref = lp(postPath(item.data.slug || item.id));
           const itemCat = item.data.terms?.category?.[0];
           const itemDate = formatLocalizedDate(item.data.publishedAt, locale);
-          const itemMin = estimateReadingMinutes(item.data.content);
           return (
             <li class="featured-rail-item">
               <div class="post-card-meta">
@@ -106,7 +96,6 @@ const hasRail = railPosts.length > 0;
                 ) : (
                   <span>{isZh ? '志刊' : 'Journal'}</span>
                 )}
-                {itemMin && <span>{isZh ? `${itemMin} 分钟` : `${itemMin} min`}</span>}
               </div>
               <h3 class="featured-rail-title">
                 <a href={itemHref}>{item.data.title}</a>
