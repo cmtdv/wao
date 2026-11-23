@@ -1,0 +1,197 @@
+---
+/**
+ * 06 /atlas/ — The Economist Graphic Detail × Our World in Data Reference Hub
+ * Distinct Paradigm: Brand-red top bar + Chart-First Briefing Hero (native visual metric bars)
+ * -> 4-Column Macro KPI Strip -> Myths vs. Verified Reality Decoder -> OWID 3×3 Structured Chapters -> Live All-Topics Filter
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import Icon from '@site/Icon.astro';
+import { V32_PILLARS, V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.atlas;
+---
+<BaseShell
+  title={isZh ? '读懂中国' : 'China Atlas'}
+  description={isZh ? '基于一手官方统计与公开档案，系统呈现中国的地理生态、五千年历史、前沿 AI 科技、宏观经济与超级基建。' : 'Data-driven briefings on how modern China works: infrastructure, UNESCO heritage, frontier AI, governance, and macro reality.'}
+  activePillar="atlas"
+  persona="analyst"
+>
+  <div class="container">
+    <div class="pd-shell">
+      {/* 1. The Economist Chart-First Briefing Hero (Red top rule + left thesis + right native data bars) */}
+      <section class="at-hero" aria-label={isZh ? '当代中国数据简报' : 'China Atlas Data Briefing'}>
+        <div>
+          <h1>{isZh ? '读懂中国：数据、制度与现代运转' : 'China Atlas: Systems, Data & Modern Reality'}</h1>
+          <p class="tr-hero-lead">
+            {isZh
+              ? '跳过二手情绪叙事，直接用可溯源的一手统计、开放数据与实地核验事实，看清高铁、AI、清洁能源与治理体系的真实尺度。'
+              : 'Skip second-hand clichés. Explore modern China through source-verified macro benchmarks, open government datasets, and evidence-backed briefings.'}
+          </p>
+          <div class="tr-hero-pills">
+            <a href={lp('/portals/')} class="tr-hero-pill">{isZh ? '开放数据与 MCP 中心 →' : 'Open Data & MCP Hub →'}</a>
+            <a href={lp('/guides/myths-vs-facts/')} class="tr-hero-pill">{isZh ? '十大误解核查 →' : '10 Myths Decoded →'}</a>
+            <a href="#topic-index" class="tr-hero-pill">{isZh ? '全站主题检索 ↓' : 'All Topics Index ↓'}</a>
+          </div>
+        </div>
+
+        {/* Native CSS Graphic-Detail Visual Comparison Card */}
+        <div class="at-chart-card" aria-label={isZh ? '中国现代基建与开放度基线图' : 'China Infrastructure & Openness Snapshot'}>
+          <div class="at-chart-head">
+            <h2>{isZh ? '一目了然 · 当代中国关键尺度对比' : 'At a Glance · Verified Scale Indicators'}</h2>
+            <span>{isZh ? '一手官方统计' : 'Official Sources'}</span>
+          </div>
+          <div class="at-bars">
+            <div class="at-bar-item">
+              <div class="at-bar-top">
+                <strong>{isZh ? '中国高速铁路占全球比重' : 'Share of Global High-Speed Rail'}</strong>
+                <span>~70% (45,000+ km)</span>
+              </div>
+              <div class="at-bar-track"><div class="at-bar-fill at-bar-fill--accent" style="width:72%;"></div></div>
+            </div>
+
+            <div class="at-bar-item">
+              <div class="at-bar-top">
+                <strong>{isZh ? '北京 → 上海门到门准点率（复兴号标杆）' : 'Beijing → Shanghai Express Rail Punctuality'}</strong>
+                <span>98.2% (4h 18m)</span>
+              </div>
+              <div class="at-bar-track"><div class="at-bar-fill" style="width:98%;"></div></div>
+            </div>
+
+            <div class="at-bar-item">
+              <div class="at-bar-top">
+                <strong>{isZh ? 'UNESCO 世界遗产总数（全球第一梯队）' : 'UNESCO World Heritage Sites'}</strong>
+                <span>{isZh ? '61 处（截至 2026-07）' : '61 sites (Jul 2026)'}</span>
+              </div>
+              <div class="at-bar-track"><div class="at-bar-fill" style="width:92%;"></div></div>
+            </div>
+
+            <div class="at-bar-item">
+              <div class="at-bar-top">
+                <strong>{isZh ? '免登录政府公开数据与公共服务直连源' : 'Direct Open Government Data Portals'}</strong>
+                <span>{isZh ? '48 个核心官方门户' : '48 Core Official Portals'}</span>
+              </div>
+              <div class="at-bar-track"><div class="at-bar-fill" style="width:84%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. The Economist Dual-Column "Myths vs. 2026 Verified Reality" Decoder */}
+      <section class="p-atlas-myths" aria-labelledby="at-myths-h">
+        <div class="pd-section-head">
+          <h2 id="at-myths-h">{isZh ? '常见认知偏差 vs. 2026 实地核验事实' : 'Common Misconceptions vs. Verified Reality'}</h2>
+          <a href={lp('/guides/myths-vs-facts/')} class="pd-link">{isZh ? '阅读完整十条核查 →' : 'All 10 fact checks →'}</a>
+        </div>
+
+        <div>
+          <div class="p-atlas-myth-row">
+            <div class="p-atlas-myth-claim">
+              <span class="p-atlas-myth-tag">{isZh ? '常见误解 01' : 'MYTH 01'}</span>
+              <strong>{isZh ? '“没有中国银行卡和 +86 手机号，外国人几乎无法消费与乘车？”' : '“Foreign visitors cannot pay or ride metro without a local bank card?”'}</strong>
+            </div>
+            <div class="p-atlas-myth-fact">
+              <span class="p-atlas-myth-fact-tag">{isZh ? '实测事实' : 'VERIFIED REALITY'}</span>
+              <p>{isZh ? '支付宝与微信已支持境外 Visa / Mastercard 直绑（单笔 ≤ ¥200 免手续费，年额度 $50,000），且北京、上海等地铁支持境外非接卡直刷过闸。' : 'Alipay & WeChat Pay bind foreign Visa/MC directly (0% fee ≤ ¥200, $50k annual cap), and Beijing/Shanghai metros accept direct contactless foreign taps.'}</p>
+            </div>
+          </div>
+
+          <div class="p-atlas-myth-row">
+            <div class="p-atlas-myth-claim">
+              <span class="p-atlas-myth-tag">{isZh ? '常见误解 02' : 'MYTH 02'}</span>
+              <strong>{isZh ? '“跨省超过 1,000 公里坐飞机一定比高铁省时间？”' : '“Flights always beat rail over 1,000 km?”'}</strong>
+            </div>
+            <div class="p-atlas-myth-fact">
+              <span class="p-atlas-myth-fact-tag">{isZh ? '实测事实' : 'VERIFIED REALITY'}</span>
+              <p>{isZh ? '京沪 1,318 公里复兴号市中心到市中心仅 4 小时 18 分，综合机场通勤、安检与延误风险，4.5 小时以内高铁门到门全面胜出。' : 'Beijing–Shanghai (1,318 km) takes 4h 18m city-center to city-center, beating flights door-to-door on every corridor under 4.5 hours.'}</p>
+            </div>
+          </div>
+
+          <div class="p-atlas-myth-row">
+            <div class="p-atlas-myth-claim">
+              <span class="p-atlas-myth-tag">{isZh ? '常见误解 03' : 'MYTH 03'}</span>
+              <strong>{isZh ? '“中国科技生态相对封闭，仍以低端组装制造为主？”' : '“China’s tech ecosystem is closed and limited to low-end assembly?”'}</strong>
+            </div>
+            <div class="p-atlas-myth-fact">
+              <span class="p-atlas-myth-fact-tag">{isZh ? '实测事实' : 'VERIFIED REALITY'}</span>
+              <p>{isZh ? '从 DeepSeek、Qwen 等全球主流开源模型，到大疆无人机、拓竹 3D 打印机、宇树机器人与智能电车，开源 AI 与敏捷硬件正双向驱动全球创新。' : 'Open-weight models (DeepSeek, Qwen) pair with rapid hardware leaders like DJI, Bambu Lab, Unitree, and BYD across global markets.'}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Our World in Data 3×3 Structured National Briefings Matrix */}
+      <section class="pd-section" aria-labelledby="at-owid-h">
+        <div class="pd-section-head">
+          <h2 id="at-owid-h">{isZh ? '九大国情与硬核专题章节' : 'Nine Structured National Briefings'}</h2>
+        </div>
+        <div class="at-owid-grid">
+          {pillar.children.map((sec) => (
+            <a href={lp(sec.hubPath)} class="at-owid-card">
+              <h3>{isZh ? sec.navZh : sec.navEn}</h3>
+              <p>{isZh ? sec.scopeZh : sec.navEn}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Interactive Master All-Topics Filter (#topic-index) */}
+      <section id="topic-index" class="pd-section" aria-labelledby="topic-index-h">
+        <div class="pd-section-head">
+          <h2 id="topic-index-h">{isZh ? '全站主题全景检索' : 'All Topics Master Directory'}</h2>
+        </div>
+
+        <search class="atlas-toolbar">
+          <label class="atlas-search" aria-label={isZh ? '筛选全站主题' : 'Filter all topics'}>
+            <Icon name="search" size={16} />
+            <input
+              type="search"
+              data-atlas-filter
+              placeholder={isZh ? '按关键词即时筛选（如 签证、支付、广交会、高铁、茶、AI）…' : 'Filter by keyword (e.g. visa, rail, Canton Fair, tea, AI)…'}
+              autocomplete="off"
+            />
+          </label>
+        </search>
+
+        <div style="display:grid;gap:var(--space-3);">
+          {V32_PILLARS.map((tp) => (
+            <details class="journey-step" data-atlas-pillar={tp.id} open={tp.id === 'atlas' || tp.id === 'travel'}>
+              <summary>
+                <span class="journey-step-head">
+                  <span class="journey-step-title">{isZh ? tp.navZh : tp.navEn}</span>
+                </span>
+              </summary>
+              <div class="journey-step-body">
+                <div class="pe-mega-chips">
+                  {tp.children.map((topic) => (
+                    <a
+                      href={lp(topic.hubPath)}
+                      class="pe-mega-chip"
+                      data-atlas-topic
+                      data-search={`${topic.slug} ${topic.navEn} ${topic.navZh} ${topic.scopeZh} ${tp.navEn} ${tp.navZh}`.toLowerCase()}
+                    >
+                      {isZh ? topic.navZh : topic.navEn}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '读懂中国' : 'China Atlas'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>

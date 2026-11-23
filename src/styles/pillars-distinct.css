@@ -1,0 +1,1066 @@
+/* ==========================================================================
+   ChinaWao 6 Truly Distinct Primary Pillar Architectures
+   - 01 /travel/   : GOV.UK Step-by-Step × Wise Instant Visa/Trip Command Deck
+   - 02 /live/     : Nomad List Interactive Filterable City Dashboard × Expatica
+   - 03 /business/ : China Briefing Policy Ticker × Live USCC Verifier × Trade.gov Desk
+   - 04 /places/   : Lonely Planet 2:1 Hero × Region Filter × Bento Cities × Layer Map
+   - 05 /culture/  : Monocle 3-Col Swiss Magazine Front Page × Eater Gallery × Audio Board
+   - 06 /atlas/    : The Economist Chart-First Briefing × OWID Structured Reference Matrix
+   ========================================================================== */
+
+@layer pages {
+  .pd-shell {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .pd-shell--editorial {
+    max-width: 72rem;
+  }
+
+  .pd-section {
+    margin-top: var(--space-8);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .pd-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .pd-section-head h2 {
+    margin: 0;
+    font-size: clamp(1.3rem, 1.15rem + 0.45vw, 1.55rem);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--ink-primary);
+  }
+
+  .pd-link {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .pd-link:hover {
+    color: var(--link-hover);
+  }
+
+  /* ========================================================================
+     01. TRAVEL (/travel/) — Wise × GOV.UK Command Deck (No Banner Photo!)
+     ======================================================================== */
+  .tr-hero {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+    padding-block: var(--space-4) var(--space-7);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .tr-hero h1 {
+    margin: 0;
+    font-size: clamp(2.15rem, 1.65rem + 1.6vw, 2.9rem);
+    font-weight: 650;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--ink-primary);
+  }
+
+  .tr-hero-lead {
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.62;
+    color: var(--ink-secondary);
+  }
+
+  .tr-hero-pills {
+    margin-top: var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tr-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 9999px;
+    background: var(--surface-sunken);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--ink-primary);
+    text-decoration: none;
+    transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+
+  .tr-hero-pill:hover {
+    color: var(--link);
+  }
+
+  /* Wise-style Inline Instant Visa-Free Checker Card */
+  .tr-checker {
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-raised);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .tr-checker-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .tr-checker-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .tr-field {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .tr-field label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+  }
+
+  .tr-field select {
+    height: 2.35rem;
+    padding-inline: 0.65rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--background);
+    color: var(--ink-primary);
+    font-size: var(--text-sm);
+  }
+
+  .tr-checker-result {
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .tr-checker-verdict {
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--status-verified-ink, #166534);
+  }
+
+  .tr-checker-note {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ink-secondary);
+  }
+
+  /* GOV.UK Interactive Step-by-Step Progress List */
+  .tr-gov-progress {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-xl);
+    background: var(--surface-sunken);
+  }
+
+  .tr-gov-bar-wrap {
+    flex: 1 1 16rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .tr-gov-bar-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .tr-gov-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-seal);
+    transition: width 220ms ease;
+  }
+
+  .tr-gov-steps {
+    display: grid;
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .tr-gov-step {
+    border-bottom: 1px solid var(--rule-subtle);
+    padding-block: var(--space-4);
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .tr-gov-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 1.5px solid var(--ink-primary);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .tr-gov-step[data-done="true"] .tr-gov-num {
+    background: var(--ink-primary);
+    color: var(--background);
+  }
+
+  .tr-gov-step-body h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .tr-gov-step-body p {
+    margin: 0.25rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-secondary);
+    line-height: 1.55;
+  }
+
+  .tr-gov-sublinks {
+    margin-top: 0.65rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1.25rem;
+  }
+
+  .tr-gov-sublinks a {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .tr-gov-sublinks a:hover {
+    color: var(--link-hover);
+  }
+
+  .tr-gov-check-btn {
+    height: 2rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-raised);
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .tr-gov-step[data-done="true"] .tr-gov-check-btn {
+    border-color: var(--ink-primary);
+    color: var(--ink-primary);
+    font-weight: 600;
+  }
+
+  /* ========================================================================
+     02. LIVE & WORK (/live/) — Nomad List Interactive Filterable Dashboard
+     ======================================================================== */
+  .lv-head {
+    padding-block: var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--rule-subtle);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .lv-head-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .lv-head h1 {
+    margin: 0;
+    font-size: clamp(2rem, 1.55rem + 1.5vw, 2.75rem);
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .lv-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-xl);
+    background: var(--surface-sunken);
+  }
+
+  .lv-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .lv-chip {
+    height: 2rem;
+    padding-inline: 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: all var(--dur-fast) ease;
+  }
+
+  .lv-chip[aria-pressed="true"] {
+    background: var(--ink-primary);
+    border-color: var(--ink-primary);
+    color: var(--background);
+  }
+
+  .lv-city-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .lv-city-card {
+    display: grid;
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-raised);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--dur-fast) ease, transform 120ms ease-out;
+  }
+
+  .lv-city-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .lv-city-card[hidden] {
+    display: none;
+  }
+
+  .lv-city-photo {
+    position: relative;
+    background: var(--surface-sunken);
+  }
+
+  .lv-city-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 12.5rem;
+    object-fit: cover;
+  }
+
+  .lv-city-cost-badge {
+    position: absolute;
+    inset-block-end: 0.65rem;
+    inset-inline-start: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    background: rgba(15, 15, 15, 0.78);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lv-city-info {
+    padding: var(--space-4) var(--space-5);
+    display: grid;
+    align-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .lv-city-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .lv-city-title-row h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .lv-city-card:hover h3 {
+    color: var(--link);
+  }
+
+  .lv-city-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+  }
+
+  .lv-meters {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .lv-meter-row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) 2.6rem;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-2xs);
+    color: var(--ink-secondary);
+  }
+
+  .lv-meter-track {
+    height: 5px;
+    border-radius: 9999px;
+    background: var(--surface-sunken);
+    overflow: hidden;
+  }
+
+  .lv-meter-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: var(--ink-primary);
+  }
+
+  .lv-city-meta {
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+
+  /* ========================================================================
+     03. BUSINESS (/business/) — Policy Ticker + Live USCC Verifier Desk
+     ======================================================================== */
+  .bz-ticker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    margin-bottom: var(--space-5);
+  }
+
+  .bz-ticker-badge {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 650;
+    color: var(--accent-seal-text);
+    letter-spacing: 0.05em;
+  }
+
+  .bz-ticker a {
+    color: var(--ink-primary);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .bz-ticker a:hover {
+    color: var(--link);
+  }
+
+  .bz-hero {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+    padding-bottom: var(--space-7);
+    border-bottom: 1.5px solid var(--ink-primary);
+  }
+
+  .bz-hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .bz-uscc-box {
+    padding: var(--space-5);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-2xl);
+    background: var(--surface-raised);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .bz-uscc-input-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .bz-uscc-input {
+    flex: 1;
+    min-width: 0;
+    height: 2.4rem;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--background);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-primary);
+    letter-spacing: 0.04em;
+  }
+
+  .bz-uscc-status {
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-sunken);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ink-secondary);
+  }
+
+  .bz-3col-matrix {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .bz-col {
+    border-top: 2px solid var(--ink-primary);
+    padding-top: var(--space-4);
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .bz-col h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 650;
+  }
+
+  .bz-col-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule-subtle);
+  }
+
+  .bz-col-list li {
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .bz-col-list a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-block: 0.65rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--ink-primary);
+    text-decoration: none;
+  }
+
+  .bz-col-list a:hover {
+    color: var(--link);
+  }
+
+  /* ========================================================================
+     04. PLACES (/places/) — Lonely Planet 2:1 Hero + Region Filter + Bento
+     ======================================================================== */
+  .pl-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+
+  .pl-hero img {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--hero-ratio-desktop);
+    max-height: var(--hero-max-h-desktop);
+    object-fit: cover;
+  }
+
+  .pl-hero-overlay {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 3.5rem var(--space-6) var(--space-6);
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.78), rgba(10, 10, 10, 0.25) 65%, transparent);
+    color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .pl-hero-overlay h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 1.6rem + 1.6vw, 2.9rem);
+    font-weight: 650;
+    line-height: 1.12;
+    color: #fff;
+  }
+
+  .pl-hero-overlay p {
+    margin: 0.45rem 0 0;
+    max-width: 40rem;
+    font-size: var(--text-base);
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.55;
+  }
+
+  .pl-region-bar {
+    margin-top: var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .pl-sight-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .pl-sight-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .pl-sight-media {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+  }
+
+  .pl-sight-media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+
+  .pl-sight-card:hover img {
+    transform: scale(1.04);
+  }
+
+  .pl-sight-card strong {
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .pl-sight-card:hover strong {
+    color: var(--link);
+  }
+
+  .pl-sight-card span {
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+  }
+
+  /* ========================================================================
+     05. CULTURE & LIFE (/culture/) — Monocle 3-Col Swiss Magazine Front Page
+     ======================================================================== */
+  .cu-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--ink-primary);
+  }
+
+  .cu-topbar h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 1.6rem + 1.5vw, 2.8rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .cu-pipe-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.75rem;
+    font-size: var(--text-xs);
+    color: var(--ink-tertiary);
+  }
+
+  .cu-pipe-nav a {
+    color: var(--ink-secondary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cu-pipe-nav a:hover {
+    color: var(--ink-primary);
+  }
+
+  /* Artikle / Monocle 3-Column Magazine Frontpage: 24% Lead | 51% Center Photo | 25% Right Rail */
+  .cu-frontpage {
+    margin-top: var(--space-6);
+    display: grid;
+    grid-template-columns: 1fr 2.1fr 1.05fr;
+    gap: var(--space-6);
+    align-items: start;
+    padding-bottom: var(--space-7);
+    border-bottom: 1px solid var(--rule-subtle);
+  }
+
+  .cu-lead-col {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .cu-lead-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent-seal-text);
+    text-transform: uppercase;
+  }
+
+  .cu-lead-col h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.25rem + 0.7vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1.22;
+  }
+
+  .cu-lead-col h2 a {
+    color: var(--ink-primary);
+    text-decoration: none;
+  }
+
+  .cu-lead-col h2 a:hover {
+    color: var(--link);
+  }
+
+  .cu-lead-col p {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.65;
+    color: var(--ink-secondary);
+  }
+
+  .cu-center-photo {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+
+  .cu-center-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 360ms ease;
+  }
+
+  .cu-center-photo:hover img {
+    transform: scale(1.025);
+  }
+
+  .cu-right-col {
+    border-inline-start: 1px solid var(--rule-subtle);
+    padding-inline-start: var(--space-5);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cu-right-item {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--rule-subtle);
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .cu-right-item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .cu-right-item strong {
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--ink-primary);
+    line-height: 1.4;
+  }
+
+  .cu-right-item:hover strong {
+    color: var(--link);
+  }
+
+  .cu-right-item span {
+    font-size: var(--text-xs);
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+
+  .cu-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .cu-photo-card {
+    display: grid;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cu-photo-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+
+  .cu-photo-card h3 {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--ink-primary);
+  }
+
+  .cu-photo-card:hover h3 {
+    color: var(--link);
+  }
+
+  /* ========================================================================
+     06. CHINA ATLAS (/atlas/) — The Economist Chart-First + OWID Reference
+     ======================================================================== */
+  .at-hero {
+    border-top: 3px solid var(--accent-seal);
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-7);
+    border-bottom: 1px solid var(--rule-subtle);
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  .at-hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 1.6rem + 1.5vw, 2.85rem);
+    font-weight: 500;
+    line-height: 1.14;
+  }
+
+  .at-chart-card {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    background: var(--surface-sunken);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .at-chart-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .at-chart-head h2 {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--ink-primary);
+  }
+
+  .at-chart-head span {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--ink-tertiary);
+  }
+
+  .at-bars {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .at-bar-item {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .at-bar-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-bar-top strong {
+    color: var(--ink-primary);
+    font-weight: 600;
+  }
+
+  .at-bar-top span {
+    font-family: var(--font-mono);
+    color: var(--ink-secondary);
+  }
+
+  .at-bar-track {
+    height: 10px;
+    border-radius: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .at-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--ink-primary);
+  }
+
+  .at-bar-fill--accent {
+    background: var(--accent-seal);
+  }
+
+  /* OWID Structured Chapter Cards (3×3 Reference Matrix) */
+  .at-owid-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .at-owid-card {
+    border-top: 2px solid var(--ink-primary);
+    padding-top: var(--space-3);
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .at-owid-card h3 {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 650;
+    color: var(--ink-primary);
+    transition: color var(--dur-fast) ease;
+  }
+
+  .at-owid-card:hover h3 {
+    color: var(--link);
+  }
+
+  .at-owid-card p {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.58;
+    color: var(--ink-secondary);
+  }
+
+  @media (max-width: 960px) {
+    .tr-hero,
+    .bz-hero,
+    .cu-frontpage,
+    .at-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .cu-right-col {
+      border-inline-start: 0;
+      padding-inline-start: 0;
+      border-top: 1px solid var(--rule-subtle);
+      padding-top: var(--space-4);
+    }
+
+    .lv-city-grid,
+    .bz-3col-matrix,
+    .cu-photo-grid,
+    .at-owid-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pl-sight-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .tr-checker-fields,
+    .lv-city-card,
+    .pl-sight-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tr-gov-step {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+
+    .tr-gov-check-btn {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .pl-hero img {
+      aspect-ratio: var(--hero-ratio-mobile);
+      max-height: var(--hero-max-h-mobile);
+    }
+  }
+}

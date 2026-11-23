@@ -1,11 +1,18 @@
 ---
 /**
- * Mother Template 2: v3.2 Primary Pillar Hub Landing Pages
- * Routes: /travel/ /live/ /business/ /places/ /culture/ (+ 301 /visit/ -> /travel/)
+ * 5 Dynamic Primary Pillar Pages — Each renders its own completely independent, benchmark-modeled layout:
+ *   /travel/   -> TravelPillarPage   (Wise × GOV.UK Step-by-Step × Japan-Guide)
+ *   /live/     -> LivePillarPage     (Nomad List × Expatica × GOV.UK Visas)
+ *   /business/ -> BusinessPillarPage (China Briefing × Trade.gov × Live USCC Verifier)
+ *   /places/   -> PlacesPillarPage   (Lonely Planet × Michelin Guide × Atlas Obscura)
+ *   /culture/  -> CulturePillarPage  (Monocle 3-Col Magazine × Eater × Mandarin Soundboard)
+ *   (/atlas/ is routed via src/pages/atlas/index.astro -> AtlasPillarPage)
  */
-import PillarHubLayout from '@layouts/PillarHubLayout.astro';
-import ChinaLayerMap from '../../components/maps/ChinaLayerMap.astro';
-import { PILLAR_BY_ID, type PillarId } from '@data/paradigm-e/pillars';
+import TravelPillarPage from '../../components/pillars/TravelPillarPage.astro';
+import LivePillarPage from '../../components/pillars/LivePillarPage.astro';
+import BusinessPillarPage from '../../components/pillars/BusinessPillarPage.astro';
+import PlacesPillarPage from '../../components/pillars/PlacesPillarPage.astro';
+import CulturePillarPage from '../../components/pillars/CulturePillarPage.astro';
 import { getLocaleFromContext, localePath } from '@i18n/ui';
 
 const rawPillar = (Astro.params.pillar || '').toLowerCase();
@@ -15,26 +22,13 @@ if (rawPillar === 'visit') {
   return Astro.redirect(localePath('/travel/', locale), 301);
 }
 
-const validDynamicPillars: PillarId[] = ['travel', 'live', 'business', 'places', 'culture'];
-
-if (!validDynamicPillars.includes(rawPillar as PillarId)) {
+const valid = ['travel', 'live', 'business', 'places', 'culture'];
+if (!valid.includes(rawPillar)) {
   return new Response('Not Found', { status: 404 });
 }
-
-const pillar = PILLAR_BY_ID[rawPillar as PillarId];
 ---
-<PillarHubLayout pillar={pillar}>
-  {rawPillar === 'places' && (
-    <section class="v32-section-block" aria-labelledby="places-layer-map-h">
-      <h2 id="places-layer-map-h">
-        {locale === 'zh' ? '中国地理图层与城市中枢地图' : 'Interactive China Layer & City Hub Map'}
-      </h2>
-      <p class="v32-section-sub">
-        {locale === 'zh'
-          ? '按高铁网络、风味版图、产业带与世遗图层快速筛选重点城市中枢。'
-          : 'Filter flagship city hubs by rail network, culinary regions, industrial belts, and UNESCO heritage.'}
-      </p>
-      <ChinaLayerMap locale={locale} />
-    </section>
-  )}
-</PillarHubLayout>
+{rawPillar === 'travel' && <TravelPillarPage />}
+{rawPillar === 'live' && <LivePillarPage />}
+{rawPillar === 'business' && <BusinessPillarPage />}
+{rawPillar === 'places' && <PlacesPillarPage />}
+{rawPillar === 'culture' && <CulturePillarPage />}

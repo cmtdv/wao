@@ -1,0 +1,244 @@
+---
+/**
+ * 03 /business/ — China Briefing × Trade.gov Regulatory Desk & Live USCC Verifier
+ * Distinct Paradigm: Flash Policy Ticker -> 2-Col Intelligence Hero with Live 18-Digit USCC Checksum Verifier
+ * -> Trade.gov 3-Column Functional Matrix (11 topics) -> 7:5 Canton Fair & Factory Sourcing Protocol
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import { V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.business;
+
+const colCompliance = pillar.children.filter((c) => ['B1', 'B2', 'B10', 'B11'].includes(c.code));
+const colSourcing = pillar.children.filter((c) => ['B3', 'B4', 'B5', 'B7'].includes(c.code));
+const colFinanceLegal = pillar.children.filter((c) => ['B6', 'B8', 'B9'].includes(c.code));
+---
+<BaseShell
+  title={isZh ? '商务' : 'Business'}
+  description={isZh ? '18 位统一社会信用代码校验、广交会参展、3C 与国标合规、外资准入、财税发票与源头验厂尽调。' : 'Verify Chinese suppliers via 18-digit USCC, navigate Canton Fair, check CCC/GB standards, WFOE entry, and cross-border tax.'}
+  activePillar="business"
+  persona="legal"
+>
+  <div class="container">
+    <div class="pd-shell">
+      {/* 1. China Briefing Style Regulatory Flash Policy Ticker */}
+      <div class="bz-ticker" role="region" aria-label={isZh ? '近期合规动态' : 'Regulatory updates'}>
+        <span class="bz-ticker-badge">{isZh ? '合规速递' : 'REGULATORY ALERT'}</span>
+        <a href={lp('/business/standards-compliance/')}>
+          {isZh ? '锂电池 3C 强制新标 GB 47372-2026 与海关 280 号令进口食品核验指南已更新 →' : 'Updated: GB 47372-2026 Battery CCC Rules & Customs Decree 280 Food Standards →'}
+        </a>
+      </div>
+
+      {/* 2. Trade.gov / Bloomberg Desk Hero + Live 18-Digit USCC Verifier */}
+      <section class="bz-hero" aria-label={isZh ? '在华商务与尽调工作台' : 'Business & Due Diligence Desk'}>
+        <div>
+          <h1>{isZh ? '在华商务、采购与合规工作台' : 'China Business, Sourcing & Compliance Desk'}</h1>
+          <p class="tr-hero-lead">
+            {isZh
+              ? '面向全球买手、硬件创始人与企业法务：先用 18 位信用代码过滤皮包公司，再对接广交会、百大产业带与外资合规实务。'
+              : 'Built for global buyers, founders, and legal teams. Validate supplier licenses locally, decode company chops, and track CCC/GB mandates.'}
+          </p>
+          <div class="tr-hero-pills">
+            <a href={lp('/attractions/canton-fair/')} class="tr-hero-pill">{isZh ? '广交会买手档案 →' : 'Canton Fair Dossier →'}</a>
+            <a href={lp('/compliance/uscc-gsxt-lookup/')} class="tr-hero-pill">{isZh ? '企信网尽调指引 →' : 'GSXT Lookup Guide →'}</a>
+            <a href={lp('/guides/company-chops-contracts/')} class="tr-hero-pill">{isZh ? '公章与合同防坑 →' : 'Company Chops & NNN →'}</a>
+          </div>
+        </div>
+
+        {/* Live GB 32100-2015 18-Digit USCC Local Checksum Verifier */}
+        <div class="bz-uscc-box" data-bz-uscc data-locale={locale}>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.5rem;">
+            <h2 class="tr-checker-title">{isZh ? '18 位统一社会信用代码本地校验' : '18-Digit USCC Checksum Validator'}</h2>
+            <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">GB 32100-2015</span>
+          </div>
+          <div class="bz-uscc-input-row">
+            <input
+              type="text"
+              class="bz-uscc-input"
+              maxlength="18"
+              value="91440300MA5D9N1R5G"
+              aria-label={isZh ? '输入 18 位统一社会信用代码' : 'Enter 18-digit USCC'}
+              data-bz-uscc-input
+            />
+          </div>
+          <div class="bz-uscc-status" data-bz-uscc-output aria-live="polite">
+            {isZh ? '✓ 校验位有效 · 登记机关：91（市场监管 · 企业）· 行政区划：440300（广东深圳）' : '✓ Valid GB 32100 checksum · Authority: 91 (SAMR Enterprise) · Region: 440300 (Shenzhen)'}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">
+              {isZh ? '纯本地模 31 算法 · 不上传查询记录' : 'Local Mod-31 validation · Private'}
+            </span>
+            <a href={lp('/compliance/uscc-gsxt-lookup/')} class="pd-link">
+              {isZh ? '完整企信网核验台 →' : 'Full GSXT Desk →'}
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Trade.gov 3-Column Functional Regulatory & Sourcing Matrix (All 11 Topics) */}
+      <section class="pd-section" aria-labelledby="bz-matrix-h">
+        <div class="pd-section-head">
+          <h2 id="bz-matrix-h">{isZh ? '三大业务与合规职能柱' : 'Three Business & Regulatory Pillars'}</h2>
+        </div>
+
+        <div class="bz-3col-matrix">
+          <div class="bz-col">
+            <h3>{isZh ? '准入、国标与数据合规' : 'Market Entry, Standards & Data'}</h3>
+            <ul class="bz-col-list">
+              {colCompliance.map((sec) => (
+                <li>
+                  <a href={lp(sec.hubPath)}>
+                    <span>{isZh ? sec.navZh : sec.navEn}</span>
+                    <span style="color:var(--ink-tertiary);">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="bz-col">
+            <h3>{isZh ? '产业带、展会与跨境物流' : 'Sourcing, Trade Fairs & Logistics'}</h3>
+            <ul class="bz-col-list">
+              {colSourcing.map((sec) => (
+                <li>
+                  <a href={lp(sec.hubPath)}>
+                    <span>{isZh ? sec.navZh : sec.navEn}</span>
+                    <span style="color:var(--ink-tertiary);">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="bz-col">
+            <h3>{isZh ? '财税、知产与商旅礼仪' : 'Tax, IP, Arbitration & Culture'}</h3>
+            <ul class="bz-col-list">
+              {colFinanceLegal.map((sec) => (
+                <li>
+                  <a href={lp(sec.hubPath)}>
+                    <span>{isZh ? sec.navZh : sec.navEn}</span>
+                    <span style="color:var(--ink-tertiary);">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Asymmetric 7:5 Canton Fair Flagship Visual + 4-Step Factory Audit Protocol */}
+      <section class="p-biz-split" aria-label={isZh ? '旗舰展会与源头验厂流程' : 'Flagship Trade Fair & Sourcing Protocol'}>
+        <a href={lp('/attractions/canton-fair/')} class="p-biz-fair-lead">
+          <div class="p-biz-fair-media">
+            <img src="/images/shanghai.webp" alt={isZh ? '中国国际会展与商贸枢纽' : 'China Trade Fair & Commercial Hub'} loading="lazy" decoding="async" />
+          </div>
+          <div>
+            <span class="v32-spot-tag">{isZh ? '旗舰展会实操档案 · 广州琶洲' : 'FLAGSHIP TRADE FAIR · GUANGZHOU PAZHOU'}</span>
+            <h2 style="margin:0.25rem 0 0;font-size:1.45rem;font-weight:650;color:var(--ink-primary);">
+              {isZh ? '中国进出口商品交易会（广交会）境外采购商实操手册' : 'Canton Fair (Phase 1–3) Overseas Buyer Playbook'}
+            </h2>
+            <p style="margin:0.4rem 0 0;font-size:var(--text-sm);color:var(--ink-secondary);line-height:1.6;">
+              {isZh
+                ? '白云机场落地免费领证避开首日 90 分钟长队、琶洲四区地铁出口速查，以及从广州直连深圳华强北与义乌产业带的选品动线。'
+                : 'Print your buyer badge free at Baiyun Airport to skip 90-minute queues, navigate Pazhou Line 8 gates, and connect south to Shenzhen.'}
+            </p>
+          </div>
+        </a>
+
+        <div class="p-biz-protocol">
+          <h3>{isZh ? '源头工厂采购四步防坑铁律' : '4-Step Supplier Due Diligence Protocol'}</h3>
+          <ol class="p-biz-protocol-list">
+            <li class="p-biz-protocol-step">
+              <span class="p-biz-protocol-num">01</span>
+              <div>
+                <strong>{isZh ? '先验营业执照范围：' : 'Verify Manufacturing Scope: '}</strong>
+                <span>{isZh ? '在企信网核对「生产/制造」资质与实缴资本，过滤无厂贸易中介。' : 'Confirm manufacturing scope on GSXT before wiring sample fees.'}</span>
+              </div>
+            </li>
+            <li class="p-biz-protocol-step">
+              <span class="p-biz-protocol-num">02</span>
+              <div>
+                <strong>{isZh ? '备案公章高于个人签字：' : 'Red Company Seal Over Signature: '}</strong>
+                <span>{isZh ? '双语合同与 NNN 保密协议须加盖带 13 位编号的红色公章或合同章。' : 'Contracts require the registered red company seal (chop) and NNN clause.'}</span>
+              </div>
+            </li>
+            <li class="p-biz-protocol-step">
+              <span class="p-biz-protocol-num">03</span>
+              <div>
+                <strong>{isZh ? '百件打样与第三方验货：' : 'Small-Batch & 3P QC: '}</strong>
+                <span>{isZh ? '尾款放行前委托 QIMA / V-Trust 完成产中与出货前抽检。' : 'Run QIMA or V-Trust pre-shipment inspection prior to final balance.'}</span>
+              </div>
+            </li>
+            <li class="p-biz-protocol-step">
+              <span class="p-biz-protocol-num">04</span>
+              <div>
+                <strong>{isZh ? '收汇主体与报关单一致：' : 'Matching Beneficiary Account: '}</strong>
+                <span>{isZh ? '严禁向私人或不明离岸账户打款，留存数电增值税发票。' : 'Never wire deposits to personal or mismatched offshore accounts.'}</span>
+              </div>
+            </li>
+          </ol>
+          <a href={lp('/guides/factory-sourcing-due-diligence/')} class="pd-link">
+            {isZh ? '阅读完整验厂与合同防坑指南 →' : 'Read full sourcing due diligence guide →'}
+          </a>
+        </div>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '商务' : 'Business'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>
+
+<script>
+  // Local GB 32100-2015 Mod-31 USCC Validator
+  const box = document.querySelector<HTMLElement>('[data-bz-uscc]');
+  if (box) {
+    const isZh = box.dataset.locale === 'zh';
+    const input = box.querySelector<HTMLInputElement>('[data-bz-uscc-input]');
+    const out = box.querySelector<HTMLElement>('[data-bz-uscc-output]');
+    const charset = '0123456789ABCDEFGHJKLMNPQRTUWXY';
+    const weights = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];
+
+    const verify = () => {
+      if (!input || !out) return;
+      const code = input.value.trim().toUpperCase();
+      if (code.length < 18) {
+        out.textContent = isZh ? `已输入 ${code.length} / 18 位，请输入完整的 18 位统一社会信用代码。` : `${code.length} / 18 characters entered. Enter full 18-digit USCC.`;
+        return;
+      }
+      let sum = 0;
+      let validChars = true;
+      for (let i = 0; i < 17; i++) {
+        const idx = charset.indexOf(code[i]);
+        if (idx === -1) { validChars = false; break; }
+        sum += idx * weights[i];
+      }
+      const expected = charset[(31 - (sum % 31)) % 31];
+      const ok = validChars && code[17] === expected;
+      const regCode = code.slice(2, 8);
+      if (ok) {
+        out.textContent = isZh
+          ? `✓ 校验位通过（GB 32100）· 登记前缀：${code.slice(0, 2)} · 行政区划码：${regCode}`
+          : `✓ Valid GB 32100 checksum · Authority: ${code.slice(0, 2)} · Region code: ${regCode}`;
+      } else {
+        out.textContent = isZh
+          ? `✕ 校验位不匹配（末位应为 ${validChars ? expected : '合法字符'}），请核对营业执照原件。`
+          : `✕ Invalid checksum (expected final char ${validChars ? expected : 'valid alphanumeric'}). Re-check license.`;
+      }
+    };
+
+    input?.addEventListener('input', verify);
+    verify();
+  }
+</script>

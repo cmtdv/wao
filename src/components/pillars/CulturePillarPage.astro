@@ -1,0 +1,157 @@
+---
+/**
+ * 05 /culture/ — Monocle × Eater × Sixth Tone Swiss-Grid Cultural Magazine
+ * Distinct Paradigm: Masthead + Pipe Sub-Nav -> 3-Column Swiss Magazine Front Page (24% Lead | 51% Photo | 25% Essays)
+ * -> Eater 3-Photo Sensory Gallery -> Interactive Mandarin Dining Soundboard -> 9 Cultural Realms Grid
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import { V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.culture;
+---
+<BaseShell
+  title={isZh ? '文化与生活' : 'Culture & Life'}
+  description={isZh ? '中华八大菜系、六大茶类、国民新消费连锁、活态民俗、24 小时汤泉与当代中文热词。' : 'Explore Chinese cuisines, six tea categories, everyday retail chains, folk spectacles, 24h bathhouses, and living language.'}
+  activePillar="culture"
+  persona="editorial"
+>
+  <div class="container">
+    <div class="pd-shell pd-shell--editorial">
+      {/* 1. Monocle / Artikle Masthead + Unboxed Pipe-Separated Sub-Nav */}
+      <header class="cu-topbar">
+        <h1>{isZh ? '文化与生活' : 'Culture & Life'}</h1>
+        <nav class="cu-pipe-nav" aria-label={isZh ? '文化子栏目' : 'Culture sections'}>
+          {pillar.children.map((sec, idx) => (
+            <>
+              {idx > 0 && <span aria-hidden="true">|</span>}
+              <a href={lp(sec.hubPath)}>{isZh ? sec.navZh : sec.navEn}</a>
+            </>
+          ))}
+        </nav>
+      </header>
+
+      {/* 2. Artikle / Monocle 3-Column Magazine Front Page (No generic top banner!) */}
+      <section class="cu-frontpage" aria-label={isZh ? '本期文化封面' : 'Culture Cover Spread'}>
+        <div class="cu-lead-col">
+          <span class="cu-lead-kicker">{isZh ? '封面特写 · 餐桌与茶席' : 'COVER ESSAY · FOOD & TEA'}</span>
+          <h2>
+            <a href={lp('/guides/chinese-tea-6-types/')}>
+              {isZh ? '一片树叶的六种演化：八大菜系风味地图与六大茶类全图鉴' : 'One Leaf, Six Teas: Pairing China’s Tea Classes With Eight Regional Cuisines'}
+            </a>
+          </h2>
+          <p>
+            {isZh
+              ? '从杭州梅家坞明前龙井到武夷岩茶炭焙岩韵，拆解为什么中文「红茶」在英文里叫 Black Tea，以及走进川菜馆与广式早茶店的地道点单密码。'
+              : 'Decode why Chinese “Red Tea” is Western Black Tea, explore Sichuan’s 24 compound flavors beyond chili heat, and order dim sum like a local.'}
+          </p>
+          <a href={lp('/guides/chinese-tea-6-types/')} class="pd-link">
+            {isZh ? '阅读完整图文图鉴 →' : 'Read full visual guide →'}
+          </a>
+        </div>
+
+        <a href={lp('/guides/chinese-tea-6-types/')} class="cu-center-photo" aria-label={isZh ? '查看饮食与茶类图鉴' : 'Open Food & Tea Guide'}>
+          <img src="/images/tea.webp" alt={isZh ? '中华功夫茶席与器物美学' : 'Chinese tea ceremony and culinary craft'} loading="eager" decoding="async" />
+        </a>
+
+        <aside class="cu-right-col" aria-label={isZh ? '编辑部精选专栏' : 'Editors Picks'}>
+          <a href={lp('/guides/tcm-wellness-bathhouses/')} class="cu-right-item">
+            <span class="v32-spot-tag">{isZh ? '市井与汤泉' : 'WELLNESS & SPAS'}</span>
+            <strong>{isZh ? '读懂「上火与祛湿」：24 小时城市豪华汤泉全体验' : '“Shanghuo”, Hot Water & China’s 24-Hour Luxury Bathhouses'}</strong>
+            <span>{isZh ? '水果自由、泡汤过夜与中式头疗手把手指南。' : 'Thermal pools, unlimited fruit lounges, and overnight spa etiquette.'}</span>
+          </a>
+          <a href={lp('/guides/living-folk-arts/')} class="cu-right-item">
+            <span class="v32-spot-tag">{isZh ? '活态民俗大秀' : 'FOLK SPECTACLES'}</span>
+            <strong>{isZh ? '1600°C 铁水流星：打铁花与潮汕英歌舞现场日历' : '1600°C Molten Iron Flowers & Chaoshan Yingge Street Dances'}</strong>
+            <span>{isZh ? '走出博物馆玻璃柜、仍在街巷燃烧的千年非遗现场。' : 'Living folk spectacles performed in streets and riverbeds across China.'}</span>
+          </a>
+          <a href={lp('/culture/chains-retail-culture/')} class="cu-right-item">
+            <span class="v32-spot-tag">{isZh ? '国民新消费' : 'NEW RETAIL'}</span>
+            <strong>{isZh ? '瑞幸、霸王茶姬、蜜雪冰城与胖东来：中国新零售观察' : 'Luckin, Chagee, Mixue & Haidilao: Street-Level Retail Culture'}</strong>
+            <span>{isZh ? '小程序点单糖度冰度暗号与本土品牌体验。' : 'How to order half-sugar oolong lattes and navigate modern retail.'}</span>
+          </a>
+        </aside>
+      </section>
+
+      {/* 3. Eater Sensory Photography Strip (Clean image + title, zero paragraph clutter) */}
+      <section class="pd-section" aria-labelledby="cu-gallery-h">
+        <div class="pd-section-head">
+          <h2 id="cu-gallery-h">{isZh ? '风味、节令与器物画报' : 'Taste, Seasons & Living Craft'}</h2>
+          <a href={lp('/tools/hanzi-tattoo-check/')} class="pd-link">{isZh ? '汉字纹身防雷与起名工坊 →' : 'Hanzi Tattoo Check & Naming →'}</a>
+        </div>
+        <div class="cu-photo-grid">
+          <a href={lp('/guides/dining-etiquette-old-brands/')} class="cu-photo-card">
+            <img src="/images/food.webp" alt={isZh ? '中华老字号与合餐礼仪' : 'Dining Etiquette & Heritage Kitchens'} loading="lazy" />
+            <h3>{isZh ? '合餐圆桌礼仪与中华老字号招牌菜' : 'Lazy-Susan Etiquette & Time-Honored Kitchens'}</h3>
+          </a>
+          <a href={lp('/guides/black-myth-shanxi/')} class="cu-photo-card">
+            <img src="/images/craft.webp" alt={isZh ? '山西古建木构与传统非遗' : 'Shanxi Timber Architecture & Craft'} loading="lazy" />
+            <h3>{isZh ? '从《黑神话》走进山西唐宋木构古建巡礼' : 'Following Black Myth: Wukong Across Shanxi’s Timber Temples'}</h3>
+          </a>
+          <a href={lp('/guides/annual-events-calendar/')} class="cu-photo-card">
+            <img src="/images/rice.webp" alt={isZh ? '二十四节气与年度节庆日历' : '24 Solar Terms & Festival Calendar'} loading="lazy" />
+            <h3>{isZh ? '二十四节气、物候农时与年度节庆日历' : '24 Solar Terms, Harvests & 12-Month Festival Calendar'}</h3>
+          </a>
+        </div>
+      </section>
+
+      {/* 4. Interactive Tap-to-Speak Mandarin Soundboard */}
+      <section class="p-culture-audio-strip" aria-labelledby="cu-audio-h">
+        <div class="pd-section-head">
+          <h2 id="cu-audio-h">{isZh ? '餐桌与茶馆即点即读（点击卡片播报普通话）' : 'Tap-to-Speak Mandarin Dining & Teahouse Soundboard'}</h2>
+          <a href={lp('/culture/language-pronunciation-slang/')} class="pd-link">{isZh ? '更多发音与热词 →' : 'More language & slang →'}</a>
+        </div>
+        <div class="p-culture-audio-grid">
+          <button type="button" class="p-culture-audio-btn" data-pe-speak="微辣，不要香菜">
+            <span class="p-culture-audio-hanzi"><span>微辣，不要香菜</span><span>🔊</span></span>
+            <span class="p-culture-audio-pinyin">Wēi là, bú yào xiāngcài</span>
+            <span class="p-culture-audio-meaning">{isZh ? '川湘点单保命短语' : 'Mild spice, no cilantro'}</span>
+          </button>
+          <button type="button" class="p-culture-audio-btn" data-pe-speak="你好，服务员，买单">
+            <span class="p-culture-audio-hanzi"><span>服务员，买单</span><span>🔊</span></span>
+            <span class="p-culture-audio-pinyin">Fúwùyuán, mǎidān</span>
+            <span class="p-culture-audio-meaning">{isZh ? '用餐结束呼叫结账' : 'Excuse me, check please'}</span>
+          </button>
+          <button type="button" class="p-culture-audio-btn" data-pe-speak="请不要放花生和坚果">
+            <span class="p-culture-audio-hanzi"><span>不要放花生和坚果</span><span>🔊</span></span>
+            <span class="p-culture-audio-pinyin">Bú yào fàng huāshēng hé jiānguǒ</span>
+            <span class="p-culture-audio-meaning">{isZh ? '坚果过敏后厨叮嘱' : 'No peanuts or tree nuts'}</span>
+          </button>
+          <button type="button" class="p-culture-audio-btn" data-pe-speak="老板，来一碗盖碗茶">
+            <span class="p-culture-audio-hanzi"><span>来一碗盖碗茶</span><span>🔊</span></span>
+            <span class="p-culture-audio-pinyin">Lái yì wǎn gàiwǎn chá</span>
+            <span class="p-culture-audio-meaning">{isZh ? '成都百年茶社点茶' : 'One lidded-bowl tea, please'}</span>
+          </button>
+        </div>
+      </section>
+
+      {/* 5. 9 Cultural Realms Swiss Typography Index */}
+      <section class="pd-section" aria-labelledby="cu-all-h">
+        <div class="pd-section-head">
+          <h2 id="cu-all-h">{isZh ? '文化与生活全部分类' : 'All Culture & Life Sections'}</h2>
+        </div>
+        <div class="at-owid-grid">
+          {pillar.children.map((sec) => (
+            <a href={lp(sec.hubPath)} class="at-owid-card">
+              <h3>{isZh ? sec.navZh : sec.navEn}</h3>
+              <p>{isZh ? sec.scopeZh : sec.navEn}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '文化与生活' : 'Culture & Life'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>

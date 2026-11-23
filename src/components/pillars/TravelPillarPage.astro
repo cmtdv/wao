@@ -1,0 +1,298 @@
+---
+/**
+ * 01 /travel/ — Wise × GOV.UK Step-by-Step × Japan-Guide Practical Command Deck
+ * Distinct Paradigm: Utility-first hero with embedded live Visa-Free Quick Checker
+ * -> Interactive GOV.UK progress checklist -> Dark Emergency Show-Cards -> Compact Logistics Index
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import { V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.travel;
+---
+<BaseShell
+  title={isZh ? '旅行' : 'Travel'}
+  description={isZh ? '240 小时过境免签测算、支付宝与微信绑外卡、高铁 12306、酒店登记与离线救火字卡。' : 'Instant 240h visa-free check, cashless payments, Railway 12306, hotels, and offline show-to-local cards.'}
+  activePillar="travel"
+  persona="safety"
+>
+  <div class="container">
+    <div class="pd-shell">
+      {/* 1. Wise-Style Task Command Hero (No decorative banner — instant utility above the fold) */}
+      <section class="tr-hero" aria-label={isZh ? '行前准备与免签快检' : 'Travel Command Deck'}>
+        <div>
+          <h1>{isZh ? '来华旅行实操台' : 'China Travel Playbook'}</h1>
+          <p class="tr-hero-lead">
+            {isZh
+              ? '按起飞前 72 小时到落地离境的真实动线，先确认免签与外卡支付，再一键带走高铁、酒店与离线救火字卡。'
+              : 'Skip generic travel fluff. Check your visa-free eligibility right here, complete the 4 arrival steps, and keep fullscreen Chinese cards offline.'}
+          </p>
+          <div class="tr-hero-pills">
+            <a href={lp('/guides/72h-pre-departure/')} class="tr-hero-pill">{isZh ? '72h 行前剧本 →' : '72h Playbook →'}</a>
+            <a href={lp('/guides/cashless-super-apps/')} class="tr-hero-pill">{isZh ? '支付宝/微信外卡 →' : 'Alipay & WeChat →'}</a>
+            <a href={lp('/routes/beijing-to-shanghai/')} class="tr-hero-pill">{isZh ? '高铁 vs 飞机 →' : 'HSR vs Flight →'}</a>
+            <a href={lp('/cards/')} class="tr-hero-pill">{isZh ? '亮屏字卡库 →' : 'Show Cards →'}</a>
+          </div>
+        </div>
+
+        {/* Live Interactive 240h / 30-Day Quick Checker (100% client-side, zero PII) */}
+        <div class="tr-checker" data-tr-visa-widget data-locale={locale}>
+          <h2 class="tr-checker-title">{isZh ? '5 秒免签与 240h 过境快检' : '5-Second Visa-Free Quick Check'}</h2>
+          <div class="tr-checker-fields">
+            <div class="tr-field">
+              <label for="tr-passport">{isZh ? '护照国籍' : 'Passport'}</label>
+              <select id="tr-passport" data-tr-passport>
+                <option value="unilateral">{isZh ? '法/德/意/荷/西/澳/日/韩/新等免签国' : 'EU / AU / JP / KR / SG (Unilateral 30d)'}</option>
+                <option value="transit240">{isZh ? '美国 / 英国 / 加拿大 / 巴西等 55 国' : 'US / UK / CA / BR (240h Transit Eligible)'}</option>
+                <option value="other">{isZh ? '其他国家护照' : 'Other Passport'}</option>
+              </select>
+            </div>
+            <div class="tr-field">
+              <label for="tr-days">{isZh ? '停留天数与行程' : 'Stay & Itinerary'}</label>
+              <select id="tr-days" data-tr-days>
+                <option value="short">{isZh ? '≤ 10 天（含第三国联程票）' : '≤ 10 days (with onward 3rd-country ticket)'}</option>
+                <option value="mid">{isZh ? '11 – 30 天（往返或联程）' : '11 – 30 days (round-trip or onward)'}</option>
+                <option value="long">{isZh ? '> 30 天' : '> 30 days'}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="tr-checker-result" aria-live="polite">
+            <span class="tr-checker-verdict" data-tr-verdict>
+              {isZh ? '✓ 适用 30 天单方面免签（无需提前办签）' : '✓ Eligible for 30-Day Unilateral Visa-Free Entry'}
+            </span>
+            <p class="tr-checker-note" data-tr-note>
+              {isZh
+                ? '持有效期 6 个月以上普通护照即可免签入境旅游、商贸或探亲，无需联程第三国机票。'
+                : 'Enter directly with a valid passport for tourism, business, or family visits—no onward third-country ticket required.'}
+            </p>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+            <span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--ink-tertiary);">
+              {isZh ? '本地即时测算 · 不上传任何信息' : 'Local calculation · Zero data uploaded'}
+            </span>
+            <a href={lp('/tools/visa-checker/')} class="pd-link">
+              {isZh ? '完整口岸判定器 →' : 'Full port checker →'}
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. GOV.UK Interactive Step-by-Step Arrival Checklist */}
+      <section class="pd-section" aria-labelledby="tr-gov-h">
+        <div class="pd-section-head">
+          <h2 id="tr-gov-h">{isZh ? '行前到离境四步通关清单' : '4-Step China Arrival Checklist'}</h2>
+          <a href={lp('/journeys/')} class="pd-link">{isZh ? '展开详细 7 步流程 →' : 'Full 7-step journey →'}</a>
+        </div>
+
+        <div class="tr-gov-progress">
+          <div class="tr-gov-bar-wrap">
+            <span style="font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;color:var(--ink-primary);" data-tr-progress-text>
+              {isZh ? '已完成 0 / 4 步' : '0 / 4 completed'}
+            </span>
+            <div class="tr-gov-bar-track" aria-hidden="true">
+              <div class="tr-gov-bar-fill" data-tr-progress-fill></div>
+            </div>
+          </div>
+          <span style="font-size:var(--text-xs);color:var(--ink-tertiary);">
+            {isZh ? '勾选进度自动保存在本机浏览器' : 'Saved locally in your browser'}
+          </span>
+        </div>
+
+        <div class="tr-gov-steps" data-tr-steps>
+          <div class="tr-gov-step" data-tr-step="s1">
+            <span class="tr-gov-num">01</span>
+            <div class="tr-gov-step-body">
+              <h3>{isZh ? '起飞前 72 小时：免签、绑外卡与漫游 eSIM' : '72h Before Flight: Visa, Foreign Cards & eSIM'}</h3>
+              <p>{isZh ? '在出发地先完成支付宝与微信国际版实名认证并绑定 Visa/Mastercard（单笔 ≤ ¥200 免收 3% 手续费），安装港澳/新加坡漫游 eSIM。' : 'Verify passport on Alipay & WeChat Pay (0% fee ≤ ¥200) and install a roaming eSIM before boarding.'}</p>
+              <div class="tr-gov-sublinks">
+                <a href={lp('/travel/visas-entry/')}>{isZh ? '签证与入境 →' : 'Visas & Entry →'}</a>
+                <a href={lp('/travel/payments-money/')}>{isZh ? '支付与货币 →' : 'Payments & Money →'}</a>
+                <a href={lp('/travel/esim-apps-fixes/')}>{isZh ? '联网、App 与报错 →' : 'eSIM & Apps →'}</a>
+              </div>
+            </div>
+            <button type="button" class="tr-gov-check-btn" data-tr-toggle="s1">{isZh ? '标记完成' : 'Mark done'}</button>
+          </div>
+
+          <div class="tr-gov-step" data-tr-step="s2">
+            <span class="tr-gov-num">02</span>
+            <div class="tr-gov-step-body">
+              <h3>{isZh ? '落地首日：数字入境卡、机场进城与 24h 住宿登记' : 'Day 1 Arrival: Arrival Card, Airport Rail & Hotel Check-In'}</h3>
+              <p>{isZh ? '提前对照填写免费数字入境卡，优先选地铁/快轨进城（北上支持外卡直刷），涉外酒店办理入住时自动同步 24 小时公安登记。' : 'Fill the free arrival card, ride airport rail, and verify 24h police registration at your hotel.'}</p>
+              <div class="tr-gov-sublinks">
+                <a href={lp('/documents/arrival-card/')}>{isZh ? '入境卡红框图解 →' : 'Arrival Card Guide →'}</a>
+                <a href={lp('/travel/hotels-stays/')}>{isZh ? '酒店与住宿登记 →' : 'Hotels & Stays →'}</a>
+                <a href={lp('/travel/getting-around/')}>{isZh ? '交通出行指南 →' : 'Getting Around →'}</a>
+              </div>
+            </div>
+            <button type="button" class="tr-gov-check-btn" data-tr-toggle="s2">{isZh ? '标记完成' : 'Mark done'}</button>
+          </div>
+
+          <div class="tr-gov-step" data-tr-step="s3">
+            <span class="tr-gov-num">03</span>
+            <div class="tr-gov-step-body">
+              <h3>{isZh ? '在途游玩：高铁 12306、7 天场馆放票与扫码点餐' : 'On the Ground: 12306 Rail, Museum Drops & Dining'}</h3>
+              <p>{isZh ? '高铁凭护照原件直刷人工/电子闸机；故宫等顶流场馆严格提前 7 天晚 20:00 放票；过敏体质随身保存后厨亮屏字卡。' : 'Board HSR with passport, watch 7-day 20:00 BJT museum drops, and carry allergy show cards.'}</p>
+              <div class="tr-gov-sublinks">
+                <a href={lp('/travel/tickets-bookings/')}>{isZh ? '门票与预约 →' : 'Tickets & Bookings →'}</a>
+                <a href={lp('/travel/eating-out-dietary/')}>{isZh ? '外出就餐与忌口 →' : 'Eating Out & Dietary →'}</a>
+                <a href={lp('/travel/trip-plans-stacks/')}>{isZh ? '行程、清单与横评 →' : 'Trip Plans & Stacks →'}</a>
+              </div>
+            </div>
+            <button type="button" class="tr-gov-check-btn" data-tr-toggle="s3">{isZh ? '标记完成' : 'Mark done'}</button>
+          </div>
+
+          <div class="tr-gov-step" data-tr-step="s4">
+            <span class="tr-gov-num">04</span>
+            <div class="tr-gov-step-body">
+              <h3>{isZh ? '应急与离境：报错救火、酒店设备图解与 11% 即买即退' : 'Rescue & Exit: App Fixes, Appliances & 11% Tax Refund'}</h3>
+              <p>{isZh ? '遇到微信受限、12306 核验失败或全中文洗衣机面板直接照图操作；同日同店满 ¥200 即可在离境口岸办理即买即退。' : 'Resolve WeChat freezes or Chinese washing machine panels fast, and claim 9% net VAT refunds.'}</p>
+              <div class="tr-gov-sublinks">
+                <a href={lp('/travel/safety-forms-how-to/')}>{isZh ? '安全、单据与设备图解 →' : 'Safety & How-To →'}</a>
+                <a href={lp('/travel/shopping-tax-refund/')}>{isZh ? '购物、数码与退税 →' : 'Shopping & Tax Refund →'}</a>
+                <a href={lp('/travel/medical-dental-trips/')}>{isZh ? '入境医疗与体检旅游 →' : 'Medical & Dental Trips →'}</a>
+              </div>
+            </div>
+            <button type="button" class="tr-gov-check-btn" data-tr-toggle="s4">{isZh ? '标记完成' : 'Mark done'}</button>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. High-Contrast Show-to-Local Emergency Cards Strip */}
+      <section class="p-travel-sos-band" aria-labelledby="travel-sos-h">
+        <div class="p-travel-sos-head">
+          <h2 id="travel-sos-h">{isZh ? '现场救火 · 全屏亮屏字卡（给司机 / 前台 / 后厨直接看）' : 'Show-to-Local Fullscreen Emergency Cards'}</h2>
+          <a href={lp('/cards/')}>{isZh ? '全部亮屏字卡 →' : 'All fullscreen cards →'}</a>
+        </div>
+        <div class="p-travel-sos-grid">
+          <a href={lp('/cards/peanut-allergy-sos/')} class="p-travel-sos-card">
+            <span class="p-travel-sos-hanzi">我对花生严重过敏</span>
+            <span class="p-travel-sos-en">{isZh ? '后厨防花生油亮屏卡 →' : 'Severe Peanut Allergy SOS →'}</span>
+          </a>
+          <a href={lp('/cards/taxi-beijing-qinghe/')} class="p-travel-sos-card">
+            <span class="p-travel-sos-hanzi">请去北京清河站</span>
+            <span class="p-travel-sos-en">{isZh ? '高铁站防走错打车卡 →' : 'Railway Station Taxi Card →'}</span>
+          </a>
+          <a href={lp('/cards/hotel-checkin-passport/')} class="p-travel-sos-card">
+            <span class="p-travel-sos-hanzi">持外国护照办理入住</span>
+            <span class="p-travel-sos-en">{isZh ? '酒店前台外宾登记卡 →' : 'Hotel Passport Check-In →'}</span>
+          </a>
+          <a href={lp('/cards/medical-emergency-120/')} class="p-travel-sos-card">
+            <span class="p-travel-sos-hanzi">请送三甲医院国际部</span>
+            <span class="p-travel-sos-en">{isZh ? '120 急诊就医沟通卡 →' : 'Emergency Hospital Card →'}</span>
+          </a>
+        </div>
+      </section>
+
+      {/* 4. Japan-Guide Compact 11-Section Practical Directory */}
+      <section class="pd-section" aria-labelledby="tr-all-h">
+        <div class="pd-section-head">
+          <h2 id="tr-all-h">{isZh ? '全部旅行专题索引' : 'All Travel Guides & Practicalities'}</h2>
+        </div>
+        <ul class="v32-topic-grid">
+          {pillar.children.map((sec) => (
+            <li class="v32-topic-cell">
+              <a href={lp(sec.hubPath)} class="v32-topic-link">
+                <div class="v32-topic-row">
+                  <span class="v32-topic-title">{isZh ? sec.navZh : sec.navEn}</span>
+                  <span class="v32-topic-arrow" aria-hidden="true">→</span>
+                </div>
+                <p class="v32-topic-desc">{isZh ? sec.scopeZh : sec.navEn}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '旅行' : 'Travel'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>
+
+<script>
+  // 1. Live Visa-Free Quick Checker
+  const widget = document.querySelector<HTMLElement>('[data-tr-visa-widget]');
+  if (widget) {
+    const isZh = widget.dataset.locale === 'zh';
+    const passportSel = widget.querySelector<HTMLSelectElement>('[data-tr-passport]');
+    const daysSel = widget.querySelector<HTMLSelectElement>('[data-tr-days]');
+    const verdictEl = widget.querySelector<HTMLElement>('[data-tr-verdict]');
+    const noteEl = widget.querySelector<HTMLElement>('[data-tr-note]');
+
+    const updateVisa = () => {
+      if (!passportSel || !daysSel || !verdictEl || !noteEl) return;
+      const p = passportSel.value;
+      const d = daysSel.value;
+      if (p === 'unilateral' && d !== 'long') {
+        verdictEl.textContent = isZh ? '✓ 适用 30 天单方面免签（无需提前办签）' : '✓ Eligible for 30-Day Unilateral Visa-Free Entry';
+        noteEl.textContent = isZh
+          ? '持有效期 6 个月以上普通护照即可免签入境旅游、商贸或探亲，无需联程第三国机票。'
+          : 'Enter directly with a valid passport for tourism, business, or family visits—no onward third-country ticket required.';
+      } else if (p === 'transit240' && d === 'short') {
+        verdictEl.textContent = isZh ? '✓ 适用 240 小时（10 天）跨省过境免签' : '✓ Eligible for 240-Hour (10-Day) Visa-Free Transit';
+        noteEl.textContent = isZh
+          ? '须持有已确定日期与座位的「出发国 → 中国 → 第三国/地区（含港澳台）」联程票，从适用口岸入境。'
+          : 'Requires confirmed onward ticket to a third country/region (HK, Macao, Taiwan count) entering via an approved port.';
+      } else {
+        verdictEl.textContent = isZh ? '! 需提前申请中国常规签证（L / M / Q）' : '! Standard Chinese Visa Required (L / M / Q)';
+        noteEl.textContent = isZh
+          ? '停留超过免签窗口或非免签/过境国籍，请提前通过中国签证申请服务中心在线填表办理。'
+          : 'Your stay length or passport requires applying in advance through a Chinese Visa Application Service Center.';
+      }
+    };
+    passportSel?.addEventListener('change', updateVisa);
+    daysSel?.addEventListener('change', updateVisa);
+  }
+
+  // 2. GOV.UK Interactive LocalStorage Checklist
+  const stepsWrap = document.querySelector<HTMLElement>('[data-tr-steps]');
+  if (stepsWrap) {
+    const STORAGE_KEY = 'cw-travel-hub-steps-v1';
+    const isZh = document.documentElement.lang.startsWith('zh');
+    const fill = document.querySelector<HTMLElement>('[data-tr-progress-fill]');
+    const txt = document.querySelector<HTMLElement>('[data-tr-progress-text]');
+    const stepEls = Array.from(stepsWrap.querySelectorAll<HTMLElement>('[data-tr-step]'));
+
+    let doneSet = new Set<string>();
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      if (Array.isArray(saved)) doneSet = new Set(saved);
+    } catch {}
+
+    const render = () => {
+      stepEls.forEach((el) => {
+        const id = el.dataset.trStep || '';
+        const done = doneSet.has(id);
+        el.dataset.done = done ? 'true' : 'false';
+        const btn = el.querySelector<HTMLButtonElement>('[data-tr-toggle]');
+        if (btn) btn.textContent = done ? (isZh ? '✓ 已完成' : '✓ Done') : (isZh ? '标记完成' : 'Mark done');
+      });
+      const pct = Math.round((doneSet.size / stepEls.length) * 100);
+      if (fill) fill.style.width = `${pct}%`;
+      if (txt) txt.textContent = isZh ? `已完成 ${doneSet.size} / ${stepEls.length} 步` : `${doneSet.size} / ${stepEls.length} completed`;
+    };
+
+    stepEls.forEach((el) => {
+      const id = el.dataset.trStep || '';
+      el.querySelector<HTMLButtonElement>('[data-tr-toggle]')?.addEventListener('click', () => {
+        if (doneSet.has(id)) doneSet.delete(id);
+        else doneSet.add(id);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet])); } catch {}
+        render();
+      });
+    });
+    render();
+  }
+</script>

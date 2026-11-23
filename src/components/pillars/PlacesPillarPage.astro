@@ -1,0 +1,172 @@
+---
+/**
+ * 04 /places/ — Lonely Planet Destinations × Michelin Guide × Atlas Obscura
+ * Distinct Paradigm: Full-bleed 2:1 panoramic landscape hero with overlay title -> Region filter bar
+ * -> 5-City Asymmetric Bento Photo Grid -> Interactive China Spatial Layer Map -> 4-Col Sights Photo Strip -> 5 Regional Corridors
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import ChinaLayerMap from '../maps/ChinaLayerMap.astro';
+import { V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.places;
+const regions = pillar.children.filter((c) => ['G5', 'G6', 'G7', 'G8', 'G9'].includes(c.code));
+---
+<BaseShell
+  title={isZh ? '地点' : 'Places'}
+  description={isZh ? '按热门城市、世界遗产、徒步骑行路线与五大地理片区探索中国。' : 'Explore China’s flagship cities, UNESCO heritage sites, scenic trails, and five regional corridors.'}
+  activePillar="places"
+  persona="editorial"
+>
+  <div class="container">
+    <div class="pd-shell">
+      {/* 1. Lonely Planet Panoramic 2:1 Visual Hero */}
+      <section class="pl-hero" aria-label={isZh ? '探索中国目的地' : 'Explore China Destinations'}>
+        <img src="/images/hero.webp" alt={isZh ? '桂林阳朔漓江山水画卷' : 'Karst mountains and river valley in China'} loading="eager" decoding="async" />
+        <div class="pl-hero-overlay">
+          <div>
+            <h1>{isZh ? '探索中国山河与城市' : 'Places Across China'}</h1>
+            <p>
+              {isZh
+                ? '从五大 240h 免签入境核心城市出发，按地理图层与五大文化片区串联世界遗产、古镇徒步与地道夜市。'
+                : 'Start from five 240h transit gateway cities and explore 34 provincial regions by rail corridors, UNESCO sites, and local walks.'}
+            </p>
+          </div>
+          <a href={lp('/tools/ticket-calendar/')} class="v32-tool-cta" style="background:#fff;color:#141414;">
+            {isZh ? '跨时区放票日历 →' : 'Ticket Drop Calendar →'}
+          </a>
+        </div>
+      </section>
+
+      {/* Quick Region Filter Pills */}
+      <div class="pl-region-bar" role="navigation" aria-label={isZh ? '按片区与主题探索' : 'Browse by region and theme'}>
+        {pillar.children.map((sec) => (
+          <a href={lp(sec.hubPath)} class="tr-hero-pill">
+            {isZh ? sec.navZh : sec.navEn}
+          </a>
+        ))}
+      </div>
+
+      {/* 2. Lonely Planet 5-City Asymmetric Bento Photography Grid */}
+      <section class="pd-section" aria-labelledby="pl-bento-h">
+        <div class="pd-section-head">
+          <h2 id="pl-bento-h">{isZh ? '五大首访核心城市画报' : 'Five Flagship Entry Cities'}</h2>
+          <a href={lp('/places/top-cities/')} class="pd-link">{isZh ? '全部热门城市 →' : 'All top cities →'}</a>
+        </div>
+
+        <div class="p-places-bento" style="margin-top:0;">
+          <a href={lp('/cities/beijing/')} class="p-places-tile p-places-tile--lead">
+            <img src="/images/beijing.webp" alt={isZh ? '北京古建天际线' : 'Beijing Imperial Roofs'} loading="lazy" decoding="async" />
+            <div class="p-places-tile-overlay">
+              <span class="p-places-tile-port">PEK · PKX · 240H</span>
+              <h3 class="p-places-tile-name">{isZh ? '北京' : 'Beijing'}</h3>
+              <p class="p-places-tile-sub">{isZh ? '故宫 7 天放票、慕田峪长城与 7 大火车站防走错提醒' : 'Forbidden City drops, Mutianyu Wall & 7 rail stations'}</p>
+            </div>
+          </a>
+
+          <a href={lp('/cities/shanghai/')} class="p-places-tile">
+            <img src="/images/shanghai.webp" alt={isZh ? '上海黄浦江暮色' : 'Shanghai Dusk'} loading="lazy" decoding="async" />
+            <div class="p-places-tile-overlay">
+              <span class="p-places-tile-port">PVG · SHA · CRUISE</span>
+              <h3 class="p-places-tile-name">{isZh ? '上海' : 'Shanghai'}</h3>
+              <p class="p-places-tile-sub">{isZh ? '外卡最友好国际门户与梧桐历史街区' : 'Frictionless international gateway & Art Deco walks'}</p>
+            </div>
+          </a>
+
+          <a href={lp('/cities/chengdu/')} class="p-places-tile">
+            <img src="/images/chengdu.webp" alt={isZh ? '成都竹林大熊猫' : 'Chengdu Panda'} loading="lazy" decoding="async" />
+            <div class="p-places-tile-overlay">
+              <span class="p-places-tile-port">TFU · CTU</span>
+              <h3 class="p-places-tile-name">{isZh ? '成都' : 'Chengdu'}</h3>
+              <p class="p-places-tile-sub">{isZh ? '早 7:30 熊猫基地、盖碗茶社与巴蜀慢生活' : '07:30 panda feeding, teahouses & Sichuan food'}</p>
+            </div>
+          </a>
+
+          <a href={lp('/cities/xian/')} class="p-places-tile">
+            <img src="/images/town.webp" alt={isZh ? '西安古都建筑' : 'Xi’an Heritage'} loading="lazy" decoding="async" />
+            <div class="p-places-tile-overlay">
+              <span class="p-places-tile-port">XIY · SILK ROAD</span>
+              <h3 class="p-places-tile-name">{isZh ? '西安' : 'Xi’an'}</h3>
+              <p class="p-places-tile-sub">{isZh ? '秦兵马俑、明城墙日落骑行与洒金桥碳水江湖' : 'Terracotta Army, Ming City Wall & noodle alleys'}</p>
+            </div>
+          </a>
+
+          <a href={lp('/cities/shenzhen/')} class="p-places-tile">
+            <img src="/images/technology.webp" alt={isZh ? '深圳现代都市' : 'Shenzhen Skyline'} loading="lazy" decoding="async" />
+            <div class="p-places-tile-overlay">
+              <span class="p-places-tile-port">SZX · 14M TO HK</span>
+              <h3 class="p-places-tile-name">{isZh ? '深圳' : 'Shenzhen'}</h3>
+              <p class="p-places-tile-sub">{isZh ? '华强北硬件极客圣地与 14 分钟直达香港西九龙' : 'Huaqiangbei electronics & 14-min HSR to Hong Kong'}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* 3. Michelin / Atlas Obscura Interactive Spatial Layer Map */}
+      <section class="pd-section" aria-labelledby="pl-map-h">
+        <div class="pd-section-head">
+          <h2 id="pl-map-h">{isZh ? '交互式中国地理与交通图层地图' : 'Interactive China Spatial & Rail Layer Map'}</h2>
+        </div>
+        <ChinaLayerMap locale={locale} />
+      </section>
+
+      {/* 4. Flagship Sights & UNESCO Photo Strip */}
+      <section class="pd-section" aria-labelledby="pl-sights-h">
+        <div class="pd-section-head">
+          <h2 id="pl-sights-h">{isZh ? '顶流地标与世界遗产实测档案' : 'Flagship Landmarks & UNESCO Dossiers'}</h2>
+          <a href={lp('/places/sights-unesco-museums/')} class="pd-link">{isZh ? '全部景点与世遗 →' : 'All sights & UNESCO →'}</a>
+        </div>
+        <div class="pl-sight-grid">
+          <a href={lp('/attractions/forbidden-city/')} class="pl-sight-card">
+            <div class="pl-sight-media"><img src="/images/beijing.webp" alt={isZh ? '故宫博物院' : 'Forbidden City'} loading="lazy" /></div>
+            <strong>{isZh ? '故宫博物院' : 'Forbidden City'}</strong>
+            <span>{isZh ? '提前 7 天 20:00 放票 · 周一闭馆' : '7-day 20:00 BJT drop · Closed Mon'}</span>
+          </a>
+          <a href={lp('/attractions/mutianyu-great-wall/')} class="pl-sight-card">
+            <div class="pl-sight-media"><img src="/images/hero.webp" alt={isZh ? '慕田峪长城' : 'Mutianyu Great Wall'} loading="lazy" /></div>
+            <strong>{isZh ? '慕田峪长城' : 'Mutianyu Great Wall'}</strong>
+            <span>{isZh ? '缆车上山 + 6 号敌楼滑道下山' : 'Gondola up · Toboggan from Tower 6'}</span>
+          </a>
+          <a href={lp('/attractions/chengdu-panda-base/')} class="pl-sight-card">
+            <div class="pl-sight-media"><img src="/images/chengdu.webp" alt={isZh ? '成都大熊猫基地' : 'Chengdu Panda Base'} loading="lazy" /></div>
+            <strong>{isZh ? '成都大熊猫基地' : 'Chengdu Panda Base'}</strong>
+            <span>{isZh ? '早 07:30 晨间竹林投喂黄金窗口' : '07:30 AM bamboo feeding peak'}</span>
+          </a>
+          <a href={lp('/attractions/terracotta-warriors/')} class="pl-sight-card">
+            <div class="pl-sight-media"><img src="/images/craft.webp" alt={isZh ? '秦始皇帝陵博物院' : 'Terracotta Warriors'} loading="lazy" /></div>
+            <strong>{isZh ? '秦始皇帝陵博物院' : 'Terracotta Warriors'}</strong>
+            <span>{isZh ? '地铁 9 号线早班入园避开大巴团' : 'Metro Line 9 early entry tip'}</span>
+          </a>
+        </div>
+      </section>
+
+      {/* 5. Five Macro-Regions Corridors */}
+      <section class="pd-section" aria-labelledby="pl-regions-h">
+        <div class="pd-section-head">
+          <h2 id="pl-regions-h">{isZh ? '五大地理片区（覆盖 34 省级行政区）' : 'Five Regional Corridors'}</h2>
+        </div>
+        <div class="p-places-regions" style="margin-top:0;">
+          {regions.map((r) => (
+            <a href={lp(r.hubPath)} class="p-places-region-card">
+              <strong>{isZh ? r.navZh : r.navEn}</strong>
+              <span>{isZh ? r.scopeZh : r.navEn}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '地点' : 'Places'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>

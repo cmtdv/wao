@@ -1,0 +1,269 @@
+---
+/**
+ * 02 /live/ — Nomad List Interactive Filterable City Dashboard × Expatica Lifecycle
+ * Distinct Paradigm: Parameter filter bar above visual city metric cards (cost, expat-friendliness, hospitals, unis)
+ * -> 3 Identity Pathways -> 10-Item Expat Lifecycle Directory
+ */
+import BaseShell from '@layouts/BaseShell.astro';
+import { V32_PILLAR_BY_ID } from '@data/taxonomy-v32';
+import { getLocaleFromContext, localePath } from '@i18n/ui';
+import '../../styles/article.css';
+import '../../styles/hub-v32.css';
+import '../../styles/pillars-bespoke.css';
+import '../../styles/pillars-distinct.css';
+
+const locale = getLocaleFromContext(Astro);
+const isZh = locale === 'zh';
+const lp = (p: string) => localePath(p, locale);
+const pillar = V32_PILLAR_BY_ID.live;
+
+const cities = [
+  {
+    slug: 'shanghai',
+    nameZh: '上海',
+    nameEn: 'Shanghai',
+    image: '/images/shanghai.webp',
+    cost: '¥14k–24k / mo',
+    tier: 'premium',
+    tracks: 'expat student',
+    tagZh: '金融外派首选',
+    tagEn: 'Global Expat HQ',
+    cardScore: 96,
+    medScore: 95,
+    valueScore: 68,
+    metaZh: '复旦 / 上交大 / 上海纽大 · 华山医院国际部 / 和睦家',
+    metaEn: 'Fudan / SJTU / NYU Shanghai · Huashan Intl / United Family',
+  },
+  {
+    slug: 'chengdu',
+    nameZh: '成都',
+    nameEn: 'Chengdu',
+    image: '/images/chengdu.webp',
+    cost: '¥7.5k–11.5k / mo',
+    tier: 'value',
+    tracks: 'nomad student',
+    tagZh: '数字游民性价比第一',
+    tagEn: 'Top Nomad Value',
+    cardScore: 84,
+    medScore: 86,
+    valueScore: 94,
+    metaZh: '四川大学 / 电子科大 · 华西医院国际医疗中心',
+    metaEn: 'Sichuan Univ. / UESTC · West China Hospital Intl Clinic',
+  },
+  {
+    slug: 'beijing',
+    nameZh: '北京',
+    nameEn: 'Beijing',
+    image: '/images/beijing.webp',
+    cost: '¥13.5k–23k / mo',
+    tier: 'premium',
+    tracks: 'expat student',
+    tagZh: '高校科研与使馆核心',
+    tagEn: 'Academia & Policy',
+    cardScore: 92,
+    medScore: 98,
+    valueScore: 66,
+    metaZh: '清华大学 / 北京大学 · 北京协和国际部 / 北京和睦家',
+    metaEn: 'Tsinghua / Peking Univ. · PUMCH Intl / Beijing United Family',
+  },
+  {
+    slug: 'shenzhen',
+    nameZh: '深圳',
+    nameEn: 'Shenzhen',
+    image: '/images/technology.webp',
+    cost: '¥11k–18.5k / mo',
+    tier: 'value',
+    tracks: 'expat nomad',
+    tagZh: '硬件创业 × 14 分钟直达香港',
+    tagEn: 'Hardware × 14m to HK',
+    cardScore: 90,
+    medScore: 88,
+    valueScore: 82,
+    metaZh: '南方科大 / 港中大（深圳）· 港大深圳医院国际医疗中心',
+    metaEn: 'SUSTech / CUHK-SZ · HKU-Shenzhen Hospital IMC',
+  },
+];
+---
+<BaseShell
+  title={isZh ? '长居与工作' : 'Live & Work'}
+  description={isZh ? '外籍来华工作许可积分、留学名校、数字游民生活成本对比、银行个税、涉外就医与离境退保。' : 'Compare expat living costs, work permit points, English-taught universities, international hospitals, and clean exit rules.'}
+  activePillar="live"
+  persona="legal"
+>
+  <div class="container">
+    <div class="pd-shell">
+      {/* 1. Nomad List Command Header + Live Filter Bar */}
+      <header class="lv-head">
+        <div class="lv-head-top">
+          <div>
+            <h1>{isZh ? '长居、工作与留学指南' : 'Live, Work & Study in China'}</h1>
+            <p class="tr-hero-lead" style="max-width:44rem;">
+              {isZh
+                ? '按你的身份与月度预算筛选宜居城市，查看真实租金开销、三甲国际部医院与全生命周期政务清单。'
+                : 'Filter China’s top expat and nomad cities by pathway and monthly budget, then follow step-by-step permit, banking, and tax rules.'}
+            </p>
+          </div>
+          <a href={lp('/tools/tax-points-calc/')} class="v32-tool-cta">
+            {isZh ? '工签积分与个税计算器 →' : 'Work Points & IIT Calc →'}
+          </a>
+        </div>
+
+        <div class="lv-filter-bar" data-lv-filters>
+          <div class="lv-filter-group" role="group" aria-label={isZh ? '按身份筛选' : 'Filter by pathway'}>
+            <button type="button" class="lv-chip" data-lv-track="all" aria-pressed="true">{isZh ? '全部身份' : 'All Pathways'}</button>
+            <button type="button" class="lv-chip" data-lv-track="expat" aria-pressed="false">{isZh ? '外籍雇员' : 'Working Expats'}</button>
+            <button type="button" class="lv-chip" data-lv-track="student" aria-pressed="false">{isZh ? '来华留学' : 'Students'}</button>
+            <button type="button" class="lv-chip" data-lv-track="nomad" aria-pressed="false">{isZh ? '数字游民' : 'Digital Nomads'}</button>
+          </div>
+          <div class="lv-filter-group" role="group" aria-label={isZh ? '按预算筛选' : 'Filter by budget'}>
+            <button type="button" class="lv-chip" data-lv-tier="all" aria-pressed="true">{isZh ? '全部预算' : 'Any Budget'}</button>
+            <button type="button" class="lv-chip" data-lv-tier="value" aria-pressed="false">{isZh ? '高性价比 (≤¥18k)' : 'High Value'}</button>
+            <button type="button" class="lv-chip" data-lv-tier="premium" aria-pressed="false">{isZh ? '一线国际大都市' : 'Tier-1 Global'}</button>
+          </div>
+        </div>
+      </header>
+
+      {/* 2. Nomad List Visual City Dashboard Cards */}
+      <section class="pd-section" style="margin-top:var(--space-6);" aria-labelledby="lv-cities-h">
+        <div class="pd-section-head">
+          <h2 id="lv-cities-h">{isZh ? '长居与旅居城市实测仪表盘' : 'Expat & Nomad City Benchmarks'}</h2>
+          <a href={lp('/guides/digital-nomad-china/')} class="pd-link">{isZh ? '查看数字游民深度报告 →' : 'Full nomad report →'}</a>
+        </div>
+
+        <div class="lv-city-grid" data-lv-grid>
+          {cities.map((c) => (
+            <a href={lp(`/cities/${c.slug}/`)} class="lv-city-card" data-tracks={c.tracks} data-tier={c.tier}>
+              <div class="lv-city-photo">
+                <img src={c.image} alt={isZh ? c.nameZh : c.nameEn} loading="eager" decoding="async" />
+                <span class="lv-city-cost-badge">{c.cost}</span>
+              </div>
+              <div class="lv-city-info">
+                <div>
+                  <div class="lv-city-title-row">
+                    <h3>{isZh ? c.nameZh : c.nameEn}</h3>
+                    <span class="lv-city-tag">{isZh ? c.tagZh : c.tagEn}</span>
+                  </div>
+                </div>
+
+                <div class="lv-meters">
+                  <div class="lv-meter-row">
+                    <span>{isZh ? '外卡/英文' : 'Expat Ease'}</span>
+                    <div class="lv-meter-track"><div class="lv-meter-fill" style={`width:${c.cardScore}%`}></div></div>
+                    <span style="font-family:var(--font-mono);text-align:end;">{c.cardScore}</span>
+                  </div>
+                  <div class="lv-meter-row">
+                    <span>{isZh ? '国际医疗' : 'Intl Care'}</span>
+                    <div class="lv-meter-track"><div class="lv-meter-fill" style={`width:${c.medScore}%`}></div></div>
+                    <span style="font-family:var(--font-mono);text-align:end;">{c.medScore}</span>
+                  </div>
+                  <div class="lv-meter-row">
+                    <span>{isZh ? '性价比' : 'Value'}</span>
+                    <div class="lv-meter-track"><div class="lv-meter-fill" style={`width:${c.valueScore}%`}></div></div>
+                    <span style="font-family:var(--font-mono);text-align:end;">{c.valueScore}</span>
+                  </div>
+                </div>
+
+                <div class="lv-city-meta">{isZh ? c.metaZh : c.metaEn}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. Three Identity Pathways */}
+      <section class="p-live-tracks" aria-label={isZh ? '三大身份路径' : 'Expat Pathways'}>
+        <div class="p-live-track-card">
+          <div>
+            <span class="p-live-track-kicker">{isZh ? '外籍雇员与外派' : 'PROFESSIONALS'}</span>
+            <h2 class="p-live-track-title">{isZh ? '工签、银行与个税' : 'Work Permits, Banking & IIT'}</h2>
+            <p class="p-live-track-desc">{isZh ? 'A/B/C 分类积分、Z 签换居留、183 天税务居民与五险一金合规实务。' : 'Category A/B/C scoring, Z-visas, 183-day tax rules, and social insurance.'}</p>
+          </div>
+          <ul class="p-live-track-list">
+            <li><a href={lp('/live/work-permits-visas/')}><span>{isZh ? '工作许可与签证' : 'Work Permits & Visas'}</span><span>→</span></a></li>
+            <li><a href={lp('/live/banking-personal-tax/')}><span>{isZh ? '银行与个人所得税' : 'Banking & Personal Tax'}</span><span>→</span></a></li>
+            <li><a href={lp('/live/jobs-social-insurance/')}><span>{isZh ? '就业与五险一金' : 'Jobs & Social Insurance'}</span><span>→</span></a></li>
+          </ul>
+        </div>
+
+        <div class="p-live-track-card">
+          <div>
+            <span class="p-live-track-kicker">{isZh ? '国际学生' : 'STUDENTS'}</span>
+            <h2 class="p-live-track-title">{isZh ? '来华留学与高校名录' : 'Universities & Scholarships'}</h2>
+            <p class="p-live-track-desc">{isZh ? '150 所英文授课名校、MBBS/CS/MBA 学位、CSC 奖学金与 X 签指南。' : '150 English-taught universities, CSC funding, and student residence permits.'}</p>
+          </div>
+          <ul class="p-live-track-list">
+            <li><a href={lp('/live/study-in-china/')}><span>{isZh ? '来华留学与名校' : 'Study in China'}</span><span>→</span></a></li>
+            <li><a href={lp('/live/residence-pr-nomads/')}><span>{isZh ? '居留、五星卡永居与旅居' : 'Residence, PR & Nomads'}</span><span>→</span></a></li>
+            <li><a href={lp('/guides/study-work-residence/')}><span>{isZh ? '留学转工签全流程' : 'Study-to-Work Playbook'}</span><span>→</span></a></li>
+          </ul>
+        </div>
+
+        <div class="p-live-track-card">
+          <div>
+            <span class="p-live-track-kicker">{isZh ? '日常安家与离境' : 'SETTLING & EXIT'}</span>
+            <h2 class="p-live-track-title">{isZh ? '租房、就医、驾照与退保' : 'Housing, Healthcare & Exit'}</h2>
+            <p class="p-live-track-desc">{isZh ? '租房避坑、涉外国际部就医、科目一换驾照、携宠入境及离境社保退保。' : 'Renting traps, international clinics, driver licenses, pets, and pension refunds.'}</p>
+          </div>
+          <ul class="p-live-track-list">
+            <li><a href={lp('/live/housing-cost-of-living/')}><span>{isZh ? '租房、买房与生活成本' : 'Housing & Cost of Living'}</span><span>→</span></a></li>
+            <li><a href={lp('/live/healthcare/')}><span>{isZh ? '就医与涉外医保' : 'Healthcare & Clinics'}</span><span>→</span></a></li>
+            <li><a href={lp('/live/leaving-china/')}><span>{isZh ? '离境收尾与退保清单' : 'Leaving China Closeout'}</span><span>→</span></a></li>
+          </ul>
+        </div>
+      </section>
+
+      {/* 4. Expatica Full 10-Topic Bureaucracy Directory */}
+      <section class="pd-section" aria-labelledby="lv-all-h">
+        <div class="pd-section-head">
+          <h2 id="lv-all-h">{isZh ? '长居全生命周期政务索引' : 'Complete Expat Lifecycle Directory'}</h2>
+        </div>
+        <ul class="v32-topic-grid">
+          {pillar.children.map((sec) => (
+            <li class="v32-topic-cell">
+              <a href={lp(sec.hubPath)} class="v32-topic-link">
+                <div class="v32-topic-row">
+                  <span class="v32-topic-title">{isZh ? sec.navZh : sec.navEn}</span>
+                  <span class="v32-topic-arrow" aria-hidden="true">→</span>
+                </div>
+                <p class="v32-topic-desc">{isZh ? sec.scopeZh : sec.navEn}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <nav class="breadcrumb article-bottom-breadcrumb" aria-label="Breadcrumb">
+        <a href={lp('/')}>{isZh ? '首页' : 'Home'}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{isZh ? '长居与工作' : 'Live & Work'}</span>
+      </nav>
+    </div>
+  </div>
+</BaseShell>
+
+<script>
+  const filters = document.querySelector<HTMLElement>('[data-lv-filters]');
+  const grid = document.querySelector<HTMLElement>('[data-lv-grid]');
+  if (filters && grid) {
+    let activeTrack = 'all';
+    let activeTier = 'all';
+    const trackBtns = Array.from(filters.querySelectorAll<HTMLButtonElement>('[data-lv-track]'));
+    const tierBtns = Array.from(filters.querySelectorAll<HTMLButtonElement>('[data-lv-tier]'));
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.lv-city-card'));
+
+    const apply = () => {
+      trackBtns.forEach((b) => b.setAttribute('aria-pressed', b.dataset.lvTrack === activeTrack ? 'true' : 'false'));
+      tierBtns.forEach((b) => b.setAttribute('aria-pressed', b.dataset.lvTier === activeTier ? 'true' : 'false'));
+      cards.forEach((card) => {
+        const tracks = (card.dataset.tracks || '').split(' ');
+        const tier = card.dataset.tier || '';
+        const okTrack = activeTrack === 'all' || tracks.includes(activeTrack);
+        const okTier = activeTier === 'all' || tier === activeTier;
+        card.hidden = !(okTrack && okTier);
+      });
+    };
+
+    trackBtns.forEach((b) => b.addEventListener('click', () => { activeTrack = b.dataset.lvTrack || 'all'; apply(); }));
+    tierBtns.forEach((b) => b.addEventListener('click', () => { activeTier = b.dataset.lvTier || 'all'; apply(); }));
+  }
+</script>
