@@ -658,7 +658,7 @@ const jsonLd = buildEntityGraphJsonLd(entity, Astro.url.origin, locale, [
       {/* PART 4: Quiet Provenance Strip + Apple-Style Bottom Breadcrumb */}
       <div class="entity-provenance">
         <span>
-          {isZh ? `${entity.tier} · 最后核验于 ${entity.lastVerified}` : `${entity.tier} · Last verified ${entity.lastVerified}`}
+          {isZh ? `一手信源核验 · 更新于 ${entity.lastVerified}` : `Source-verified · Updated ${entity.lastVerified}`}
         </span>
         {entity.officialUrl && (
           <a href={entity.officialUrl} target="_blank" rel="noopener noreferrer">

@@ -73,7 +73,7 @@ const normalizedActive = activePillar === 'visit' ? 'travel' : activePillar;
       <span>{isZh ? '搜索栏目、城市、免签、工具…' : 'Search hubs, cities, visa, tools…'}</span>
     </button>
 
-    <nav class="cw-main-nav" aria-label={isZh ? '主导航（v3.2 六大主柱）' : 'Primary navigation'}>
+    <nav class="cw-main-nav" aria-label={isZh ? '主导航' : 'Primary navigation'}>
       <ul class="cw-sub-list">
         {isPhase1Mode ? (
           phase1Sections.map((sec) => {

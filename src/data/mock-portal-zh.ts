@@ -284,7 +284,7 @@ const DIRECTORY_ZH: Record<string, { name: string; operator: string; domainLabel
     operator: '国家市场监督管理总局（SAMR）',
     domainLabel: '政府开放数据',
     accessLabel: 'WAF 官方反爬备用源',
-    summary: '官方强制性/推荐性国标（GB/T）及 2,913 项外文版国标目录。按 OKF 规则标注为 WAF 官方备用源，请在常规浏览器中直接打开。',
+    summary: '官方强制性/推荐性国标（GB/T）及 2,913 项外文版国标目录。请在常规浏览器中直接打开访问。',
   },
 };
 
