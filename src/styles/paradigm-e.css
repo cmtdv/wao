@@ -868,10 +868,6 @@
   flex-wrap: wrap;
 }
 
-.pe-crumb-bar .cw-breadcrumb {
-  margin-bottom: 0;
-}
-
 .pe-crumb-mobile {
   display: none;
 }
