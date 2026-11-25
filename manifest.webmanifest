@@ -1,0 +1,18 @@
+{
+  "name": "ChinaWao — Show-to-Local Cards & Verified China Guide",
+  "short_name": "ChinaWao Cards",
+  "description": "Instant fullscreen bilingual taxi, allergy, hotel & 120 SOS cards plus verified China travel tools.",
+  "start_url": "/cards/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f3e9",
+  "theme_color": "#e43216",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
